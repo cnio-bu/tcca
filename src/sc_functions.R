@@ -46,7 +46,7 @@ filter_sc <- function(sc, res_dir) {
     
     sc_filtered <- subset(x = sc, subset = (percent.mt <= 10) &
                               (nFeature_RNA >= 2000 & nFeature_RNA <= 7000) &
-                              (nCount_RNA > 500) 
+                              (nCount_RNA > 500)  & (percent.ribo) <=40)
     )
     
     this_counts <- GetAssayData(sc_filtered, slot = "counts")
