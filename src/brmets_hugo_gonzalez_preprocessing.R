@@ -96,7 +96,7 @@ filter_sc <- function(sc) {
 }
 
 normalize_and_scale <- function(sc) {
-    sc <- Seurat::NormalizeData(sc, method = "log.normalize", scale.factor = 10000)
+    sc <- Seurat::NormalizeData(sc, normalization.method = "LogNormalize", scale.factor = 10000)
     sc <- Seurat::FindVariableFeatures(sc, selection.method = "vst")
     sc <- Seurat::ScaleData(sc, features = rownames(sc))
     return(sc)
