@@ -1,7 +1,12 @@
 library("tidyverse")
 library("Seurat")
 
-setwd("/local/sagarcia/bc-meta/todo/brmets/")
+cfg <- read.delim(file = "config/basics.tsv") 
+keys <- cfg$key
+cfg <- as.character(cfg$value)
+names(cfg) <- keys
+
+setwd(cfg["working_dir"])
 
 ## Code for the preprocessing of brmets_hugo_gonzalez ##
 
@@ -55,6 +60,7 @@ load_10x_from_geo <- function(sample){
 
 filter_sc <- function(sc) {
     this_sample <- unique(sc@meta.data$orig.ident)
+    where_to_save <- paste0(getwd(), "/single_cell/qc/brmets_hugo_gonzalez/")
     sc <- PercentageFeatureSet(sc, pattern = "^MT-", col.name = "percent.mt")
     sc <- PercentageFeatureSet(sc, pattern = "^RP[SL]", col.name = "percent.ribo")
     
@@ -66,7 +72,14 @@ filter_sc <- function(sc) {
                                        "percent.ribo"),
                           ncol = 4)
     
-    ggsave(plot = this_sc_qc, filename = paste0("../../single_cell/qc/brmets_hugo_gonzalez/",this_sample, "_pre_qc.png"))
+    ggsave(
+        plot = this_sc_qc,
+        filename = paste0(where_to_save, this_sample, "_pre_qc.png"),
+        dpi = 100,
+        height = 7,
+        width = 24
+        )
+    
     sc_filtered <- subset(x = sc, subset = (percent.mt <= 10) &
                               (nFeature_RNA >= 2000 & nFeature_RNA <= 7000) &
                               (nCount_RNA > 500) 
@@ -91,7 +104,12 @@ filter_sc <- function(sc) {
                                             "percent.ribo"),
                                ncol = 4)
     
-    ggsave(plot = this_sc_post_qc, filename = paste0("../../single_cell/qc/brmets_hugo_gonzalez/", this_sample, "_post_qc.png"))
+    ggsave(plot = this_sc_post_qc,
+           filename = paste0(where_to_save, this_sample, "_post_qc.png"),
+           dpi = 100,
+           height = 7,
+           width = 24
+    )
     return(new_filtered_sc)
 }
 
@@ -109,7 +127,7 @@ keep_all_malignants <- function(sc) {
 
 ## get all mats
 mats <- list.files(
-    path = getwd(),
+    path = paste0(getwd(), "/single_cell/raw/brmets_hugo_gonzalez/"),
     pattern = "_matrix.mtx",
     full.names = FALSE
 )
@@ -129,11 +147,13 @@ filtered_sc <- lapply(filtered_sc, normalize_and_scale)
 # Keep malignant cells
 malignant_sc <- lapply(filtered_sc, keep_all_malignants)
 
+res_dir <- paste0(getwd(), "/single_cell/obj/brmets_hugo_gonzalez/")
+
 saveRDS(
     object = filtered_sc,
-    file = "../../single_cell/obj/brmets_hugo_gonzalez/all_samples_filtered.rds"
+    file = paste0(res_dir, "all_samples_filtered.rds")
     )
 saveRDS(
     object = malignant_sc,
-    file = "../../single_cell/obj/brmets_hugo_gonzalez/all_malignant.rds"
+    file = paste0(res_dir, "all_malignant.rds")
     )
