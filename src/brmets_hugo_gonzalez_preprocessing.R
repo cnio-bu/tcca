@@ -1,7 +1,7 @@
 library("tidyverse")
 library("Seurat")
 
-setwd("/local/sagarcia/bc-meta/single_cell")
+setwd("/local/sagarcia/bc-meta/todo/brmets/")
 
 ## Code for the preprocessing of brmets_hugo_gonzalez ##
 
@@ -66,7 +66,7 @@ filter_sc <- function(sc) {
                                        "percent.ribo"),
                           ncol = 4)
     
-    ggsave(plot = this_sc_qc, filename = paste0("../QC/brain/",this_sample, "_pre_qc.png"))
+    ggsave(plot = this_sc_qc, filename = paste0("../../single_cell/qc/brmets_hugo_gonzalez/",this_sample, "_pre_qc.png"))
     sc_filtered <- subset(x = sc, subset = (percent.mt <= 10) &
                               (nFeature_RNA >= 2000 & nFeature_RNA <= 7000) &
                               (nCount_RNA > 500) 
@@ -91,7 +91,7 @@ filter_sc <- function(sc) {
                                             "percent.ribo"),
                                ncol = 4)
     
-    ggsave(plot = this_sc_post_qc, filename = paste0("../QC/brain/", this_sample, "_post_qc.png"))
+    ggsave(plot = this_sc_post_qc, filename = paste0("../../single_cell/qc/brmets_hugo_gonzalez/", this_sample, "_post_qc.png"))
     return(new_filtered_sc)
 }
 
@@ -129,5 +129,11 @@ filtered_sc <- lapply(filtered_sc, normalize_and_scale)
 # Keep malignant cells
 malignant_sc <- lapply(filtered_sc, keep_all_malignants)
 
-saveRDS(object = filtered_sc, file = "../brain_mets/all_samples_filtered.rds")
-saveRDS(object = malignant_sc, file = "../brain_mets/all_malignant.rds")
+saveRDS(
+    object = filtered_sc,
+    file = "../../single_cell/obj/brmets_hugo_gonzalez/all_samples_filtered.rds"
+    )
+saveRDS(
+    object = malignant_sc,
+    file = "../../single_cell/obj/brmets_hugo_gonzalez/all_malignant.rds"
+    )
