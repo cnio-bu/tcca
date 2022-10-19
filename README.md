@@ -9,7 +9,7 @@ here to setup your dev. environment.
 
 You'll need to keep a local copy of the  preprocessing/analysis codebase: 
 1. Install git.
-1. Ask @§GMartin for the appropiate collaborator rights.
+1. Ask @SGMartin for the appropiate collaborator rights.
 1. Clone the repo.
 
 The default branch is called **main**. Feel free to push directly to this branch
