@@ -45,7 +45,6 @@ keep_all_malignants <- function(sc) {
     if (!is.null(sc)) {
         if (sum(sc@meta.data$type == "malignant") > 0) {
             sc_filtered <- subset(x = sc, subset = type == "malignant")
-            print(ncol(sc_filtered@assays$RNA@counts))
             return(sc_filtered)
         } else {
             return(NULL)
