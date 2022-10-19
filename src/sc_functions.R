@@ -46,8 +46,8 @@ filter_sc <- function(sc, res_dir) {
     
     sc_filtered <- subset(x = sc, subset = (percent.mt <= 10) &
                               (nFeature_RNA >= 2000 & nFeature_RNA <= 7000) &
-                              (nCount_RNA > 500)  & (percent.ribo) <=40)
-    )
+                              (nCount_RNA > 500)  & (percent.ribo) <= 40)
+    
     
     this_counts <- GetAssayData(sc_filtered, slot = "counts")
     nonzero_genes <- this_counts > 0
@@ -70,7 +70,7 @@ filter_sc <- function(sc, res_dir) {
     
     ggsave(
         plot = this_sc_post_qc,
-        filename = filename = paste0(where_to_save, "_post_qc.png"), 
+        filename = paste0(where_to_save, "_post_qc.png"), 
         dpi = 100,
         height = 7,
         width = 28
