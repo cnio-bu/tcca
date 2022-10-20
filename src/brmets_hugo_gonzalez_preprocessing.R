@@ -6,22 +6,24 @@ keys <- cfg$key
 cfg <- as.character(cfg$value)
 names(cfg) <- keys
 
-setwd(cfg["working_dir"])
-
 ## Code for the preprocessing of brmets_hugo_gonzalez ##
 
 ## Not sourcing it since some black magic is necessary to annotate Cell Types
 load_10x_from_geo <- function(sample){
     
-    counts <- Matrix::readMM(paste0(sample, "_matrix.mtx"))
+    data_path <- paste0(cfg["working_dir"], "/single_cell/raw/brmets_hugo_gonzalez/")
+
+    counts <- Matrix::readMM(paste0(data_path, sample, "_matrix.mtx"))
     
-    genes <- read_tsv(paste0(sample, "_features.tsv"), col_names = FALSE) %>%
+    genes <- read_tsv(paste0(data_path, sample, "_features.tsv"),
+    col_names = FALSE) %>%
         pull("X2")
     
-    cids <- read_tsv(paste0(sample, "_barcodes.tsv"), col_names = FALSE) %>%
+    cids <- read_tsv(paste0(data_path, sample, "_barcodes.tsv"),
+    col_names = FALSE) %>%
         pull("X1")
     
-    cell_annot <- read.csv(paste0(sample, "_Cell_Types_Annotations.csv"),
+    cell_annot <- read.csv(paste0(data_path, sample, "_Cell_Types_Annotations.csv"),
                            row.names = 1,
                            stringsAsFactors = FALSE
     )
@@ -60,7 +62,7 @@ load_10x_from_geo <- function(sample){
 
 filter_sc <- function(sc) {
     this_sample <- unique(sc@meta.data$orig.ident)
-    where_to_save <- paste0(getwd(), "/single_cell/qc/brmets_hugo_gonzalez/")
+    where_to_save <- paste0(cfg["working_dir"], "/single_cell/qc/brmets_hugo_gonzalez/")
     sc <- PercentageFeatureSet(sc, pattern = "^MT-", col.name = "percent.mt")
     sc <- PercentageFeatureSet(sc, pattern = "^RP[SL]", col.name = "percent.ribo")
     
@@ -129,15 +131,17 @@ keep_all_malignants <- function(sc) {
 }
 
 ## get all mats
+data_path <- paste0(cfg["working_dir"], "/single_cell/raw/brmets_hugo_gonzalez")
+
 mats <- list.files(
-    path = paste0(getwd(), "/single_cell/raw/brmets_hugo_gonzalez/"),
+    path = data_path,
     pattern = "_matrix.mtx",
     full.names = FALSE
 )
 
 mats <- gsub(pattern = "_matrix.mtx", replacement = "", x = mats)
 mats <- mats[!grepl(pattern = "*_Mouse_*", x = mats)]
-mats <- mats[mats != "GSM5645906_Rhabdomyosarcoma"] ## missing cell types
+mats <- mats[!grepl(pattern = "_Rhabdomyosarcoma",  x = mats)] ## missing cell types
 
 # Load data
 raw_seurat_list <- lapply(mats, load_10x_from_geo)
@@ -150,12 +154,8 @@ filtered_sc <- lapply(filtered_sc, normalize_and_scale)
 # Keep malignant cells
 malignant_sc <- lapply(filtered_sc, keep_all_malignants)
 
-res_dir <- paste0(getwd(), "/single_cell/obj/brmets_hugo_gonzalez/")
+res_dir <- paste0(cfg["working_dir"], "/single_cell/obj/brmets_hugo_gonzalez/")
 
-saveRDS(
-    object = filtered_sc,
-    file = paste0(res_dir, "all_samples_filtered.rds")
-    )
 saveRDS(
     object = malignant_sc,
     file = paste0(res_dir, "all_malignant.rds")
