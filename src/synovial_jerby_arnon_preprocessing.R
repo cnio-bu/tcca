@@ -68,6 +68,6 @@ synovial_malignant[sapply(synovial_malignant, is.null)] <- NULL
 
 saveRDS(
     object = synovial_malignant, 
-    file = paste0(data_folder, "obj/synovial_jerby_arnon/all_malignant.rds")
+    file = paste0(data_folder, "/obj/synovial_jerby_arnon/all_malignant.rds")
 )
     
