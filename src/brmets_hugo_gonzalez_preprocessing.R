@@ -82,7 +82,7 @@ filter_sc <- function(sc) {
     
     sc_filtered <- subset(x = sc, subset = (percent.mt <= 10) &
                               (nFeature_RNA >= 2000 & nFeature_RNA <= 7000) &
-                              (nCount_RNA > 500) 
+                              (nCount_RNA > 500) & (percent.ribo <= 40)
     )
     
     this_counts <- GetAssayData(sc_filtered, slot = "counts")
@@ -114,7 +114,10 @@ filter_sc <- function(sc) {
 }
 
 normalize_and_scale <- function(sc) {
-    sc <- Seurat::NormalizeData(sc, normalization.method = "LogNormalize", scale.factor = 10000)
+    sc <- Seurat::NormalizeData(sc,
+                                normalization.method = "LogNormalize",
+                                scale.factor = 10000
+                                )
     sc <- Seurat::FindVariableFeatures(sc, selection.method = "vst")
     sc <- Seurat::ScaleData(sc, features = rownames(sc))
     return(sc)
