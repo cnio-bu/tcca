@@ -60,10 +60,6 @@ sc_Peng_PDAC.samples <- Seurat::SplitObject(
     )
 
 
-unique(sc_Peng_PDAC.samples$T2@meta.data$Sample)
-
-
-
 #Filtering and normalize data
 sc_Peng_PDAC_filtered <- lapply(X = sc_Peng_PDAC.samples,
                             FUN = filter_sc,    
