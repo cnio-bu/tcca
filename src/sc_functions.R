@@ -22,7 +22,6 @@ load_10x_from_geo <- function(sample){
 }
 
 filter_sc <- function(sc, res_dir) {
-
     this_sample <- unique(sc@meta.data$orig.ident)
     where_to_save <- paste0(res_dir, "/", this_sample)
     
@@ -30,6 +29,10 @@ filter_sc <- function(sc, res_dir) {
     sc <- PercentageFeatureSet(sc, pattern = "^RP[SL]", col.name = "percent.ribo")
     
     ## get vlnplot for this sample
+    
+    Idents(sc) <- "orig.ident"
+    
+    
     this_sc_qc <- VlnPlot(sc,
                           features = c("nFeature_RNA",
                                        "nCount_RNA",
