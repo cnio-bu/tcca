@@ -22,13 +22,17 @@ load_10x_from_geo <- function(sample){
 }
 
 filter_sc <- function(sc, res_dir) {
-    
     this_sample <- unique(sc@meta.data$orig.ident)
     where_to_save <- paste0(res_dir, "/", this_sample)
+    
     sc <- PercentageFeatureSet(sc, pattern = "^MT-", col.name = "percent.mt")
     sc <- PercentageFeatureSet(sc, pattern = "^RP[SL]", col.name = "percent.ribo")
     
     ## get vlnplot for this sample
+    
+    Idents(sc) <- "orig.ident"
+    
+    
     this_sc_qc <- VlnPlot(sc,
                           features = c("nFeature_RNA",
                                        "nCount_RNA",
@@ -41,7 +45,9 @@ filter_sc <- function(sc, res_dir) {
         filename = paste0(where_to_save, "_pre_qc.png"),
         dpi = 100,
         height = 7,
-        width = 28
+        width = 28,
+        device = "png"
+
         )
     
     sc_filtered <- subset(x = sc, subset = (percent.mt <= 10) &
@@ -68,15 +74,15 @@ filter_sc <- function(sc, res_dir) {
                                             "percent.mt",
                                             "percent.ribo"),
                                ncol = 4)
-    
     ggsave(
         plot = this_sc_post_qc,
         filename = paste0(where_to_save, "_post_qc.png"), 
         dpi = 100,
         height = 7,
-        width = 28
+        width = 28,
+        device = "png"
         )
-    
+
     return(new_filtered_sc)
 }
 

@@ -31,27 +31,33 @@ anot <- read.table(paste0(data_folder,
     header = T,
     row.names = 1)
 
+
+sc <- sc_Peng_PDAC
+
+
 sc_Peng_PDAC@meta.data <- merge(sc_Peng_PDAC@meta.data,
     anot,
     by = "row.names",
-    all = T)
+    all.x = T)
+
+
 
 row.names(sc_Peng_PDAC@meta.data) <- sc_Peng_PDAC@meta.data$Row.names
-
+sc_Peng_PDAC@meta.data <- sc_Peng_PDAC@meta.data[,-1]
 
 # Change default ident for later split and QC
 sc_Peng_PDAC@meta.data$orig.ident <- sc_Peng_PDAC@meta.data$Sample
+Idents(sc_Peng_PDAC) <- "orig.ident"
 
 
-
+sc_Peng_PDAC@meta.data <- sc_Peng_PDAC@meta.data[rownames(sc@meta.data),]
 
 ## Split the merged obj
+
 sc_Peng_PDAC.samples <- Seurat::SplitObject(
     object = sc_Peng_PDAC,
-    split.by = "Sample"
+    split.by = "orig.ident"
     )
-
-names(sc_Peng_PDAC.samples) <- unique(sc_Peng_PDAC@meta.data$Sample)
 
 
 #Filtering and normalize data
@@ -78,8 +84,17 @@ sc_Peng_PDAC_filtered <- sc_Peng_PDAC_filtered[names(sc_Peng_PDAC_filtered)
 keep_malignant <- function(sc) {
     sc_filtered <- subset(
         x = sc,
-        subset = `characteristics..cell.type` == "Malignant"
+        subset = cluster == "Ductal cell type 2"
         )
     return(sc_filtered)
 }
 
+sc_Peng_PDAC_malignant <- lapply(sc_Peng_PDAC_filtered, keep_malignant)    
+
+# Get rid of "NULL" samples, if there were no malignants left
+sc_Peng_PDAC_malignant[sapply(sc_Peng_PDAC_malignant, is.null)] <- NULL
+
+saveRDS(
+    object = sc_Peng_PDAC_malignant, 
+    file = paste0(data_folder, "/single_cell/obj/pdac_junya_peng/all_malignant.rds")
+)
