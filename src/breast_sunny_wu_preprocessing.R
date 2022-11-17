@@ -21,10 +21,6 @@ meta_data <- read.delim(sep=",",row.names = 1,
   )
 )
 
-# check metadata
-table(meta_data$celltype_major)
-
-
 seu <- Seurat::CreateSeuratObject(counts = all_cells,
                                   project = "breast_sunny_wu",
                                   meta.data = meta_data
@@ -48,8 +44,8 @@ samples_filtered <- lapply(samples_filtered, normalize_and_scale)
 filter_malignant <- function(sc) {
   
   types_to_keep <- "Cancer Epithelial"
-  if (sum(sc@meta.data$celltype_major %in% types_to_keep) > 1) {
-    sc_filtered <- subset(x = sc, subset = celltype_major %in% types_to_keep)
+  if (sum(sc@meta.data$celltype_major == types_to_keep) > 1) {
+    sc_filtered <- subset(x = sc, subset = celltype_major == types_to_keep)
     return(sc_filtered)
     
   } else {
@@ -68,5 +64,3 @@ saveRDS(
   object = malignant_cells,
   file = paste0(data_folder, "/obj/breast_sunny_wu/all_malignant.rds")
 )
-
-sum(sapply(malignant_cells, ncol))
