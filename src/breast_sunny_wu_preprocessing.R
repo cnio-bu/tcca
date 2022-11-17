@@ -21,6 +21,10 @@ meta_data <- read.delim(sep=",",row.names = 1,
   )
 )
 
+# check metadata
+table(meta_data$celltype_major)
+
+
 seu <- Seurat::CreateSeuratObject(counts = all_cells,
                                   project = "breast_sunny_wu",
                                   meta.data = meta_data
