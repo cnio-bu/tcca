@@ -21,10 +21,6 @@ meta_data <- read.delim(sep=",",row.names = 1,
   )
 )
 
-# check metadata
-table(meta_data$celltype_major)
-
-
 seu <- Seurat::CreateSeuratObject(counts = all_cells,
                                   project = "breast_sunny_wu",
                                   meta.data = meta_data
@@ -68,6 +64,3 @@ saveRDS(
   object = malignant_cells,
   file = paste0(data_folder, "/obj/breast_sunny_wu/all_malignant.rds")
 )
-
-#print n of cells
-sum(sapply(malignant_cells, ncol))
