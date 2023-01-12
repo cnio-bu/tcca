@@ -13,11 +13,6 @@ data_folder <- cfg["working_dir"]
 data_folder <- paste0(data_folder, "/single_cell")
 
 ## load full mat
-full_mat <- Matrix::readHB(paste0(
-    data_folder,
-    "/raw/luad_kim_nayoung/raw_umi_matrix.mtx")
-)
-
 full_mat <- readRDS(file = paste0(
     data_folder,
     "/raw/luad_kim_nayoung/GSE131907_Lung_Cancer_raw_UMI_matrix.rds")
