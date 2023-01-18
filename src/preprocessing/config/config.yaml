@@ -1,6 +1,6 @@
 ---
-results_directory: "/local/sagarcia"
-raw_data_directory: "/local/sagarcia/bc-meta/single_cell/raw"
+results_directory: ""
+raw_data_directory: ""
 log_directory: ""
 
 max_mito_percent: 20
