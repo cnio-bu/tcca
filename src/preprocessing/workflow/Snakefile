@@ -1,0 +1,67 @@
+import pandas as pd
+
+configfile: "config/config.yaml"
+
+datasets = pd.read_csv("config/datasets.tsv", sep="\t")
+samples = list(datasets.loc[:, "sample"].unique())
+datasets.set_index("sample", inplace = True)
+
+raw_data = config["raw_data_directory"]
+results = config["results_directory"]
+
+
+def get_brmets_mats(wc):
+    hugo_files = datasets.loc[datasets["study"] == "brmets_hugo_gonzalez", "filename"]
+
+    return expand(f"{raw_data}/brmets_hugo_gonzalez/{{sample}}_matrix.mtx",
+    sample = hugo_files)
+
+
+def get_brmets_features(wc):
+    hugo_files = datasets.loc[datasets["study"] == "brmets_hugo_gonzalez", "filename"]
+
+    return expand(f"{raw_data}/brmets_hugo_gonzalez/{{sample}}_features.tsv",
+    sample = hugo_files)
+
+
+def get_brmets_barcodes(wc):
+    hugo_files = datasets.loc[datasets["study"] == "brmets_hugo_gonzalez", "filename"]
+
+    return expand(f"{raw_data}/brmets_hugo_gonzalez/{{sample}}_barcodes.tsv",
+    sample = hugo_files)
+
+def get_brmets_annotation(wc):
+    hugo_files = datasets.loc[datasets["study"] == "brmets_hugo_gonzalez", "filename"]
+
+    return expand(f"{raw_data}/brmets_hugo_gonzalez/{{sample}}_Cell_Types_Annotations.csv",
+    sample = hugo_files)
+
+
+def get_resource(rule, resource):
+    try:
+        return config["resources"][rule][resource]
+    except KeyError:
+        return config["resources"]["default"][resource]
+
+   
+rule all:
+    input:
+        f"{results}/seurat/raw/brmets_hugo_gonzalez.rds"
+
+
+rule sc_brmets_hugo_gonzalez_seurat:
+    input:
+        mats = get_brmets_mats,
+        features = get_brmets_features,
+        barcodes = get_brmets_barcodes,
+        annotations = get_brmets_annotation,
+    output:
+        seurat_list = f"{results}/seurat/raw/brmets_hugo_gonzalez.rds",
+    threads: 1
+    resources:
+        mem_mb=32000,
+        walltime=30,
+    conda:
+        "envs/seurat.yaml"
+    script:
+        "scripts/brmets_hugo_gonzalez_seurat.R"

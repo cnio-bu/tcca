@@ -1,0 +1,9 @@
+---
+name: seurat
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - r-seurat=4.2.0
+  - r-tidyverse=1.3.2
