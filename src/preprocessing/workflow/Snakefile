@@ -80,3 +80,23 @@ rule sc_pancancer_dalia_barkley_seurat:
         "envs/seurat.yaml",
     script:
         "scripts/pancancer_dalia_barkkley_seurat.R"
+
+
+rule sc_breast_sunny_wu_seurat:
+    input:
+        mat = f"{raw_data}/breast_sunny_wu/matrix.mtx.gz",
+        barcodes = f"{raw_data}/breast_sunny_wu/barcodes.tsv.gz",
+        features = f"{raw_data}/breast_sunny_wu/features.tsv.gz",
+        metadata = f"{raw_data}/breast_sunny_wu/metadata.csv",
+    output:
+        seurat_list = f"{results}/seurat/raw/breast_sunny_wu.rds",
+    threads: get_resource("defaults", "threads"),
+    resources:
+        mem_mb = get_resource("defaults", "mem_mb"),
+        walltime = get_resource("defaults", "walltime"),
+    params:
+        data_dir = f"{raw_data}/breast_sunny_wu",
+    conda:
+        "envs/seurat.yaml",
+    script:
+        "scripts/breast_sunny_wu_seurat.R"
