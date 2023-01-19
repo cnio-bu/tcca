@@ -8,3 +8,9 @@ max_ribo_percent: 40
 min_rna_features: 1000
 max_rna_features: 7000
 min_count_rna: 500
+
+resources:
+  defaults:
+    threads: 1
+    mem_mb: 32000
+    walltime: 30

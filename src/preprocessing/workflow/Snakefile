@@ -57,10 +57,10 @@ rule sc_brmets_hugo_gonzalez_seurat:
         annotations = get_brmets_annotation,
     output:
         seurat_list = f"{results}/seurat/raw/brmets_hugo_gonzalez.rds",
-    threads: 1
+    threads: get_resource("defaults", "threads")
     resources:
-        mem_mb=32000,
-        walltime=30,
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
     conda:
         "envs/seurat.yaml"
     script:
@@ -72,10 +72,10 @@ rule sc_pancancer_dalia_barkley_seurat:
         object_list = f"{raw_data}/pancancer_dalia_barkley/srt.list.primary.all.RData",
     output:
         seurat_list = f"{results}/seurat/raw/pancancer_dalia_barkley.rds"
-    threads: 1,
+    threads: get_resource("defaults", "threads"),
     resources:
-        mem_mb=32000,
-        walltime=30,
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
     conda:
         "envs/seurat.yaml",
     script:
