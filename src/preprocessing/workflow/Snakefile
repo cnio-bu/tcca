@@ -65,3 +65,18 @@ rule sc_brmets_hugo_gonzalez_seurat:
         "envs/seurat.yaml"
     script:
         "scripts/brmets_hugo_gonzalez_seurat.R"
+
+
+rule sc_pancancer_dalia_barkley_seurat:
+    input:
+        object_list = f"{raw_data}/pancancer_dalia_barkley/srt.list.primary.all.RData",
+    output:
+        seurat_list = f"{results}/seurat/raw/pancancer_dalia_barkley.rds"
+    threads: 1,
+    resources:
+        mem_mb=32000,
+        walltime=30,
+    conda:
+        "envs/seurat.yaml",
+    script:
+        "scripts/pancancer_dalia_barkkley_seurat.R"
