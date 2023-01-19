@@ -100,3 +100,19 @@ rule sc_breast_sunny_wu_seurat:
         "envs/seurat.yaml",
     script:
         "scripts/breast_sunny_wu_seurat.R"
+
+
+rule sc_luad_kim_nayoung_seurat:
+    input:
+        mat_object = f"{raw_data}/luad_kim_nayoung/GSE131907_Lung_Cancer_raw_UMI_matrix.rds",
+        annotations = f"{raw_data}/luad_kim_nayoung/GSE131907_Lung_Cancer_cell_annotation.txt",
+    output:
+        seurat_list = f"{results}/seurat/raw/luad_kim_nayoung.rds",
+    threads: get_resource("defaults", "threads"),
+    resources:
+        mem_mb = get_resource("defaults", "mem_mb"),
+        walltime = get_resource("defaults", "walltime"),
+    conda:
+        "envs/seurat.yaml",
+    script:
+        "scripts/luad_kim_nayoung_seurat.R"
