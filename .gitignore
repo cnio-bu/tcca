@@ -3,3 +3,4 @@
 .RData
 .Ruserdata
 config/basics.tsv
+src/preprocessing/.snakemake
