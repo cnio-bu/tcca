@@ -54,12 +54,17 @@ normalize_and_scale <- function(sc) {
 all_seurat_objects = list()
 
 for(i in 1:nrow(dataset)) {
+    sample_name <- gsub(
+        pattern="_matrix.mtx",
+        replacement="",
+        x=basename(dataset[i, "mats"])
+        )
 
     counts <- Matrix::readMM(dataset[i, "mats"])
-    genes <- read_tsv(dataset[i, "features"], col_names = FALSE) %>%
+    genes <- read_tsv(dataset[i, "features"], col_names = FALSE, show_col_types = FALSE) %>%
         pull("X2")
     
-    cids <- read_tsv(dataset[i, "barcodes"], col_names = FALSE) %>%
+    cids <- read_tsv(dataset[i, "barcodes"], col_names = FALSE, show_col_types = FALSE) %>%
         pull("X1")
     
     cell_annot <- read.csv(dataset[i, "annotation"],
@@ -92,16 +97,15 @@ for(i in 1:nrow(dataset)) {
     cids <- gsub(pattern = "-1$", replacement = "", x = cids)
     rownames(counts) <- genes
     colnames(counts) <- cids
-    
+
     seurat_obj <- Seurat::CreateSeuratObject(counts = counts,
-                                             project = sample,
+                                             project = sample_name,
                                              meta.data = cell_annot_filtered
                                              )
 
     all_seurat_objects <- append(all_seurat_objects, seurat_obj)
 
 }
-
 # QC
 filtered_sc <- lapply(all_seurat_objects, filter_sc)
 # Normalize
