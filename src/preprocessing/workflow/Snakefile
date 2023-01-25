@@ -48,6 +48,8 @@ rule all:
     input:
         f"{results}/seurat/raw/brmets_hugo_gonzalez.rds",
         f"{results}/seurat/raw/pancancer_dalia_barkley.rds",
+        f"{results}/seurat/raw/breast_sunny_wu.rds",
+        f"{results}/seurat/raw/luad_kim_nayoung.rds",
 
 
 rule sc_brmets_hugo_gonzalez_seurat:
