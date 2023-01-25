@@ -1,6 +1,6 @@
 ---
-results_directory: ""
-raw_data_directory: ""
+results_directory: "/local/sagarcia/bc-meta"
+raw_data_directory: "/local/sagarcia/bc-meta/raw"
 log_directory: ""
 
 max_mito_percent: 20
@@ -12,5 +12,5 @@ min_count_rna: 500
 resources:
   defaults:
     threads: 1
-    mem_mb: 32000
+    mem_mb: 64000
     walltime: 30
