@@ -46,7 +46,8 @@ def get_resource(rule, resource):
    
 rule all:
     input:
-        f"{results}/seurat/raw/brmets_hugo_gonzalez.rds"
+        f"{results}/seurat/raw/brmets_hugo_gonzalez.rds",
+        f"{results}/seurat/raw/pancancer_dalia_barkley.rds",
 
 
 rule sc_brmets_hugo_gonzalez_seurat:
@@ -79,7 +80,7 @@ rule sc_pancancer_dalia_barkley_seurat:
     conda:
         "envs/seurat.yaml",
     script:
-        "scripts/pancancer_dalia_barkkley_seurat.R"
+        "scripts/pancancer_dalia_barkley_seurat.R"
 
 
 rule sc_breast_sunny_wu_seurat:
