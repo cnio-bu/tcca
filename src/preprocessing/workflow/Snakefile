@@ -157,3 +157,18 @@ rule sc_urothelial_chen_seurat:
         "envs/seurat.yaml",
     script:
         "scripts/urothelial_chen_seurat.R"
+
+
+rule sc_adrenal_rui_chong_seurat:
+    input:
+        object_list = f"{raw_data}/adrenalnb_rui_chong/human_NB_subset_tumor.rda",
+    output:
+        seurat_list = f"{results}/seurat/raw/adrenalnb_rui_chong.rds"
+    threads: get_resource("defaults", "threads"),
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+        "envs/seurat.yaml",
+    script:
+        "scripts/adrenal_rui_chong_seurat.R"
