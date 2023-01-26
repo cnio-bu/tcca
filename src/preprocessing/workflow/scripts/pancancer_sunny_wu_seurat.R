@@ -71,7 +71,7 @@ names(sample_list) <- sapply(sample_list, function(sc){unique(sc$"biosample_id")
 # Filter cells
 samples_filtered <- lapply(
     sample_list,
-    filter_sc,
+    filter_sc
 )
 
 ## Normalize and scale data
