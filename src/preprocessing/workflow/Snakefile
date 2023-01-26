@@ -105,6 +105,27 @@ rule sc_breast_sunny_wu_seurat:
         "scripts/breast_sunny_wu_seurat.R"
 
 
+rule sc_pancancer_sunny_wu_seurat:
+    input:
+        mat = f"{raw_data}/pancancer_sunny_wu/matrix.mtx.gz",
+        barcodes = f"{raw_data}/pancancer_sunny_wu/barcodes.tsv.gz",
+        features = f"{raw_data}/pancancer_sunny_wu/features.tsv.gz",
+        metadata = f"{raw_data}/pancancer_sunny_wu/Wu_etal_2021_metadata.txt",
+    output:
+        seurat_list = f"{results}/seurat/raw/pancancer_sunny_wu.rds",
+    threads: 
+        get_resource("defaults", "threads"),
+    resources:
+        mem_mb = get_resource("defaults", "mem_mb"),
+        walltime = get_resource("defaults", "walltime"),
+    params:
+        data_fir = f"{raw_data}/pancancer_sunny_wu",
+    conda:
+        "envs/seurat.yaml",
+    script:
+        "scripts/pancancer_sunny_wu_seurat.R"
+
+
 rule sc_luad_kim_nayoung_seurat:
     input:
         mat_object = f"{raw_data}/luad_kim_nayoung/GSE131907_Lung_Cancer_raw_UMI_matrix.rds",
