@@ -44,7 +44,7 @@ normalize_and_scale <- function(sc) {
 ## load full mat
 full_mat <- readRDS(file = mat)
 cell_annot <- read.delim(annotations)
-
+rownames(cell_annot) <- cell_annot$Index
 
 all_seurat <- Seurat::CreateSeuratObject(
     counts = full_mat,
