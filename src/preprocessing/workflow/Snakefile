@@ -50,6 +50,8 @@ rule all:
         f"{results}/seurat/raw/pancancer_dalia_barkley.rds",
         f"{results}/seurat/raw/breast_sunny_wu.rds",
         f"{results}/seurat/raw/luad_kim_nayoung.rds",
+        f"{results}/seurat/raw/pancancer_sunny_wu.rds",
+        f"{results}/seurat/raw/urothelial_chen.rds",
 
 
 rule sc_brmets_hugo_gonzalez_seurat:
