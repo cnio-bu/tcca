@@ -121,7 +121,7 @@ rule sc_pancancer_sunny_wu_seurat:
         mem_mb = get_resource("defaults", "mem_mb"),
         walltime = get_resource("defaults", "walltime"),
     params:
-        data_fir = f"{raw_data}/pancancer_sunny_wu",
+        data_dir = f"{raw_data}/pancancer_sunny_wu",
     conda:
         "envs/seurat.yaml",
     script:
