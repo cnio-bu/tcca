@@ -52,6 +52,7 @@ rule all:
         f"{results}/seurat/raw/luad_kim_nayoung.rds",
         f"{results}/seurat/raw/pancancer_sunny_wu.rds",
         f"{results}/seurat/raw/urothelial_chen.rds",
+        f"{results}/seurat/raw/adrenalnb_rui_chong.rds",
 
 
 rule sc_brmets_hugo_gonzalez_seurat:
@@ -171,4 +172,4 @@ rule sc_adrenal_rui_chong_seurat:
     conda:
         "envs/seurat.yaml",
     script:
-        "scripts/adrenal_rui_chong_seurat.R"
+        "scripts/adrenalnb_rui_chong_seurat.R"
