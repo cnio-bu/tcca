@@ -53,6 +53,7 @@ rule all:
         f"{results}/seurat/raw/pancancer_sunny_wu.rds",
         f"{results}/seurat/raw/urothelial_chen.rds",
         f"{results}/seurat/raw/adrenalnb_rui_chong.rds",
+        f"{results}/seurat/raw/luad_philip_bisschof.rds",
 
 
 rule sc_brmets_hugo_gonzalez_seurat:
@@ -173,3 +174,21 @@ rule sc_adrenal_rui_chong_seurat:
         "envs/seurat.yaml",
     script:
         "scripts/adrenalnb_rui_chong_seurat.R"
+
+
+rule sc_luad_philip_bisschof_seurat:
+    input:
+        metadata = f"{raw_data}/luad_philip_bisschof/patients_metadata.xlsx",
+        infercnv_scores = f"{raw_data}/luad_philip_bisschof/infercnv_clone_scores_nsclc.tsv",
+    output:
+        seurat_list = f"{results}/seurat/raw/luad_philip_bisschof.rds"
+    threads: get_resource("defaults", "threads"),
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    params:
+        data_dir = f"{raw_data}/luad_philip_bisschof",
+    conda:
+        "envs/seurat.yaml",
+    script:
+        "scripts/luad_philip_bisschof_seurat.R"
