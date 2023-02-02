@@ -55,6 +55,7 @@ rule all:
         f"{results}/seurat/raw/adrenalnb_rui_chong.rds",
         f"{results}/seurat/raw/luad_philip_bisschof.rds",
         f"{results}/seurat/raw/pdac_junya_peng.rds",
+        f"{results}/seurat/raw/synovial_jerby_arnon.rds",
 
 
 rule sc_brmets_hugo_gonzalez_seurat:
@@ -194,6 +195,7 @@ rule sc_luad_philip_bisschof_seurat:
     script:
         "scripts/luad_philip_bisschof_seurat.R"
 
+
 rule sc_pdac_junya_peng_seurat:
     input:
         object_list = f"{raw_data}/pdac_junya_peng/pdac_junya_peng.RData",
@@ -208,3 +210,18 @@ rule sc_pdac_junya_peng_seurat:
         "envs/seurat.yaml",
     script:
         "scripts/pdac_junya_peng_seurat.R"
+
+
+rule sc_synovial_jerby_arnon_seurat:
+    input:
+        object_list = f"{raw_data}/synovial_jerby_arnon/seurat_pre-qc.rds",
+    output:
+        seurat_list = f"{results}/seurat/raw/synovial_jerby_arnon.rds"
+    threads: get_resource("defaults", "threads"),
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+        "envs/seurat.yaml",
+    script:
+        "scripts/synovial_jerby_arnon_seurat.R"
