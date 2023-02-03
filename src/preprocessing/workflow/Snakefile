@@ -56,6 +56,7 @@ rule all:
         f"{results}/seurat/raw/luad_philip_bisschof.rds",
         f"{results}/seurat/raw/pdac_junya_peng.rds",
         f"{results}/seurat/raw/synovial_jerby_arnon.rds",
+        f"{results}/seurat/raw/rcell_kevin_bi.rds",
 
 
 rule sc_brmets_hugo_gonzalez_seurat:
@@ -225,3 +226,20 @@ rule sc_synovial_jerby_arnon_seurat:
         "envs/seurat.yaml",
     script:
         "scripts/synovial_jerby_arnon_seurat.R"
+
+
+rule sc_rcell_kevin_bi_seurat:
+    input:
+        metadata = f"{raw_data}/rcell_kevin_bi/Final_SCP_Metadata.txt",
+    output:
+        seurat_list = f"{results}/seurat/raw/rcell_kevin_bi.rds"
+    threads: get_resource("defaults", "threads"),
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    params:
+        data_dir = f"{raw_data}/rcell_kevin_bi",
+    conda:
+        "envs/seurat.yaml",
+    script:
+        "scripts/rcell_kevin_bi_seurat.R"
