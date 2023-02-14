@@ -57,6 +57,7 @@ rule all:
         f"{results}/seurat/raw/pdac_junya_peng.rds",
         f"{results}/seurat/raw/synovial_jerby_arnon.rds",
         f"{results}/seurat/raw/rcell_kevin_bi.rds",
+        f"{results}/seurat/raw/pancancer_junbin_qian.rds",
 
 
 rule sc_brmets_hugo_gonzalez_seurat:
@@ -243,3 +244,18 @@ rule sc_rcell_kevin_bi_seurat:
         "envs/seurat.yaml",
     script:
         "scripts/rcell_kevin_bi_seurat.R"
+
+
+rule sc_pancancer_junbin_qian_seurat:    
+    output:
+        seurat_list = f"{results}/seurat/raw/pancancer_junbin_qian.rds"
+    threads: get_resource("defaults", "threads"),
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    params:
+        data_dir = f"{raw_data}/pancancer_junbin_qian",
+    conda:
+        "envs/seurat.yaml",
+    script:
+        "scripts/pancancer_junbin_qian_seurat.R"
