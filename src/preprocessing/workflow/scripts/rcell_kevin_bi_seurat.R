@@ -2,7 +2,7 @@ library("tidyverse")
 library("Seurat")
 
 ## SNAKEMAKE I/O
-metadata <- snakemake@input[["metadata"]]
+metadata_directory <- snakemake@input[["metadata"]]
 data_directory <- snakemake@params[["data_dir"]]
 
 where_to_save <- snakemake@output[["seurat_list"]]
@@ -42,9 +42,15 @@ normalize_and_scale <- function(sc) {
     return(sc)
 }
 
+## Read data
 all_cells <- Seurat::Read10X(data.dir = data_directory,
                              gene.column = 1
                              )
+
+## Read metadata
+metadata <- read.delim(sep="\t",row.names = 1,
+                       file = metadata_directory
+                       )
 
 ## Merge data + metadata
 seu <- Seurat::CreateSeuratObject(counts = all_cells,
@@ -70,7 +76,7 @@ names(sample_list) <- sapply(sample_list,
                              )
 
 ## Filter cells
-filtered_sc <- lapply(samples_list, filter_sc)
+filtered_sc <- lapply(sample_list, filter_sc)
 
 ## Normalize and scale data
 filtered_sc <- lapply(filtered_sc, normalize_and_scale)
