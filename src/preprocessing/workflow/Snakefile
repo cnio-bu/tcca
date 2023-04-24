@@ -161,9 +161,13 @@ rule sc_urothelial_chen_seurat:
         "scripts/urothelial_chen_seurat.R"
 
 
-rule sc_adrenal_rui_chong_seurat:
+rule sc_adrenalnb_rui_chong_seurat:
     input:
         object_list = f"{raw_data}/adrenalnb_rui_chong/human_NB_subset_tumor.rda",
+        tumor_data = f"{raw_data}/adrenalnb_rui_chong/tumor_dataset_annotation.csv",
+        gland_data = f"{raw_data}/adrenalnb_rui_chong/adrenal_gland_annotation.csv",
+        reference_gene_annotation = "/storage/scratch01/shared/projects/bc-meta/reference/hgnc_gene_with_protein_product_2023-03-22.tsv",
+
     output:
         seurat_list = f"{results}/seurat/raw/adrenalnb_rui_chong.rds"
     threads: get_resource("defaults", "threads"),
