@@ -54,6 +54,10 @@ rule all:
         f"{results}/seurat/raw/urothelial_chen.rds",
         f"{results}/seurat/raw/adrenalnb_rui_chong.rds",
         f"{results}/seurat/raw/luad_philip_bisschof.rds",
+        f"{results}/seurat/raw/pdac_junya_peng.rds",
+        f"{results}/seurat/raw/synovial_jerby_arnon.rds",
+        f"{results}/seurat/raw/rcell_kevin_bi.rds",
+        f"{results}/seurat/raw/pancancer_junbin_qian.rds",
 
 
 rule sc_brmets_hugo_gonzalez_seurat:
@@ -196,3 +200,66 @@ rule sc_luad_philip_bisschof_seurat:
         "envs/seurat.yaml",
     script:
         "scripts/luad_philip_bisschof_seurat.R"
+
+
+rule sc_pdac_junya_peng_seurat:
+    input:
+        object_list = f"{raw_data}/pdac_junya_peng/pdac_junya_peng.RData",
+        celltype = f"{raw_data}/pdac_junya_peng/all_celltype.txt",
+    output:
+        seurat_list = f"{results}/seurat/raw/pdac_junya_peng.rds"
+    threads: get_resource("defaults", "threads"),
+    resources:
+        mem_mb=144000,
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+        "envs/seurat.yaml",
+    script:
+        "scripts/pdac_junya_peng_seurat.R"
+
+
+rule sc_synovial_jerby_arnon_seurat:
+    input:
+        object_list = f"{raw_data}/synovial_jerby_arnon/seurat_pre-qc.rds",
+    output:
+        seurat_list = f"{results}/seurat/raw/synovial_jerby_arnon.rds"
+    threads: get_resource("defaults", "threads"),
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+        "envs/seurat.yaml",
+    script:
+        "scripts/synovial_jerby_arnon_seurat.R"
+
+
+rule sc_rcell_kevin_bi_seurat:
+    input:
+        metadata = f"{raw_data}/rcell_kevin_bi/Final_SCP_Metadata.txt",
+    output:
+        seurat_list = f"{results}/seurat/raw/rcell_kevin_bi.rds"
+    threads: get_resource("defaults", "threads"),
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    params:
+        data_dir = f"{raw_data}/rcell_kevin_bi",
+    conda:
+        "envs/seurat.yaml",
+    script:
+        "scripts/rcell_kevin_bi_seurat.R"
+
+
+rule sc_pancancer_junbin_qian_seurat:    
+    output:
+        seurat_list = f"{results}/seurat/raw/pancancer_junbin_qian.rds"
+    threads: get_resource("defaults", "threads"),
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    params:
+        data_dir = f"{raw_data}/pancancer_junbin_qian",
+    conda:
+        "envs/seurat.yaml",
+    script:
+        "scripts/pancancer_junbin_qian_seurat.R"
