@@ -345,3 +345,101 @@ mod1
 mod2
 
 res_test <- drugs_id_to_keep[drugs_id_to_keep$IDs %in% module_test, ]
+
+
+## merge test for mod 1 draw.
+combined_tumors <- merge(x = tumor_subset, y = second_tumor)
+
+bc_combined <- bcScore(sc = combined_tumors, gs = SSc, expr.thres = 0.1)
+bc_combined@normalized[is.na(bc_combined@normalized)] <- 0
+bc_combined <- bcRecompute(bc_combined, slot = "normalized")
+bc_combined <- bcRegressOut(
+  bc = bc_combined,
+  vars.to.regress = c("nFeature_RNA")
+  )
+
+bc_combined <- bcUMAP(
+  bc = bc_combined,
+  pc = 50,
+  npcs = 50,
+  res = 0.2,
+  k.neighbors = 20
+  )
+
+combined_clusters <- bcClusters(
+  bc = bc_combined,
+  idents = "bc_clusters_res.0.2",
+  spatial = FALSE
+  )
+
+combined_norm_mat <- bc_combined@normalized
+combined_norm_mat <- combined_norm_mat[, order(bc_combined@meta.data$bc_clusters_res.0.2)]
+
+mod1_annot <- data.frame(
+  drug = rownames(combined_norm_mat),
+  is_mod_1 = rownames(combined_norm_mat) %in% module_test
+)
+
+mod1_annot$is_mod_1 <- as.factor(mod1_annot$is_mod_1)
+levels(mod1_annot$is_mod_1) <- c("NO", "YES")
+rownames(mod1_annot) <- mod1_annot$drug 
+mod1_annot$drug <- NULL
+
+combined_norm_mat <- combined_norm_mat[order(mod1_annot$is_mod_1), ]
+
+heat8 <- pheatmap(
+  mat = combined_norm_mat,
+  color = colorRampPalette(c("blue", "white", "red"))(50),
+  breaks = seq(-5, 5, 0.2),
+  show_rownames = FALSE,
+  show_colnames = FALSE,
+  cluster_rows = FALSE,
+  cluster_cols = FALSE,
+  clustering_distance_cols = "correlation",
+  annotation_col = bc_combined@meta.data[, c("bc_clusters_res.0.2", "subtype")],
+  annotation_row = mod1_annot,
+  scale = "row",
+  main = "Heatmap of the drugs comprising the common module",
+  filename = "results/biclustering/combined_tumors_by_module_1.png",
+  height = 10,
+  width = 10
+)
+
+mod1_drugs <- data.table(t(combined_norm_mat[module_test, ]))
+mod1_drugs[, "cell"] <- colnames(combined_norm_mat)
+mod1_drugs <- melt(
+  mod1_drugs,
+  id.vars = "cell",
+  variable.name = "signature",
+  value.name = "enrichment"
+)
+
+## Annotate sample and bc clusters
+bc_metadata_combined <- bc_combined@meta.data
+bc_metadata_combined$cell <- rownames(bc_metadata_combined)
+
+mod1_drugs_annot <- mod1_drugs %>%
+  left_join(
+    y = bc_metadata_combined[, c("cell", "orig.ident", "bc_clusters_res.0.2")],
+    by = "cell"
+    ) %>%
+  rename(
+    "sample" = orig.ident
+  )
+
+mod1_drugs_annot_summary <- mod1_drugs_annot %>%
+  group_by(cell) %>%
+  summarise(
+    median_module_enrichment = median(enrichment),
+    sample = unique(sample),
+    tc = unique(bc_clusters_res.0.2)
+  )
+
+
+cell_wise_enrichment <- ggplot(
+  data = mod1_drugs_annot_summary, 
+  aes(x = tc, y = median_module_enrichment)
+  ) +
+  geom_boxplot() + 
+  geom_point(aes(color = tc), position = position_dodge(width=0.5)) +
+  theme_bw()
