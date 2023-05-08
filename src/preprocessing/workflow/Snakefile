@@ -77,6 +77,20 @@ rule sc_brmets_hugo_gonzalez_seurat:
     script:
         "scripts/brmets_hugo_gonzalez_seurat.R"
 
+rule bc_brmets_hugo_gonzalez:
+    input:
+        seurat_list = rules.sc_brmets_hugo_gonzalez_seurat.output.seurat_list,
+    output:
+        malignant_list = f"{raw_data}/seurat/malignant/brmets_hugo_gonzalez.rds",
+        bc_list = f"{raw_data}/beyondcell/brmets_hugo_gonzalez.rds",
+    threads: get_resource("defaults", "threads"),
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+        "envs/beyondcell.yaml",
+    script:
+        "scripts/brmets_hugo_gonzalez_beyondcell.R"
 
 rule sc_pancancer_dalia_barkley_seurat:
     input:
