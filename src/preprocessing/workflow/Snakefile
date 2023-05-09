@@ -313,7 +313,7 @@ rule sc_luad_philip_bisschof_seurat:
         "scripts/luad_philip_bisschof_seurat.R"
 
 
-rule bc_adrenalnb_rui_chong:
+rule bc_luad_philip_bisschof:
     input:
         seurat_list = rules.sc_luad_philip_bisschof_seurat.output.seurat_list,
     output:
