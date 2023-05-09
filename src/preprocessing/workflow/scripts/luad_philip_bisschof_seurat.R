@@ -59,6 +59,17 @@ fill_clinical <- function(sc) {
     
 }
 
+fill_copy_number <- function(sc){
+    pid <- unique(sc$orig.ident)
+    
+    cnv_scores <- infer_cnv_scores[infer_cnv_scores$cell_id %in% colnames(sc), ]
+    cell_meta <- cnv_scores$cna_clone
+    names(cell_meta) <- cnv_scores$cell_id
+    
+    sc <- AddMetaData(object = sc, metadata = cell_meta, col.name = "cna_clone")
+    return(sc)
+}
+
 ## Get all samples
 all_samples <- list.dirs(data_directory,
                          recursive = FALSE,
@@ -81,7 +92,6 @@ infer_cnv_scores <- read.csv(
     file = infercnv_scores,
     sep = "\t"
     ) %>%
-    filter(tissue_type == "Tumor", !is.na(cell_id), cna_clone == "CNA") %>%
     mutate(
         cell_id = gsub(pattern = "^p.*_", replacement = "", x = cell_id)
     )
@@ -107,6 +117,7 @@ filtered_sc <- lapply(all_seurat_objects, filter_sc)
 # Normalize
 filtered_sc <- lapply(filtered_sc, normalize_and_scale)
 # Annotation
-filtered_sc <- lapply(filtered_sc, fill_clinical)
+filtered_sc_clinical <- lapply(filtered_sc, fill_clinical)
+filtered_clinical_annotated <- lapply(filtered_sc_clinical, fill_copy_number)
 
 saveRDS(object = filtered_sc, file = where_to_save)
