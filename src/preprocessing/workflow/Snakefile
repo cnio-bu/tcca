@@ -52,7 +52,7 @@ rule all:
         f"{results}/reports/cells_pancancer_sunny_wu.tsv",
         f"{results}/reports/cells_luad_kim_nayoung.tsv",
         f"{results}/reports/cells_urothelial_chen.tsv",
-        f"{results}/seurat/raw/adrenalnb_rui_chong.rds",
+        f"{results}/reports/cells_adrenalnb_rui_chong.tsv",
         f"{results}/seurat/raw/luad_philip_bisschof.rds",
         f"{results}/seurat/raw/pdac_junya_peng.rds",
         f"{results}/seurat/raw/synovial_jerby_arnon.rds",
@@ -276,6 +276,23 @@ rule sc_adrenalnb_rui_chong_seurat:
         "envs/seurat.yaml",
     script:
         "scripts/adrenalnb_rui_chong_seurat.R"
+
+
+rule bc_adrenalnb_rui_chong:
+    input:
+        seurat_list = rules.sc_adrenalnb_rui_chong_seurat.output.seurat_list,
+    output:
+        malignant_list = f"{results}/seurat/malignant/adrenalnb_rui_chong.rds",
+        bc_list = f"{results}/beyondcell/adrenalnb_rui_chong.rds",
+        report = f"{results}/reports/cells_adrenalnb_rui_chong.tsv",
+    threads: get_resource("defaults", "threads"),
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+        "envs/beyondcell.yaml",
+    script:
+        "scripts/adrenalnb_rui_chong_beyondcell.R"
 
 
 rule sc_luad_philip_bisschof_seurat:
