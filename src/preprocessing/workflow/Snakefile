@@ -107,6 +107,21 @@ rule sc_pancancer_dalia_barkley_seurat:
     script:
         "scripts/pancancer_dalia_barkley_seurat.R"
 
+rule bc_pancancer_dalia_barkley:
+    input:
+        seurat_list = rules.sc_pancancer_dalia_barkley_seurat.output.seurat_list,
+    output:
+        malignant_list = f"{raw_data}/seurat/malignant/pancancer_dalia_barkley.rds",
+        bc_list = f"{raw_data}/beyondcell/pancancer_dalia_barkley.rds",
+        report = f"{raw_data}/reports/pancancer_dalia_barkley.tsv",
+    threads: get_resource("defaults", "threads"),
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+        "envs/beyondcell.yaml",
+    script:
+        "scripts/pancancer_dalia_barkley_beyondcell.R"
 
 rule sc_breast_sunny_wu_seurat:
     input:
