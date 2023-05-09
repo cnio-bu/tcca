@@ -53,7 +53,7 @@ single_cell_report <- data.frame(
     sample = sapply(seu, FUN = function(x){unique(x@meta.data$orig.ident)}),
     cells = sapply(seu, FUN = function(x){ nrow(x@meta.data)}),
     malignants = sapply(malignants, FUN = function(x){ nrow(x@meta.data)}),
-    drug_sigs = sapply(bcs, FUN = function(x){ nrow(bc@normalized)})
+    drug_sigs = sapply(bcs, FUN = function(x){ nrow(x@normalized)})
 )
 
 write.table(
