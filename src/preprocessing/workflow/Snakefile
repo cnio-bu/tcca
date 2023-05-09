@@ -148,7 +148,7 @@ rule bc_breast_sunny_wu:
     output:
         malignant_list = f"{results}/seurat/malignant/breast_sunny_wu.rds",
         bc_list = f"{results}/beyondcell/breast_sunny_wu.rds",
-        report = f"{results}/reports/breast_sunny_wu.tsv",
+        report = f"{results}/reports/cells_breast_sunny_wu.tsv",
     threads: get_resource("defaults", "threads"),
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
