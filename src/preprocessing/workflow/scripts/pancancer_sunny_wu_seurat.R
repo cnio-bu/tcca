@@ -77,8 +77,8 @@ samples_filtered <- lapply(
 ## Normalize and scale data
 samples_filtered <- lapply(samples_filtered, normalize_and_scale)
 
-## Get rid of the NULL elements/samples_filtered with no malignant cells left
-samples_filtered[sapply(malignant_cells, is.null)] <- NULL
+## Get rid of the NULL elements/samples_filtered with no  cells left
+samples_filtered[sapply(samples_filtered, is.null)] <- NULL
 
 saveRDS(
     object = samples_filtered,
