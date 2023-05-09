@@ -188,7 +188,7 @@ rule sc_luad_kim_nayoung_seurat:
         seurat_list = f"{results}/seurat/raw/luad_kim_nayoung.rds",
     threads: get_resource("defaults", "threads"),
     resources:
-        mem_mb = get_resource("defaults", "mem_mb"),
+        mem_mb = 96000,
         walltime = get_resource("defaults", "walltime"),
     conda:
         "envs/seurat.yaml",
