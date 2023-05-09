@@ -46,8 +46,8 @@ def get_resource(rule, resource):
    
 rule all:
     input:
-        f"{results}/seurat/raw/brmets_hugo_gonzalez.rds",
-        f"{results}/seurat/raw/pancancer_dalia_barkley.rds",
+        f"{results}/reports/cells_brmets_hugo_gonzalez.tsv",
+        f"{results}/reports/cells_pancancer_dalia_barkley.tsv",
         f"{results}/seurat/raw/breast_sunny_wu.rds",
         f"{results}/seurat/raw/luad_kim_nayoung.rds",
         f"{results}/seurat/raw/pancancer_sunny_wu.rds",
