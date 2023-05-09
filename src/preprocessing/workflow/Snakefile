@@ -50,7 +50,7 @@ rule all:
         f"{results}/reports/cells_pancancer_dalia_barkley.tsv",
         f"{results}/reports/cells_breast_sunny_wu.tsv",
         f"{results}/reports/cells_pancancer_sunny_wu.tsv",
-        f"{results}/seurat/raw/luad_kim_nayoung.rds",
+        f"{results}/reports/cells_luad_kim_nayoung.tsv",
         f"{results}/seurat/raw/urothelial_chen.rds",
         f"{results}/seurat/raw/adrenalnb_rui_chong.rds",
         f"{results}/seurat/raw/luad_philip_bisschof.rds",
@@ -209,6 +209,22 @@ rule sc_luad_kim_nayoung_seurat:
         "envs/seurat.yaml",
     script:
         "scripts/luad_kim_nayoung_seurat.R"
+
+rule bc_luad_kim_nayoung:
+    input:
+        seurat_list = rules.sc_luad_kim_nayoung_seurat.output.seurat_list,
+    output:
+        malignant_list = f"{results}/seurat/malignant/luad_kim_nayoung.rds",
+        bc_list = f"{results}/beyondcell/luad_kim_nayoung.rds",
+        report = f"{results}/reports/cells_luad_kim_nayoung.tsv",
+    threads: get_resource("defaults", "threads"),
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+        "envs/beyondcell.yaml",
+    script:
+        "scripts/luad_kim_nayoung_beyondcell.R"
 
 
 rule sc_urothelial_chen_seurat:
