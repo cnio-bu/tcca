@@ -83,6 +83,7 @@ rule bc_brmets_hugo_gonzalez:
     output:
         malignant_list = f"{raw_data}/seurat/malignant/brmets_hugo_gonzalez.rds",
         bc_list = f"{raw_data}/beyondcell/brmets_hugo_gonzalez.rds",
+        report = f"{raw_data}/reports/cells_brmets_hugo_gonzalez.tsv",
     threads: get_resource("defaults", "threads"),
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
