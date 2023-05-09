@@ -51,7 +51,7 @@ rule all:
         f"{results}/reports/cells_breast_sunny_wu.tsv",
         f"{results}/reports/cells_pancancer_sunny_wu.tsv",
         f"{results}/reports/cells_luad_kim_nayoung.tsv",
-        f"{results}/seurat/raw/urothelial_chen.rds",
+        f"{results}/reports/cells_urothelial_chen.tsv",
         f"{results}/seurat/raw/adrenalnb_rui_chong.rds",
         f"{results}/seurat/raw/luad_philip_bisschof.rds",
         f"{results}/seurat/raw/pdac_junya_peng.rds",
@@ -240,6 +240,23 @@ rule sc_urothelial_chen_seurat:
         "envs/seurat.yaml",
     script:
         "scripts/urothelial_chen_seurat.R"
+
+
+rule bc_urothelial_chen:
+    input:
+        seurat_list = rules.sc_urothelial_chen_seurat.output.seurat_list,
+    output:
+        malignant_list = f"{results}/seurat/malignant/urothelial_chen.rds",
+        bc_list = f"{results}/beyondcell/urothelial_chen.rds",
+        report = f"{results}/reports/cells_urothelial_chen.tsv",
+    threads: get_resource("defaults", "threads"),
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+        "envs/beyondcell.yaml",
+    script:
+        "scripts/urothelial_chen_beyondcell.R"
 
 
 rule sc_adrenalnb_rui_chong_seurat:
