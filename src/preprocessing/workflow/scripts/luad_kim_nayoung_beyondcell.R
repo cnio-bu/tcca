@@ -31,6 +31,7 @@ filter_malignants <- function(sc) {
 }
 
 ## Calculate bcscores sample wise, for each sample, for malignant pops. only
+gs <- beyondcell::GetCollection(SSc, n.genes = 250, include.pathways = FALSE)
 get_bcscores <- function(sc){
     bc <- bcScore(sc = sc, gs = gs, expr.thres = 0.1)
     
@@ -45,8 +46,8 @@ get_bcscores <- function(sc){
 seu <- readRDS(file = full_seurat_list)
 seu <- lapply(X = seu, FUN = annotate_cell_cycle)
 
-malignants <- lapply(X = seu, function = filter_malignant)
-bcs <- lapply(X = malignants, function = get_bcscores)
+malignants <- lapply(X = seu, FUN = filter_malignant)
+bcs <- lapply(X = malignants, FUN = get_bcscores)
 
 ## Save results objects
 saveRDS(object = malignants, file = malignant_list)
