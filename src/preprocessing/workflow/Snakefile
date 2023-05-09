@@ -48,7 +48,7 @@ rule all:
     input:
         f"{results}/reports/cells_brmets_hugo_gonzalez.tsv",
         f"{results}/reports/cells_pancancer_dalia_barkley.tsv",
-        f"{results}/reports/cells_breast_sunny_wu.rds",
+        f"{results}/reports/cells_breast_sunny_wu.tsv",
         f"{results}/seurat/raw/luad_kim_nayoung.rds",
         f"{results}/seurat/raw/pancancer_sunny_wu.rds",
         f"{results}/seurat/raw/urothelial_chen.rds",
