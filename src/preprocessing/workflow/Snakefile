@@ -81,9 +81,9 @@ rule bc_brmets_hugo_gonzalez:
     input:
         seurat_list = rules.sc_brmets_hugo_gonzalez_seurat.output.seurat_list,
     output:
-        malignant_list = f"{raw_data}/seurat/malignant/brmets_hugo_gonzalez.rds",
-        bc_list = f"{raw_data}/beyondcell/brmets_hugo_gonzalez.rds",
-        report = f"{raw_data}/reports/cells_brmets_hugo_gonzalez.tsv",
+        malignant_list = f"{results}/seurat/malignant/brmets_hugo_gonzalez.rds",
+        bc_list = f"{results}/beyondcell/brmets_hugo_gonzalez.rds",
+        report = f"{results}/reports/cells_brmets_hugo_gonzalez.tsv",
     threads: get_resource("defaults", "threads"),
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
@@ -111,9 +111,9 @@ rule bc_pancancer_dalia_barkley:
     input:
         seurat_list = rules.sc_pancancer_dalia_barkley_seurat.output.seurat_list,
     output:
-        malignant_list = f"{raw_data}/seurat/malignant/pancancer_dalia_barkley.rds",
-        bc_list = f"{raw_data}/beyondcell/pancancer_dalia_barkley.rds",
-        report = f"{raw_data}/reports/pancancer_dalia_barkley.tsv",
+        malignant_list = f"{results}/seurat/malignant/pancancer_dalia_barkley.rds",
+        bc_list = f"{results}/beyondcell/pancancer_dalia_barkley.rds",
+        report = f"{results}/reports/cells_pancancer_dalia_barkley.tsv",
     threads: get_resource("defaults", "threads"),
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
