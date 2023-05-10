@@ -320,7 +320,7 @@ rule bc_luad_philip_bisschof:
     output:
         malignant_list = f"{results}/seurat/malignant/luad_philip_bisschof.rds",
         bc_list = f"{results}/beyondcell/luad_philip_bisschof.rds",
-        report = f"{results}/reports/luad_philip_bisschof.tsv",
+        report = f"{results}/reports/cells_luad_philip_bisschof.tsv",
     threads: get_resource("defaults", "threads"),
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
