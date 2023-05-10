@@ -14,3 +14,7 @@ resources:
     threads: 1
     mem_mb: 64000
     walltime: 30
+  default_bc:
+    threads: 1
+    mem_mb: 64000
+    walltime: 120
