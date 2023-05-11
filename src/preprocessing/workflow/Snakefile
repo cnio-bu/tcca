@@ -60,7 +60,7 @@ rule all:
         f"{results}/seurat/raw/pancancer_junbin_qian.rds",
         f"{results}/seurat/raw/rcell_r_li.rds",
         f"{results}/seurat/raw/aml_audrey_lasry.rds"
-
+        f"{results}/seurat/raw/cll_ramon_massoni.rds",
 
 rule sc_brmets_hugo_gonzalez_seurat:
     input:
@@ -408,7 +408,23 @@ rule sc_rcell_r_li_seurat:
         "envs/seurat.yaml",
     script:
         "scripts/rcell_r_li_seurat.R"
+        
+        
+rule sc_cll_ramon_massoni_seurat:
+    output:
+        seurat_list = f"{results}/seurat/raw/cll_ramon_massoni.rds",
+    params:
+        data_dir = f"{raw_data}/cll_ramon_massoni",
+    threads: get_resource("defaults", "threads"),
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+        "envs/seurat.yaml",
+    script:
+        "scripts/cll_ramon_massoni_seurat.R"
 
+        
 rule sc_aml_audrey_lasry_seurat:
     input:
         matrix = f"{raw_data}/aml_audrey_lasry/RNA_soupX.mtx",
@@ -426,3 +442,4 @@ rule sc_aml_audrey_lasry_seurat:
         "envs/seurat.yaml",
     script:
         "scripts/aml_audrey_lasry_seurat.R"
+        
