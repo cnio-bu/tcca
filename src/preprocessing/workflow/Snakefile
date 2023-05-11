@@ -59,7 +59,7 @@ rule all:
         f"{results}/seurat/raw/rcell_kevin_bi.rds",
         f"{results}/seurat/raw/pancancer_junbin_qian.rds",
         f"{results}/seurat/raw/rcell_r_li.rds",
-        f"{results}/seurat/raw/aml_audrey_lasry.rds"
+        f"{results}/seurat/raw/aml_audrey_lasry.rds",
         f"{results}/seurat/raw/cll_ramon_massoni.rds",
 
 rule sc_brmets_hugo_gonzalez_seurat:
