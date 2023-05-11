@@ -1,5 +1,6 @@
 library("beyondcell")
 library("Seurat")
+library("tidyverse")
 
 ## SNAKEMAKE I/O
 full_seurat_list <- snakemake@input[["seurat_list"]]
@@ -63,10 +64,18 @@ saveRDS(object = bcs, file = bc_list)
 ## Generate and save reports
 single_cell_report <- data.frame(
     sample = sapply(seu, FUN = function(x){unique(x@meta.data$orig.ident)}),
-    cells = sapply(seu, FUN = function(x){ nrow(x@meta.data)}),
+    cells = sapply(seu, FUN = function(x){ nrow(x@meta.data)})
+)
+
+bc_report <- data.frame(
+    sample = sapply(malignants, FUN = function(x){ unique(x@meta.data$orig.ident)}),
     malignants = sapply(malignants, FUN = function(x){ nrow(x@meta.data)}),
     drug_sigs = sapply(bcs, FUN = function(x){ nrow(x@normalized)})
-)
+) 
+
+single_cell_report <- single_cell_report %>%
+    full_join(y = bc_report, by = "sample") %>%
+    replace_na(list(malignants = 0, drug_sigs = 0))
 
 write.table(
     x = single_cell_report,
