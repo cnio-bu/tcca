@@ -50,6 +50,10 @@ seu <- readRDS(file = full_seurat_list)
 seu <- lapply(X = seu, FUN = annotate_cell_cycle)
 
 malignants <- lapply(X = seu, FUN = filter_malignant)
+
+## Get rid of NULLs samples w/o malignants left
+malignants[sapply(malignants, is.null)] <- NULL
+
 bcs <- lapply(X = malignants, FUN = get_bcscores)
 
 ## Save results objects
