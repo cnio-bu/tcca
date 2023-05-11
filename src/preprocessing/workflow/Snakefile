@@ -86,10 +86,10 @@ rule bc_brmets_hugo_gonzalez:
         malignant_list = f"{results}/seurat/malignant/brmets_hugo_gonzalez.rds",
         bc_list = f"{results}/beyondcell/brmets_hugo_gonzalez.rds",
         report = f"{results}/reports/cells_brmets_hugo_gonzalez.tsv",
-    threads: get_resource("defaults", "threads"),
+    threads: get_resource("default_bc", "threads"),
     resources:
-        mem_mb=get_resource("defaults", "mem_mb"),
-        walltime=get_resource("defaults", "walltime"),
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=get_resource("default_bc", "walltime"),
     conda:
         "envs/beyondcell.yaml",
     script:
@@ -116,10 +116,10 @@ rule bc_pancancer_dalia_barkley:
         malignant_list = f"{results}/seurat/malignant/pancancer_dalia_barkley.rds",
         bc_list = f"{results}/beyondcell/pancancer_dalia_barkley.rds",
         report = f"{results}/reports/cells_pancancer_dalia_barkley.tsv",
-    threads: get_resource("defaults", "threads"),
+    threads: get_resource("default_bc", "threads"),
     resources:
-        mem_mb=get_resource("defaults", "mem_mb"),
-        walltime=get_resource("defaults", "walltime"),
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=get_resource("default_bc", "walltime"),
     conda:
         "envs/beyondcell.yaml",
     script:
@@ -151,10 +151,10 @@ rule bc_breast_sunny_wu:
         malignant_list = f"{results}/seurat/malignant/breast_sunny_wu.rds",
         bc_list = f"{results}/beyondcell/breast_sunny_wu.rds",
         report = f"{results}/reports/cells_breast_sunny_wu.tsv",
-    threads: get_resource("defaults", "threads"),
+    threads: get_resource("default_bc", "threads"),
     resources:
-        mem_mb=get_resource("defaults", "mem_mb"),
-        walltime=get_resource("defaults", "walltime"),
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=get_resource("default_bc", "walltime"),
     conda:
         "envs/beyondcell.yaml",
     script:
@@ -188,10 +188,10 @@ rule bc_pancancer_sunny_wu:
         malignant_list = f"{results}/seurat/malignant/pancancer_sunny_wu.rds",
         bc_list = f"{results}/beyondcell/pancancer_sunny_wu.rds",
         report = f"{results}/reports/cells_pancancer_sunny_wu.tsv",
-    threads: get_resource("defaults", "threads"),
+    threads: get_resource("default_bc", "threads"),
     resources:
-        mem_mb=get_resource("defaults", "mem_mb"),
-        walltime=get_resource("defaults", "walltime"),
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=get_resource("default_bc", "walltime"),
     conda:
         "envs/beyondcell.yaml",
     script:
@@ -219,10 +219,10 @@ rule bc_luad_kim_nayoung:
         malignant_list = f"{results}/seurat/malignant/luad_kim_nayoung.rds",
         bc_list = f"{results}/beyondcell/luad_kim_nayoung.rds",
         report = f"{results}/reports/cells_luad_kim_nayoung.tsv",
-    threads: get_resource("defaults", "threads"),
+    threads: get_resource("default_bc", "threads"),
     resources:
-        mem_mb=get_resource("defaults", "mem_mb"),
-        walltime=get_resource("defaults", "walltime"),
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=get_resource("default_bc", "walltime"),
     conda:
         "envs/beyondcell.yaml",
     script:
@@ -251,10 +251,10 @@ rule bc_urothelial_chen:
         malignant_list = f"{results}/seurat/malignant/urothelial_chen.rds",
         bc_list = f"{results}/beyondcell/urothelial_chen.rds",
         report = f"{results}/reports/cells_urothelial_chen.tsv",
-    threads: get_resource("defaults", "threads"),
+    threads: get_resource("default_bc", "threads"),
     resources:
-        mem_mb=get_resource("defaults", "mem_mb"),
-        walltime=get_resource("defaults", "walltime"),
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=get_resource("default_bc", "walltime"),
     conda:
         "envs/beyondcell.yaml",
     script:
@@ -287,10 +287,10 @@ rule bc_adrenalnb_rui_chong:
         malignant_list = f"{results}/seurat/malignant/adrenalnb_rui_chong.rds",
         bc_list = f"{results}/beyondcell/adrenalnb_rui_chong.rds",
         report = f"{results}/reports/cells_adrenalnb_rui_chong.tsv",
-    threads: get_resource("defaults", "threads"),
+    threads: get_resource("default_bc", "threads"),
     resources:
-        mem_mb=get_resource("defaults", "mem_mb"),
-        walltime=get_resource("defaults", "walltime"),
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=get_resource("default_bc", "walltime"),
     conda:
         "envs/beyondcell.yaml",
     script:
@@ -322,10 +322,10 @@ rule bc_luad_philip_bisschof:
         malignant_list = f"{results}/seurat/malignant/luad_philip_bisschof.rds",
         bc_list = f"{results}/beyondcell/luad_philip_bisschof.rds",
         report = f"{results}/reports/cells_luad_philip_bisschof.tsv",
-    threads: get_resource("defaults", "threads"),
+    threads: get_resource("default_bc", "threads"),
     resources:
-        mem_mb=get_resource("defaults", "mem_mb"),
-        walltime=get_resource("defaults", "walltime"),
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=get_resource("default_bc", "walltime"),
     conda:
         "envs/beyondcell.yaml",
     script:
