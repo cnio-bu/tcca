@@ -60,7 +60,7 @@ rule all:
         f"{results}/seurat/raw/pancancer_junbin_qian.rds",
         f"{results}/seurat/raw/rcell_r_li.rds",
         f"{results}/seurat/raw/aml_audrey_lasry.rds",
-        f"{results}/seurat/raw/cll_ramon_massoni.rds",
+        f"{results}/reports/cells_cll_ramon_massoni.tsv",
 
 rule sc_brmets_hugo_gonzalez_seurat:
     input:
@@ -423,6 +423,23 @@ rule sc_cll_ramon_massoni_seurat:
         "envs/seurat.yaml",
     script:
         "scripts/cll_ramon_massoni_seurat.R"
+
+
+rule bc_cll_ramon_massoni:
+    input:
+        seurat_list = rules.sc_cll_ramon_massoni_seurat.output.seurat_list,
+    output:
+        malignant_list = f"{results}/seurat/malignant/cll_ramon_massoni.rds",
+        bc_list = f"{results}/beyondcell/cll_ramon_massoni.rds",
+        report = f"{results}/reports/cells_cll_ramon_massoni.tsv",
+    threads: get_resource("default_bc", "threads"),
+    resources:
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=get_resource("default_bc", "walltime"),
+    conda:
+        "envs/beyondcell.yaml",
+    script:
+        "scripts/cells_cll_ramon_massoni_beyondcell.R"
 
         
 rule sc_aml_audrey_lasry_seurat:
