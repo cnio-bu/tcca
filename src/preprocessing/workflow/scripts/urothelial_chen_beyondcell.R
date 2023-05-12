@@ -1,5 +1,6 @@
 library("beyondcell")
 library("Seurat")
+library("tidyverse")
 
 ## SNAKEMAKE I/O
 full_seurat_list <- snakemake@input[["seurat_list"]]
@@ -21,9 +22,11 @@ annotate_cell_cycle <- function(sc){
 ## For this study, filter out non malignant cells
 filter_malignant <- function(sc) {
     
+    sc$Epithelial <- grepl("Epithelial",sc$cluster_sample)
+    
     ## check if it's a normal sample
     if(!grepl("NBM", unique(sc$Sample))){
-        malignant_subset <- subset(x = sc, subset = cluster_sample == "Epithelial")
+        malignant_subset <- subset(x = sc, subset = Epithelial)
         return(malignant_subset)
     }else{
         return(NULL)
@@ -63,13 +66,21 @@ saveRDS(object = bcs, file = bc_list)
 single_cell_report <- data.frame(
     sample = sapply(seu, FUN = function(x){unique(x@meta.data$orig.ident)}),
     cells = sapply(seu, FUN = function(x){ nrow(x@meta.data)}),
+)
+
+bc_report <- data.frame(
+    sample = sapply(malignants, FUN = function(x){ unique(x@meta.data$orig.ident)}),
     malignants = sapply(malignants, FUN = function(x){ nrow(x@meta.data)}),
     drug_sigs = sapply(bcs, FUN = function(x){ nrow(x@normalized)})
 )
+
+single_cell_report <- single_cell_report %>%
+    full_join(y = bc_report, by = "sample") %>%
+    replace_na(list(malignants = 0, drug_sigs = 0))
 
 write.table(
     x = single_cell_report,
     file = report_file,
     sep = "\t",
     row.names = FALSE
-    )
+)
