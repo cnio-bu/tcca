@@ -48,6 +48,14 @@ seu <- readRDS(file = full_seurat_list)
 seu <- lapply(X = seu, FUN = annotate_cell_cycle)
 
 malignants <- lapply(X = seu, FUN = filter_malignants)
+
+## Get rid of the NULL elements
+malignants[sapply(malignants, is.null)] <- NULL
+
+## In this datasets, some samples had very few cells, less than the minimum
+## 10 for bc_regress_out, thus we remove them now
+malignants <- malignants[sapply(malignants, ncol) > 10]
+
 bcs <- lapply(X = malignants, FUN = get_bcscores)
 
 ## Save results objects
