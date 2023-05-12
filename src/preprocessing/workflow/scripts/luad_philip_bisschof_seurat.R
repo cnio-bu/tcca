@@ -120,4 +120,4 @@ filtered_sc <- lapply(filtered_sc, normalize_and_scale)
 filtered_sc_clinical <- lapply(filtered_sc, fill_clinical)
 filtered_clinical_annotated <- lapply(filtered_sc_clinical, fill_copy_number)
 
-saveRDS(object = filtered_sc, file = where_to_save)
+saveRDS(object = filtered_clinical_annotated, file = where_to_save)
