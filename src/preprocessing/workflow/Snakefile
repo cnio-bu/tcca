@@ -459,4 +459,20 @@ rule sc_aml_audrey_lasry_seurat:
         "envs/seurat.yaml",
     script:
         "scripts/aml_audrey_lasry_seurat.R"
-        
+    
+       
+rule sc_gbm_nourhan_abdelfattah_seurat:
+    input:
+        metadata = f"{raw_data}/gbm_nourhan_abdelfattah/Meta_Data_GBMatlas.txt",
+    output:
+        seurat_list = f"{results}/seurat/raw/gbm_nourhan_abdelfattah.rds",
+    params:
+        data_dir = f"{raw_data}/gbm_nourhan_abdelfattah",
+    threads: get_resource("defaults", "threads"),
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+        "envs/seurat.yaml",
+    script:
+        "scripts/gbm_nourhan_abdelfattah_seurat.R"
