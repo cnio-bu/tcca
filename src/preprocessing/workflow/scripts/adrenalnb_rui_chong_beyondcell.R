@@ -52,7 +52,7 @@ saveRDS(object = bcs, file = bc_list)
 ## Generate and save reports
 single_cell_report <- data.frame(
     sample = sapply(seu, FUN = function(x){unique(x@meta.data$orig.ident)}),
-    cells = sapply(seu, FUN = function(x){ nrow(x@meta.data)}),
+    cells = sapply(seu, FUN = function(x){ nrow(x@meta.data)})
 )
 
 bc_report <- data.frame(
