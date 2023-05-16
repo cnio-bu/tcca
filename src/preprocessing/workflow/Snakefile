@@ -499,7 +499,7 @@ rule sc_gbm_nourhan_abdelfattah_seurat:
 
 rule bc_gbm_nourhan_abdelfattah:
     input:
-        seurat_list = sc_gbm_nourhan_abdelfattah_seurat.output.seurat_list,
+        seurat_list = rules.sc_gbm_nourhan_abdelfattah_seurat.output.seurat_list,
     output:
         malignant_list = f"{results}/seurat/malignant/gbm_nourhan_abdelfattah.rds",
         bc_list = f"{results}/beyondcell/gbm_nourhan_abdelfattah.rds",
