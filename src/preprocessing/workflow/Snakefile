@@ -364,6 +364,23 @@ rule sc_synovial_jerby_arnon_seurat:
         "scripts/synovial_jerby_arnon_seurat.R"
 
 
+rule bc_synovial_jerby_arnon:
+    input:
+        seurat_list = rules.sc_synovial_jerby_arnon_seurat.output.seurat_list,
+    output:
+        malignant_list = f"{results}/seurat/malignant/synovial_jerby_arnon.rds",
+        bc_list = f"{results}/beyondcell/synovial_jerby_arnon.rds",
+        report = f"{results}/reports/synovial_jerby_arnon.tsv",
+    threads: get_resource("default_bc", "threads"),
+    resources:
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=get_resource("default_bc", "walltime"),
+    conda:
+        "envs/beyondcell.yaml",
+    script:
+        "scripts/synovial_jerby_arnon_beyondcell.R"
+
+
 rule sc_rcell_kevin_bi_seurat:
     input:
         metadata = f"{raw_data}/rcell_kevin_bi/Final_SCP_Metadata.txt",
