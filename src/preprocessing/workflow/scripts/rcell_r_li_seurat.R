@@ -48,7 +48,7 @@ rownames(mat) <- mat$gene
 mat$gene <- NULL 
 
 ## Load metadata
-annot <- data.table:.fread(annotations, sep = "\t")
+annot <- data.table::fread(annotations, sep = "\t")
 rownames(annot) <- annot$V1
 annot$V1 <- NULL 
 
