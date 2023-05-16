@@ -59,7 +59,7 @@ rule all:
         f"{results}/reports/cells_cll_ramon_massoni.tsv",
         f"{results}/reports/cells_gbm_nourhan_abdelfattah.tsv",
         f"{results}/reports/cells_synovial_jerby_arnon.tsv",
-        f"{results}/seurat/raw/pdac_junya_peng.rds",
+        f"{results}/reports/cells_pdac_junya_peng.tsv",
         f"{results}/seurat/raw/rcell_kevin_bi.rds",
         f"{results}/seurat/raw/rcell_r_li.rds",
 
@@ -347,6 +347,23 @@ rule sc_pdac_junya_peng_seurat:
         "envs/seurat.yaml",
     script:
         "scripts/pdac_junya_peng_seurat.R"
+
+
+rule bc_pdac_junya_peng:
+    input:
+        seurat_list = rules.sc_pdac_junya_peng_seurat.output.seurat_list,
+    output:
+        malignant_list = f"{results}/seurat/malignant/pdac_junya_peng.rds",
+        bc_list = f"{results}/beyondcell/pdac_junya_peng.rds",
+        report = f"{results}/reports/pdac_junya_peng.tsv",
+    threads: get_resource("default_bc", "threads"),
+    resources:
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=get_resource("default_bc", "walltime"),
+    conda:
+        "envs/beyondcell.yaml",
+    script:
+        "scripts/pdac_junya_peng_beyondcell.R"
 
 
 rule sc_synovial_jerby_arnon_seurat:
