@@ -434,9 +434,9 @@ rule bc_pancancer_junbin_qian:
     input:
         seurat_list = rules.sc_pancancer_junbin_qian_seurat.output.seurat_list,
     output:
-        malignant_list = f"{results}/seurat/malignant/bc_pancancer_junbin_qian.rds",
-        bc_list = f"{results}/beyondcell/bc_pancancer_junbin_qian.rds",
-        report = f"{results}/reports/bc_pancancer_junbin_qian.tsv",
+        malignant_list = f"{results}/seurat/malignant/pancancer_junbin_qian.rds",
+        bc_list = f"{results}/beyondcell/pancancer_junbin_qian.rds",
+        report = f"{results}/reports/cells_pancancer_junbin_qian.tsv",
     threads: get_resource("default_bc", "threads"),
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
