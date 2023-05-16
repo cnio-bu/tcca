@@ -54,14 +54,14 @@ rule all:
         f"{results}/reports/cells_urothelial_chen.tsv",
         f"{results}/reports/cells_adrenalnb_rui_chong.tsv",
         f"{results}/reports/cells_luad_philip_bisschof.tsv",
-        f"{results}/seurat/raw/pdac_junya_peng.rds",
-        f"{results}/seurat/raw/synovial_jerby_arnon.rds",
-        f"{results}/seurat/raw/rcell_kevin_bi.rds",
-        f"{results}/seurat/raw/pancancer_junbin_qian.rds",
-        f"{results}/seurat/raw/rcell_r_li.rds",
+        f"{results}/reports/cells_pancancer_junbin_qian.tsv",
         f"{results}/reports/cells_aml_audrey_lasry.tsv",
         f"{results}/reports/cells_cll_ramon_massoni.tsv",
         f"{results}/reports/cells_gbm_nourhan_abdelfattah.tsv",
+        f"{results}/seurat/raw/pdac_junya_peng.rds",
+        f"{results}/seurat/raw/synovial_jerby_arnon.rds",
+        f"{results}/seurat/raw/rcell_kevin_bi.rds",
+        f"{results}/seurat/raw/rcell_r_li.rds",
 
 rule sc_brmets_hugo_gonzalez_seurat:
     input:
@@ -394,6 +394,24 @@ rule sc_pancancer_junbin_qian_seurat:
         "envs/seurat.yaml",
     script:
         "scripts/pancancer_junbin_qian_seurat.R"
+
+
+rule bc_pancancer_junbin_qian:    
+    input:
+        seurat_list = rules.sc_pancancer_junbin_qian_seurat.output.seurat_list,
+    output:
+        malignant_list = f"{results}/seurat/malignant/bc_pancancer_junbin_qian.rds",
+        bc_list = f"{results}/beyondcell/bc_pancancer_junbin_qian.rds",
+        report = f"{results}/reports/bc_pancancer_junbin_qian.tsv",
+    threads: get_resource("default_bc", "threads"),
+    resources:
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=get_resource("default_bc", "walltime"),
+    conda:
+        "envs/beyondcell.yaml",
+    script:
+        "scripts/pancancer_junbin_qian_beyondcell.R"
+
 
 rule sc_rcell_r_li_seurat:
     input:
