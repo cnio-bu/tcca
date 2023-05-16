@@ -62,6 +62,7 @@ rule all:
         f"{results}/reports/cells_pdac_junya_peng.tsv",
         f"{results}/seurat/raw/rcell_kevin_bi.rds",
         f"{results}/seurat/raw/rcell_r_li.rds",
+        f"{results}/seurat/raw/cc_xiaosong_lu.rds"
 
 rule sc_brmets_hugo_gonzalez_seurat:
     input:
