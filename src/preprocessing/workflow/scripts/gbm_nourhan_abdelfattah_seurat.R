@@ -1,5 +1,5 @@
 library(Seurat)
-library(tidiverse)
+library(tidyverse)
 
 ## SNAKEMAKE I/O
 metadata <- snakemake@input[["metadata"]]
