@@ -551,7 +551,7 @@ rule bc_gbm_nourhan_abdelfattah:
 
 rule sc_cc_xiaosong_lu_seurat:
     input:
-        metadata = f"{raw_data}/cc_xiaosong_lu/Meta_Data_GBMatlas.txt",
+        metadata = f"{raw_data}/cc_xiaosong_lu/metadata_mod.txt",
     output:
         seurat_list = f"{results}/seurat/raw/cc_xiaosong_lu.rds",
     params:
