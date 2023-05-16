@@ -21,9 +21,8 @@ annotate_cell_cycle <- function(sc){
 
 # keep malignants cells only
 filter_malignants <- function(sc) {
-    subtypes_to_keep <- c("Malignant cells", "tS1", "tS2", "tS3")
-    if (sum(sc@meta.data$Cell_subtype %in% subtypes_to_keep) > 0) {
-            sc_filtered <- subset(x = sc, subset = Cell_subtype %in% subtypes_to_keep)
+    if (sum(sc$CopyKatPrediction == "aneuploid", na.rm = TRUE) > 0) {
+            sc_filtered <- subset(x = sc, subset = CopyKatPrediction == "aneuploid")
             return(sc_filtered)
         } else {
             return(NULL)
