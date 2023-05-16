@@ -61,6 +61,7 @@ rule all:
         f"{results}/seurat/raw/rcell_r_li.rds",
         f"{results}/seurat/raw/aml_audrey_lasry.rds",
         f"{results}/reports/cells_cll_ramon_massoni.tsv",
+        f"{results}/reports/cells_gbm_nourhan_abdelfattah.tsv",
 
 rule sc_brmets_hugo_gonzalez_seurat:
     input:
@@ -467,7 +468,7 @@ rule sc_gbm_nourhan_abdelfattah_seurat:
     output:
         seurat_list = f"{results}/seurat/raw/gbm_nourhan_abdelfattah.rds",
     params:
-        data_dir = f"{raw_data}/gbm_nourhan_abdelfattah",
+        data_dir = f"{raw_data}/gbm_nourhan_abdelfattah/GSE182109_RAW",
     threads: get_resource("defaults", "threads"),
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
@@ -476,3 +477,20 @@ rule sc_gbm_nourhan_abdelfattah_seurat:
         "envs/seurat.yaml",
     script:
         "scripts/gbm_nourhan_abdelfattah_seurat.R"
+
+
+rule bc_gbm_nourhan_abdelfattah:
+    input:
+        seurat_list = sc_gbm_nourhan_abdelfattah_seurat.output.seurat_list,
+      output:
+        malignant_list = f"{results}/seurat/malignant/gbm_nourhan_abdelfattah.rds",
+        bc_list = f"{results}/beyondcell/gbm_nourhan_abdelfattah.rds",
+        report = f"{results}/reports/cells_gbm_nourhan_abdelfattah.tsv",
+    threads: get_resource("default_bc", "threads"),
+    resources:
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=get_resource("default_bc", "walltime"),
+    conda:
+        "envs/beyondcell.yaml",
+    script:
+        "scripts/gbm_nourhan_abdelfattah_beyondcell.R"
