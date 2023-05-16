@@ -55,7 +55,7 @@ rule all:
         f"{results}/reports/cells_adrenalnb_rui_chong.tsv",
         f"{results}/reports/cells_luad_philip_bisschof.tsv",
         f"{results}/reports/cells_pancancer_junbin_qian.tsv",
-        f"{results}/reports/cells_aml_audrey_lasry.tsv",
+        f"{results}/seurat/raw/aml_audrey_lasry.rds",
         f"{results}/reports/cells_cll_ramon_massoni.tsv",
         f"{results}/reports/cells_gbm_nourhan_abdelfattah.tsv",
         f"{results}/reports/cells_synovial_jerby_arnon.tsv",
@@ -355,7 +355,7 @@ rule bc_pdac_junya_peng:
     output:
         malignant_list = f"{results}/seurat/malignant/pdac_junya_peng.rds",
         bc_list = f"{results}/beyondcell/pdac_junya_peng.rds",
-        report = f"{results}/reports/pdac_junya_peng.tsv",
+        report = f"{results}/reports/cells_pdac_junya_peng.tsv",
     threads: get_resource("default_bc", "threads"),
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -387,7 +387,7 @@ rule bc_synovial_jerby_arnon:
     output:
         malignant_list = f"{results}/seurat/malignant/synovial_jerby_arnon.rds",
         bc_list = f"{results}/beyondcell/synovial_jerby_arnon.rds",
-        report = f"{results}/reports/synovial_jerby_arnon.tsv",
+        report = f"{results}/reports/cells_synovial_jerby_arnon.tsv",
     threads: get_resource("default_bc", "threads"),
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
