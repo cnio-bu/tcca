@@ -12,7 +12,8 @@ where_to_save <- snakemake@output[["seurat_list"]]
 generate_seurat_objects <- function(dgMat, sample) {
     seu <- CreateSeuratObject(counts = dgMat,
                               project = sample,
-                              assay = "RNA", names.delim = "z" #Names delim is set to a random character in order not to set original ident by barcode id code
+                              assay = "RNA",
+                              names.delim = "z" #Names delim is set to a random character in order not to set original ident by barcode id code
     )
     
     return(seu)
@@ -56,7 +57,7 @@ normalize_and_scale <- function(sc) {
 #Annotation with metadata from the authors (which includes copykat predictions)
 fill_metadata <- function(sc) {
     
-    meta_set <- metadata %>%
+    meta_set <- meta %>%
         filter(sample == unique(sc$orig.ident)) 
     cells_to_keep <- intersect(colnames(sc), meta_set$barcode)
     #We perform our filters and then keep cells in the intersection 
