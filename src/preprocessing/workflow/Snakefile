@@ -564,3 +564,20 @@ rule sc_cc_xiaosong_lu_seurat:
         "envs/seurat.yaml",
     script:
         "scripts/cc_xiaosong_lu_seurat.R"
+
+
+rule bc_cc_xiaosong_lu:
+    input:
+        seurat_list = rules.sc_cc_xiaosong_lu_seurat.output.seurat_list,
+    output:
+        malignant_list = f"{results}/seurat/malignant/cc_xiaosong_lu.rds",
+        bc_list = f"{results}/beyondcell/cc_xiaosong_lu.rds",
+        report = f"{results}/reports/cells_cc_xiaosong_lu.tsv",
+    threads: get_resource("default_bc", "threads"),
+    resources:
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=get_resource("default_bc", "walltime"),
+    conda:
+        "envs/beyondcell.yaml",
+    script:
+        "scripts/cc_xiaosong_lu_beyondcell.R"
