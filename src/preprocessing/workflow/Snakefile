@@ -60,6 +60,7 @@ rule all:
         f"{results}/reports/cells_gbm_nourhan_abdelfattah.tsv",
         f"{results}/reports/cells_synovial_jerby_arnon.tsv",
         f"{results}/reports/cells_pdac_junya_peng.tsv",
+        f"{results}/reports/cells_cc_xiaosong_lu.tsv"
         f"{results}/seurat/raw/rcell_kevin_bi.rds",
         f"{results}/seurat/raw/rcell_r_li.rds",
         f"{results}/seurat/raw/cc_xiaosong_lu.rds"
