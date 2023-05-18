@@ -494,7 +494,7 @@ rule bc_cll_ramon_massoni:
     conda:
         "envs/beyondcell.yaml",
     script:
-        "scripts/cells_cll_ramon_massoni_beyondcell.R"
+        "scripts/cll_ramon_massoni_beyondcell.R"
 
         
 rule sc_aml_audrey_lasry_seurat:
