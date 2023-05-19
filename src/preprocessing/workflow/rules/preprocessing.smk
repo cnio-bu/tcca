@@ -13,7 +13,7 @@ rule sc_brmets_hugo_gonzalez_seurat:
     conda:
         "../envs/seurat.yaml"
     script:
-        "scripts/brmets_hugo_gonzalez_seurat.R"
+        "../../scripts/brmets_hugo_gonzalez_seurat.R"
 
 
 rule sc_pancancer_dalia_barkley_seurat:
@@ -28,7 +28,7 @@ rule sc_pancancer_dalia_barkley_seurat:
     conda:
         "../envs/seurat.yaml"
     script:
-        "scripts/pancancer_dalia_barkley_seurat.R"
+        "../scripts/pancancer_dalia_barkley_seurat.R"
 
 
 rule sc_breast_sunny_wu_seurat:
@@ -48,7 +48,7 @@ rule sc_breast_sunny_wu_seurat:
     conda:
         "../envs/seurat.yaml"
     script:
-        "scripts/breast_sunny_wu_seurat.R"
+        "../scripts/breast_sunny_wu_seurat.R"
 
 
 rule sc_pancancer_sunny_wu_seurat:
@@ -68,7 +68,7 @@ rule sc_pancancer_sunny_wu_seurat:
     conda:
         "../envs/seurat.yaml"
     script:
-        "scripts/pancancer_sunny_wu_seurat.R"
+        "../scripts/pancancer_sunny_wu_seurat.R"
 
 
 rule sc_luad_kim_nayoung_seurat:
@@ -84,7 +84,7 @@ rule sc_luad_kim_nayoung_seurat:
     conda:
         "../envs/seurat.yaml"
     script:
-        "scripts/luad_kim_nayoung_seurat.R"
+        "../scripts/luad_kim_nayoung_seurat.R"
 
 
 rule sc_adrenalnb_rui_chong_seurat:
@@ -102,7 +102,7 @@ rule sc_adrenalnb_rui_chong_seurat:
     conda:
         "../envs/seurat.yaml"
     script:
-        "scripts/adrenalnb_rui_chong_seurat.R"
+        "../scripts/adrenalnb_rui_chong_seurat.R"
 
 
 rule sc_luad_philip_bisschof_seurat:
@@ -120,7 +120,7 @@ rule sc_luad_philip_bisschof_seurat:
     conda:
         "../envs/seurat.yaml"
     script:
-        "scripts/luad_philip_bisschof_seurat.R"
+        "../scripts/luad_philip_bisschof_seurat.R"
 
 
 rule sc_pdac_junya_peng_seurat:
@@ -136,7 +136,7 @@ rule sc_pdac_junya_peng_seurat:
     conda:
         "../envs/seurat.yaml"
     script:
-        "scripts/pdac_junya_peng_seurat.R"
+        "../scripts/pdac_junya_peng_seurat.R"
 
 
 rule sc_synovial_jerby_arnon_seurat:
@@ -151,7 +151,7 @@ rule sc_synovial_jerby_arnon_seurat:
     conda:
         "../envs/seurat.yaml"
     script:
-        "scripts/synovial_jerby_arnon_seurat.R"
+        "../scripts/synovial_jerby_arnon_seurat.R"
 
 
 rule sc_rcell_kevin_bi_seurat:
@@ -168,7 +168,7 @@ rule sc_rcell_kevin_bi_seurat:
     conda:
         "../envs/seurat.yaml"
     script:
-        "scripts/rcell_kevin_bi_seurat.R"
+        "../scripts/rcell_kevin_bi_seurat.R"
 
 
 rule sc_pancancer_junbin_qian_seurat:
@@ -183,7 +183,7 @@ rule sc_pancancer_junbin_qian_seurat:
     conda:
         "../envs/seurat.yaml"
     script:
-        "scripts/pancancer_junbin_qian_seurat.R"
+        "../scripts/pancancer_junbin_qian_seurat.R"
 
 
 rule sc_rcell_r_li_seurat:
@@ -199,7 +199,7 @@ rule sc_rcell_r_li_seurat:
     conda:
         "../envs/seurat.yaml"
     script:
-        "scripts/rcell_r_li_seurat.R"
+        "../scripts/rcell_r_li_seurat.R"
 
 
 rule sc_cll_ramon_massoni_seurat:
@@ -214,7 +214,7 @@ rule sc_cll_ramon_massoni_seurat:
     conda:
         "../envs/seurat.yaml"
     script:
-        "scripts/cll_ramon_massoni_seurat.R"
+        "../scripts/cll_ramon_massoni_seurat.R"
 
 
 rule sc_aml_audrey_lasry_seurat:
@@ -233,7 +233,7 @@ rule sc_aml_audrey_lasry_seurat:
     conda:
         "../envs/seurat.yaml"
     script:
-        "scripts/aml_audrey_lasry_seurat.R"
+        "../scripts/aml_audrey_lasry_seurat.R"
 
 
 rule sc_gbm_nourhan_abdelfattah_seurat:
@@ -250,7 +250,7 @@ rule sc_gbm_nourhan_abdelfattah_seurat:
     conda:
         "../envs/seurat.yaml"
     script:
-        "scripts/gbm_nourhan_abdelfattah_seurat.R"
+        "../scripts/gbm_nourhan_abdelfattah_seurat.R"
 
 
 rule sc_cc_xiaosong_lu_seurat:
@@ -267,7 +267,7 @@ rule sc_cc_xiaosong_lu_seurat:
     conda:
         "../envs/seurat.yaml"
     script:
-        "scripts/cc_xiaosong_lu_seurat.R"
+        "../scripts/cc_xiaosong_lu_seurat.R"
 
 
 rule sc_pleural_rui_dong_seurat:
@@ -283,7 +283,7 @@ rule sc_pleural_rui_dong_seurat:
     conda:
         "../envs/seurat.yaml"
     script:
-        "scripts/pleural_rui_dong_seurat.R"
+        "../scripts/pleural_rui_dong_seurat.R"
 
 
 rule sc_bone_yun_liu_seurat:
@@ -301,7 +301,7 @@ rule sc_bone_yun_liu_seurat:
     conda:
         "../envs/seurat.yaml"
     script:
-        "scripts/bone_yun_liu_seurat.R"
+        "../scripts/bone_yun_liu_seurat.R"
 
 
 rule sc_mmieloma_stephan_tirier_seurat:
@@ -317,7 +317,7 @@ rule sc_mmieloma_stephan_tirier_seurat:
     conda:
         "../envs/seurat.yaml"
     script:
-        "scripts/mmieloma_stephan_tirier_seurat.R"
+        "../scripts/mmieloma_stephan_tirier_seurat.R"
 
 
 rule sc_urothelial_chen_seurat:
@@ -332,4 +332,4 @@ rule sc_urothelial_chen_seurat:
     conda:
         "../envs/seurat.yaml"
     script:
-        "scripts/urothelial_chen_seurat.R"
+        "../scripts/urothelial_chen_seurat.R"

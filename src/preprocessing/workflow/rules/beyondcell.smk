@@ -12,7 +12,7 @@ rule bc_brmets_hugo_gonzalez:
     conda:
         "../envs/beyondcell.yaml"
     script:
-        "scripts/brmets_hugo_gonzalez_beyondcell.R"
+        "../scripts/brmets_hugo_gonzalez_beyondcell.R"
 
 
 rule bc_pancancer_dalia_barkley:
@@ -29,7 +29,7 @@ rule bc_pancancer_dalia_barkley:
     conda:
         "../envs/beyondcell.yaml"
     script:
-        "scripts/pancancer_dalia_barkley_beyondcell.R"
+        "../scripts/pancancer_dalia_barkley_beyondcell.R"
 
 
 rule bc_breast_sunny_wu:
@@ -46,7 +46,7 @@ rule bc_breast_sunny_wu:
     conda:
         "../envs/beyondcell.yaml"
     script:
-        "scripts/breast_sunny_wu_beyondcell.R"
+        "../scripts/breast_sunny_wu_beyondcell.R"
 
 
 rule bc_pancancer_sunny_wu:
@@ -63,7 +63,7 @@ rule bc_pancancer_sunny_wu:
     conda:
         "../envs/beyondcell.yaml"
     script:
-        "scripts/pancancer_sunny_wu_beyondcell.R"
+        "../scripts/pancancer_sunny_wu_beyondcell.R"
 
 
 rule bc_luad_kim_nayoung:
@@ -80,7 +80,7 @@ rule bc_luad_kim_nayoung:
     conda:
         "../envs/beyondcell.yaml"
     script:
-        "scripts/luad_kim_nayoung_beyondcell.R"
+        "../scripts/luad_kim_nayoung_beyondcell.R"
 
 
 rule bc_urothelial_chen:
@@ -97,7 +97,7 @@ rule bc_urothelial_chen:
     conda:
         "../envs/beyondcell.yaml"
     script:
-        "scripts/urothelial_chen_beyondcell.R"
+        "../scripts/urothelial_chen_beyondcell.R"
 
 
 rule bc_adrenalnb_rui_chong:
@@ -114,7 +114,7 @@ rule bc_adrenalnb_rui_chong:
     conda:
         "../envs/beyondcell.yaml"
     script:
-        "scripts/adrenalnb_rui_chong_beyondcell.R"
+        "../scripts/adrenalnb_rui_chong_beyondcell.R"
 
 
 rule bc_luad_philip_bisschof:
@@ -131,7 +131,7 @@ rule bc_luad_philip_bisschof:
     conda:
         "../envs/beyondcell.yaml"
     script:
-        "scripts/luad_philip_bisschof_beyondcell.R"
+        "../scripts/luad_philip_bisschof_beyondcell.R"
 
 
 rule bc_pdac_junya_peng:
@@ -148,7 +148,7 @@ rule bc_pdac_junya_peng:
     conda:
         "../envs/beyondcell.yaml"
     script:
-        "scripts/pdac_junya_peng_beyondcell.R"
+        "../scripts/pdac_junya_peng_beyondcell.R"
 
 
 rule bc_synovial_jerby_arnon:
@@ -165,7 +165,7 @@ rule bc_synovial_jerby_arnon:
     conda:
         "../envs/beyondcell.yaml"
     script:
-        "scripts/synovial_jerby_arnon_beyondcell.R"
+        "../scripts/synovial_jerby_arnon_beyondcell.R"
 
 
 rule bc_rcell_kevin_bi:
@@ -182,7 +182,7 @@ rule bc_rcell_kevin_bi:
     conda:
         "../envs/beyondcell.yaml"
     script:
-        "scripts/rcell_kevin_bi_beyondcell.R"
+        "../scripts/rcell_kevin_bi_beyondcell.R"
 
 
 rule bc_pancancer_junbin_qian:
@@ -199,7 +199,7 @@ rule bc_pancancer_junbin_qian:
     conda:
         "../envs/beyondcell.yaml"
     script:
-        "scripts/pancancer_junbin_qian_beyondcell.R"
+        "../scripts/pancancer_junbin_qian_beyondcell.R"
 
 
 rule bc_rcell_r_li:
@@ -216,7 +216,7 @@ rule bc_rcell_r_li:
     conda:
         "../envs/beyondcell.yaml"
     script:
-        "scripts/rcell_r_li_beyondcell.R"
+        "../scripts/rcell_r_li_beyondcell.R"
 
 
 rule bc_cll_ramon_massoni:
@@ -233,7 +233,7 @@ rule bc_cll_ramon_massoni:
     conda:
         "../envs/beyondcell.yaml"
     script:
-        "scripts/cll_ramon_massoni_beyondcell.R"
+        "../scripts/cll_ramon_massoni_beyondcell.R"
 
 
 rule bc_aml_audrey_lasry:
@@ -250,7 +250,7 @@ rule bc_aml_audrey_lasry:
     conda:
         "../envs/beyondcell.yaml"
     script:
-        "scripts/aml_audrey_lasry_beyondcell.R"
+        "../scripts/aml_audrey_lasry_beyondcell.R"
 
 
 rule bc_gbm_nourhan_abdelfattah:
@@ -267,7 +267,7 @@ rule bc_gbm_nourhan_abdelfattah:
     conda:
         "../envs/beyondcell.yaml"
     script:
-        "scripts/gbm_nourhan_abdelfattah_beyondcell.R"
+        "../scripts/gbm_nourhan_abdelfattah_beyondcell.R"
 
 
 rule bc_cc_xiaosong_lu:
@@ -284,7 +284,7 @@ rule bc_cc_xiaosong_lu:
     conda:
         "../envs/beyondcell.yaml"
     script:
-        "scripts/cc_xiaosong_lu_beyondcell.R"
+        "../scripts/cc_xiaosong_lu_beyondcell.R"
 
 
 rule bc_pleural_rui_dong:
@@ -301,7 +301,7 @@ rule bc_pleural_rui_dong:
     conda:
         "../envs/beyondcell.yaml"
     script:
-        "scripts/pleural_rui_dong_beyondcell.R"
+        "../scripts/pleural_rui_dong_beyondcell.R"
 
 
 rule bc_bone_yun_liu:
@@ -318,7 +318,7 @@ rule bc_bone_yun_liu:
     conda:
         "../envs/beyondcell.yaml"
     script:
-        "scripts/bone_yun_liu_beyondcell.R"
+        "../scripts/bone_yun_liu_beyondcell.R"
 
 
 rule bc_mmieloma_stephan_tirier:
@@ -335,4 +335,4 @@ rule bc_mmieloma_stephan_tirier:
     conda:
         "../envs/beyondcell.yaml"
     script:
-        "scripts/mmieloma_stephan_tirier_beyondcell.R"
+        "../scripts/mmieloma_stephan_tirier_beyondcell.R"
