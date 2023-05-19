@@ -71,8 +71,8 @@ rule all:
         f"{results}/reports/cells_cc_xiaosong_lu.tsv",
         f"{results}/reports/cells_rcell_kevin_bi.tsv",
         f"{results}/reports/cells_rcell_r_li.tsv",
-        f"{results}/reports/cells_pleural_rui_dong.tsv"
-
+        f"{results}/reports/cells_pleural_rui_dong.tsv",
+        f"{results}/reports/cells_bone_yun_liu.tsv"
 
 rule sc_brmets_hugo_gonzalez_seurat:
     input:
@@ -679,3 +679,38 @@ rule bc_pleural_rui_dong:
         "envs/beyondcell.yaml"
     script:
         "scripts/pleural_rui_dong_beyondcell.R"
+
+
+rule sc_bone_yun_liu_seurat:
+    input:
+        metadata=f"{raw_data}/bone_yun_liu/OS_GSE162454_CellMetainfo_table.tsv",
+        reference_gene_annotation="/storage/scratch01/shared/projects/bc-meta/reference/hgnc_gene_with_protein_product_2023-03-22.tsv",
+    output:
+        seurat_list=f"{results}/seurat/raw/bone_yun_liu.rds",
+    params:
+        data_dir=f"{raw_data}/bone_yun_liu",
+    threads: get_resource("defaults", "threads")
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+        "envs/seurat.yaml"
+    script:
+        "scripts/bone_yun_liu_seurat.R"
+
+
+rule bc_bone_yun_liu:
+    input:
+        seurat_list=rules.sc_bone_yun_liu_seurat.output.seurat_list,
+    output:
+        malignant_list=f"{results}/seurat/malignant/bone_yun_liu.rds",
+        bc_list=f"{results}/beyondcell/bone_yun_liu.rds",
+        report=f"{results}/reports/cells_bone_yun_liu.tsv",
+    threads: get_resource("default_bc", "threads")
+    resources:
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=get_resource("default_bc", "walltime"),
+    conda:
+        "envs/beyondcell.yaml"
+    script:
+        "scripts/bone_yun_liu_beyondcell.R"
