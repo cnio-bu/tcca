@@ -1,0 +1,304 @@
+rule sc_brmets_hugo_gonzalez_seurat:
+    input:
+        mats=get_brmets_mats,
+        features=get_brmets_features,
+        barcodes=get_brmets_barcodes,
+        annotations=get_brmets_annotation,
+    output:
+        seurat_list=f"{results}/seurat/raw/brmets_hugo_gonzalez.rds",
+    threads: get_resource("defaults", "threads")
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+        "envs/seurat.yaml"
+    script:
+        "scripts/brmets_hugo_gonzalez_seurat.R"
+
+
+rule sc_pancancer_dalia_barkley_seurat:
+    input:
+        object_list=f"{raw_data}/pancancer_dalia_barkley/srt.list.primary.all.RData",
+    output:
+        seurat_list=f"{results}/seurat/raw/pancancer_dalia_barkley.rds",
+    threads: get_resource("defaults", "threads")
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+        "envs/seurat.yaml"
+    script:
+        "scripts/pancancer_dalia_barkley_seurat.R"
+
+
+rule sc_breast_sunny_wu_seurat:
+    input:
+        mat=f"{raw_data}/breast_sunny_wu/matrix.mtx.gz",
+        barcodes=f"{raw_data}/breast_sunny_wu/barcodes.tsv.gz",
+        features=f"{raw_data}/breast_sunny_wu/features.tsv.gz",
+        metadata=f"{raw_data}/breast_sunny_wu/metadata.csv",
+    output:
+        seurat_list=f"{results}/seurat/raw/breast_sunny_wu.rds",
+    threads: get_resource("defaults", "threads")
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    params:
+        data_dir=f"{raw_data}/breast_sunny_wu",
+    conda:
+        "envs/seurat.yaml"
+    script:
+        "scripts/breast_sunny_wu_seurat.R"
+
+
+rule sc_pancancer_sunny_wu_seurat:
+    input:
+        mat=f"{raw_data}/pancancer_sunny_wu/matrix.mtx.gz",
+        barcodes=f"{raw_data}/pancancer_sunny_wu/barcodes.tsv.gz",
+        features=f"{raw_data}/pancancer_sunny_wu/features.tsv.gz",
+        metadata=f"{raw_data}/pancancer_sunny_wu/Wu_etal_2021_metadata.txt",
+    output:
+        seurat_list=f"{results}/seurat/raw/pancancer_sunny_wu.rds",
+    threads: get_resource("defaults", "threads")
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    params:
+        data_dir=f"{raw_data}/pancancer_sunny_wu",
+    conda:
+        "envs/seurat.yaml"
+    script:
+        "scripts/pancancer_sunny_wu_seurat.R"
+
+
+rule sc_luad_kim_nayoung_seurat:
+    input:
+        mat_object=f"{raw_data}/luad_kim_nayoung/GSE131907_Lung_Cancer_raw_UMI_matrix.rds",
+        annotations=f"{raw_data}/luad_kim_nayoung/GSE131907_Lung_Cancer_cell_annotation.txt",
+    output:
+        seurat_list=f"{results}/seurat/raw/luad_kim_nayoung.rds",
+    threads: get_resource("defaults", "threads")
+    resources:
+        mem_mb=144000,
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+        "envs/seurat.yaml"
+    script:
+        "scripts/luad_kim_nayoung_seurat.R"
+
+
+rule sc_adrenalnb_rui_chong_seurat:
+    input:
+        object_list=f"{raw_data}/adrenalnb_rui_chong/human_NB_subset_tumor.rda",
+        tumor_data=f"{raw_data}/adrenalnb_rui_chong/tumor_dataset_annotation.csv",
+        gland_data=f"{raw_data}/adrenalnb_rui_chong/adrenal_gland_annotation.csv",
+        reference_gene_annotation="/storage/scratch01/shared/projects/bc-meta/reference/hgnc_gene_with_protein_product_2023-03-22.tsv",
+    output:
+        seurat_list=f"{results}/seurat/raw/adrenalnb_rui_chong.rds",
+    threads: get_resource("defaults", "threads")
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+        "envs/seurat.yaml"
+    script:
+        "scripts/adrenalnb_rui_chong_seurat.R"
+
+
+rule sc_luad_philip_bisschof_seurat:
+    input:
+        metadata=f"{raw_data}/luad_philip_bisschof/patients_metadata.xlsx",
+        infercnv_scores=f"{raw_data}/luad_philip_bisschof/infercnv_clone_scores_nsclc.tsv",
+    output:
+        seurat_list=f"{results}/seurat/raw/luad_philip_bisschof.rds",
+    threads: get_resource("defaults", "threads")
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    params:
+        data_dir=f"{raw_data}/luad_philip_bisschof",
+    conda:
+        "envs/seurat.yaml"
+    script:
+        "scripts/luad_philip_bisschof_seurat.R"
+
+
+rule sc_pdac_junya_peng_seurat:
+    input:
+        object_list=f"{raw_data}/pdac_junya_peng/pdac_junya_peng.RData",
+        celltype=f"{raw_data}/pdac_junya_peng/all_celltype.txt",
+    output:
+        seurat_list=f"{results}/seurat/raw/pdac_junya_peng.rds",
+    threads: get_resource("defaults", "threads")
+    resources:
+        mem_mb=144000,
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+        "envs/seurat.yaml"
+    script:
+        "scripts/pdac_junya_peng_seurat.R"
+
+
+rule sc_synovial_jerby_arnon_seurat:
+    input:
+        object_list=f"{raw_data}/synovial_jerby_arnon/seurat_pre-qc.rds",
+    output:
+        seurat_list=f"{results}/seurat/raw/synovial_jerby_arnon.rds",
+    threads: get_resource("defaults", "threads")
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+        "envs/seurat.yaml"
+    script:
+        "scripts/synovial_jerby_arnon_seurat.R"
+
+
+rule sc_rcell_kevin_bi_seurat:
+    input:
+        metadata=f"{raw_data}/rcell_kevin_bi/Final_SCP_Metadata.txt",
+    output:
+        seurat_list=f"{results}/seurat/raw/rcell_kevin_bi.rds",
+    threads: get_resource("defaults", "threads")
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    params:
+        data_dir=f"{raw_data}/rcell_kevin_bi",
+    conda:
+        "envs/seurat.yaml"
+    script:
+        "scripts/rcell_kevin_bi_seurat.R"
+
+
+rule sc_pancancer_junbin_qian_seurat:
+    output:
+        seurat_list=f"{results}/seurat/raw/pancancer_junbin_qian.rds",
+    threads: get_resource("defaults", "threads")
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    params:
+        data_dir=f"{raw_data}/pancancer_junbin_qian",
+    conda:
+        "envs/seurat.yaml"
+    script:
+        "scripts/pancancer_junbin_qian_seurat.R"
+
+
+rule sc_rcell_r_li_seurat:
+    input:
+        mat_file=f"{raw_data}/rcell_r_li/full_mat_annot.tsv",
+        annotations=f"{raw_data}/rcell_r_li/annotations.tsv",
+    output:
+        seurat_list=f"{results}/seurat/raw/rcell_r_li.rds",
+    threads: get_resource("defaults", "threads")
+    resources:
+        mem_mb=144000,
+        walltime=60,
+    conda:
+        "envs/seurat.yaml"
+    script:
+        "scripts/rcell_r_li_seurat.R"
+
+
+rule sc_cll_ramon_massoni_seurat:
+    output:
+        seurat_list=f"{results}/seurat/raw/cll_ramon_massoni.rds",
+    params:
+        data_dir=f"{raw_data}/cll_ramon_massoni",
+    threads: get_resource("defaults", "threads")
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+        "envs/seurat.yaml"
+    script:
+        "scripts/cll_ramon_massoni_seurat.R"
+
+
+rule sc_aml_audrey_lasry_seurat:
+    input:
+        matrix=f"{raw_data}/aml_audrey_lasry/RNA_soupX.mtx",
+        features=f"{raw_data}/aml_audrey_lasry/features_RNA_soupX1.csv",
+        cells=f"{raw_data}/aml_audrey_lasry/cells_RNA_soupX1.csv",
+        metadata=f"{raw_data}/aml_audrey_lasry/metadata_clustering_w_header_upd.csv",
+        additional_metadata=f"{raw_data}/aml_audrey_lasry/combined_metadata.csv",
+    output:
+        seurat_list=f"{results}/seurat/raw/aml_audrey_lasry.rds",
+    threads: get_resource("defaults", "threads")
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+        "envs/seurat.yaml"
+    script:
+        "scripts/aml_audrey_lasry_seurat.R"
+
+
+rule sc_gbm_nourhan_abdelfattah_seurat:
+    input:
+        metadata=f"{raw_data}/gbm_nourhan_abdelfattah/Meta_Data_GBMatlas.txt",
+    output:
+        seurat_list=f"{results}/seurat/raw/gbm_nourhan_abdelfattah.rds",
+    params:
+        data_dir=f"{raw_data}/gbm_nourhan_abdelfattah/GSE182109_RAW",
+    threads: get_resource("defaults", "threads")
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+        "envs/seurat.yaml"
+    script:
+        "scripts/gbm_nourhan_abdelfattah_seurat.R"
+
+
+rule sc_cc_xiaosong_lu_seurat:
+    input:
+        metadata=f"{raw_data}/cc_xiaosong_lu/metadata_mod.txt",
+    output:
+        seurat_list=f"{results}/seurat/raw/cc_xiaosong_lu.rds",
+    params:
+        data_dir=f"{raw_data}/cc_xiaosong_lu",
+    threads: get_resource("defaults", "threads")
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+        "envs/seurat.yaml"
+    script:
+        "scripts/cc_xiaosong_lu_seurat.R"
+
+
+rule sc_pleural_rui_dong_seurat:
+    input:
+        metadata=f"{raw_data}/pleural_rui_dong/PPB_GSE163678_CellMetainfo_table.tsv",
+        matrix=f"{raw_data}/pleural_rui_dong/PPB_GSE163678_expression.h5",
+    output:
+        seurat_list=f"{results}/seurat/raw/pleural_rui_dong.rds",
+    threads: get_resource("defaults", "threads")
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+        "envs/seurat.yaml"
+    script:
+        "scripts/pleural_rui_dong_seurat.R"
+
+
+rule sc_bone_yun_liu_seurat:
+    input:
+        metadata=f"{raw_data}/bone_yun_liu/OS_GSE162454_CellMetainfo_table.tsv",
+        reference_gene_annotation="/storage/scratch01/shared/projects/bc-meta/reference/hgnc_gene_with_protein_product_2023-03-22.tsv",
+    output:
+        seurat_list=f"{results}/seurat/raw/bone_yun_liu.rds",
+    params:
+        data_dir=f"{raw_data}/bone_yun_liu",
+    threads: get_resource("defaults", "threads")
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+        "envs/seurat.yaml"
+    script:
+        "scripts/bone_yun_liu_seurat.R"
