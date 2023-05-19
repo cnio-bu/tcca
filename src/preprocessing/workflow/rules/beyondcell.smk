@@ -319,3 +319,20 @@ rule bc_bone_yun_liu:
         "envs/beyondcell.yaml"
     script:
         "scripts/bone_yun_liu_beyondcell.R"
+
+
+rule bc_pleural_rui_dong:
+    input:
+        seurat_list=rules.sc_mmieloma_stephan_tirier_seurat.output.seurat_list,
+    output:
+        malignant_list=f"{results}/seurat/malignant/mmieloma_stephan_tirier.rds",
+        bc_list=f"{results}/beyondcell/mmieloma_stephan_tirier.rds",
+        report=f"{results}/reports/cells_mmieloma_stephan_tirier.tsv",
+    threads: get_resource("default_bc", "threads")
+    resources:
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=get_resource("default_bc", "walltime"),
+    conda:
+        "envs/beyondcell.yaml"
+    script:
+        "scripts/mmieloma_stephan_tirier_beyondcell.R"
