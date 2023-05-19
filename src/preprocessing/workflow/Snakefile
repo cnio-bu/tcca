@@ -71,6 +71,7 @@ rule all:
         f"{results}/reports/cells_cc_xiaosong_lu.tsv",
         f"{results}/reports/cells_rcell_kevin_bi.tsv",
         f"{results}/reports/cells_rcell_r_li.tsv",
+        f"{results}/reports/cells_pleural_rui_dong.tsv"
 
 
 rule sc_brmets_hugo_gonzalez_seurat:
@@ -647,3 +648,34 @@ rule bc_cc_xiaosong_lu:
         "envs/beyondcell.yaml"
     script:
         "scripts/cc_xiaosong_lu_beyondcell.R"
+
+rule sc_pleural_rui_dong_seurat:
+    input:
+        metadata=f"{raw_data}/pleural_rui_dong/PPB_GSE163678_CellMetainfo_table.tsv",
+        matrix=f"{raw_data}/pleural_rui_dong/PPB_GSE163678_expression.h5",
+    output:
+        seurat_list=f"{results}/seurat/raw/pleural_rui_dong.rds",
+    threads: get_resource("defaults", "threads")
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+        "envs/seurat.yaml"
+    script:
+        "scripts/pleural_rui_dong_seurat.R"
+
+rule bc_pleural_rui_dong:
+    input:
+        seurat_list=rules.sc_pleural_rui_dong_seurat.output.seurat_list,
+    output:
+        malignant_list=f"{results}/seurat/malignant/pleural_rui_dong.rds",
+        bc_list=f"{results}/beyondcell/pleural_rui_dong.rds",
+        report=f"{results}/reports/cells_pleural_rui_dong.tsv",
+    threads: get_resource("default_bc", "threads")
+    resources:
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=get_resource("default_bc", "walltime"),
+    conda:
+        "envs/beyondcell.yaml"
+    script:
+        "scripts/pleural_rui_dong_beyondcell.R"
