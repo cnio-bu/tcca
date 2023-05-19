@@ -321,7 +321,7 @@ rule bc_bone_yun_liu:
         "scripts/bone_yun_liu_beyondcell.R"
 
 
-rule bc_pleural_rui_dong:
+rule bc_mmieloma_stephan_tirier:
     input:
         seurat_list=rules.sc_mmieloma_stephan_tirier_seurat.output.seurat_list,
     output:
