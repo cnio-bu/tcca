@@ -318,3 +318,18 @@ rule sc_mmieloma_stephan_tirier_seurat:
         "envs/seurat.yaml"
     script:
         "scripts/mmieloma_stephan_tirier_seurat.R"
+
+
+rule sc_urothelial_chen_seurat:
+    input:
+        object_list=f"{raw_data}/urothelial_chen/sc_Chen_BUC.rda",
+    output:
+        seurat_list=f"{results}/seurat/raw/urothelial_chen.rds",
+    threads: get_resource("defaults", "threads")
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+        "envs/seurat.yaml"
+    script:
+        "scripts/urothelial_chen_seurat.R"
