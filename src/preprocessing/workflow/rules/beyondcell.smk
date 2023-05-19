@@ -10,7 +10,7 @@ rule bc_brmets_hugo_gonzalez:
         mem_mb=get_resource("default_bc", "mem_mb"),
         walltime=get_resource("default_bc", "walltime"),
     conda:
-        "envs/beyondcell.yaml"
+        "../envs/beyondcell.yaml"
     script:
         "scripts/brmets_hugo_gonzalez_beyondcell.R"
 
@@ -27,7 +27,7 @@ rule bc_pancancer_dalia_barkley:
         mem_mb=get_resource("default_bc", "mem_mb"),
         walltime=get_resource("default_bc", "walltime"),
     conda:
-        "envs/beyondcell.yaml"
+        "../envs/beyondcell.yaml"
     script:
         "scripts/pancancer_dalia_barkley_beyondcell.R"
 
@@ -44,7 +44,7 @@ rule bc_breast_sunny_wu:
         mem_mb=get_resource("default_bc", "mem_mb"),
         walltime=get_resource("default_bc", "walltime"),
     conda:
-        "envs/beyondcell.yaml"
+        "../envs/beyondcell.yaml"
     script:
         "scripts/breast_sunny_wu_beyondcell.R"
 
@@ -61,7 +61,7 @@ rule bc_pancancer_sunny_wu:
         mem_mb=get_resource("default_bc", "mem_mb"),
         walltime=get_resource("default_bc", "walltime"),
     conda:
-        "envs/beyondcell.yaml"
+        "../envs/beyondcell.yaml"
     script:
         "scripts/pancancer_sunny_wu_beyondcell.R"
 
@@ -78,7 +78,7 @@ rule bc_luad_kim_nayoung:
         mem_mb=get_resource("default_bc", "mem_mb"),
         walltime=get_resource("default_bc", "walltime"),
     conda:
-        "envs/beyondcell.yaml"
+        "../envs/beyondcell.yaml"
     script:
         "scripts/luad_kim_nayoung_beyondcell.R"
 
@@ -95,7 +95,7 @@ rule bc_urothelial_chen:
         mem_mb=get_resource("default_bc", "mem_mb"),
         walltime=get_resource("default_bc", "walltime"),
     conda:
-        "envs/beyondcell.yaml"
+        "../envs/beyondcell.yaml"
     script:
         "scripts/urothelial_chen_beyondcell.R"
 
@@ -112,7 +112,7 @@ rule bc_adrenalnb_rui_chong:
         mem_mb=get_resource("default_bc", "mem_mb"),
         walltime=get_resource("default_bc", "walltime"),
     conda:
-        "envs/beyondcell.yaml"
+        "../envs/beyondcell.yaml"
     script:
         "scripts/adrenalnb_rui_chong_beyondcell.R"
 
@@ -129,7 +129,7 @@ rule bc_luad_philip_bisschof:
         mem_mb=get_resource("default_bc", "mem_mb"),
         walltime=get_resource("default_bc", "walltime"),
     conda:
-        "envs/beyondcell.yaml"
+        "../envs/beyondcell.yaml"
     script:
         "scripts/luad_philip_bisschof_beyondcell.R"
 
@@ -146,7 +146,7 @@ rule bc_pdac_junya_peng:
         mem_mb=get_resource("default_bc", "mem_mb"),
         walltime=get_resource("default_bc", "walltime"),
     conda:
-        "envs/beyondcell.yaml"
+        "../envs/beyondcell.yaml"
     script:
         "scripts/pdac_junya_peng_beyondcell.R"
 
@@ -163,7 +163,7 @@ rule bc_synovial_jerby_arnon:
         mem_mb=get_resource("default_bc", "mem_mb"),
         walltime=get_resource("default_bc", "walltime"),
     conda:
-        "envs/beyondcell.yaml"
+        "../envs/beyondcell.yaml"
     script:
         "scripts/synovial_jerby_arnon_beyondcell.R"
 
@@ -180,7 +180,7 @@ rule bc_rcell_kevin_bi:
         mem_mb=get_resource("default_bc", "mem_mb"),
         walltime=get_resource("default_bc", "walltime"),
     conda:
-        "envs/beyondcell.yaml"
+        "../envs/beyondcell.yaml"
     script:
         "scripts/rcell_kevin_bi_beyondcell.R"
 
@@ -197,7 +197,7 @@ rule bc_pancancer_junbin_qian:
         mem_mb=get_resource("default_bc", "mem_mb"),
         walltime=get_resource("default_bc", "walltime"),
     conda:
-        "envs/beyondcell.yaml"
+        "../envs/beyondcell.yaml"
     script:
         "scripts/pancancer_junbin_qian_beyondcell.R"
 
@@ -214,7 +214,7 @@ rule bc_rcell_r_li:
         mem_mb=get_resource("default_bc", "mem_mb"),
         walltime=get_resource("default_bc", "walltime"),
     conda:
-        "envs/beyondcell.yaml"
+        "../envs/beyondcell.yaml"
     script:
         "scripts/rcell_r_li_beyondcell.R"
 
@@ -231,7 +231,7 @@ rule bc_cll_ramon_massoni:
         mem_mb=get_resource("default_bc", "mem_mb"),
         walltime=get_resource("default_bc", "walltime"),
     conda:
-        "envs/beyondcell.yaml"
+        "../envs/beyondcell.yaml"
     script:
         "scripts/cll_ramon_massoni_beyondcell.R"
 
@@ -248,7 +248,7 @@ rule bc_aml_audrey_lasry:
         mem_mb=get_resource("default_bc", "mem_mb"),
         walltime=get_resource("default_bc", "walltime"),
     conda:
-        "envs/beyondcell.yaml"
+        "../envs/beyondcell.yaml"
     script:
         "scripts/aml_audrey_lasry_beyondcell.R"
 
@@ -265,7 +265,7 @@ rule bc_gbm_nourhan_abdelfattah:
         mem_mb=get_resource("default_bc", "mem_mb"),
         walltime=get_resource("default_bc", "walltime"),
     conda:
-        "envs/beyondcell.yaml"
+        "../envs/beyondcell.yaml"
     script:
         "scripts/gbm_nourhan_abdelfattah_beyondcell.R"
 
@@ -282,7 +282,7 @@ rule bc_cc_xiaosong_lu:
         mem_mb=get_resource("default_bc", "mem_mb"),
         walltime=get_resource("default_bc", "walltime"),
     conda:
-        "envs/beyondcell.yaml"
+        "../envs/beyondcell.yaml"
     script:
         "scripts/cc_xiaosong_lu_beyondcell.R"
 
@@ -299,7 +299,7 @@ rule bc_pleural_rui_dong:
         mem_mb=get_resource("default_bc", "mem_mb"),
         walltime=get_resource("default_bc", "walltime"),
     conda:
-        "envs/beyondcell.yaml"
+        "../envs/beyondcell.yaml"
     script:
         "scripts/pleural_rui_dong_beyondcell.R"
 
@@ -316,7 +316,7 @@ rule bc_bone_yun_liu:
         mem_mb=get_resource("default_bc", "mem_mb"),
         walltime=get_resource("default_bc", "walltime"),
     conda:
-        "envs/beyondcell.yaml"
+        "../envs/beyondcell.yaml"
     script:
         "scripts/bone_yun_liu_beyondcell.R"
 
@@ -333,6 +333,6 @@ rule bc_mmieloma_stephan_tirier:
         mem_mb=get_resource("default_bc", "mem_mb"),
         walltime=get_resource("default_bc", "walltime"),
     conda:
-        "envs/beyondcell.yaml"
+        "../envs/beyondcell.yaml"
     script:
         "scripts/mmieloma_stephan_tirier_beyondcell.R"

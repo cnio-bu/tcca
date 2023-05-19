@@ -11,7 +11,7 @@ rule sc_brmets_hugo_gonzalez_seurat:
         mem_mb=get_resource("defaults", "mem_mb"),
         walltime=get_resource("defaults", "walltime"),
     conda:
-        "envs/seurat.yaml"
+        "../envs/seurat.yaml"
     script:
         "scripts/brmets_hugo_gonzalez_seurat.R"
 
@@ -26,7 +26,7 @@ rule sc_pancancer_dalia_barkley_seurat:
         mem_mb=get_resource("defaults", "mem_mb"),
         walltime=get_resource("defaults", "walltime"),
     conda:
-        "envs/seurat.yaml"
+        "../envs/seurat.yaml"
     script:
         "scripts/pancancer_dalia_barkley_seurat.R"
 
@@ -46,7 +46,7 @@ rule sc_breast_sunny_wu_seurat:
     params:
         data_dir=f"{raw_data}/breast_sunny_wu",
     conda:
-        "envs/seurat.yaml"
+        "../envs/seurat.yaml"
     script:
         "scripts/breast_sunny_wu_seurat.R"
 
@@ -66,7 +66,7 @@ rule sc_pancancer_sunny_wu_seurat:
     params:
         data_dir=f"{raw_data}/pancancer_sunny_wu",
     conda:
-        "envs/seurat.yaml"
+        "../envs/seurat.yaml"
     script:
         "scripts/pancancer_sunny_wu_seurat.R"
 
@@ -82,7 +82,7 @@ rule sc_luad_kim_nayoung_seurat:
         mem_mb=144000,
         walltime=get_resource("defaults", "walltime"),
     conda:
-        "envs/seurat.yaml"
+        "../envs/seurat.yaml"
     script:
         "scripts/luad_kim_nayoung_seurat.R"
 
@@ -100,7 +100,7 @@ rule sc_adrenalnb_rui_chong_seurat:
         mem_mb=get_resource("defaults", "mem_mb"),
         walltime=get_resource("defaults", "walltime"),
     conda:
-        "envs/seurat.yaml"
+        "../envs/seurat.yaml"
     script:
         "scripts/adrenalnb_rui_chong_seurat.R"
 
@@ -118,7 +118,7 @@ rule sc_luad_philip_bisschof_seurat:
     params:
         data_dir=f"{raw_data}/luad_philip_bisschof",
     conda:
-        "envs/seurat.yaml"
+        "../envs/seurat.yaml"
     script:
         "scripts/luad_philip_bisschof_seurat.R"
 
@@ -134,7 +134,7 @@ rule sc_pdac_junya_peng_seurat:
         mem_mb=144000,
         walltime=get_resource("defaults", "walltime"),
     conda:
-        "envs/seurat.yaml"
+        "../envs/seurat.yaml"
     script:
         "scripts/pdac_junya_peng_seurat.R"
 
@@ -149,7 +149,7 @@ rule sc_synovial_jerby_arnon_seurat:
         mem_mb=get_resource("defaults", "mem_mb"),
         walltime=get_resource("defaults", "walltime"),
     conda:
-        "envs/seurat.yaml"
+        "../envs/seurat.yaml"
     script:
         "scripts/synovial_jerby_arnon_seurat.R"
 
@@ -166,7 +166,7 @@ rule sc_rcell_kevin_bi_seurat:
     params:
         data_dir=f"{raw_data}/rcell_kevin_bi",
     conda:
-        "envs/seurat.yaml"
+        "../envs/seurat.yaml"
     script:
         "scripts/rcell_kevin_bi_seurat.R"
 
@@ -181,7 +181,7 @@ rule sc_pancancer_junbin_qian_seurat:
     params:
         data_dir=f"{raw_data}/pancancer_junbin_qian",
     conda:
-        "envs/seurat.yaml"
+        "../envs/seurat.yaml"
     script:
         "scripts/pancancer_junbin_qian_seurat.R"
 
@@ -197,7 +197,7 @@ rule sc_rcell_r_li_seurat:
         mem_mb=144000,
         walltime=60,
     conda:
-        "envs/seurat.yaml"
+        "../envs/seurat.yaml"
     script:
         "scripts/rcell_r_li_seurat.R"
 
@@ -212,7 +212,7 @@ rule sc_cll_ramon_massoni_seurat:
         mem_mb=get_resource("defaults", "mem_mb"),
         walltime=get_resource("defaults", "walltime"),
     conda:
-        "envs/seurat.yaml"
+        "../envs/seurat.yaml"
     script:
         "scripts/cll_ramon_massoni_seurat.R"
 
@@ -231,7 +231,7 @@ rule sc_aml_audrey_lasry_seurat:
         mem_mb=get_resource("defaults", "mem_mb"),
         walltime=get_resource("defaults", "walltime"),
     conda:
-        "envs/seurat.yaml"
+        "../envs/seurat.yaml"
     script:
         "scripts/aml_audrey_lasry_seurat.R"
 
@@ -248,7 +248,7 @@ rule sc_gbm_nourhan_abdelfattah_seurat:
         mem_mb=get_resource("defaults", "mem_mb"),
         walltime=get_resource("defaults", "walltime"),
     conda:
-        "envs/seurat.yaml"
+        "../envs/seurat.yaml"
     script:
         "scripts/gbm_nourhan_abdelfattah_seurat.R"
 
@@ -265,7 +265,7 @@ rule sc_cc_xiaosong_lu_seurat:
         mem_mb=get_resource("defaults", "mem_mb"),
         walltime=get_resource("defaults", "walltime"),
     conda:
-        "envs/seurat.yaml"
+        "../envs/seurat.yaml"
     script:
         "scripts/cc_xiaosong_lu_seurat.R"
 
@@ -281,7 +281,7 @@ rule sc_pleural_rui_dong_seurat:
         mem_mb=get_resource("defaults", "mem_mb"),
         walltime=get_resource("defaults", "walltime"),
     conda:
-        "envs/seurat.yaml"
+        "../envs/seurat.yaml"
     script:
         "scripts/pleural_rui_dong_seurat.R"
 
@@ -299,7 +299,7 @@ rule sc_bone_yun_liu_seurat:
         mem_mb=get_resource("defaults", "mem_mb"),
         walltime=get_resource("defaults", "walltime"),
     conda:
-        "envs/seurat.yaml"
+        "../envs/seurat.yaml"
     script:
         "scripts/bone_yun_liu_seurat.R"
 
@@ -315,7 +315,7 @@ rule sc_mmieloma_stephan_tirier_seurat:
         mem_mb=get_resource("defaults", "mem_mb"),
         walltime=get_resource("defaults", "walltime"),
     conda:
-        "envs/seurat.yaml"
+        "../envs/seurat.yaml"
     script:
         "scripts/mmieloma_stephan_tirier_seurat.R"
 
@@ -330,6 +330,6 @@ rule sc_urothelial_chen_seurat:
         mem_mb=get_resource("defaults", "mem_mb"),
         walltime=get_resource("defaults", "walltime"),
     conda:
-        "envs/seurat.yaml"
+        "../envs/seurat.yaml"
     script:
         "scripts/urothelial_chen_seurat.R"
