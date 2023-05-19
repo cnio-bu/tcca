@@ -70,7 +70,7 @@ rule all:
         f"{results}/reports/cells_pdac_junya_peng.tsv",
         f"{results}/reports/cells_cc_xiaosong_lu.tsv",
         f"{results}/seurat/raw/rcell_kevin_bi.rds",
-        f"{results}/seurat/raw/rcell_r_li.rds",
+        f"{results}/reports/cells_rcell_r_li.tsv",
 
 
 rule sc_brmets_hugo_gonzalez_seurat:
@@ -477,6 +477,23 @@ rule sc_rcell_r_li_seurat:
         "envs/seurat.yaml"
     script:
         "scripts/rcell_r_li_seurat.R"
+
+
+rule bc_rcell_r_li:
+    input:
+        seurat_list=rules.sc_pancancer_junbin_qian_seurat.output.seurat_list,
+    output:
+        malignant_list=f"{results}/seurat/malignant/rcell_r_li.rds",
+        bc_list=f"{results}/beyondcell/rcell_r_li.rds",
+        report=f"{results}/reports/cells_rcell_r_li.tsv",
+    threads: get_resource("defaults", "threads")
+    resources:
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=get_resource("default_bc", "walltime"),
+    conda:
+        "envs/beyondcell.yaml"
+    script:
+        "scripts/rcell_r_li_beyondcell.R"
 
 
 rule sc_cll_ramon_massoni_seurat:
