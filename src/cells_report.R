@@ -203,3 +203,39 @@ ggsave(
     width = 16
 )
 
+study_wise_report <- full_report_annotated %>%
+    group_by(cancer_type) %>%
+    summarise(
+        n.malignants = sum(malignants),
+        n.cells = sum(cells),
+        n.samples = n(),
+        n.studies = sum(length(unique(study)))
+    )  %>%
+    arrange(n.studies) %>%
+    mutate(
+        cancer_type = as_factor(cancer_type)
+    ) 
+
+## studies by tumor
+samples_by_tumor <- ggplot(data = study_wise_report, aes(x = n.studies, y = cancer_type)) +
+    geom_bar(stat = "identity") +
+    scale_x_continuous(n.breaks = 4) +
+    xlab(label = "Samples") +
+    ylab(label = "") +
+    theme_bw() +
+    theme(axis.line = element_line(colour = "black"),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.border = element_blank(),
+          panel.background = element_blank()
+    ) +
+    ggtitle(label = "Studies by tumor type")
+
+
+ggsave(
+    plot = samples_by_tumor,
+    filename = "results/studies_per_tumor.png",
+    dpi = 300,
+    height = 9,
+    width = 16
+)
