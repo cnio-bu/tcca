@@ -333,3 +333,21 @@ rule sc_urothelial_chen_seurat:
         "../envs/seurat.yaml"
     script:
         "../scripts/urothelial_chen_seurat.R"
+        
+        
+rule sc_all_maxime_caron_seurat:
+    input:
+        metadata=f"{raw_data}/all_maxime_caron/ALL_GSE132509_CellMetainfo_table.tsv",
+        reference_gene_annotation="/storage/scratch01/shared/projects/bc-meta/reference/hgnc_gene_with_protein_product_2023-03-22.tsv",
+    output:
+        seurat_list=f"{results}/seurat/raw/all_maxime_caron.rds",
+    params:
+        data_dir=f"{raw_data}/all_maxime_caron",
+    threads: get_resource("defaults", "threads")
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+        "../envs/seurat.yaml"
+    script:
+        "../scripts/all_maxime_caron_seurat.R"

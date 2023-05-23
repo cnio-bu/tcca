@@ -336,3 +336,20 @@ rule bc_mmieloma_stephan_tirier:
         "../envs/beyondcell.yaml"
     script:
         "../scripts/mmieloma_stephan_tirier_beyondcell.R"
+        
+        
+rule bc_all_maxime_caron:
+    input:
+        seurat_list=rules.sc_all_maxime_caron_seurat.output.seurat_list,
+    output:
+        malignant_list=f"{results}/seurat/malignant/all_maxime_caron.rds",
+        bc_list=f"{results}/beyondcell/all_maxime_caron.rds",
+        report=f"{results}/reports/cells_all_maxime_caron.tsv",
+    threads: get_resource("default_bc", "threads")
+    resources:
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=get_resource("default_bc", "walltime"),
+    conda:
+        "../envs/beyondcell.yaml"
+    script:
+        "../scripts/all_maxime_caron_beyondcell.R"
