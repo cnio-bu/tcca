@@ -73,7 +73,8 @@ rule all:
         f"{results}/reports/cells_rcell_r_li.tsv",
         f"{results}/reports/cells_pleural_rui_dong.tsv",
         f"{results}/reports/cells_bone_yun_liu.tsv",
-        f"{results}/reports/cells_mmieloma_stephan_tirier.tsv"
+        f"{results}/reports/cells_mmieloma_stephan_tirier.tsv",
+        f"{results}/reports/cells_all_maxime_caron.tsv"
 
 
 include: "rules/preprocessing.smk"
