@@ -119,10 +119,10 @@ report_summary_all_malignants <- full_report_annotated %>%
     )
 
 ## plot totals
-malignants_by_tumor <- ggplot(data=report_summary_all_malignants, aes(x = n.malignants, y = cancer_type)) + 
+malignants_by_tumor_total <- ggplot(data=report_summary_all_malignants, aes(x = n.malignants, y = cancer_type)) + 
     geom_bar(stat = "identity") +
-    geom_text(stat="identity", aes(label = n.malignants), hjust = -1) +
-    scale_x_continuous(n.breaks = 10) +
+    geom_text(stat="identity", aes(label = n.malignants), hjust = -.3) +
+    scale_x_continuous(n.breaks = 10, labels = scales::scientific_format()) +
     xlab(label = "Malignant cells") +
     ylab(label = "") +
     theme_bw() +
@@ -134,6 +134,9 @@ malignants_by_tumor <- ggplot(data=report_summary_all_malignants, aes(x = n.mali
     ) +
     ggtitle(label = "Total proportion of malignant cells by tumor type")
 
+ggsave(malignants_by_tumor_total,filename = "results/cells_by_tumor_type.png",
+       dpi = 300, height = 7, width = 14
+       )
 ## plots by proportion
 report_summary_all_malignants <- report_summary_all_malignants %>%
     mutate(
@@ -163,7 +166,8 @@ report_summary_all_malignants <- full_report_annotated %>%
     summarise(
         n.malignants = sum(malignants),
         n.cells = sum(cells),
-        n.samples = n()
+        n.samples = n(),
+        prop.cells_by_sample = n.malignants / n.samples
     )  %>%
     arrange(n.samples) %>%
     mutate(
@@ -239,3 +243,40 @@ ggsave(
     height = 9,
     width = 16
 )
+
+prop_cells_tumor_dt <- full_report_annotated %>%
+    group_by(cancer_type) %>%
+    summarise(
+        n.malignants = sum(malignants),
+        n.cells = sum(cells),
+        n.samples = n(),
+        avg.mals.sample = round(n.malignants / n.samples, digits = 1)
+    )  %>%
+    arrange(avg.mals.sample) %>%
+    mutate(
+        cancer_type = as_factor(cancer_type)
+    )
+
+    
+
+## average prop. of cells by sample by tumor_type
+prop_cells_by_tumor <- ggplot(data = prop_cells_tumor_dt, aes(y = cancer_type, x = avg.mals.sample)) +
+    geom_bar(stat = "identity") +
+    geom_text(stat = "identity", aes(label = n.samples), hjust = -.3) +
+    scale_x_continuous(n.breaks = 10) +
+    xlab("Average proportion of malignant cells") +
+    ylab("") + 
+    theme_bw() +
+    theme(axis.line = element_line(colour = "black"),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.border = element_blank(),
+          panel.background = element_blank()
+    ) 
+    
+
+ggsave(
+    plot = prop_cells_by_tumor,
+    filename = "results/prop_cells_by_tumor.png",
+    dpi = 100
+    )
