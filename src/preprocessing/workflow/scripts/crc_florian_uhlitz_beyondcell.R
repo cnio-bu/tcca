@@ -44,8 +44,6 @@ get_bcscores <- function(sc){
 }
 
 ## Perform operations over list
-full_seurat_list <- "/local/bc_meta/crc_florian_uhlitz/seurat.rds"
-
 seu <- readRDS(file = full_seurat_list)
 seu <- lapply(X = seu, FUN = annotate_cell_cycle)
 
