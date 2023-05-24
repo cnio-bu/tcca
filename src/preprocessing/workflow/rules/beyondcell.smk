@@ -336,8 +336,8 @@ rule bc_mmieloma_stephan_tirier:
         "../envs/beyondcell.yaml"
     script:
         "../scripts/mmieloma_stephan_tirier_beyondcell.R"
-        
-        
+
+
 rule bc_all_maxime_caron:
     input:
         seurat_list=rules.sc_all_maxime_caron_seurat.output.seurat_list,
@@ -354,6 +354,7 @@ rule bc_all_maxime_caron:
     script:
         "../scripts/all_maxime_caron_beyondcell.R"
 
+
 rule bc_crc_lei_zhang:
     input:
         seurat_list=rules.sc_crc_lei_zhang_seurat.output.seurat_list,
@@ -369,7 +370,8 @@ rule bc_crc_lei_zhang:
         "../envs/beyondcell.yaml"
     script:
         "../scripts/crc_lei_zhang_beyondcell.R"
-        
+
+
 rule bc_florian_uhlitz:
     input:
         seurat_list=rules.sc_florian_uhlitz_seurat.output.seurat_list,
@@ -382,6 +384,6 @@ rule bc_florian_uhlitz:
         mem_mb=get_resource("default_bc", "mem_mb"),
         walltime=get_resource("default_bc", "walltime"),
     conda:
-        "../envs/beyondcell.yaml",
+        "../envs/beyondcell.yaml"
     script:
-        "../scripts/florian_uhlitz_beyondcell.R"   
+        "../scripts/florian_uhlitz_beyondcell.R"
