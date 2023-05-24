@@ -353,13 +353,28 @@ rule sc_all_maxime_caron_seurat:
         "../scripts/all_maxime_caron_seurat.R"
 
 
+rule sc_crc_florian_uhlitz_seurat:
+    input:
+        metadata=f"{raw_data}/crc_florian_uhlitz/CRC_GSE166555_CellMetainfo_table.tsv",
+        matrix=f"{raw_data}/crc_florian_uhlitz/CRC_GSE166555_expression.h5",
+    output:
+        seurat_list=f"{results}/seurat/raw/crc_florian_uhlitz.rds",
+    threads: get_resource("defaults", "threads"),
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+        "../envs/seurat.yaml"
+    script:
+        "../scripts/crc_florian_uhlitz_seurat.R"
+
 rule sc_crc_lei_zhang_seurat:
     input:
         metadata=f"{raw_data}/crc_lei_zhang/CRC_GSE146771_Smartseq2_CellMetainfo_table.tsv",
         matrix=f"{raw_data}/crc_lei_zhang/CRC_GSE146771_Smartseq2_expression.h5",
     output:
         seurat_list=f"{results}/seurat/raw/crc_lei_zhang.rds",
-    threads: get_resource("defaults", "threads")
+    threads: get_resource("defaults", "threads"),
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
         walltime=get_resource("defaults", "walltime"),
