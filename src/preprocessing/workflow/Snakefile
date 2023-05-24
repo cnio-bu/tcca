@@ -74,7 +74,9 @@ rule all:
         f"{results}/reports/cells_pleural_rui_dong.tsv",
         f"{results}/reports/cells_bone_yun_liu.tsv",
         f"{results}/reports/cells_mmieloma_stephan_tirier.tsv",
-        f"{results}/reports/cells_all_maxime_caron.tsv"
+        f"{results}/reports/cells_all_maxime_caron.tsv",
+        f"{results}/reports/cells_cells_crc_lei_zhang.tsv",
+        f"{results}/reports/cells_florian_uhlitz.tsv",
 
 
 include: "rules/preprocessing.smk"
