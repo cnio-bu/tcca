@@ -354,7 +354,22 @@ rule bc_all_maxime_caron:
     script:
         "../scripts/all_maxime_caron_beyondcell.R"
 
-
+rule bc_crc_lei_zhang:
+    input:
+        seurat_list=rules.sc_crc_lei_zhang_seurat.output.seurat_list,
+    output:
+        malignant_list=f"{results}/seurat/malignant/crc_lei_zhang.rds",
+        bc_list=f"{results}/beyondcell/crc_lei_zhang.rds",
+        report=f"{results}/reports/cells_crc_lei_zhang.tsv",
+    threads: get_resource("default_bc", "threads")
+    resources:
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=get_resource("default_bc", "walltime"),
+    conda:
+        "../envs/beyondcell.yaml"
+    script:
+        "../scripts/crc_lei_zhang_beyondcell.R"
+        
 rule bc_florian_uhlitz:
     input:
         seurat_list=rules.sc_florian_uhlitz_seurat.output.seurat_list,
@@ -367,6 +382,6 @@ rule bc_florian_uhlitz:
         mem_mb=get_resource("default_bc", "mem_mb"),
         walltime=get_resource("default_bc", "walltime"),
     conda:
-        "../envs/beyondcell.yaml"
+        "../envs/beyondcell.yaml",
     script:
-        "../scripts/florian_uhlitz_beyondcell.R"
+        "../scripts/florian_uhlitz_beyondcell.R"   
