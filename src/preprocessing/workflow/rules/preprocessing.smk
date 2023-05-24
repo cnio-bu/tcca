@@ -383,3 +383,18 @@ rule sc_crc_lei_zhang_seurat:
         "../envs/seurat.yaml"
     script:
         "../scripts/crc_lei_zhang_seurat.R"
+
+rule sc_bcc_catherine_dyao_seurat:
+    input:
+        metadata=f"{raw_data}/bcc_catherine_dyao/BCC_GSE141526_CellMetainfo_table.tsv",
+        matrix=f"{raw_data}/bcc_catherine_dyao/BCC_GSE141526_expression.h5",
+    output:
+        seurat_list=f"{results}/seurat/raw/bcc_catherine_dyao.rds",
+    threads: get_resource("defaults", "threads")
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+        "../envs/seurat.yaml"
+    script:
+        "../scripts/bcc_catherine_dyao_seurat.R"

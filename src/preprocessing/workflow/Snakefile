@@ -77,6 +77,8 @@ rule all:
         f"{results}/reports/cells_all_maxime_caron.tsv",
         f"{results}/reports/cells_crc_lei_zhang.tsv",
         f"{results}/reports/cells_crc_florian_uhlitz.tsv",
+        f"{results}/reports/cells_bcc_catherine_dyao.tsv",
+
 
 
 include: "rules/preprocessing.smk"

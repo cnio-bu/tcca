@@ -387,3 +387,20 @@ rule bc_florian_uhlitz:
         "../envs/beyondcell.yaml"
     script:
         "../scripts/crc_florian_uhlitz_beyondcell.R"
+
+
+rule bcc_catherine_dyao:
+    input:
+        seurat_list=rules.sc_bcc_catherine_dyao_seurat.output.seurat_list,
+    output:
+        malignant_list=f"{results}/seurat/malignant/bcc_catherine_dyao.rds",
+        bc_list=f"{results}/beyondcell/bcc_catherine_dyao.rds",
+        report=f"{results}/reports/cells_bcc_catherine_dyao.tsv",
+    threads: get_resource("default_bc", "threads")
+    resources:
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=get_resource("default_bc", "walltime"),
+    conda:
+        "../envs/beyondcell.yaml"
+    script:
+        "../scripts/bcc_catherine_dyao_beyondcell.R"
