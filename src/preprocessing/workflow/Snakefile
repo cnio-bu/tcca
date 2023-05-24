@@ -78,6 +78,7 @@ rule all:
         f"{results}/reports/cells_crc_lei_zhang.tsv",
         f"{results}/reports/cells_crc_florian_uhlitz.tsv",
         f"{results}/reports/cells_bcc_catherine_dyao.tsv",
+        f"{results}/reports/cells_uvm_michael_durante.tsv",
 
 
 

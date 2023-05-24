@@ -398,3 +398,18 @@ rule sc_bcc_catherine_dyao_seurat:
         "../envs/seurat.yaml"
     script:
         "../scripts/bcc_catherine_dyao_seurat.R"
+
+rule sc_uvm_michael_durante_seurat:
+    input:
+        metadata=f"{raw_data}/uvm_michael_durante/UVM_GSE139829_CellMetainfo_table.tsv",
+        matrix=f"{raw_data}/uvm_michael_durante/UVM_GSE139829_expression.h5",
+    output:
+        seurat_list=f"{results}/seurat/raw/uvm_michael_durante.rds",
+    threads: get_resource("defaults", "threads")
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+        "../envs/seurat.yaml"
+    script:
+        "../scripts/uvm_michael_durante_seurat.R"
