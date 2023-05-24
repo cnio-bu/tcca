@@ -76,7 +76,7 @@ rule all:
         f"{results}/reports/cells_mmieloma_stephan_tirier.tsv",
         f"{results}/reports/cells_all_maxime_caron.tsv",
         f"{results}/reports/cells_crc_lei_zhang.tsv",
-        f"{results}/reports/cells_florian_uhlitz.tsv",
+        f"{results}/reports/cells_crc_florian_uhlitz.tsv",
 
 
 include: "rules/preprocessing.smk"
