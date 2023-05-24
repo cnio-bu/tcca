@@ -386,4 +386,4 @@ rule bc_florian_uhlitz:
     conda:
         "../envs/beyondcell.yaml"
     script:
-        "../scripts/florian_uhlitz_beyondcell.R"
+        "../scripts/crc_florian_uhlitz_beyondcell.R"
