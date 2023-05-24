@@ -389,7 +389,7 @@ rule bc_florian_uhlitz:
         "../scripts/crc_florian_uhlitz_beyondcell.R"
 
 
-rule bcc_catherine_dyao:
+rule bc_bcc_catherine_dyao:
     input:
         seurat_list=rules.sc_bcc_catherine_dyao_seurat.output.seurat_list,
     output:

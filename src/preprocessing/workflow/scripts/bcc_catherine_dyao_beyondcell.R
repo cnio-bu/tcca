@@ -21,8 +21,8 @@ annotate_cell_cycle <- function(sc){
 
 # keep malignants cells only
 filter_malignants <- function(sc) {
-    if (sum(sc@meta.data$Celltype..major.lineage. == "Malignant cells") > 0) {
-        sc_filtered <- subset(x = sc, subset = Celltype..major.lineage. == "Malignant cells")
+    if (sum(sc@meta.data$Celltype..major.lineage. == "Malignant") > 0) {
+        sc_filtered <- subset(x = sc, subset = Celltype..major.lineage. == "Malignant")
         return(sc_filtered)
     } else {
         return(NULL)
