@@ -436,3 +436,22 @@ rule bc_esca_xiannian_zhang:
         "../envs/beyondcell.yaml"
     script:
         "../scripts/esca_xiannian_zhang_beyondcell.R"
+
+rule bc_brca_bhupinder_pal:
+    input:
+        seurat_list=rules.sc_brca_bhupinder_pal_seurat.output.seurat_list,
+    output:
+        malignant_list=f"{results}/seurat/malignant/brca_bhupinder_pal.rds",
+        bc_list=f"{results}/beyondcell/brca_bhupinder_pal.rds",
+        report=f"{results}/reports/cells_brca_bhupinder_pal.tsv",
+    threads: get_resource("default_bc", "threads")
+    resources:
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=get_resource("default_bc", "walltime"),
+    conda:
+        "../envs/beyondcell.yaml"
+    script:
+        "../scripts/brca_bhupinder_pal_beyondcell.R"
+
+
+sc_brca_bhupinder_pal_seurat

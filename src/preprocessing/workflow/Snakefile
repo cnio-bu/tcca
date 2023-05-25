@@ -80,6 +80,7 @@ rule all:
         f"{results}/reports/cells_bcc_catherine_dyao.tsv",
         f"{results}/reports/cells_uvm_michael_durante.tsv",
         f"{results}/reports/cells_esca_xianiann_zhang.tsv",
+        f"{results}/reports/cells_brca_bhupinder_pal.tsv",
 
 
 
