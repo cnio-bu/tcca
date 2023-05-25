@@ -423,7 +423,7 @@ rule sc_esca_xiannian_zhang_seurat:
     threads: get_resource("defaults", "threads")
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
-        walltime=get_resource("defaults", "walltime"),
+        walltime=120,
     conda:
         "../envs/seurat.yaml"
     script:
@@ -438,7 +438,7 @@ rule sc_brca_bhupinder_pal_seurat:
     threads: get_resource("defaults", "threads")
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
-        walltime=get_resource("defaults", "walltime"),
+        walltime=120,
     conda:
         "../envs/seurat.yaml"
     script:

@@ -431,7 +431,7 @@ rule bc_esca_xiannian_zhang:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        walltime=180,
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -447,7 +447,7 @@ rule bc_brca_bhupinder_pal:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        walltime=180,
     conda:
         "../envs/beyondcell.yaml"
     script:
