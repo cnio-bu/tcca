@@ -452,6 +452,3 @@ rule bc_brca_bhupinder_pal:
         "../envs/beyondcell.yaml"
     script:
         "../scripts/brca_bhupinder_pal_beyondcell.R"
-
-
-sc_brca_bhupinder_pal_seurat
