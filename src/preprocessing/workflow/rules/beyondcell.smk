@@ -420,3 +420,19 @@ rule bc_uvm_michael_durante:
         "../envs/beyondcell.yaml"
     script:
         "../scripts/uvm_michael_durante_beyondcell.R"
+
+rule bc_esca_xiannian_zhang:
+    input:
+        seurat_list=rules.sc_esca_xiannian_zhang_seurat.output.seurat_list,
+    output:
+        malignant_list=f"{results}/seurat/malignant/esca_xiannian_zhang.rds",
+        bc_list=f"{results}/beyondcell/esca_xiannian_zhang.rds",
+        report=f"{results}/reports/cells_esca_xiannian_zhang.tsv",
+    threads: get_resource("default_bc", "threads")
+    resources:
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=get_resource("default_bc", "walltime"),
+    conda:
+        "../envs/beyondcell.yaml"
+    script:
+        "../scripts/esca_xiannian_zhang_beyondcell.R"

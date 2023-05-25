@@ -413,3 +413,18 @@ rule sc_uvm_michael_durante_seurat:
         "../envs/seurat.yaml"
     script:
         "../scripts/uvm_michael_durante_seurat.R"
+
+rule sc_esca_xiannian_zhang_seurat:
+    input:
+        metadata=f"{raw_data}/esca_xiannian_zhang/ESCA_GSE160269_CellMetainfo_table.tsv",
+        matrix=f"{raw_data}/esca_xiannian_zhang/ESCA_GSE160269_expression.h5",
+    output:
+        seurat_list=f"{results}/seurat/raw/esca_xiannian_zhang.rds",
+    threads: get_resource("defaults", "threads")
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+        "../envs/seurat.yaml"
+    script:
+        "../scripts/esca_xiannian_zhang_seurat.R"
