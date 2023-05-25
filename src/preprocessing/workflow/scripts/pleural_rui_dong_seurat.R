@@ -32,11 +32,7 @@ filter_sc <- function(sc) {
     return(new_filtered_sc)
 }
 
-normalize_and_scale <- function(sc) {
-    sc <- Seurat::NormalizeData(sc,
-                                normalization.method = "LogNormalize",
-                                scale.factor = 10000
-    )
+scale_data_find_variables <- function(sc) {
     sc <- Seurat::FindVariableFeatures(sc, selection.method = "vst")
     sc <- Seurat::ScaleData(sc, features = rownames(sc))
     return(sc)
@@ -58,6 +54,6 @@ seu <- Seurat::CreateSeuratObject(
 ## we'll standarize this study with the others with >1 sample
 seu <- list(seu)
 seu <- lapply(seu, filter_sc)
-seu <- lapply(seu, normalize_and_scale)
+seu <- lapply(seu, scale_data_find_variables)
 
 saveRDS(seu, where_to_save)
