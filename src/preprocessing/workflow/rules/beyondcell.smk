@@ -468,3 +468,19 @@ rule bc_nsclc_fengying_wu:
         "../envs/beyondcell.yaml"
     script:
         "../scripts/nsclc_fengying_wu_beyondcell.R"
+
+rule bc_rb_joseph_collin:
+    input:
+        seurat_list=rules.sc_rb_joseph_collin_seurat.output.seurat_list,
+    output:
+        malignant_list=f"{results}/seurat/malignant/rb_joseph_collin.rds",
+        bc_list=f"{results}/beyondcell/rb_joseph_collin.rds",
+        report=f"{results}/reports/cells_rb_joseph_collin.tsv",
+    threads: get_resource("default_bc", "threads")
+    resources:
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=get_resource("default_bc", "walltime"),
+    conda:
+        "../envs/beyondcell.yaml"
+    script:
+        "../scripts/rb_joseph_collin_beyondcell.R"

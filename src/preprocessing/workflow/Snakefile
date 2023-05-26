@@ -82,6 +82,7 @@ rule all:
         f"{results}/reports/cells_esca_xiannian_zhang.tsv",
         f"{results}/reports/cells_brca_bhupinder_pal.tsv",
         f"{results}/reports/cells_nsclc_fengying_wu.tsv",
+        f"{results}/reports/cells_rb_joseph_collin.tsv",
 
 
 include: "rules/preprocessing.smk"

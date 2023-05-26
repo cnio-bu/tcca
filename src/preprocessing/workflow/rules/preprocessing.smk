@@ -458,3 +458,18 @@ rule sc_nsclc_fengying_wu_seurat:
         "../envs/seurat.yaml"
     script:
         "../scripts/nsclc_fengying_wu_seurat.R"
+
+rule sc_rb_joseph_collin_seurat:
+    input:
+        metadata=f"{raw_data}/rb_joseph_collin/RB_GSE166173_CellMetainfo_table.tsv",
+        matrix=f"{raw_data}/rb_joseph_collin/RB_GSE166173_expression.h5",
+    output:
+        seurat_list=f"{results}/seurat/raw/rb_joseph_collin.rds",
+    threads: get_resource("defaults", "threads")
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=120,
+    conda:
+        "../envs/seurat.yaml"
+    script:
+        "../scripts/rb_joseph_collin_seurat.R"
