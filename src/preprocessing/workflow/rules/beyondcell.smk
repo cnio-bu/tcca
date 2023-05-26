@@ -452,3 +452,19 @@ rule bc_brca_bhupinder_pal:
         "../envs/beyondcell.yaml"
     script:
         "../scripts/brca_bhupinder_pal_beyondcell.R"
+
+rule bc_nsclc_fengying_wu:
+    input:
+        seurat_list=rules.sc_nsclc_fengying_wu_seurat.output.seurat_list,
+    output:
+        malignant_list=f"{results}/seurat/malignant/nsclc_fengying_wu.rds",
+        bc_list=f"{results}/beyondcell/nsclc_fengying_wu.rds",
+        report=f"{results}/reports/cells_nsclc_fengying_wu.tsv",
+    threads: get_resource("default_bc", "threads")
+    resources:
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=get_resource("default_bc", "walltime"),
+    conda:
+        "../envs/beyondcell.yaml"
+    script:
+        "../scripts/nsclc_fengying_wu_beyondcell.R"

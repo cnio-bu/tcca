@@ -443,3 +443,18 @@ rule sc_brca_bhupinder_pal_seurat:
         "../envs/seurat.yaml"
     script:
         "../scripts/brca_bhupinder_pal_seurat.R"
+
+rule sc_nsclc_fengying_wu_seurat:
+    input:
+        metadata=f"{raw_data}/nsclc_fengying_wu/NSCLC_GSE148071_CellMetainfo_table.tsv",
+        matrix=f"{raw_data}/nsclc_fengying_wu/NSCLC_GSE148071_expression.h5",
+    output:
+        seurat_list=f"{results}/seurat/raw/brca_bhupinder_pal.rds",
+    threads: get_resource("defaults", "threads")
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=120,
+    conda:
+        "../envs/seurat.yaml"
+    script:
+        "../scripts/nsclc_fengying_wu_seurat.R"
