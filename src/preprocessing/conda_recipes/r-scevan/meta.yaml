@@ -1,0 +1,69 @@
+{% set version = '1.0.1' %}
+{% set name = "SCEVAN" %}
+{% set posix = 'm2-' if win else '' %}
+{% set native = 'm2w64-' if win else '' %}
+
+package:
+  name: r-scevan
+  version: "1.0.1"
+
+source:
+  git_url: https://github.com/AntonioDeFalco/SCEVAN.git
+  git_depth: 1 # (Defaults to -1/not shallow)
+
+build:
+  number: 1
+  rpaths:
+    - lib/R/lib/
+    - lib/
+
+requirements:
+  host:
+    - r-base
+    - r-paralleldist
+    - r-pheatmap
+    - r-forcats
+    - r-dplyr
+    - r-r.methodss3
+    - r-yagst
+    - bioconductor-fgsea
+    - r-cluster
+    - r-ggplot2
+    - r-rtsne
+    - bioconductor-scran
+    - r-ape
+    - bioconductor-ggtree
+    - r-tidytree
+    - r-ggrepel
+    - r-knitr
+    - r-rmarkdown
+  run:
+    - r-base
+    - r-paralleldist
+    - r-pheatmap
+    - r-forcats
+    - r-dplyr
+    - r-r.methodss3
+    - bioconductor-fgsea
+    - r-cluster
+    - r-ggplot2
+    - r-rtsne
+    - bioconductor-scran
+    - r-ape
+    - bioconductor-ggtree
+    - r-tidytree
+    - r-ggrepel
+    - r-knitr
+    - r-rmarkdown
+test:
+  commands:
+    - $R -e "library('SCEVAN')" # [not win]
+    - "\"%R%\" -e \"library('SCEVAN')\"" # [win]
+
+about:
+  home: https://r-forge.r-project.org
+  license: GPL-2
+  summary: R package that starting from the raw count matrix of scRNA data automatically classifies the cells present in the biopsy by segregating non-malignant cells of tumor microenviroment from the malignant cells and also characterizes the clonal structure of these malignant cells.
+extra:
+  recipe-maintainers:
+    - Santiago García-Martín
