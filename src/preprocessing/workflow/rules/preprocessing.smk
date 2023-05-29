@@ -460,7 +460,6 @@ rule sc_nsclc_fengying_wu_seurat:
         "../scripts/nsclc_fengying_wu_seurat.R"
 
 rule sc_thyroid_weilin_pu_seurat:
-    input:
     output:
         seurat_list=f"{results}/seurat/raw/thyroid_weilin_pu.rds",
     shadow: "shallow",
@@ -468,7 +467,7 @@ rule sc_thyroid_weilin_pu_seurat:
         data_dir=f"{raw_data}/thyroid_weilin_pu/GSE184362_RAW",
     threads: 32,
     resources:
-        mem_mb=64000
+        mem_mb=64000,
         walltime=120,
     conda:
         "../envs/scevan.yaml"
