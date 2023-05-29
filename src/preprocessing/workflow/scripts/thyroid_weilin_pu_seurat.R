@@ -4,10 +4,14 @@ library("tidyverse")
 
 ## SNAKEMAKE I/O
 data_directory <- snakemake@params[["data_dir"]]
+cna_dir       <- snakemake@params[["cna_res"]]
 where_to_save <- snakemake@output[["seurat_list"]]
 
 ## SNAKE params
 threads_to_use <- snakemake@threads
+
+## FOR SCEVAN
+setwd(dirname(where_to_save))
 
 ## Function definitions
 filter_sc <- function(sc) {
@@ -49,7 +53,7 @@ annotate_cna_clones <- function(sc){
     this_mat <- Seurat::GetAssayData(sc, slot = "counts")
     cna_pred <- SCEVAN::pipelineCNA(
         count_mtx = this_mat,
-        sample = sc$orig.ident,
+        sample = unique(sc$orig.ident),
         par_cores = threads_to_use,
         SUBCLONES = TRUE,
         plotTree = FALSE,
@@ -80,6 +84,10 @@ for(sample in all_samples){
 names(all_seurat_objects) <- basename(all_samples)
 filtered_sc <- lapply(all_seurat_objects, filter_sc)
 filtered_sc <- lapply(filtered_sc, normalize_and_scale)
+
+## Create the dir for CNA
+dir.create(cna_dir, showWarnings = FALSE)
+setwd(cna_dir)
 annotated_sc <- lapply(filtered_sc, annotate_cna_clones)
 
 saveRDS(object = annotated_sc, file = where_to_save)

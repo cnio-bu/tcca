@@ -462,12 +462,13 @@ rule sc_nsclc_fengying_wu_seurat:
 rule sc_thyroid_weilin_pu_seurat:
     output:
         seurat_list=f"{results}/seurat/raw/thyroid_weilin_pu.rds",
-    shadow: "shallow",
+        out_dir = directory(f"{results}/cna/thyroid_weilin_pu/output"),
     params:
         data_dir=f"{raw_data}/thyroid_weilin_pu/GSE184362_RAW",
-    threads: 32,
+        cna_res = f"{results}/cna/thyroid_weilin_pu",
+    threads: 16,
     resources:
-        mem_mb=64000,
+        mem_mb=120000,
         walltime=120,
     conda:
         "../envs/scevan.yaml"
