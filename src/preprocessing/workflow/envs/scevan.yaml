@@ -1,0 +1,12 @@
+---
+name: scevan
+channels:
+  - conda-forge
+  - bioconda
+  - bu_cnio
+  - defaults
+dependencies:
+  - r-seurat=4.2.0
+  - r-tidyverse=1.3.2
+  - r-scevan
+  - r-hdf5r
