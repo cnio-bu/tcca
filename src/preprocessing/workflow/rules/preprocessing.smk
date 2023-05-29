@@ -458,3 +458,19 @@ rule sc_nsclc_fengying_wu_seurat:
         "../envs/seurat.yaml"
     script:
         "../scripts/nsclc_fengying_wu_seurat.R"
+
+rule sc_thyroid_weilin_pu_seurat:
+    input:
+    output:
+        seurat_list=f"{results}/seurat/raw/thyroid_weilin_pu.rds",
+    shadow: "shallow",
+    params:
+        data_dir=f"{raw_data}/thyroid_weilin_pu/GSE184362_RAW",
+    threads: 32,
+    resources:
+        mem_mb=64000
+        walltime=120,
+    conda:
+        "../envs/scevan.yaml"
+    script:
+        "../scripts/thyroid_weilin_pu_seurat.R"
