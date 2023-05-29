@@ -10,3 +10,4 @@ dependencies:
   - r-tidyverse
   - r-scevan
   - r-hdf5r
+  - r-yagst
