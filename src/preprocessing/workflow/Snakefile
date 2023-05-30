@@ -4,7 +4,7 @@ import pandas as pd
 configfile: "config/config.yaml"
 
 
-datasets = pd.read_csv("config/datasets.rds", sep="\t")
+datasets = pd.read_csv("config/datasets.tsv", sep="\t")
 samples = list(datasets.loc[:, "sample"].unique())
 datasets.set_index("sample", inplace=True)
 
