@@ -4,7 +4,7 @@ import pandas as pd
 configfile: "config/config.yaml"
 
 
-datasets = pd.read_csv("config/datasets.tsv", sep="\t")
+datasets = pd.read_csv("config/datasets.rds", sep="\t")
 samples = list(datasets.loc[:, "sample"].unique())
 datasets.set_index("sample", inplace=True)
 
@@ -24,7 +24,7 @@ def get_brmets_features(wc):
     hugo_files = datasets.loc[datasets["study"] == "brmets_hugo_gonzalez", "filename"]
 
     return expand(
-        f"{raw_data}/brmets_hugo_gonzalez/{{sample}}_features.tsv", sample=hugo_files
+        f"{raw_data}/brmets_hugo_gonzalez/{{sample}}_features.rds", sample=hugo_files
     )
 
 
@@ -32,7 +32,7 @@ def get_brmets_barcodes(wc):
     hugo_files = datasets.loc[datasets["study"] == "brmets_hugo_gonzalez", "filename"]
 
     return expand(
-        f"{raw_data}/brmets_hugo_gonzalez/{{sample}}_barcodes.tsv", sample=hugo_files
+        f"{raw_data}/brmets_hugo_gonzalez/{{sample}}_barcodes.rds", sample=hugo_files
     )
 
 
@@ -54,34 +54,35 @@ def get_resource(rule, resource):
 
 rule all:
     input:
-        f"{results}/reports/cells_brmets_hugo_gonzalez.tsv",
-        f"{results}/reports/cells_pancancer_dalia_barkley.tsv",
-        f"{results}/reports/cells_breast_sunny_wu.tsv",
-        f"{results}/reports/cells_pancancer_sunny_wu.tsv",
-        f"{results}/reports/cells_luad_kim_nayoung.tsv",
-        f"{results}/reports/cells_urothelial_chen.tsv",
-        f"{results}/reports/cells_adrenalnb_rui_chong.tsv",
-        f"{results}/reports/cells_luad_philip_bisschof.tsv",
-        f"{results}/reports/cells_pancancer_junbin_qian.tsv",
-        f"{results}/reports/cells_aml_audrey_lasry.tsv",
-        f"{results}/reports/cells_cll_ramon_massoni.tsv",
-        f"{results}/reports/cells_gbm_nourhan_abdelfattah.tsv",
-        f"{results}/reports/cells_synovial_jerby_arnon.tsv",
-        f"{results}/reports/cells_pdac_junya_peng.tsv",
-        f"{results}/reports/cells_cc_xiaosong_lu.tsv",
-        f"{results}/reports/cells_rcell_kevin_bi.tsv",
-        f"{results}/reports/cells_rcell_r_li.tsv",
-        f"{results}/reports/cells_pleural_rui_dong.tsv",
-        f"{results}/reports/cells_bone_yun_liu.tsv",
-        f"{results}/reports/cells_mmieloma_stephan_tirier.tsv",
-        f"{results}/reports/cells_all_maxime_caron.tsv",
-        f"{results}/reports/cells_crc_lei_zhang.tsv",
-        f"{results}/reports/cells_crc_florian_uhlitz.tsv",
-        f"{results}/reports/cells_bcc_catherine_dyao.tsv",
-        f"{results}/reports/cells_uvm_michael_durante.tsv",
-        f"{results}/reports/cells_esca_xiannian_zhang.tsv",
-        f"{results}/reports/cells_brca_bhupinder_pal.tsv",
-        f"{results}/reports/cells_nsclc_fengying_wu.tsv",
+        f"{results}/functional/brmets_hugo_gonzalez.rds",
+        f"{results}/functional/pancancer_dalia_barkley.rds",
+        f"{results}/functional/breast_sunny_wu.rds",
+        f"{results}/functional/pancancer_sunny_wu.rds",
+        f"{results}/functional/luad_kim_nayoung.rds",
+        f"{results}/functional/urothelial_chen.rds",
+        f"{results}/functional/adrenalnb_rui_chong.rds",
+        f"{results}/functional/luad_philip_bisschof.rds",
+        f"{results}/functional/pancancer_junbin_qian.rds",
+        f"{results}/functional/aml_audrey_lasry.rds",
+        f"{results}/functional/cll_ramon_massoni.rds",
+        f"{results}/functional/gbm_nourhan_abdelfattah.rds",
+        f"{results}/functional/synovial_jerby_arnon.rds",
+        f"{results}/functional/pdac_junya_peng.rds",
+        f"{results}/functional/cc_xiaosong_lu.rds",
+        f"{results}/functional/rcell_kevin_bi.rds",
+        f"{results}/functional/rcell_r_li.rds",
+        f"{results}/functional/pleural_rui_dong.rds",
+        f"{results}/functional/bone_yun_liu.rds",
+        f"{results}/functional/mmieloma_stephan_tirier.rds",
+        f"{results}/functional/all_maxime_caron.rds",
+        f"{results}/functional/crc_lei_zhang.rds",
+        f"{results}/functional/crc_florian_uhlitz.rds",
+        f"{results}/functional/bcc_catherine_dyao.rds",
+        f"{results}/functional/uvm_michael_durante.rds",
+        f"{results}/functional/esca_xiannian_zhang.rds",
+        f"{results}/functional/brca_bhupinder_pal.rds",
+        f"{results}/functional/nsclc_fengying_wu.rds",
 
 include: "rules/preprocessing.smk"
 include: "rules/beyondcell.smk"
+include: "rules/functional.smk"
