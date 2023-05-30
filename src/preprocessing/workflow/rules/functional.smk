@@ -352,7 +352,7 @@ rule fc_crc_lei_zhang:
 
 rule fc_florian_uhlitz:
     input:
-        malignant_cells=rules.bc_florian_uhlitz.output.malignant_list,
+        malignant_cells=rules.bc_crc_florian_uhlitz.output.malignant_list,
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/combined_gsets_functional.gmt",
     output:
         bc_list=f"{results}/functional/florian_uhlitz.rds",
