@@ -372,7 +372,7 @@ rule bc_crc_lei_zhang:
         "../scripts/crc_lei_zhang_beyondcell.R"
 
 
-rule bc_florian_uhlitz:
+rule bc_crc_florian_uhlitz:
     input:
         seurat_list=rules.sc_crc_florian_uhlitz_seurat.output.seurat_list,
     output:
