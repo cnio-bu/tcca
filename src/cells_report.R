@@ -21,11 +21,15 @@ full_report_annotated <- full_report %>%
         cancer_type = case_when(
             grepl(pattern = "adrenalnb", x = study) ~ "Adrenal Neuroblastoma",
             grepl(pattern = "aml", x = study) ~ "Acute Myeloid Leukemia",
+            grepl(pattern = "all", x = study) ~ "Acute lymphocytic Leukemia",
             grepl(pattern = "bone", x = study) ~ "Bone sarcoma",
             grepl(pattern = "breast", x = study) ~ "Breast cancer",
+            grepl(pattern = "brca", x = study) ~ "Breast cancer",
             grepl(pattern = "brmets", x = study) ~ "Brain metastasis",
             grepl(pattern = "cc", x = study) ~ "Cervical cancer",
             grepl(pattern = "cll", x = study) ~ "Chronic lymphocytic leukemia",
+            grepl(pattern = "crc", x = study) ~ "Colon adenocarcinoma",
+            grepl(pattern = "esca", x = study) ~ "Esophageal cancer",
             grepl(pattern = "gbm", x = study) ~ "Glioma/Glioblastoma",
             grepl(pattern = "luad", x = study) ~ "Lung adenocarcinoma",
             grepl(pattern = "pancancer", x = study) ~ "Pancancer",
@@ -34,7 +38,12 @@ full_report_annotated <- full_report %>%
             grepl(pattern = "rcell", x = study) ~ "Renal cell carcinoma",
             grepl(pattern = "synovial", x = study) ~ "Synovial sarcoma",
             grepl(pattern = "urothelial", x = study) ~ "Urothelial carcinoma",
-            grepl(pattern = "mmieloma", x = study) ~ "Multiple mieloma"
+            grepl(pattern = "mmieloma", x = study) ~ "Multiple mieloma",
+            grepl(pattern = "uvm", x = study) ~ "Uveal melanoma",
+            grepl(pattern = "nsclc", x = study) ~ "Non small cell lung cancer",
+            
+            
+            
             
         )
     ) %>%
