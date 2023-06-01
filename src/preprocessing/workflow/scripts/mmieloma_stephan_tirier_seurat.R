@@ -42,7 +42,7 @@ metadata <- read.csv(metadata, sep = "\t")
 rownames(metadata) <- metadata$Cell
 
 seu <- Seurat::CreateSeuratObject(counts = mat, meta.data = metadata)
-seu_list <- Seurat::SplitObject(object = seu, split.by = "Patient")
+seu_list <- Seurat::SplitObject(object = seu, split.by = "Sample")
 
 seu_list <- lapply(seu_list, filter_sc)
 seu_list <- lapply(seu_list, scale_data_find_variables)
