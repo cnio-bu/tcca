@@ -64,12 +64,12 @@ saveRDS(object = bcs, file = bc_list)
 
 ## Generate and save reports
 single_cell_report <- data.frame(
-    sample = sapply(seu, FUN = function(x){unique(x$Sample)}),
+    sample = sapply(seu, FUN = function(x){unique(x$Patient)}),
     cells = sapply(seu, FUN = function(x){ nrow(x@meta.data)})
 )
 
 bc_report <- data.frame(
-    sample = sapply(malignants, FUN = function(x){ unique(x$Sample)}),
+    sample = sapply(malignants, FUN = function(x){ unique(x$Patient)}),
     malignants = sapply(malignants, FUN = function(x){ nrow(x@meta.data)}),
     drug_sigs = sapply(bcs, FUN = function(x){ nrow(x@normalized)})
 )
