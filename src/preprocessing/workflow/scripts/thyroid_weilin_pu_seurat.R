@@ -10,8 +10,7 @@ where_to_save <- snakemake@output[["seurat_list"]]
 ## SNAKE params
 threads_to_use <- snakemake@threads
 
-## FOR SCEVAN
-setwd(dirname(where_to_save))
+
 
 ## Function definitions
 filter_sc <- function(sc) {
@@ -55,7 +54,7 @@ annotate_cna_clones <- function(sc){
         count_mtx = this_mat,
         sample = unique(sc$orig.ident),
         par_cores = threads_to_use,
-        SUBCLONES = TRUE,
+        SUBCLONES = FALSE,
         plotTree = FALSE,
         organism = "human",
         SCEVANsignatures = TRUE
@@ -84,6 +83,9 @@ for(sample in all_samples){
 names(all_seurat_objects) <- basename(all_samples)
 filtered_sc <- lapply(all_seurat_objects, filter_sc)
 filtered_sc <- lapply(filtered_sc, normalize_and_scale)
+
+## sample 18 fails in SCEVAN, temporarily removed
+filtered_sc <- filtered_sc[-17]
 
 ## Create the dir for CNA
 dir.create(cna_dir, showWarnings = FALSE)
