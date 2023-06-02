@@ -21,13 +21,13 @@ annotate_cell_cycle <- function(sc){
 
 # keep malignants cells only
 filter_malignants <- function(sc) {
-    if (sum(sc@meta.data$Celltype..major.lineage. == "Malignant") > 0) {
-        sc_filtered <- subset(x = sc, subset = Celltype..major.lineage. == "Malignant")
-        return(sc_filtered)
-    } else {
-        return(NULL)
-    }
-    
+  if (unique(sc$Tissue) != "Normal" & sum(sc@meta.data$Celltype..major.lineage. == "Malignant") > 0) {
+    sc_filtered <- subset(x = sc, subset = Celltype..major.lineage. == "Malignant")
+    return(sc_filtered)
+  } else {
+    return(NULL)
+  }
+  
 }
 
 ## Calculate bcscores sample wise, for each sample, for malignant pops. only
