@@ -413,6 +413,7 @@ rule fc_esca_xiannian_zhang:
     script:
         "../scripts/general_functional_enrichment.R"
 
+
 rule fc_crc_florian_uhlitz:
     input:
         malignant_cells=rules.bc_crc_florian_uhlitz.output.malignant_list,
@@ -427,6 +428,7 @@ rule fc_crc_florian_uhlitz:
         "../envs/beyondcell.yaml"
     script:
         "../scripts/general_functional_enrichment.R"
+
 
 rule fc_brca_bhupinder_pal:
     input:
@@ -450,6 +452,22 @@ rule fc_nsclc_fengying_wu:
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/combined_gsets_functional.gmt",
     output:
         bc_list=f"{results}/functional/nsclc_fengying_wu.rds",
+    threads: get_resource("default_bc", "threads")
+    resources:
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=get_resource("default_bc", "walltime"),
+    conda:
+        "../envs/beyondcell.yaml"
+    script:
+        "../scripts/general_functional_enrichment.R"
+
+
+rule fc_prad_sujun_chen:
+    input:
+        malignant_cells=rules.bc_prad_sujun_chen.output.malignant_list,
+        gsets="/storage/scratch01/shared/projects/bc-meta/reference/combined_gsets_functional.gmt",
+    output:
+        bc_list=f"{results}/functional/prad_sujun_chen.rds",
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),

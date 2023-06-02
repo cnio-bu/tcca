@@ -384,6 +384,7 @@ rule sc_crc_lei_zhang_seurat:
     script:
         "../scripts/crc_lei_zhang_seurat.R"
 
+
 rule sc_bcc_catherine_dyao_seurat:
     input:
         metadata=f"{raw_data}/bcc_catherine_dyao/BCC_GSE141526_CellMetainfo_table.tsv",
@@ -398,6 +399,7 @@ rule sc_bcc_catherine_dyao_seurat:
         "../envs/seurat.yaml"
     script:
         "../scripts/bcc_catherine_dyao_seurat.R"
+
 
 rule sc_uvm_michael_durante_seurat:
     input:
@@ -414,6 +416,7 @@ rule sc_uvm_michael_durante_seurat:
     script:
         "../scripts/uvm_michael_durante_seurat.R"
 
+
 rule sc_esca_xiannian_zhang_seurat:
     input:
         metadata=f"{raw_data}/esca_xiannian_zhang/ESCA_GSE160269_CellMetainfo_table.tsv",
@@ -428,6 +431,7 @@ rule sc_esca_xiannian_zhang_seurat:
         "../envs/seurat.yaml"
     script:
         "../scripts/esca_xiannian_zhang_seurat.R"
+
 
 rule sc_brca_bhupinder_pal_seurat:
     input:
@@ -444,6 +448,7 @@ rule sc_brca_bhupinder_pal_seurat:
     script:
         "../scripts/brca_bhupinder_pal_seurat.R"
 
+
 rule sc_nsclc_fengying_wu_seurat:
     input:
         metadata=f"{raw_data}/nsclc_fengying_wu/NSCLC_GSE148071_CellMetainfo_table.tsv",
@@ -459,14 +464,15 @@ rule sc_nsclc_fengying_wu_seurat:
     script:
         "../scripts/nsclc_fengying_wu_seurat.R"
 
+
 rule sc_thyroid_weilin_pu_seurat:
     output:
         seurat_list=f"{results}/seurat/raw/thyroid_weilin_pu.rds",
-        out_dir = directory(f"{results}/cna/thyroid_weilin_pu/output"),
+        out_dir=directory(f"{results}/cna/thyroid_weilin_pu/output"),
     params:
         data_dir=f"{raw_data}/thyroid_weilin_pu/GSE184362_RAW",
-        cna_res = f"{results}/cna/thyroid_weilin_pu",
-    threads: 16,
+        cna_res=f"{results}/cna/thyroid_weilin_pu",
+    threads: 16
     resources:
         mem_mb=120000,
         walltime=120,
@@ -474,3 +480,19 @@ rule sc_thyroid_weilin_pu_seurat:
         "../envs/scevan.yaml"
     script:
         "../scripts/thyroid_weilin_pu_seurat.R"
+
+
+rule sc_prad_sujun_chen_seurat:
+    input:
+        cell_annot=f"{raw_data}/prad_sujun_chen/PRAD_GSE141445_CellMetainfo_table.tsv",
+        raw_matrix=f"{raw_data}/prad_sujun_chen/data.raw.matrix.txt",
+    output:
+        seurat_list=f"{results}/seurat/raw/prad_sujun_chen.rds",
+    threads: get_resource("defaults", "threads")
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+        "../envs/seurat.yaml"
+    script:
+        "../scripts/prad_sujun_chen_seurat.R"

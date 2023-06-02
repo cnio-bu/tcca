@@ -405,6 +405,7 @@ rule bc_bcc_catherine_dyao:
     script:
         "../scripts/bcc_catherine_dyao_beyondcell.R"
 
+
 rule bc_uvm_michael_durante:
     input:
         seurat_list=rules.sc_uvm_michael_durante_seurat.output.seurat_list,
@@ -420,6 +421,7 @@ rule bc_uvm_michael_durante:
         "../envs/beyondcell.yaml"
     script:
         "../scripts/uvm_michael_durante_beyondcell.R"
+
 
 rule bc_esca_xiannian_zhang:
     input:
@@ -437,6 +439,7 @@ rule bc_esca_xiannian_zhang:
     script:
         "../scripts/esca_xiannian_zhang_beyondcell.R"
 
+
 rule bc_brca_bhupinder_pal:
     input:
         seurat_list=rules.sc_brca_bhupinder_pal_seurat.output.seurat_list,
@@ -453,6 +456,7 @@ rule bc_brca_bhupinder_pal:
     script:
         "../scripts/brca_bhupinder_pal_beyondcell.R"
 
+
 rule bc_nsclc_fengying_wu:
     input:
         seurat_list=rules.sc_nsclc_fengying_wu_seurat.output.seurat_list,
@@ -468,3 +472,20 @@ rule bc_nsclc_fengying_wu:
         "../envs/beyondcell.yaml"
     script:
         "../scripts/nsclc_fengying_wu_beyondcell.R"
+
+
+rule bc_prad_sujun_chen:
+    input:
+        seurat_list=rules.sc_prad_sujun_chen_seurat.output.seurat_list,
+    output:
+        malignant_list=f"{results}/seurat/malignant/prad_sujun_chen.rds",
+        bc_list=f"{results}/beyondcell/prad_sujun_chen.rds",
+        report=f"{results}/reports/cells_prad_sujun_chen.tsv",
+    threads: get_resource("default_bc", "threads")
+    resources:
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=get_resource("default_bc", "walltime"),
+    conda:
+        "../envs/beyondcell.yaml"
+    script:
+        "../scripts/prad_sujun_chen_beyondcell.R"
