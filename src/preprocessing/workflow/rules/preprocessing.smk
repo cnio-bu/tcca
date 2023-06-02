@@ -472,10 +472,10 @@ rule sc_thyroid_weilin_pu_seurat:
     params:
         data_dir=f"{raw_data}/thyroid_weilin_pu/GSE184362_RAW",
         cna_res=f"{results}/cna/thyroid_weilin_pu",
-    threads: 16
+    threads: 10
     resources:
-        mem_mb=120000,
-        walltime=120,
+        mem_mb=300000,
+        walltime=240,
     conda:
         "../envs/scevan.yaml"
     script:
