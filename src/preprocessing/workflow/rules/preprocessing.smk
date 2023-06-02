@@ -499,6 +499,8 @@ rule sc_prad_sujun_chen_seurat:
 
 
 rule sc_skcm_chao_zhang_seurat:
+    input:
+        metadata=f"{raw_data}/skcm_chao_zhang/GSE215121_RAW/patient_metadata.tsv",
     output:
         seurat_list=f"{results}/seurat/raw/skcm_chao_zhang.rds",
         out_dir=directory(f"{results}/cna/skcm_chao_zhang/output"),
@@ -513,4 +515,3 @@ rule sc_skcm_chao_zhang_seurat:
         "../envs/scevan.yaml"
     script:
         "../scripts/skcm_chao_zhang_seurat.R"
-        
