@@ -56,6 +56,10 @@ metadata <- data.table::fread(cell_annot) %>%
 rownames(metadata) <- metadata$Cell
 metadata$Cell <- NULL 
 
+## Some cells in the raw were not annotated
+cells_in_common <- intersect(colnames(mat), rownames(metadata))
+mat <- mat[, cells_in_common]
+
 ## Merge data + metadata
 seu <- Seurat::CreateSeuratObject(counts = mat,
                                   project = "prad_sujun_chen",
