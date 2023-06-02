@@ -496,3 +496,21 @@ rule sc_prad_sujun_chen_seurat:
         "../envs/seurat.yaml"
     script:
         "../scripts/prad_sujun_chen_seurat.R"
+
+
+rule sc_skcm_chao_zhang_seurat:
+    output:
+        seurat_list=f"{results}/seurat/raw/skcm_chao_zhang.rds",
+        out_dir=directory(f"{results}/cna/skcm_chao_zhang/output"),
+    params:
+        data_dir=f"{raw_data}/skcm_chao_zhang/GSE215121_RAW",
+        cna_res=f"{results}/cna/skcm_chao_zhang",
+    threads: 10
+    resources:
+        mem_mb=300000,
+        walltime=240,
+    conda:
+        "../envs/scevan.yaml"
+    script:
+        "../scripts/skcm_chao_zhang_seurat.R"
+        
