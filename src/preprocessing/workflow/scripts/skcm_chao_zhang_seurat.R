@@ -59,13 +59,12 @@ normalize_and_scale <- function(sc) {
 }
 
 fill_clinical <- function(sc) {
-    this_meta <-  meta[meta$SampleID == unique(sc$orig.ident),] %>%
-        full_join(y = data.frame(cell_id = colnames(sc)), by = character()) %>%
+    
+    this_meta <- meta %>%
+        filter(SampleID == my_sample) %>%
+        uncount(weights = ncol(sc)) %>%
         as.data.frame()
-    
-    rownames(this_meta) <- this_meta$cell_id
-    this_meta$cell_id <- NULL
-    
+    rownames(this_meta) <- colnames(sc)
     sc <- AddMetaData(object = sc, metadata = this_meta)
     return(sc)
     
@@ -112,7 +111,13 @@ filtered_sc <- lapply(all_seurat_objects, filter_sc)
 filtered_sc <- lapply(filtered_sc, normalize_and_scale)
 
 #Fill clinical data
-meta <- read.csv(metadata, header=TRUE, row.names= NULL, sep="\t")  
+meta <- read.csv(
+    metadata,
+    header=TRUE,
+    row.names= NULL,
+    sep="\t"
+    )  
+
 filtered_sc_clinical <- lapply(filtered_sc, fill_clinical)
 
 # Create the dir for CNA
