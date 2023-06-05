@@ -55,6 +55,8 @@ requirements:
     - r-ggrepel
     - r-knitr
     - r-rmarkdown
+    - r-yagst
+
 test:
   commands:
     - $R -e "library('SCEVAN')" # [not win]
