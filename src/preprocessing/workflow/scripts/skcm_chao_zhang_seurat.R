@@ -61,7 +61,7 @@ normalize_and_scale <- function(sc) {
 fill_clinical <- function(sc) {
     
     this_meta <- meta %>%
-        filter(SampleID == my_sample) %>%
+        filter(SampleID == as.character(unique(sc$orig.ident))) %>%
         uncount(weights = ncol(sc)) %>%
         as.data.frame()
     rownames(this_meta) <- colnames(sc)
