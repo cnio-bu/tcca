@@ -77,7 +77,7 @@ annotate_cna_clones <- function(sc){
         count_mtx = this_mat,
         sample = unique(sc$orig.ident),
         par_cores = threads_to_use,
-        SUBCLONES = FALSE,
+        SUBCLONES = TRUE,
         plotTree = FALSE,
         organism = "human",
         SCEVANsignatures = TRUE

@@ -477,7 +477,7 @@ rule sc_thyroid_weilin_pu_seurat:
         mem_mb=300000,
         walltime=240,
     conda:
-        "../envs/scevan.yaml"
+        "scevan"
     script:
         "../scripts/thyroid_weilin_pu_seurat.R"
 
@@ -512,6 +512,6 @@ rule sc_skcm_chao_zhang_seurat:
         mem_mb=300000,
         walltime=240,
     conda:
-        "../envs/scevan.yaml"
+        "scevan"
     script:
         "../scripts/skcm_chao_zhang_seurat.R"
