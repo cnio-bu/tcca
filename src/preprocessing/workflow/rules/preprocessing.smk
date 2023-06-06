@@ -519,7 +519,7 @@ rule sc_skcm_chao_zhang_seurat:
 rule sc_chol_min_zhang_seurat:
     input:
         cell_annot=f"{raw_data}/chol_min_zhang/CHOL_GSE138709_CellMetainfo_table.tsv",
-        raw_matrix=f"{raw_data}/chol_min_zhang/CHOL_GSE138709_expression.h5",
+        matrix=f"{raw_data}/chol_min_zhang/CHOL_GSE138709_expression.h5",
     output:
         seurat_list=f"{results}/seurat/raw/chol_min_zhang.rds",
     threads: get_resource("defaults", "threads"),

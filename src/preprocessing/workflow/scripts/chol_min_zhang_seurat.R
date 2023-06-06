@@ -3,7 +3,7 @@ library("tidyverse")
 
 ## SNAKEMAKE I/O
 mat_file      <- snakemake@input[["matrix"]]
-metadata      <- snakemake@input[["metadata"]]
+metadata      <- snakemake@input[["cell_annot"]]
 where_to_save <- snakemake@output[["seurat_list"]]
 
 ## Function definitions
