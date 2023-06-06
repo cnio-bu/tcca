@@ -506,3 +506,19 @@ rule bc_chol_min_zhang:
         "../envs/beyondcell.yaml"
     script:
         "../scripts/chol_min_zhang_beyondcell.R"
+
+rule bc_skcm_chao_zhang:
+    input:
+        seurat_list=rules.sc_skcm_chao_zhang_seurat.output.seurat_list,
+    output:
+        malignant_list=f"{results}/seurat/malignant/skcm_chao_zhang.rds",
+        bc_list=f"{results}/beyondcell/skcm_chao_zhang.rds",
+        report=f"{results}/reports/skcm_chao_zhang.tsv",
+    threads: get_resource("default_bc", "threads"),
+    resources:
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=get_resource("default_bc", "walltime"),
+    conda:
+        "../envs/beyondcell.yaml"
+    script:
+        "../scripts/skcm_chao_zhang_beyondcell.R"
