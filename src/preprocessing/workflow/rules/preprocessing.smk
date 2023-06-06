@@ -515,3 +515,18 @@ rule sc_skcm_chao_zhang_seurat:
         "scevan"
     script:
         "../scripts/skcm_chao_zhang_seurat.R"
+
+rule sc_chol_min_zhang_seurat:
+    input:
+        cell_annot=f"{raw_data}/chol_min_zhang/CHOL_GSE138709_CellMetainfo_table.tsv",
+        raw_matrix=f"{raw_data}/chol_min_zhang/CHOL_GSE138709_expression.h5",
+    output:
+        seurat_list=f"{results}/seurat/raw/chol_min_zhang.rds",
+    threads: get_resource("defaults", "threads"),
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+        "../envs/seurat.yaml"
+    script:
+        "../scripts/chol_min_zhang_seurat.R"

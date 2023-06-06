@@ -476,3 +476,19 @@ rule fc_prad_sujun_chen:
         "../envs/beyondcell.yaml"
     script:
         "../scripts/general_functional_enrichment.R"
+
+
+rule fc_chol_min_zhang:
+    input:
+        malignant_cells=rules.bc_chol_min_zhang.output.malignant_list,
+        gsets="/storage/scratch01/shared/projects/bc-meta/reference/combined_gsets_functional.gmt",
+    output:
+        bc_list=f"{results}/functional/bc_chol_min_zhang.rds",
+    threads: get_resource("default_bc", "threads")
+    resources:
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=get_resource("default_bc", "walltime"),
+    conda:
+        "../envs/beyondcell.yaml"
+    script:
+        "../scripts/general_functional_enrichment.R"
