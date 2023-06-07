@@ -48,7 +48,6 @@ normalize_and_scale <- function(sc) {
 }
 
 annotate_cna_clones <- function(sc){
-    
     this_mat <- Seurat::GetAssayData(sc, slot = "counts")
     cna_pred <- SCEVAN::pipelineCNA(
         count_mtx = this_mat,
@@ -70,6 +69,7 @@ all_seurat_objects <- list()
 for(sample in all_samples){
     sample_name <- basename(sample)
     mat <- Seurat::Read10X(data.dir = sample)
+    colnames(mat) <- gsub("\\.", "-", colnames(mat))
     seu <- Seurat::CreateSeuratObject(
         counts = mat,
         assay = "RNA",
@@ -85,7 +85,8 @@ filtered_sc <- lapply(all_seurat_objects, filter_sc)
 filtered_sc <- lapply(filtered_sc, normalize_and_scale)
 
 ## sample 18 fails in SCEVAN, temporarily removed
-filtered_sc <- filtered_sc[-17]
+filtered_sc <- filtered_sc[-4]
+filtered_sc <- filtered_sc[-16]
 
 ## Create the dir for CNA
 dir.create(cna_dir, showWarnings = FALSE)
