@@ -84,6 +84,4 @@ filtered_sc <- lapply(all_seurat_objects, filter_sc)
 filtered_sc <- lapply(filtered_sc, normalize_and_scale)
 filtered_sc <- lapply(filtered_sc, annotate_clinical_data)
 
-
-
-saveRDS(object = annotated_sc, file = where_to_save)
+saveRDS(object = filtered_sc, file = where_to_save)
