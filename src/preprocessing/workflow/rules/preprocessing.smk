@@ -356,9 +356,10 @@ rule sc_all_maxime_caron_seurat:
 rule sc_crc_florian_uhlitz_seurat:
     input:
         metadata=f"{raw_data}/crc_florian_uhlitz/CRC_GSE166555_CellMetainfo_table.tsv",
-        matrix=f"{raw_data}/crc_florian_uhlitz/CRC_GSE166555_expression.h5",
     output:
         seurat_list=f"{results}/seurat/raw/crc_florian_uhlitz.rds",
+    params:
+        data_dir=f"{raw_data}/crc_florian_uhlitz/GSE166555_RAW"
     threads: get_resource("defaults", "threads")
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
