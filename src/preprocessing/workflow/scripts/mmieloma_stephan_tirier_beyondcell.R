@@ -21,8 +21,8 @@ annotate_cell_cycle <- function(sc){
 
 ## For this study, filter out non malignant cells
 filter_malignant <- function(sc) {
-    if (sum(sc$Celltype..major.lineage. == "Malignant") > 0) {
-        sc_filtered <- subset(x = sc, subset = Celltype..major.lineage. == "Malignant")
+    if (sum(sc$major_celltype == "PCs") > 0) {
+        sc_filtered <- subset(x = sc, subset = major_celltype == "PCs")
         return(sc_filtered)
         
     } else {
@@ -67,12 +67,12 @@ saveRDS(object = bcs, file = bc_list)
 
 ## Generate and save reports
 single_cell_report <- data.frame(
-    sample = sapply(seu, FUN = function(x){unique(x$Sample)}),
+    sample = sapply(seu, FUN = function(x){unique(x$PID_sample_new)}),
     cells = sapply(seu, FUN = function(x){nrow(x@meta.data)})
 )
 
 bc_report <- data.frame(
-    sample = sapply(malignants, FUN = function(x){ unique(x$Sample)}),
+    sample = sapply(malignants, FUN = function(x){ unique(x$PID_sample_new)}),
     malignants = sapply(malignants, FUN = function(x){ nrow(x@meta.data)}),
     drug_sigs = sapply(bcs, FUN = function(x){ nrow(x@normalized)})
 )

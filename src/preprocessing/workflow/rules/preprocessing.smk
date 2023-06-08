@@ -306,10 +306,11 @@ rule sc_bone_yun_liu_seurat:
 
 rule sc_mmieloma_stephan_tirier_seurat:
     input:
-        metadata=f"{raw_data}/mmieloma_stephan_tirier/MM_GSE161801_CellMetainfo_table.tsv",
-        matrix=f"{raw_data}/mmieloma_stephan_tirier/MM_GSE161801_expression.h5",
+        metadata=f"{raw_data}/mmieloma_stephan_tirier/GSE161801_K43R_metadata_table.csv",
     output:
         seurat_list=f"{results}/seurat/raw/mmieloma_stephan_tirier.rds",
+    params:
+        data_dir=f"{raw_data}/mmieloma_stephan_tirier/GSE161801_RAW",
     threads: get_resource("defaults", "threads")
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
