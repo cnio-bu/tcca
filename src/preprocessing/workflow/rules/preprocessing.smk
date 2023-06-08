@@ -533,9 +533,9 @@ rule sc_chol_min_zhang_seurat:
 
 rule sc_brmets_jana_biermann_seurat:
     input:
-        cell_annot=f"{raw_data}/brmets_jan_biermann/GSE200218_sc_sn_metadata.csv",
+        cell_annot=f"{raw_data}/brmets_jana_biermann/GSE200218_sc_sn_metadata.csv",
     output:
-        seurat_list=f"{results}/seurat/raw/chol_min_zhang.rds",
+        seurat_list=f"{results}/seurat/raw/brmets_jana_biermann.rds",
     params:
         data_dir=f"{raw_data}/brmets_jana_biermann/GSE200218_RAW",
     threads: get_resource("defaults", "threads"),

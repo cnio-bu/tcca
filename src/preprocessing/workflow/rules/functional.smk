@@ -510,10 +510,10 @@ rule fc_skcm_chao_zhang:
 
 rule fc_brmets_jana_biermann:
     input:
-        malignant_cells=rules.bc_skcm_chao_zhang.output.malignant_list,
+        malignant_cells=rules.bc_brmets_jana_biermann.output.malignant_list,
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/combined_gsets_functional.gmt",
     output:
-        bc_list=f"{results}/functional/skcm_chao_zhang.rds",
+        bc_list=f"{results}/functional/brmets_jana_biermann.rds",
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
