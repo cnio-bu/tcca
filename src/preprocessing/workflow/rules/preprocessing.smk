@@ -530,3 +530,19 @@ rule sc_chol_min_zhang_seurat:
         "../envs/seurat.yaml"
     script:
         "../scripts/chol_min_zhang_seurat.R"
+
+rule sc_brmets_jana_biermann_seurat:
+    input:
+        cell_annot=f"{raw_data}/brmets_jan_biermann/GSE200218_sc_sn_metadata.csv",
+    output:
+        seurat_list=f"{results}/seurat/raw/chol_min_zhang.rds",
+    params:
+        data_dir=f"{raw_data}/brmets_jana_biermann/GSE200218_RAW",
+    threads: get_resource("defaults", "threads"),
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+        "../envs/seurat.yaml"
+    script:
+        "../scripts/brmets_jana_biermann_seurat.R"

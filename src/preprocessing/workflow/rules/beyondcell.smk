@@ -513,7 +513,7 @@ rule bc_skcm_chao_zhang:
     output:
         malignant_list=f"{results}/seurat/malignant/skcm_chao_zhang.rds",
         bc_list=f"{results}/beyondcell/skcm_chao_zhang.rds",
-        report=f"{results}/reports/skcm_chao_zhang.tsv",
+        report=f"{results}/reports/cells_skcm_chao_zhang.tsv",
     threads: get_resource("default_bc", "threads"),
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -522,3 +522,19 @@ rule bc_skcm_chao_zhang:
         "../envs/beyondcell.yaml"
     script:
         "../scripts/skcm_chao_zhang_beyondcell.R"
+
+rule bc_brmets_jana_biermann:
+    input:
+        seurat_list=rules.sc_brmets_jana_biermann_seurat.output.seurat_list,
+    output:
+        malignant_list=f"{results}/seurat/malignant/brmets_jana_biermann.rds",
+        bc_list=f"{results}/beyondcell/brmets_jana_biermann.rds",
+        report=f"{results}/reports/cells_brmets_jana_biermann.tsv",
+    threads: get_resource("default_bc", "threads"),
+    resources:
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=get_resource("default_bc", "walltime"),
+    conda:
+        "../envs/beyondcell.yaml"
+    script:
+        "../scripts/brmets_jana_biermann_beyondcell.R"
