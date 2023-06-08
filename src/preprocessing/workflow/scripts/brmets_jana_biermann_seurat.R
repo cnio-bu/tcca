@@ -42,19 +42,18 @@ normalize_and_scale <- function(sc) {
 }
 
 annotate_clinical_data <- function(sc){
-    common_cells <- intersect(colnames(sc), meta.data$barcode)
     this_meta <- meta.data %>%
-        filter(barcode %in% common_cells,
-               (sequencing == "Single cells" & 
-                    batch == "CD45neg" | sequencing == "Single nuclei"),
-               patient == unique(sc$orig.ident)
-        )
+        filter(patient == unique(sc$orig.ident)) %>%
+        filter(sequencing == "Single cells" & batch == "CD45neg" | sequencing == "Single nuclei") %>%
+        as.data.frame()
     
+    common_cells <- intersect(colnames(sc), this_meta$barcode)
+    this_meta <- this_meta[this_meta$barcode %in% common_cells, ]
     rownames(this_meta) <- this_meta$barcode
-    
     sc <- sc[, common_cells]
     sc <- AddMetaData(sc, metadata = this_meta)
     return(sc)
+
 }
 
 all_samples <- list.files(data_directory, full.names = TRUE)
