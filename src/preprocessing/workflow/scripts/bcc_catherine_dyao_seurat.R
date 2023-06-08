@@ -2,9 +2,9 @@ library("Seurat")
 library("tidyverse")
 
 ## SNAKEMAKE I/O
-mat_file      <- snakemake@input[["matrix"]]
 metadata      <- snakemake@input[["metadata"]]
 where_to_save <- snakemake@output[["seurat_list"]]
+data_directory <- snakemake@params[["data_dir"]]
 
 ## Function definitions
 filter_sc <- function(sc) {
@@ -31,28 +31,55 @@ filter_sc <- function(sc) {
     return(new_filtered_sc)
 }
 
-scale_data_find_variables <- function(sc) {
+normalize_and_scale <- function(sc) {
+    sc <- Seurat::NormalizeData(sc,
+                                normalization.method = "LogNormalize",
+                                scale.factor = 10000
+    )
     sc <- Seurat::FindVariableFeatures(sc, selection.method = "vst")
     sc <- Seurat::ScaleData(sc, features = rownames(sc))
     return(sc)
 }
 
-mat <- Seurat::Read10X_h5(filename = mat_file)
+annotate_clinical_data <- function(sc){
+    this_meta <- metadata %>%
+        filter(Sample == unique(sc$orig.ident)) %>%
+        mutate(
+            barcode = str_remove_all(string = Cell, pattern = "^P.*@")
+        ) %>%
+        as.data.frame()
+    
+    common_cells <- intersect(colnames(sc), this_meta$barcode)
+    this_meta <- this_meta[this_meta$barcode %in% common_cells, ]
+    rownames(this_meta) <- this_meta$barcode
+    sc <- sc[, common_cells]
+    sc <- AddMetaData(sc, metadata = this_meta)
+    return(sc)
+    
+}
+
+
+all_samples <- list.files(data_directory, full.names = TRUE)
+seu_list <- list()
+
+for(sample in all_samples){
+    sample_name <- basename(sample)
+    mat <- Seurat::Read10X(data.dir = sample)
+    seu <- Seurat::CreateSeuratObject(
+        counts = mat,
+        assay = "RNA",
+        project = sample_name
+    )
+    seu_list <- c(seu_list, seu)
+}
+
+names(seu_list) <- basename(all_samples)
+
 metadata <- data.table::fread(input = metadata)  %>%
     as.data.frame()
 
-rownames(metadata) <- metadata$Cell
-metadata$Cell <- NULL
-
-seu <- Seurat::CreateSeuratObject(
-    counts = mat,
-    meta.data = metadata,
-    project = "Basal_cell_carcinoma"
-    )
-
-seu_list <- Seurat::SplitObject(object = seu, split.by = "Sample")
-
 seu_list <- lapply(seu_list, filter_sc)
-seu_list <- lapply(seu_list, scale_data_find_variables)
+seu_list <- lapply(seu_list, normalize_and_scale)
+seu_list <- lapply(seu_list, annotate_clinical_data)
 
 saveRDS(seu_list, where_to_save)

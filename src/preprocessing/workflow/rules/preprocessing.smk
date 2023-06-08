@@ -388,9 +388,10 @@ rule sc_crc_lei_zhang_seurat:
 rule sc_bcc_catherine_dyao_seurat:
     input:
         metadata=f"{raw_data}/bcc_catherine_dyao/BCC_GSE141526_CellMetainfo_table.tsv",
-        matrix=f"{raw_data}/bcc_catherine_dyao/BCC_GSE141526_expression.h5",
     output:
         seurat_list=f"{results}/seurat/raw/bcc_catherine_dyao.rds",
+    params:
+        data_dir=f"{raw_data}/bcc_catherine_dyao/GSE141526_RAW"
     threads: get_resource("defaults", "threads")
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
