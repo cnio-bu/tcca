@@ -437,9 +437,10 @@ rule sc_esca_xiannian_zhang_seurat:
 rule sc_brca_bhupinder_pal_seurat:
     input:
         metadata=f"{raw_data}/brca_bhupinder_pal/BRCA_GSE161529_CellMetainfo_table.tsv",
-        matrix=f"{raw_data}/brca_bhupinder_pal/BRCA_GSE161529_expression.h5",
     output:
         seurat_list=f"{results}/seurat/raw/brca_bhupinder_pal.rds",
+    params:
+        data_dir=f"{raw_data}/brca_bhupinder_pal/GSE161529_RAW"
     threads: get_resource("defaults", "threads")
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
