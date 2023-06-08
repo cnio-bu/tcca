@@ -81,7 +81,6 @@ rule all:
         f"{results}/functional/uvm_michael_durante.rds",
         f"{results}/functional/esca_xiannian_zhang.rds",
         f"{results}/functional/brca_bhupinder_pal.rds",
-        f"{results}/functional/nsclc_fengying_wu.rds",
         f"{results}/functional/prad_sujun_chen.rds",
         f"{results}/functional/chol_min_zhang.rds",
         f"{results}/functional/skcm_chao_zhang.rds",
