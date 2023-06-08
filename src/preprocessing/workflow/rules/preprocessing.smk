@@ -273,9 +273,10 @@ rule sc_cc_xiaosong_lu_seurat:
 rule sc_pleural_rui_dong_seurat:
     input:
         metadata=f"{raw_data}/pleural_rui_dong/PPB_GSE163678_CellMetainfo_table.tsv",
-        matrix=f"{raw_data}/pleural_rui_dong/PPB_GSE163678_expression.h5",
     output:
         seurat_list=f"{results}/seurat/raw/pleural_rui_dong.rds",
+    params:
+        data_dir=f"{raw_data}/pleural_rui_dong/GSE141526_RAW"
     threads: get_resource("defaults", "threads")
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
