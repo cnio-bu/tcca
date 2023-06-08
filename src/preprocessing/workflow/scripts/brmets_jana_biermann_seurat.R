@@ -73,16 +73,16 @@ for(sample in all_samples){
     
 }
 
-names(all_seurat_objects) <- basename(all_samples)
-filtered_sc <- lapply(all_seurat_objects, filter_sc)
-filtered_sc <- lapply(filtered_sc, normalize_and_scale)
-filtered_sc <- lapply(filtered_sc, annotate_clinical_data)
-
 ## Load and annotate metadata
 meta.data <- data.table::fread(cell_annot) %>%
     select(patient, barcode, ID, sequencing,  organ, batch, cell_type_main,
            malignant)  %>%
     as.data.frame()
+
+names(all_seurat_objects) <- basename(all_samples)
+filtered_sc <- lapply(all_seurat_objects, filter_sc)
+filtered_sc <- lapply(filtered_sc, normalize_and_scale)
+filtered_sc <- lapply(filtered_sc, annotate_clinical_data)
 
 
 
