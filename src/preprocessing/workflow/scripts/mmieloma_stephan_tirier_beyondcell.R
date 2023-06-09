@@ -47,8 +47,8 @@ get_bcscores <- function(sc){
 
 ## Perform operations over list
 seu <- readRDS(file = full_seurat_list)
-## Sample 71 has very few cells (14) and annotate cell cycle will fail 
-seu <- seu[-71]
+## Sample 1  has very few cells and annotate cell cycle will fail 
+seu <- seu[-1]
 seu <- lapply(X = seu, FUN = annotate_cell_cycle)
 
 malignants <- lapply(X = seu, FUN = filter_malignant)
