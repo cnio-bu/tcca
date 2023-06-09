@@ -75,7 +75,6 @@ rule all:
         f"{results}/functional/bone_yun_liu.rds",
         f"{results}/functional/mmieloma_stephan_tirier.rds",
         f"{results}/functional/all_maxime_caron.rds",
-        f"{results}/functional/crc_lei_zhang.rds",
         f"{results}/functional/crc_florian_uhlitz.rds",
         f"{results}/functional/bcc_catherine_dyao.rds",
         f"{results}/functional/uvm_michael_durante.rds",

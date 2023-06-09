@@ -333,23 +333,6 @@ rule fc_all_maxime_caron:
     script:
         "../scripts/general_functional_enrichment.R"
 
-
-rule fc_crc_lei_zhang:
-    input:
-        malignant_cells=rules.bc_crc_lei_zhang.output.malignant_list,
-        gsets="/storage/scratch01/shared/projects/bc-meta/reference/combined_gsets_functional.gmt",
-    output:
-        bc_list=f"{results}/functional/crc_lei_zhang.rds",
-    threads: get_resource("default_bc", "threads")
-    resources:
-        mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
-    conda:
-        "../envs/beyondcell.yaml"
-    script:
-        "../scripts/general_functional_enrichment.R"
-
-
 rule fc_florian_uhlitz:
     input:
         malignant_cells=rules.bc_crc_florian_uhlitz.output.malignant_list,
