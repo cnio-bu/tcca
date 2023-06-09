@@ -519,3 +519,17 @@ rule sc_brmets_jana_biermann_seurat:
         "../envs/seurat.yaml"
     script:
         "../scripts/brmets_jana_biermann_seurat.R"
+
+rule sc_cell_lines_gabriella_kinker_seurat:
+    input:
+        rdata=f"{raw_data}/cell_lines_gabriella_kinker/pancancer_annotated.rds",
+    output:
+        seurat_list=f"{results}/seurat/raw/cell_lines_gabriella_kinker.rds",
+    threads: get_resource("defaults", "threads"),
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+        "../envs/seurat.yaml"
+    script:
+        "../scripts/cell_lines_gabriella_kinker_seurat.R"

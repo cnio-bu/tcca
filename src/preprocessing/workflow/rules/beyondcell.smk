@@ -503,3 +503,19 @@ rule bc_brmets_jana_biermann:
         "../envs/beyondcell.yaml"
     script:
         "../scripts/brmets_jana_biermann_beyondcell.R"
+
+rule bc_cell_lines_gabriella_kinker:
+    input:
+        seurat_list=rules.sc_cell_lines_gabriella_kinker.output.seurat_list,
+    output:
+        malignant_list=f"{results}/seurat/malignant/cell_lines_gabriella_kinker.rds",
+        bc_list=f"{results}/beyondcell/cell_lines_gabriella_kinker.rds",
+        report=f"{results}/reports/cells_cell_lines_gabriella_kinker.tsv",
+    threads: get_resource("default_bc", "threads"),
+    resources:
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=get_resource("default_bc", "walltime"),
+    conda:
+        "../envs/beyondcell.yaml"
+    script:
+        "../scripts/cell_lines_gabriella_kinker_beyondcell.R"

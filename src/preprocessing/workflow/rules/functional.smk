@@ -489,3 +489,18 @@ rule fc_brmets_jana_biermann:
         "../envs/beyondcell.yaml"
     script:
         "../scripts/general_functional_enrichment.R"
+
+rule fc_cell_lines_gabriella_kinker:
+    input:
+        malignant_cells=rules.bc_cell_lines_gabriella_kinker.output.malignant_list,
+        gsets="/storage/scratch01/shared/projects/bc-meta/reference/combined_gsets_functional.gmt",
+    output:
+        bc_list=f"{results}/functional/cell_lines_gabriella_kinker.rds",
+    threads: get_resource("default_bc", "threads")
+    resources:
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=get_resource("default_bc", "walltime"),
+    conda:
+        "../envs/beyondcell.yaml"
+    script:
+        "../scripts/general_functional_enrichment.R"

@@ -83,7 +83,8 @@ rule all:
         f"{results}/functional/prad_sujun_chen.rds",
         f"{results}/functional/chol_min_zhang.rds",
         f"{results}/functional/skcm_chao_zhang.rds",
-        f"{results}/functional/brmets_jana_biermann.rds"
+        f"{results}/functional/brmets_jana_biermann.rds",
+        f"{results}/functional/cell_lines_gabriella_kinker.rds"
 
 include: "rules/preprocessing.smk"
 include: "rules/beyondcell.smk"
