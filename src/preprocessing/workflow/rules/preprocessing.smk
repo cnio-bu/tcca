@@ -422,7 +422,8 @@ rule sc_uvm_michael_durante_seurat:
 rule sc_esca_xiannian_zhang_seurat:
     input:
         metadata=f"{raw_data}/esca_xiannian_zhang/ESCA_GSE160269_CellMetainfo_table.tsv",
-        matrix=f"{raw_data}/esca_xiannian_zhang/ESCA_GSE160269_expression.h5",
+        matrix1=f"{raw_data}/esca_xiannian_zhang/GSE160269/CD45neg_UMIs.txt",
+        matrix2=f"{raw_data}/esca_xiannian_zhang/GSE160269/CD45pos_UMIs.txt",
     output:
         seurat_list=f"{results}/seurat/raw/esca_xiannian_zhang.rds",
     threads: get_resource("defaults", "threads")

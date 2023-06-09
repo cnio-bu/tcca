@@ -2,7 +2,8 @@ library("Seurat")
 library("tidyverse")
 
 ## SNAKEMAKE I/O
-mat_file      <- snakemake@input[["matrix"]]
+mat_file1      <- snakemake@input[["matrix1"]] #CD45- cells
+mat_file2      <- snakemake@input[["matrix2"]] #CD45+ cells
 metadata      <- snakemake@input[["metadata"]]
 where_to_save <- snakemake@output[["seurat_list"]]
 
@@ -31,28 +32,57 @@ filter_sc <- function(sc) {
     return(new_filtered_sc)
 }
 
-scale_data_find_variables <- function(sc) {
+normalize_and_scale <- function(sc) {
+    sc <- Seurat::NormalizeData(sc,
+                                normalization.method = "LogNormalize",
+                                scale.factor = 10000
+    )
     sc <- Seurat::FindVariableFeatures(sc, selection.method = "vst")
     sc <- Seurat::ScaleData(sc, features = rownames(sc))
     return(sc)
 }
 
-mat <- Seurat::Read10X_h5(filename = mat_file)
+annotate_clinical_data <- function(sc){
+    this_meta <- metadata %>%
+        mutate(
+            barcode = gsub("\\-", "\\.", str_remove_all(string = Cell, pattern = ".*@"))
+        ) %>%
+        as.data.frame()
+    
+    common_cells <- intersect(colnames(sc), this_meta$barcode)
+    this_meta <- this_meta[this_meta$barcode %in% common_cells, ]
+    rownames(this_meta) <- this_meta$barcode
+    sc <- sc[, common_cells]
+    sc <- AddMetaData(sc, metadata = this_meta)
+    return(sc)
+    
+}
+
+mat1 <- data.table::fread(mat_file1) %>%
+    data.frame(row.names = 1)
+mat2 <- data.table::fread(mat_file2) %>%
+    data.frame(row.names = 1)
+
 metadata <- data.table::fread(input = metadata)  %>%
     as.data.frame()
 
-rownames(metadata) <- metadata$Cell
-metadata$Cell <- NULL
-
-seu <- Seurat::CreateSeuratObject(
-    counts = mat,
-    meta.data = metadata,
+seu1 <- Seurat::CreateSeuratObject(
+    counts = mat1,
     project = "esca"
-    )
+)
 
-seu_list <- Seurat::SplitObject(object = seu, split.by = "Sample")
+seu2 <- Seurat::CreateSeuratObject(
+    counts = mat2,
+    project = "esca"
+)
+
+seu1_annotated <- annotate_clinical_data(seu1)
+seu2_annotated <- annotate_clinical_data(seu2)
+seu_list1 <- Seurat::SplitObject(object = seu1_annotated, split.by = "Sample")
+seu_list2 <- Seurat::SplitObject(object = seu2_annotated, split.by = "Sample")
+seu_list <- c(seu_list1, seu_list2) 
 
 seu_list <- lapply(seu_list, filter_sc)
-seu_list <- lapply(seu_list, scale_data_find_variables)
+seu_list <- lapply(seu_list, normalize_and_scale)
 
 saveRDS(seu_list, where_to_save)
