@@ -506,7 +506,7 @@ rule bc_brmets_jana_biermann:
 
 rule bc_cell_lines_gabriella_kinker:
     input:
-        seurat_list=rules.sc_cell_lines_gabriella_kinker.output.seurat_list,
+        seurat_list=rules.sc_cell_lines_gabriella_kinker_seurat.output.seurat_list,
     output:
         malignant_list=f"{results}/seurat/malignant/cell_lines_gabriella_kinker.rds",
         bc_list=f"{results}/beyondcell/cell_lines_gabriella_kinker.rds",
