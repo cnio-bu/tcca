@@ -47,7 +47,7 @@ non_missing_cells <- seu_obj@meta.data %>%
     rownames()
 
 seu_obj <- seu_obj[, non_missing_cells]
-seu_list <- Seurat::SplitObject(mat, split.by = "Cell_line")
+seu_list <- Seurat::SplitObject(seu_obj, split.by = "Cell_line")
 
 filtered_sc <- lapply(X = seu_list, filter_sc)
 filtered_sc <- lapply(X = seu_list, normalize_and_scale)
