@@ -414,7 +414,7 @@ rule sc_esca_xiannian_zhang_seurat:
         seurat_list=f"{results}/seurat/raw/esca_xiannian_zhang.rds",
     threads: get_resource("defaults", "threads")
     resources:
-        mem_mb=84000
+        mem_mb=84000,
         walltime=120,
     conda:
         "../envs/seurat.yaml"
