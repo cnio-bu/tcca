@@ -276,7 +276,7 @@ rule sc_pleural_rui_dong_seurat:
     output:
         seurat_list=f"{results}/seurat/raw/pleural_rui_dong.rds",
     params:
-        data_dir=f"{raw_data}/pleural_rui_dong/GSE141526_RAW"
+        data_dir=f"{raw_data}/pleural_rui_dong/GSE163678_RAW"
     threads: get_resource("defaults", "threads")
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
