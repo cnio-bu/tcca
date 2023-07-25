@@ -535,3 +535,19 @@ rule sc_cell_lines_gabriella_kinker_seurat:
         "../envs/seurat.yaml"
     script:
         "../scripts/cell_lines_gabriella_kinker_seurat.R"
+
+rule sc_bmets_youmna_kfoury_seurat:
+    input:
+        metadata=f"{raw_data}/bmets_youmna_kfoury/GSE143791_cell.annotation.human.csv",
+    output:
+        seurat_list=f"{results}/seurat/raw/bmets_youmna_kfoury.rds",
+    params:
+        data_dir=f"{raw_data}/bmets_youmna_kfoury/GSE143791_RAW"
+    threads: get_resource("defaults", "threads"),
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+        "../envs/seurat.yaml"
+    script:
+        "../scripts/bmets_youmna_kfoury_seurat.R"
