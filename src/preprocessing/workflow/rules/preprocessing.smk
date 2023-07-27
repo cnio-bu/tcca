@@ -535,3 +535,19 @@ rule sc_cell_lines_gabriella_kinker_seurat:
         "../envs/seurat.yaml"
     script:
         "../scripts/cell_lines_gabriella_kinker_seurat.R"
+
+rule sc_oc_ec_matthew_regner_seurat:
+    input:
+        metadata=f"{raw_data}/oc_ec_matthew_regner/barcode_metadata.tsv",
+    output:
+        seurat_list=f"{results}/seurat/raw/oc_ec_matthew_regner.rds",
+    params:
+        data_dir=f"{raw_data}/oc_ec_matthew_regner/GSE173682_RAW",
+    threads: get_resource("defaults", "threads")
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+        "../envs/seurat.yaml"
+    script:
+        "../scripts/oc_ec_matthew_regner_seurat.R"

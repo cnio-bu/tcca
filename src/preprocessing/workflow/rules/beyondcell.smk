@@ -519,3 +519,19 @@ rule bc_cell_lines_gabriella_kinker:
         "../envs/beyondcell.yaml"
     script:
         "../scripts/cell_lines_gabriella_kinker_beyondcell.R"
+
+rule bc_oc_ec_matthew_regner:
+    input:
+        seurat_list=rules.sc_oc_ec_matthew_regner_seurat.output.seurat_list,
+    output:
+        malignant_list=f"{results}/seurat/malignant/oc_ec_matthew_regner.rds",
+        bc_list=f"{results}/beyondcell/oc_ec_matthew_regner.rds",
+        report=f"{results}/reports/cells_oc_ec_matthew_regner.tsv",
+    threads: get_resource("default_bc", "threads")
+    resources:
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=get_resource("default_bc", "walltime"),
+    conda:
+        "../envs/beyondcell.yaml"
+    script:
+        "../scripts/oc_ec_matthew_regner_beyondcell.R"
