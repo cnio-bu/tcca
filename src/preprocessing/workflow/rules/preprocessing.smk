@@ -535,3 +535,17 @@ rule sc_cell_lines_gabriella_kinker_seurat:
         "../envs/seurat.yaml"
     script:
         "../scripts/cell_lines_gabriella_kinker_seurat.R"
+
+rule sc_nsclc_stefan_salcher_seurat:
+    input:
+        matrix=f"{raw_data}/nsclc_stefan_salcher/extended_atlas_stefan_salcher.rds",
+    output:
+        seurat_list=f"{results}/seurat/raw/nsclc_stefan_salcher.rds",
+    threads: get_resource("defaults", "threads"),
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+        "../envs/seurat.yaml"
+    script:
+        "../scripts/nsclc_stefan_salcher_seurat.R"
