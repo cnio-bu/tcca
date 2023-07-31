@@ -520,13 +520,13 @@ rule bc_cell_lines_gabriella_kinker:
     script:
         "../scripts/cell_lines_gabriella_kinker_beyondcell.R"
 
-rule bc_oc_ec_matthew_regner:
+rule bc_bmets_youmna_kfoury:
     input:
-        seurat_list=rules.sc_oc_ec_matthew_regner_seurat.output.seurat_list,
+        seurat_list=rules.sc_bmets_youmna_kfoury_seurat.output.seurat_list,
     output:
-        malignant_list=f"{results}/seurat/malignant/oc_ec_matthew_regner.rds",
-        bc_list=f"{results}/beyondcell/oc_ec_matthew_regner.rds",
-        report=f"{results}/reports/cells_oc_ec_matthew_regner.tsv",
+        malignant_list=f"{results}/seurat/malignant/bmets_youmna_kfoury.rds",
+        bc_list=f"{results}/beyondcell/bmets_youmna_kfoury.rds",
+        report=f"{results}/reports/cells_bmets_youmna_kfoury.tsv",
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -534,4 +534,53 @@ rule bc_oc_ec_matthew_regner:
     conda:
         "../envs/beyondcell.yaml"
     script:
-        "../scripts/oc_ec_matthew_regner_beyondcell.R"
+        "../scripts/bmets_youmna_kfoury_beyondcell.R"
+
+        
+rule bc_nsclc_stefan_salcher:
+    input:
+        seurat_list=rules.sc_nsclc_stefan_salcher_seurat.output.seurat_list,
+    output:
+        malignant_list=f"{results}/seurat/malignant/nsclc_stefan_salcher.rds",
+        bc_list=f"{results}/beyondcell/nsclc_stefan_salcher.rds",
+        report=f"{results}/reports/cells_nsclc_stefan_salcher.tsv",
+    threads: get_resource("default_bc", "threads"),
+    resources:
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=180
+    conda:
+        "../envs/beyondcell.yaml"
+    script:
+        "../scripts/nsclc_stefan_salcher_beyondcell.R"
+
+rule bc_eac_thomas_carroll:
+    input:
+        seurat_list=rules.sc_eac_thomas_carroll_seurat.output.seurat_list,
+    output:
+        malignant_list=f"{results}/seurat/malignant/eac_thomas_carroll.rds",
+        bc_list=f"{results}/beyondcell/eac_thomas_carroll.rds",
+        report=f"{results}/reports/cells_eac_thomas_carroll.tsv",
+    threads: get_resource("default_bc", "threads"),
+    resources:
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=180
+    conda:
+        "../envs/beyondcell.yaml"
+    script:
+      "../scripts/eac_thomas_carroll_beyondcell.R"
+
+rule bc_oc_ec_matthew_regner:
+    input:
+        seurat_list=rules.sc_oc_ec_matthew_regner_seurat.output.seurat_list,
+    output:
+        malignant_list=f"{results}/seurat/malignant/oc_ec_matthew_regner.rds",
+        bc_list=f"{results}/beyondcell/oc_ec_matthew_regner.rds",
+        report=f"{results}/reports/cells_oc_ec_matthew_regner.tsv",
+    threads: get_resource("default_bc", "threads"),
+    resources:
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=180
+    conda:
+      "../envs/beyondcell.yaml"
+    script:
+      "../scripts/oc_ec_matthew_regner_beyondcell.R"
