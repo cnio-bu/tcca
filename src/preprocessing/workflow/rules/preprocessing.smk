@@ -565,4 +565,18 @@ rule sc_nsclc_stefan_salcher_seurat:
         "../envs/seurat.yaml"
     script:
         "../scripts/nsclc_stefan_salcher_seurat.R"
+     
+rule sc_eac_thomas_carroll_seurat:
+    input:
+        matrix=f"{raw_data}/eac_thomas_carroll/sce.pub.Rds",
+    output:
+        seurat_list=f"{results}/seurat/raw/eac_thomas_carroll.rds",
+    threads: get_resource("defaults", "threads"),
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+      "../envs/seurat.yaml"
+    script:
+      "../scripts/eac_thomas_carroll_seurat.R"
 
