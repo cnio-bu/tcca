@@ -536,6 +536,36 @@ rule sc_cell_lines_gabriella_kinker_seurat:
     script:
         "../scripts/cell_lines_gabriella_kinker_seurat.R"
 
+rule sc_bmets_youmna_kfoury_seurat:
+    input:
+        metadata=f"{raw_data}/bmets_youmna_kfoury/GSE143791_cell.annotation.human.csv",
+    output:
+        seurat_list=f"{results}/seurat/raw/bmets_youmna_kfoury.rds",
+    params:
+        data_dir=f"{raw_data}/bmets_youmna_kfoury/GSE143791_RAW",
+    threads: get_resource("defaults", "threads"),
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+        "../envs/seurat.yaml"
+    script:
+      "../scripts/bmets_youmna_kfoury_seurat.R"
+
+rule sc_nsclc_stefan_salcher_seurat:
+    input:
+        matrix=f"{raw_data}/nsclc_stefan_salcher/extended_atlas_stefan_salcher.rds",
+    output:
+        seurat_list=f"{results}/seurat/raw/nsclc_stefan_salcher.rds",
+    threads: get_resource("defaults", "threads"),
+    resources:
+        mem_mb=get_resource("defaults", "mem_mb"),
+        walltime=get_resource("defaults", "walltime"),
+    conda:
+        "../envs/seurat.yaml"
+    script:
+        "../scripts/nsclc_stefan_salcher_seurat.R"
+     
 rule sc_eac_thomas_carroll_seurat:
     input:
         matrix=f"{raw_data}/eac_thomas_carroll/sce.pub.Rds",
@@ -546,6 +576,7 @@ rule sc_eac_thomas_carroll_seurat:
         mem_mb=get_resource("defaults", "mem_mb"),
         walltime=get_resource("defaults", "walltime"),
     conda:
-        "../envs/seurat.yaml"
+      "../envs/seurat.yaml"
     script:
-        "../scripts/eac_thomas_carroll_seurat.R"
+      "../scripts/eac_thomas_carroll_seurat.R"
+
