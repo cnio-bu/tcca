@@ -504,3 +504,60 @@ rule fc_cell_lines_gabriella_kinker:
         "../envs/beyondcell.yaml"
     script:
         "../scripts/general_functional_enrichment.R"
+
+rule fc_bmets_youmna_kfoury:
+    input:
+        malignant_cells=rules.bc_cell_lines_gabriella_kinker.output.malignant_list,
+        gsets="/storage/scratch01/shared/projects/bc-meta/reference/combined_gsets_functional.gmt",
+    output:
+        bc_list=f"{results}/functional/cell_lines_gabriella_kinker.rds",
+    threads: get_resource("default_bc", "threads")
+    resources:
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=180
+    conda:
+        "../envs/beyondcell.yaml"
+    script:
+        "../scripts/general_functional_enrichment.R"
+rule fc_nsclc_stefan_salcher:
+    input:
+        malignant_cells=rules.bc_cell_lines_gabriella_kinker.output.malignant_list,
+        gsets="/storage/scratch01/shared/projects/bc-meta/reference/combined_gsets_functional.gmt",
+    output:
+        bc_list=f"{results}/functional/cell_lines_gabriella_kinker.rds",
+    threads: get_resource("default_bc", "threads")
+    resources:
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=180
+    conda:
+        "../envs/beyondcell.yaml"
+    script:
+        "../scripts/general_functional_enrichment.R"
+rule fc_eac_thomas_carroll:
+    input:
+        malignant_cells=rules.bc_cell_lines_gabriella_kinker.output.malignant_list,
+        gsets="/storage/scratch01/shared/projects/bc-meta/reference/combined_gsets_functional.gmt",
+    output:
+        bc_list=f"{results}/functional/cell_lines_gabriella_kinker.rds",
+    threads: get_resource("default_bc", "threads")
+    resources:
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=180
+    conda:
+        "../envs/beyondcell.yaml"
+    script:
+        "../scripts/general_functional_enrichment.R"
+rule fc_oc_ec_matthew_regner:
+    input:
+        malignant_cells=rules.bc_cell_lines_gabriella_kinker.output.malignant_list,
+        gsets="/storage/scratch01/shared/projects/bc-meta/reference/combined_gsets_functional.gmt",
+    output:
+        bc_list=f"{results}/functional/cell_lines_gabriella_kinker.rds",
+    threads: get_resource("default_bc", "threads")
+    resources:
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=180
+    conda:
+        "../envs/beyondcell.yaml"
+    script:
+        "../scripts/general_functional_enrichment.R"
