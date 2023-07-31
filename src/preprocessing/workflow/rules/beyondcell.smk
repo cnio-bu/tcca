@@ -520,6 +520,7 @@ rule bc_cell_lines_gabriella_kinker:
     script:
         "../scripts/cell_lines_gabriella_kinker_beyondcell.R"
 
+
 rule bc_bmets_youmna_kfoury:
     input:
         seurat_list=rules.sc_bmets_youmna_kfoury_seurat.output.seurat_list,
@@ -535,3 +536,21 @@ rule bc_bmets_youmna_kfoury:
         "../envs/beyondcell.yaml"
     script:
         "../scripts/bmets_youmna_kfoury_beyondcell.R"
+
+        
+rule bc_nsclc_stefan_salcher:
+    input:
+        seurat_list=rules.sc_nsclc_stefan_salcher_seurat.output.seurat_list,
+    output:
+        malignant_list=f"{results}/seurat/malignant/nsclc_stefan_salcher.rds",
+        bc_list=f"{results}/beyondcell/nsclc_stefan_salcher.rds",
+        report=f"{results}/reports/cells_nsclc_stefan_salcher.tsv",
+    threads: get_resource("default_bc", "threads"),
+    resources:
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=180
+    conda:
+        "../envs/beyondcell.yaml"
+    script:
+        "../scripts/nsclc_stefan_salcher_beyondcell.R"
+
