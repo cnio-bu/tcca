@@ -41,9 +41,9 @@ full_report_annotated <- full_report %>%
             grepl(pattern = "mmieloma", x = study) ~ "Multiple mieloma",
             grepl(pattern = "uvm", x = study) ~ "Uveal melanoma",
             grepl(pattern = "nsclc", x = study) ~ "Non small cell lung cancer",
-            
-            
-            
+            grepl(pattern = "prad", x = study) ~ "Prostate adenocarcinoma",
+            grepl(pattern = "skcm", x = study) ~ "Skin cutaneous melanoma",
+            grepl(pattern = "cell_lines", x = study) ~ "Cancer cell line"
             
         )
     ) %>%
@@ -289,3 +289,33 @@ ggsave(
     filename = "results/prop_cells_by_tumor.png",
     dpi = 100
     )
+
+
+## test 
+summary_malignants <- full_report_annotated %>%
+    group_by(study) %>%
+    summarise(
+        n.samples = n(),
+        n.malignants = sum(malignants)
+    )
+
+
+write.table(x = full_report_annotated, file = "results/all_samples_annotated.tsv")
+
+## save only malignants
+
+full_report_malignant_annotated <- full_report_annotated %>%
+    filter(malignants > 0)
+
+
+write.table(x = full_report_malignant_annotated, file = "results/all_malignant_samples.tsv")
+
+cum_dist <- ggplot(full_report_malignant_annotated, aes(x = malignants, y = sample)) +
+    stat_ecdf(geom = "step") +
+    scale_y_continuous(n.breaks = 10) + 
+    scale_x_continuous(n.breaks = 20)
+
+
+
+database_filtered <- full_report_malignant_annotated %>%
+    filter(malignants >= 200)
