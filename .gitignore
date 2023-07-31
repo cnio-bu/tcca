@@ -6,3 +6,5 @@ config/basics.tsv
 src/preprocessing/.snakemake
 raw/*
 results/*
+spectral_clustering_sample_test
+output/*
