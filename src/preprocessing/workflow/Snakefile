@@ -84,7 +84,13 @@ rule all:
         f"{results}/functional/chol_min_zhang.rds",
         f"{results}/functional/skcm_chao_zhang.rds",
         f"{results}/functional/brmets_jana_biermann.rds",
-        f"{results}/functional/cell_lines_gabriella_kinker.rds"
+        f"{results}/functional/cell_lines_gabriella_kinker.rds",
+        f"{results}/functional/bmets_youmna_kfoury.rds",
+        f"{results}/functional/nsclc_stefan_salcher.rds",
+        f"{results}/functional/eac_thomas_carroll.rds",
+        f"{results}/functional/oc_ec_matthew_regner.rds"
+
+
 
 include: "rules/preprocessing.smk"
 include: "rules/beyondcell.smk"

@@ -507,10 +507,10 @@ rule fc_cell_lines_gabriella_kinker:
 
 rule fc_bmets_youmna_kfoury:
     input:
-        malignant_cells=rules.bc_cell_lines_gabriella_kinker.output.malignant_list,
+        malignant_cells=rules.bc_bmets_youmna_kfoury.output.malignant_list,
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/combined_gsets_functional.gmt",
     output:
-        bc_list=f"{results}/functional/cell_lines_gabriella_kinker.rds",
+        bc_list=f"{results}/functional/bmets_youmna_kfoury.rds",
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -519,12 +519,13 @@ rule fc_bmets_youmna_kfoury:
         "../envs/beyondcell.yaml"
     script:
         "../scripts/general_functional_enrichment.R"
+
 rule fc_nsclc_stefan_salcher:
     input:
-        malignant_cells=rules.bc_cell_lines_gabriella_kinker.output.malignant_list,
+        malignant_cells=rules.bc_nsclc_stefan_salcher.output.malignant_list,
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/combined_gsets_functional.gmt",
     output:
-        bc_list=f"{results}/functional/cell_lines_gabriella_kinker.rds",
+        bc_list=f"{results}/functional/nsclc_stefan_salcher.rds",
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -533,12 +534,13 @@ rule fc_nsclc_stefan_salcher:
         "../envs/beyondcell.yaml"
     script:
         "../scripts/general_functional_enrichment.R"
+
 rule fc_eac_thomas_carroll:
     input:
-        malignant_cells=rules.bc_cell_lines_gabriella_kinker.output.malignant_list,
+        malignant_cells=rules.bc_eac_thomas_carroll.output.malignant_list,
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/combined_gsets_functional.gmt",
     output:
-        bc_list=f"{results}/functional/cell_lines_gabriella_kinker.rds",
+        bc_list=f"{results}/functional/eac_thomas_carroll.rds",
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -547,12 +549,13 @@ rule fc_eac_thomas_carroll:
         "../envs/beyondcell.yaml"
     script:
         "../scripts/general_functional_enrichment.R"
+
 rule fc_oc_ec_matthew_regner:
     input:
-        malignant_cells=rules.bc_cell_lines_gabriella_kinker.output.malignant_list,
+        malignant_cells=rules.bc_oc_ec_matthew_regner.output.malignant_list,
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/combined_gsets_functional.gmt",
     output:
-        bc_list=f"{results}/functional/cell_lines_gabriella_kinker.rds",
+        bc_list=f"{results}/functional/oc_ec_matthew_regner.rds",
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
