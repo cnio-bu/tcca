@@ -559,8 +559,8 @@ rule sc_nsclc_stefan_salcher_seurat:
         seurat_list=f"{results}/seurat/raw/nsclc_stefan_salcher.rds",
     threads: get_resource("defaults", "threads"),
     resources:
-        mem_mb=get_resource("defaults", "mem_mb"),
-        walltime=get_resource("defaults", "walltime"),
+        mem_mb=180000,
+        walltime=120,
     conda:
         "../envs/seurat.yaml"
     script:
