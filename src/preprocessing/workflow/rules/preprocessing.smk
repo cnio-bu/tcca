@@ -188,7 +188,7 @@ rule sc_pancancer_junbin_qian_seurat:
 
 rule sc_rcell_r_li_seurat:
     input:
-        mat_file=f"{raw_data}/rcell_r_li/full_mat_annot.tsv",
+        mat=f"{raw_data}/rcell_r_li/full_mat_annot.tsv",
         annotations=f"{raw_data}/rcell_r_li/annotations.tsv",
     output:
         seurat_list=f"{results}/seurat/raw/rcell_r_li.rds",
