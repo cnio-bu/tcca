@@ -63,7 +63,7 @@ rm(mat, annot)
 gc()
 
 ## Split Seurat object by patient
-seurat_list <- Seurat::SplitSeuratObject(
+seurat_list <- Seurat::SplitObject(
     object = full_seu,
     split.by = "patient"
     )
