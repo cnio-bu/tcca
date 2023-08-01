@@ -44,7 +44,13 @@ seu <- readRDS(mat_file)
 DefaultAssay(seu) <- "RNA"
 
 seu_list <- Seurat::SplitObject(object = seu, split.by = "sample")
+names(seu_list) <- unique(seu$sample)
+samples_to_filter <- c(
+  "EAC-ACMO_PreTx_Esophagus_frozen",
+  "BARR-4988_Barretts_fresh"
+  )
 
+seu_list <- seu_list[!(names(seu_list) %in% samples_to_filter)]
 seu_list <- lapply(seu_list, filter_sc)
 seu_list <- lapply(seu_list, normalize_and_scale)
 
