@@ -41,10 +41,11 @@ normalize_and_scale <- function(sc) {
 }
 
 seu <- readRDS(mat_file) 
+DefaultAssay(seu) <- "RNA"
 
 seu_list <- Seurat::SplitObject(object = seu, split.by = "sample")
 names(seu_list) <- unique(seu$sample)
-samples_to_filter <- c("Leader_Merad_2021_336")
+samples_to_filter <- c("Leader_Merad_2021_336", "Leader_Merad_2021_298")
 
 seu_list <- seu_list[!(names(seu_list) %in% samples_to_filter)]
 seu_list <- lapply(seu_list, filter_sc)
