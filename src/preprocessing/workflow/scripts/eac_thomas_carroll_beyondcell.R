@@ -47,6 +47,10 @@ get_bcscores <- function(sc){
 
 ## Perform operations over list
 seu <- readRDS(file = full_seurat_list)
+
+## get rid of this sample as the cell cycle cannot be estimated
+print(dim(seu[["EAC-HGFI_PreTx_Esophagus_frozen"]]))
+seu <- seu[names(seu) != "EAC-HGFI_PreTx_Esophagus_frozen"]
 seu <- lapply(X = seu, FUN = annotate_cell_cycle)
 
 malignants <- lapply(X = seu, FUN = filter_malignants)
