@@ -546,7 +546,7 @@ rule bc_nsclc_stefan_salcher:
         report=f"{results}/reports/cells_nsclc_stefan_salcher.tsv",
     threads: get_resource("default_bc", "threads"),
     resources:
-        mem_mb=get_resource("default_bc", "mem_mb"),
+        mem_mb=1440000,
         walltime=180
     conda:
         "../envs/beyondcell.yaml"
@@ -563,7 +563,7 @@ rule bc_eac_thomas_carroll:
     threads: get_resource("default_bc", "threads"),
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=180
+        walltime=60
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -579,7 +579,7 @@ rule bc_oc_ec_matthew_regner:
     threads: get_resource("default_bc", "threads"),
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=180
+        walltime=60
     conda:
       "../envs/beyondcell.yaml"
     script:
