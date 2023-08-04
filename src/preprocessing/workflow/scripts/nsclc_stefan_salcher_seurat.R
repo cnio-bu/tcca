@@ -2,7 +2,8 @@ library("Seurat")
 library("tidyverse")
 
 ## SNAKEMAKE I/O
-mat_file      <- snakemake@input[["matrix"]] 
+mat_file      <- snakemake@input[["matrix"]]
+reference_gene_annotation <- snakemake@input[["reference_gene_annotation"]]
 where_to_save <- snakemake@output[["seurat_list"]]
 
 ## Function definitions
@@ -40,11 +41,47 @@ normalize_and_scale <- function(sc) {
     return(sc)
 }
 
-seu <- readRDS(mat_file) 
+seu <- readRDS(mat_file)
 DefaultAssay(seu) <- "RNA"
 
-seu_list <- Seurat::SplitObject(object = seu, split.by = "sample")
-names(seu_list) <- unique(seu$sample)
+gene_annot <- readr::read_tsv(reference_gene_annotation)
+
+## Extract count mat
+mat <- seu@assays$RNA@counts
+ensembl_genes <- rownames(mat)
+
+## Annotate to HGNC
+genes_to_keep <- gene_annot %>%
+select(symbol, ensembl_gene_id) %>%
+filter(ensembl_gene_id %in% ensembl_genes)
+
+gene_dict <- genes_to_keep %>%
+select(ensembl_gene_id, symbol) %>%
+deframe()
+
+annotated_hugo <- gene_dict[ensembl_genes]
+
+## Remove NAs
+annotated_hugo <- annotated_hugo[!is.na(annotated_hugo)]
+
+mat_annot <- mat[names(annotated_hugo), ]
+rownames(mat_annot) <- annotated_hugo[rownames(mat_annot)]
+
+## Extract the original meta.data
+metadata <- seu@meta.data
+
+## Free mem
+rm(seu)
+gc()
+
+## Regenerate Seurat object
+full_seu <- Seurat::CreateSeuratObject(counts = mat_annot, meta.data = metadata)
+
+## Set idents to sample
+full_seu$orig.ident <- full_seu$sample
+
+seu_list <- Seurat::SplitObject(object = full_seu, split.by = "sample")
+names(seu_list) <- unique(full_seu$sample)
 samples_to_filter <- c("Leader_Merad_2021_336", "Leader_Merad_2021_298")
 
 seu_list <- seu_list[!(names(seu_list) %in% samples_to_filter)]
@@ -52,7 +89,7 @@ seu_list <- lapply(seu_list, filter_sc)
 
 ## Get rid of NULLs samples w/o malignants left
 seu_list[sapply(seu_list, is.null)] <- NULL
-## In this datasets, some samples had very few cells, less than the minimum
+## In these datasets, some samples had very few cells, less than the minimum
 ## for calculating variable features
 seu_list <- seu_list[sapply(seu_list, ncol) > 10]
 

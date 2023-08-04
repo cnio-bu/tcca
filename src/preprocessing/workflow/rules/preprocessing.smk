@@ -555,6 +555,7 @@ rule sc_bmets_youmna_kfoury_seurat:
 rule sc_nsclc_stefan_salcher_seurat:
     input:
         matrix=f"{raw_data}/nsclc_stefan_salcher/extended_atlas_stefan_salcher.rds",
+        reference_gene_annotation="/storage/scratch01/shared/projects/bc-meta/reference/hgnc_gene_with_protein_product_2023-03-22.tsv",
     output:
         seurat_list=f"{results}/seurat/raw/nsclc_stefan_salcher.rds",
     threads: get_resource("defaults", "threads"),
