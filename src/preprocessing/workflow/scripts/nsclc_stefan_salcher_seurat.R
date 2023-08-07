@@ -75,7 +75,11 @@ rm(seu)
 gc()
 
 ## Regenerate Seurat object
-full_seu <- Seurat::CreateSeuratObject(counts = mat_annot, meta.data = metadata)
+full_seu <- Seurat::CreateSeuratObject(
+    counts = mat_annot,
+    meta.data = metadata,
+    assay = "RNA"
+    )
 
 ## Set idents to sample
 full_seu$orig.ident <- full_seu$sample

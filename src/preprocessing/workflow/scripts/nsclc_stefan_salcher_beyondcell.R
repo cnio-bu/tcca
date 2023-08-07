@@ -22,13 +22,14 @@ annotate_cell_cycle <- function(sc){
 # keep malignants cells only
 filter_malignants <- function(sc) {
     subtypes_to_keep <- c("malignant cell")
-    if (sum(sc@meta.data$cell_type %in% subtypes_to_keep) > 0) {
-        sc_filtered <- subset(x = sc, subset = cell_type %in% subtypes_to_keep)
-        return(sc_filtered)
-    } else {
-        return(NULL)
+    if (unique(sc$study) != "Maynard_Bivona_2020"){
+      if (sum(sc@meta.data$cell_type %in% subtypes_to_keep) > 0) {
+          sc_filtered <- subset(x = sc, subset = cell_type %in% subtypes_to_keep)
+          return(sc_filtered)
+      } else {
+          return(NULL)
     }
-    
+  }
 }
 
 ## Calculate bcscores sample wise, for each sample, for malignant pops. only
