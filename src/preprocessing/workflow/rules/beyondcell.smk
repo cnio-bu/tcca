@@ -407,7 +407,7 @@ rule bc_uvm_michael_durante:
 
 rule bc_esca_xiannian_zhang:
     input:
-        seurat_list=rules.sc_esca_xiannian_zhang_seurat.output.seurat_list,
+        seurat_list=rules.cna_esca_xiannian_zhang.output.annotated_list,
     output:
         malignant_list=f"{results}/seurat/malignant/esca_xiannian_zhang.rds",
         bc_list=f"{results}/beyondcell/esca_xiannian_zhang.rds",
