@@ -356,7 +356,7 @@ rule bc_all_maxime_caron:
 
 rule bc_crc_florian_uhlitz:
     input:
-        seurat_list=rules.sc_crc_florian_uhlitz_seurat.output.seurat_list,
+        seurat_list=rules.cna_crc_florian_uhlitz.output.annotated_list,
     output:
         malignant_list=f"{results}/seurat/malignant/crc_florian_uhlitz.rds",
         bc_list=f"{results}/beyondcell/crc_florian_uhlitz.rds",
