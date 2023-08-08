@@ -4,10 +4,10 @@ rule dep_brmets_hugo_gonzalez:
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/all_dependencies.gmt",
     output:
         bc_list=f"{results}/dependencies/brmets_hugo_gonzalez.rds",
-    threads: get_resource("default_bc", "threads")
+    threads: get_resource("default_deps", "threads")
     resources:
-        mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        mem_mb=get_resource("default_deps", "mem_mb"),
+        walltime=get_resource("default_deps", "walltime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -20,10 +20,10 @@ rule dep_pancancer_dalia_barkley:
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/all_dependencies.gmt",
     output:
         bc_list=f"{results}/dependencies/pancancer_dalia_barkley.rds",
-    threads: get_resource("default_bc", "threads")
+    threads: get_resource("default_deps", "threads")
     resources:
-        mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        mem_mb=get_resource("default_deps", "mem_mb"),
+        walltime=get_resource("default_deps", "walltime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -36,10 +36,10 @@ rule dep_breast_sunny_wu:
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/all_dependencies.gmt",
     output:
         bc_list=f"{results}/dependencies/breast_sunny_wu.rds",
-    threads: get_resource("default_bc", "threads")
+    threads: get_resource("default_deps", "threads")
     resources:
-        mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        mem_mb=get_resource("default_deps", "mem_mb"),
+        walltime=get_resource("default_deps", "walltime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -52,10 +52,10 @@ rule dep_pancancer_sunny_wu:
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/all_dependencies.gmt",
     output:
         bc_list=f"{results}/dependencies/pancancer_sunny_wu.rds",
-    threads: get_resource("default_bc", "threads")
+    threads: get_resource("default_deps", "threads")
     resources:
-        mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        mem_mb=get_resource("default_deps", "mem_mb"),
+        walltime=get_resource("default_deps", "walltime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -68,10 +68,10 @@ rule dep_luad_kim_nayoung:
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/all_dependencies.gmt",
     output:
         bc_list=f"{results}/dependencies/luad_kim_nayoung.rds",
-    threads: get_resource("default_bc", "threads")
+    threads: get_resource("default_deps", "threads")
     resources:
-        mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        mem_mb=get_resource("default_deps", "mem_mb"),
+        walltime=get_resource("default_deps", "walltime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -84,10 +84,10 @@ rule dep_urothelial_chen:
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/all_dependencies.gmt",
     output:
         bc_list=f"{results}/dependencies/urothelial_chen.rds",
-    threads: get_resource("default_bc", "threads")
+    threads: get_resource("default_deps", "threads")
     resources:
-        mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        mem_mb=get_resource("default_deps", "mem_mb"),
+        walltime=get_resource("default_deps", "walltime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -100,10 +100,10 @@ rule dep_adrenalnb_rui_chong:
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/all_dependencies.gmt",
     output:
         bc_list=f"{results}/dependencies/adrenalnb_rui_chong.rds",
-    threads: get_resource("default_bc", "threads")
+    threads: get_resource("default_deps", "threads")
     resources:
-        mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        mem_mb=get_resource("default_deps", "mem_mb"),
+        walltime=get_resource("default_deps", "walltime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -116,10 +116,10 @@ rule dep_luad_philip_bisschof:
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/all_dependencies.gmt",
     output:
         bc_list=f"{results}/dependencies/luad_philip_bisschof.rds",
-    threads: get_resource("default_bc", "threads")
+    threads: get_resource("default_deps", "threads")
     resources:
-        mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        mem_mb=get_resource("default_deps", "mem_mb"),
+        walltime=get_resource("default_deps", "walltime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -132,10 +132,10 @@ rule dep_pdac_junya_peng:
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/all_dependencies.gmt",
     output:
         bc_list=f"{results}/dependencies/pdac_junya_peng.rds",
-    threads: get_resource("default_bc", "threads")
+    threads: get_resource("default_deps", "threads")
     resources:
-        mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        mem_mb=get_resource("default_deps", "mem_mb"),
+        walltime=get_resource("default_deps", "walltime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -148,10 +148,10 @@ rule dep_synovial_jerby_arnon:
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/all_dependencies.gmt",
     output:
         bc_list=f"{results}/dependencies/synovial_jerby_arnon.rds",
-    threads: get_resource("default_bc", "threads")
+    threads: get_resource("default_deps", "threads")
     resources:
-        mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        mem_mb=get_resource("default_deps", "mem_mb"),
+        walltime=get_resource("default_deps", "walltime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -164,10 +164,10 @@ rule dep_rcell_kevin_bi:
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/all_dependencies.gmt",
     output:
         bc_list=f"{results}/dependencies/rcell_kevin_bi.rds",
-    threads: get_resource("default_bc", "threads")
+    threads: get_resource("default_deps", "threads")
     resources:
-        mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        mem_mb=get_resource("default_deps", "mem_mb"),
+        walltime=get_resource("default_deps", "walltime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -180,10 +180,10 @@ rule dep_pancancer_junbin_qian:
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/all_dependencies.gmt",
     output:
         bc_list=f"{results}/dependencies/pancancer_junbin_qian.rds",
-    threads: get_resource("default_bc", "threads")
+    threads: get_resource("default_deps", "threads")
     resources:
-        mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        mem_mb=get_resource("default_deps", "mem_mb"),
+        walltime=get_resource("default_deps", "walltime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -196,10 +196,10 @@ rule dep_rcell_r_li:
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/all_dependencies.gmt",
     output:
         bc_list=f"{results}/dependencies/rcell_r_li.rds",
-    threads: get_resource("default_bc", "threads")
+    threads: get_resource("default_deps", "threads")
     resources:
-        mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        mem_mb=get_resource("default_deps", "mem_mb"),
+        walltime=get_resource("default_deps", "walltime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -212,10 +212,10 @@ rule dep_cll_ramon_massoni:
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/all_dependencies.gmt",
     output:
         bc_list=f"{results}/dependencies/cll_ramon_massoni.rds",
-    threads: get_resource("default_bc", "threads")
+    threads: get_resource("default_deps", "threads")
     resources:
-        mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        mem_mb=get_resource("default_deps", "mem_mb"),
+        walltime=get_resource("default_deps", "walltime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -228,10 +228,10 @@ rule dep_aml_audrey_lasry:
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/all_dependencies.gmt",
     output:
         bc_list=f"{results}/dependencies/aml_audrey_lasry.rds",
-    threads: get_resource("default_bc", "threads")
+    threads: get_resource("default_deps", "threads")
     resources:
-        mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        mem_mb=get_resource("default_deps", "mem_mb"),
+        walltime=get_resource("default_deps", "walltime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -244,10 +244,10 @@ rule dep_gbm_nourhan_abdelfattah:
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/all_dependencies.gmt",
     output:
         bc_list=f"{results}/dependencies/gbm_nourhan_abdelfattah.rds",
-    threads: get_resource("default_bc", "threads")
+    threads: get_resource("default_deps", "threads")
     resources:
-        mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        mem_mb=get_resource("default_deps", "mem_mb"),
+        walltime=get_resource("default_deps", "walltime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -260,10 +260,10 @@ rule dep_cc_xiaosong_lu:
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/all_dependencies.gmt",
     output:
         bc_list=f"{results}/dependencies/cc_xiaosong_lu.rds",
-    threads: get_resource("default_bc", "threads")
+    threads: get_resource("default_deps", "threads")
     resources:
-        mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        mem_mb=get_resource("default_deps", "mem_mb"),
+        walltime=get_resource("default_deps", "walltime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -276,10 +276,10 @@ rule dep_pleural_rui_dong:
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/all_dependencies.gmt",
     output:
         bc_list=f"{results}/dependencies/pleural_rui_dong.rds",
-    threads: get_resource("default_bc", "threads")
+    threads: get_resource("default_deps", "threads")
     resources:
-        mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        mem_mb=get_resource("default_deps", "mem_mb"),
+        walltime=get_resource("default_deps", "walltime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -292,10 +292,10 @@ rule dep_bone_yun_liu:
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/all_dependencies.gmt",
     output:
         bc_list=f"{results}/dependencies/bone_yun_liu.rds",
-    threads: get_resource("default_bc", "threads")
+    threads: get_resource("default_deps", "threads")
     resources:
-        mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        mem_mb=get_resource("default_deps", "mem_mb"),
+        walltime=get_resource("default_deps", "walltime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -308,10 +308,10 @@ rule dep_mmieloma_stephan_tirier:
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/all_dependencies.gmt",
     output:
         bc_list=f"{results}/dependencies/mmieloma_stephan_tirier.rds",
-    threads: get_resource("default_bc", "threads")
+    threads: get_resource("default_deps", "threads")
     resources:
-        mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        mem_mb=get_resource("default_deps", "mem_mb"),
+        walltime=get_resource("default_deps", "walltime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -324,10 +324,10 @@ rule dep_all_maxime_caron:
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/all_dependencies.gmt",
     output:
         bc_list=f"{results}/dependencies/all_maxime_caron.rds",
-    threads: get_resource("default_bc", "threads")
+    threads: get_resource("default_deps", "threads")
     resources:
-        mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        mem_mb=get_resource("default_deps", "mem_mb"),
+        walltime=get_resource("default_deps", "walltime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -339,10 +339,10 @@ rule dep_florian_uhlitz:
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/all_dependencies.gmt",
     output:
         bc_list=f"{results}/dependencies/florian_uhlitz.rds",
-    threads: get_resource("default_bc", "threads")
+    threads: get_resource("default_deps", "threads")
     resources:
-        mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        mem_mb=get_resource("default_deps", "mem_mb"),
+        walltime=get_resource("default_deps", "walltime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -355,10 +355,10 @@ rule dep_bcc_catherine_dyao:
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/all_dependencies.gmt",
     output:
         bc_list=f"{results}/dependencies/bcc_catherine_dyao.rds",
-    threads: get_resource("default_bc", "threads")
+    threads: get_resource("default_deps", "threads")
     resources:
-        mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        mem_mb=get_resource("default_deps", "mem_mb"),
+        walltime=get_resource("default_deps", "walltime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -371,10 +371,10 @@ rule dep_uvm_michael_durante:
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/all_dependencies.gmt",
     output:
         bc_list=f"{results}/dependencies/uvm_michael_durante.rds",
-    threads: get_resource("default_bc", "threads")
+    threads: get_resource("default_deps", "threads")
     resources:
-        mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        mem_mb=get_resource("default_deps", "mem_mb"),
+        walltime=get_resource("default_deps", "walltime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -387,10 +387,10 @@ rule dep_esca_xiannian_zhang:
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/all_dependencies.gmt",
     output:
         bc_list=f"{results}/dependencies/esca_xiannian_zhang.rds",
-    threads: get_resource("default_bc", "threads")
+    threads: get_resource("default_deps", "threads")
     resources:
-        mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        mem_mb=get_resource("default_deps", "mem_mb"),
+        walltime=get_resource("default_deps", "walltime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -403,10 +403,10 @@ rule dep_crc_florian_uhlitz:
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/all_dependencies.gmt",
     output:
         bc_list=f"{results}/dependencies/crc_florian_uhlitz.rds",
-    threads: get_resource("default_bc", "threads")
+    threads: get_resource("default_deps", "threads")
     resources:
-        mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        mem_mb=get_resource("default_deps", "mem_mb"),
+        walltime=get_resource("default_deps", "walltime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -419,10 +419,10 @@ rule dep_brca_bhupinder_pal:
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/all_dependencies.gmt",
     output:
         bc_list=f"{results}/dependencies/brca_bhupinder_pal.rds",
-    threads: get_resource("default_bc", "threads")
+    threads: get_resource("default_deps", "threads")
     resources:
-        mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        mem_mb=get_resource("default_deps", "mem_mb"),
+        walltime=get_resource("default_deps", "walltime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -435,10 +435,10 @@ rule dep_prad_sujun_chen:
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/all_dependencies.gmt",
     output:
         bc_list=f"{results}/dependencies/prad_sujun_chen.rds",
-    threads: get_resource("default_bc", "threads")
+    threads: get_resource("default_deps", "threads")
     resources:
-        mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        mem_mb=get_resource("default_deps", "mem_mb"),
+        walltime=get_resource("default_deps", "walltime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -451,10 +451,10 @@ rule dep_chol_min_zhang:
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/all_dependencies.gmt",
     output:
         bc_list=f"{results}/dependencies/chol_min_zhang.rds",
-    threads: get_resource("default_bc", "threads")
+    threads: get_resource("default_deps", "threads")
     resources:
-        mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        mem_mb=get_resource("default_deps", "mem_mb"),
+        walltime=get_resource("default_deps", "walltime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -466,10 +466,10 @@ rule dep_skcm_chao_zhang:
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/all_dependencies.gmt",
     output:
         bc_list=f"{results}/dependencies/skcm_chao_zhang.rds",
-    threads: get_resource("default_bc", "threads")
+    threads: get_resource("default_deps", "threads")
     resources:
-        mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        mem_mb=get_resource("default_deps", "mem_mb"),
+        walltime=get_resource("default_deps", "walltime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -481,10 +481,10 @@ rule dep_brmets_jana_biermann:
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/all_dependencies.gmt",
     output:
         bc_list=f"{results}/dependencies/brmets_jana_biermann.rds",
-    threads: get_resource("default_bc", "threads")
+    threads: get_resource("default_deps", "threads")
     resources:
-        mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        mem_mb=get_resource("default_deps", "mem_mb"),
+        walltime=get_resource("default_deps", "walltime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -496,9 +496,9 @@ rule dep_cell_lines_gabriella_kinker:
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/all_dependencies.gmt",
     output:
         bc_list=f"{results}/dependencies/cell_lines_gabriella_kinker.rds",
-    threads: get_resource("default_bc", "threads")
+    threads: get_resource("default_deps", "threads")
     resources:
-        mem_mb=get_resource("default_bc", "mem_mb"),
+        mem_mb=get_resource("default_deps", "mem_mb"),
         walltime=180
     conda:
         "../envs/beyondcell.yaml"
@@ -511,9 +511,9 @@ rule dep_bmets_youmna_kfoury:
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/all_dependencies.gmt",
     output:
         bc_list=f"{results}/dependencies/bmets_youmna_kfoury.rds",
-    threads: get_resource("default_bc", "threads")
+    threads: get_resource("default_deps", "threads")
     resources:
-        mem_mb=get_resource("default_bc", "mem_mb"),
+        mem_mb=get_resource("default_deps", "mem_mb"),
         walltime=180
     conda:
         "../envs/beyondcell.yaml"
@@ -526,9 +526,9 @@ rule dep_nsclc_stefan_salcher:
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/all_dependencies.gmt",
     output:
         bc_list=f"{results}/dependencies/nsclc_stefan_salcher.rds",
-    threads: get_resource("default_bc", "threads")
+    threads: get_resource("default_deps", "threads")
     resources:
-        mem_mb=get_resource("default_bc", "mem_mb"),
+        mem_mb=get_resource("default_deps", "mem_mb"),
         walltime=180
     conda:
         "../envs/beyondcell.yaml"
@@ -541,9 +541,9 @@ rule dep_eac_thomas_carroll:
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/all_dependencies.gmt",
     output:
         bc_list=f"{results}/dependencies/eac_thomas_carroll.rds",
-    threads: get_resource("default_bc", "threads")
+    threads: get_resource("default_deps", "threads")
     resources:
-        mem_mb=get_resource("default_bc", "mem_mb"),
+        mem_mb=get_resource("default_deps", "mem_mb"),
         walltime=180
     conda:
         "../envs/beyondcell.yaml"
@@ -556,9 +556,9 @@ rule dep_oc_ec_matthew_regner:
         gsets="/storage/scratch01/shared/projects/bc-meta/reference/all_dependencies.gmt",
     output:
         bc_list=f"{results}/dependencies/oc_ec_matthew_regner.rds",
-    threads: get_resource("default_bc", "threads")
+    threads: get_resource("default_deps", "threads")
     resources:
-        mem_mb=get_resource("default_bc", "mem_mb"),
+        mem_mb=get_resource("default_deps", "mem_mb"),
         walltime=180
     conda:
         "../envs/beyondcell.yaml"
