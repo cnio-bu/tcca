@@ -539,7 +539,7 @@ rule bc_bmets_youmna_kfoury:
         
 rule bc_nsclc_stefan_salcher:
     input:
-        seurat_list=rules.sc_nsclc_stefan_salcher_seurat.output.seurat_list,
+        seurat_list=rules.cna_nsclc_stefan_salcher.output.annotated_list,
     output:
         malignant_list=f"{results}/seurat/malignant/nsclc_stefan_salcher.rds",
         bc_list=f"{results}/beyondcell/nsclc_stefan_salcher.rds",
