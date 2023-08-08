@@ -93,5 +93,6 @@ rule all:
 
 
 include: "rules/preprocessing.smk"
+include: "rules/scevan.smk"
 include: "rules/beyondcell.smk"
 include: "rules/functional.smk"
