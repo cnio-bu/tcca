@@ -21,7 +21,7 @@ annotate_cell_cycle <- function(sc){
 
 # keep malignants cells only
 filter_malignants <- function(sc) {
-  subtypes_to_keep <- c("ovarian cancer", "endometrial cancer", "GIST")
+  subtypes_to_keep <- c(TRUE)
   if (sum(sc@meta.data$malignancy %in% subtypes_to_keep) > 0) {
     sc_filtered <- subset(x = sc, subset = malignancy %in% subtypes_to_keep)
     return(sc_filtered)
@@ -54,7 +54,7 @@ malignants[sapply(malignants, is.null)] <- NULL
 
 ## In this datasets, some samples had very few cells, less than the minimum
 ## 10 for bc_regress_out, thus we remove them now
-malignants <- malignants[sapply(malignants, ncol) > 10]
+malignants <- malignants[sapply(malignants, ncol) > 100]
 
 bcs <- lapply(X = malignants, FUN = get_bcscores)
 
