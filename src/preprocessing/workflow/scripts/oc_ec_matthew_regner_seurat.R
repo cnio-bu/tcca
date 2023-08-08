@@ -107,6 +107,7 @@ filtered_sc <- lapply(filtered_sc, normalize_and_scale)
 meta <- read.table(metadata, header = T, sep = "\t")
 meta <- mutate(meta,
                cell_barcode = gsub("^(.*?)_.*$", "\\1", Barcode), #Add a barcode column w/o attached sample
+               patient = Sample, #Add patient column (only one sample per patient)
                malignancy = ifelse(seurat_clusters %in% c(3, 9, 10, 16, 17), "ovarian cancer", 
                                    ifelse(seurat_clusters %in% c(11, 19, 20, 21, 22, 31, 34), "endometrial cancer",  
                                           ifelse(seurat_clusters %in% c(0, 27), "GIST", "normal")))) #cancer cells based on the paper

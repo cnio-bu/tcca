@@ -571,7 +571,7 @@ rule bc_eac_thomas_carroll:
 
 rule bc_oc_ec_matthew_regner:
     input:
-        seurat_list=rules.sc_oc_ec_matthew_regner_seurat.output.seurat_list,
+        seurat_list=rules.cna_oc_ec_matthew_regner.output.annotated_list,
     output:
         malignant_list=f"{results}/seurat/malignant/oc_ec_matthew_regner.rds",
         bc_list=f"{results}/beyondcell/oc_ec_matthew_regner.rds",
