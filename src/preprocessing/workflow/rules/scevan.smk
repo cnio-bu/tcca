@@ -77,3 +77,19 @@ rule cna_uvm_michael_durante:
         "scevan"
     script:
         "../scripts/uvm_michael_durante_scevan.R"
+
+rule cna_bmets_youmna_kfoury:
+    input:
+        seurat_list=rules.sc_bmets_youmna_kfoury_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/bmets_youmna_kfoury_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/bmets_youmna_kfoury"
+    threads: 10
+    resources:
+        mem_mb=300000,
+        walltime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/bmets_youmna_kfoury_scevan.R"

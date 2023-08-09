@@ -522,7 +522,7 @@ rule bc_cell_lines_gabriella_kinker:
 
 rule bc_bmets_youmna_kfoury:
     input:
-        seurat_list=rules.sc_bmets_youmna_kfoury_seurat.output.seurat_list,
+        seurat_list=rules.cna_bmets_youmna_kfoury.output.annotated_list,
     output:
         malignant_list=f"{results}/seurat/malignant/bmets_youmna_kfoury.rds",
         bc_list=f"{results}/beyondcell/bmets_youmna_kfoury.rds",
