@@ -29,3 +29,35 @@ rule cna_oc_ec_matthew_regner:
         "scevan"
     script:
         "../scripts/oc_ec_matthew_regner_scevan.R"
+
+rule cna_nsclc_stefan_salcher:
+    input:
+        seurat_list=rules.sc_nsclc_stefan_salcher_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/nsclc_stefan_salcher_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/nsclc_stefan_salcher"
+    threads: 10
+    resources:
+        mem_mb=300000,
+        walltime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/nsclc_stefan_salcher_scevan.R"
+
+rule cna_esca_xiannian_zhang:
+    input:
+        seurat_list=rules.sc_esca_xiannian_zhang_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/esca_xiannian_zhang_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/esca_xiannian_zhang"
+    threads: 10
+    resources:
+        mem_mb=300000,
+        walltime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/esca_xiannian_zhang_scevan.R"
