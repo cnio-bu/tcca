@@ -141,3 +141,19 @@ rule cna_gbm_nourhan_abdelfattah:
         "scevan"
     script:
         "../scripts/gbm_nourhan_abdelfattah_scevan.R"
+
+rule cna_skcm_chao_zhang:
+    input:
+        seurat_list=rules.sc_skcm_chao_zhang_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/skcm_chao_zhang_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/skcm_chao_zhang"
+    threads: 10
+    resources:
+        mem_mb=300000,
+        walltime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/skcm_chao_zhang_scevan.R"
