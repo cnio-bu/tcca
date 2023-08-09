@@ -255,7 +255,7 @@ rule bc_aml_audrey_lasry:
 
 rule bc_gbm_nourhan_abdelfattah:
     input:
-        seurat_list=rules.sc_gbm_nourhan_abdelfattah_seurat.output.seurat_list,
+        seurat_list=rules.cna_gbm_nourhan_abdelfattah.output.annotated_list,
     output:
         malignant_list=f"{results}/seurat/malignant/gbm_nourhan_abdelfattah.rds",
         bc_list=f"{results}/beyondcell/gbm_nourhan_abdelfattah.rds",

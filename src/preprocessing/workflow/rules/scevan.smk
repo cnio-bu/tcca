@@ -125,3 +125,19 @@ rule cna_cc_xiaosong_lu:
         "scevan"
     script:
         "../scripts/cc_xiaosong_lu_scevan.R"
+
+rule cna_gbm_nourhan_abdelfattah:
+    input:
+        seurat_list=rules.sc_gbm_nourhan_abdelfattah_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/gbm_nourhan_abdelfattah_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/gbm_nourhan_abdelfattah"
+    threads: 10
+    resources:
+        mem_mb=300000,
+        walltime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/gbm_nourhan_abdelfattah_scevan.R"
