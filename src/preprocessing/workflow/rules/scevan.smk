@@ -93,3 +93,19 @@ rule cna_bmets_youmna_kfoury:
         "scevan"
     script:
         "../scripts/bmets_youmna_kfoury_scevan.R"
+
+rule cna_eac_thomas_carroll:
+    input:
+        seurat_list=rules.sc_eac_thomas_carroll_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/eac_thomas_carroll_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/eac_thomas_carroll"
+    threads: 10
+    resources:
+        mem_mb=300000,
+        walltime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/eac_thomas_carroll_scevan.R"

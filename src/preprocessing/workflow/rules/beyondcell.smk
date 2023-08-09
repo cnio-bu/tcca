@@ -555,7 +555,7 @@ rule bc_nsclc_stefan_salcher:
 
 rule bc_eac_thomas_carroll:
     input:
-        seurat_list=rules.sc_eac_thomas_carroll_seurat.output.seurat_list,
+        seurat_list=rules.cna_eac_thomas_carroll.output.annotated_list,
     output:
         malignant_list=f"{results}/seurat/malignant/eac_thomas_carroll.rds",
         bc_list=f"{results}/beyondcell/eac_thomas_carroll.rds",
