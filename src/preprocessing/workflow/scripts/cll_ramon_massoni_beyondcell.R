@@ -51,8 +51,10 @@ seu <- lapply(X = seu, FUN = annotate_cell_cycle)
 
 malignants <- lapply(X = seu, FUN = filter_malignant)
 
-## Get rid of NULLs samples w/o malignants left
+## Get rid of the NULL elements
 malignants[sapply(malignants, is.null)] <- NULL
+# Get rid of samples with < 100 malignant cells
+malignants <- malignants[sapply(malignants, ncol) >= 100]
 
 bcs <- lapply(X = malignants, FUN = get_bcscores)
 
