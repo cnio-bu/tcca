@@ -61,3 +61,19 @@ rule cna_esca_xiannian_zhang:
         "scevan"
     script:
         "../scripts/esca_xiannian_zhang_scevan.R"
+
+rule cna_uvm_michael_durante:
+    input:
+        seurat_list=rules.sc_uvm_michael_durante_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/uvm_michael_durante_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/uvm_michael_durante"
+    threads: 10
+    resources:
+        mem_mb=300000,
+        walltime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/uvm_michael_durante_scevan.R"

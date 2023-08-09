@@ -390,7 +390,7 @@ rule bc_bcc_catherine_dyao:
 
 rule bc_uvm_michael_durante:
     input:
-        seurat_list=rules.sc_uvm_michael_durante_seurat.output.seurat_list,
+        seurat_list=rules.cna_uvm_michael_durante.output.annotated_list,
     output:
         malignant_list=f"{results}/seurat/malignant/uvm_michael_durante.rds",
         bc_list=f"{results}/beyondcell/uvm_michael_durante.rds",
