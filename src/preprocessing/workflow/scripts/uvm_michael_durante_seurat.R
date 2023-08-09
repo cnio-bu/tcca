@@ -44,6 +44,9 @@ metadata <- data.table::fread(input = metadata)  %>%
 rownames(metadata) <- metadata$Cell
 metadata$Cell <- NULL
 
+metadata <- mutate(metadata,
+               patient = Sample) #Add patient column (only one sample per patient)
+
 seu <- Seurat::CreateSeuratObject(
     counts = mat,
     meta.data = metadata,
