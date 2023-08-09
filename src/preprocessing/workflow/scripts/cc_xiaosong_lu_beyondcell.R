@@ -21,9 +21,9 @@ annotate_cell_cycle <- function(sc){
 
 # keep malignants cells only
 filter_malignants <- function(sc) {
-    subtypes_to_keep <- c("malignant cell")
-    if (sum(sc@meta.data$cell_type__ontology_label %in% subtypes_to_keep) > 0) {
-        sc_filtered <- subset(x = sc, subset = cell_type__ontology_label %in% subtypes_to_keep)
+    subtypes_to_keep <- c(TRUE)
+    if (sum(sc@meta.data$malignancy %in% subtypes_to_keep) > 0) {
+        sc_filtered <- subset(x = sc, subset = malignancy %in% subtypes_to_keep)
         return(sc_filtered)
     } else {
         return(NULL)

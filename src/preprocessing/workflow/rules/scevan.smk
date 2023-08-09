@@ -109,3 +109,19 @@ rule cna_eac_thomas_carroll:
         "scevan"
     script:
         "../scripts/eac_thomas_carroll_scevan.R"
+
+rule cna_cc_xiaosong_lu:
+    input:
+        seurat_list=rules.sc_cc_xiaosong_lu_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/cc_xiaosong_lu_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/cc_xiaosong_lu"
+    threads: 10
+    resources:
+        mem_mb=300000,
+        walltime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/cc_xiaosong_lu_scevan.R"

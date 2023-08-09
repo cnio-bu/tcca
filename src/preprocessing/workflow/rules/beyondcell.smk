@@ -272,7 +272,7 @@ rule bc_gbm_nourhan_abdelfattah:
 
 rule bc_cc_xiaosong_lu:
     input:
-        seurat_list=rules.sc_cc_xiaosong_lu_seurat.output.seurat_list,
+        seurat_list=rules.cna_cc_xiaosong_lu.output.annotated_list,
     output:
         malignant_list=f"{results}/seurat/malignant/cc_xiaosong_lu.rds",
         bc_list=f"{results}/beyondcell/cc_xiaosong_lu.rds",
