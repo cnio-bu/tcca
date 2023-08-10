@@ -490,7 +490,7 @@ rule bc_skcm_chao_zhang:
 
 rule bc_brmets_jana_biermann:
     input:
-        seurat_list=rules.sc_brmets_jana_biermann_seurat.output.seurat_list,
+        seurat_list=rules.cna_brmets_jana_biermann.output.annotated_list,
     output:
         malignant_list=f"{results}/seurat/malignant/brmets_jana_biermann.rds",
         bc_list=f"{results}/beyondcell/brmets_jana_biermann.rds",

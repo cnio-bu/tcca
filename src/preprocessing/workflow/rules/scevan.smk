@@ -397,3 +397,19 @@ rule cna_pleural_rui_dong:
         "scevan"
     script:
         "../scripts/pleural_rui_dong_scevan.R"
+
+rule cna_brmets_jana_biermann:
+    input:
+        seurat_list=rules.sc_brmets_jana_biermann_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/brmets_jana_biermann_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/brmets_jana_biermann"
+    threads: 10
+    resources:
+        mem_mb=300000,
+        walltime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/brmets_jana_biermann_scevan.R"
