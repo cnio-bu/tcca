@@ -157,3 +157,19 @@ rule cna_skcm_chao_zhang:
         "scevan"
     script:
         "../scripts/skcm_chao_zhang_scevan.R"
+
+rule cna_brca_bhupinder_pal:
+    input:
+        seurat_list=rules.sc_brca_bhupinder_pal_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/brca_bhupinder_pal_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/brca_bhupinder_pal"
+    threads: 10
+    resources:
+        mem_mb=300000,
+        walltime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/brca_bhupinder_pal_scevan.R"

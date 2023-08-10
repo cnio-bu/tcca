@@ -424,7 +424,7 @@ rule bc_esca_xiannian_zhang:
 
 rule bc_brca_bhupinder_pal:
     input:
-        seurat_list=rules.sc_brca_bhupinder_pal_seurat.output.seurat_list,
+        seurat_list=rules.cna_brca_bhupinder_pal.output.annotated_list,
     output:
         malignant_list=f"{results}/seurat/malignant/brca_bhupinder_pal.rds",
         bc_list=f"{results}/beyondcell/brca_bhupinder_pal.rds",
