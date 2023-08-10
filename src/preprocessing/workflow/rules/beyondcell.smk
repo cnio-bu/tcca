@@ -85,7 +85,7 @@ rule bc_luad_kim_nayoung:
 
 rule bc_urothelial_chen:
     input:
-        seurat_list=rules.sc_urothelial_chen_seurat.output.seurat_list,
+        seurat_list=rules.cna_urothelial_chen.output.annotated_list,
     output:
         malignant_list=f"{results}/seurat/malignant/urothelial_chen.rds",
         bc_list=f"{results}/beyondcell/urothelial_chen.rds",

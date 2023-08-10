@@ -21,12 +21,9 @@ annotate_cell_cycle <- function(sc){
 
 ## For this study, filter out non malignant cells
 filter_malignant <- function(sc) {
-    
-    sc$Epithelial <- grepl("Epithelial",sc$cluster_sample)
-    
     ## check if it's a normal sample
     if(!grepl("NBM", unique(sc$Sample))){
-        malignant_subset <- subset(x = sc, subset = Epithelial)
+        malignant_subset <- subset(x = sc, subset = malignancy == TRUE)
         return(malignant_subset)
     }else{
         return(NULL)

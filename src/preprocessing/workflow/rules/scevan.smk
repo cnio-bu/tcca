@@ -493,3 +493,19 @@ rule cna_luad_kim_nayoung:
         "scevan"
     script:
         "../scripts/luad_kim_nayoung_scevan.R"
+
+rule cna_urothelial_chen:
+    input:
+        seurat_list=rules.sc_urothelial_chen_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/urothelial_chen_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/urothelial_chen"
+    threads: 10
+    resources:
+        mem_mb=300000,
+        walltime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/urothelial_chen_scevan.R"
