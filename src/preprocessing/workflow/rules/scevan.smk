@@ -269,3 +269,19 @@ rule cna_rcell_kevin_bi:
         "scevan"
     script:
         "../scripts/rcell_kevin_bi_scevan.R"
+
+rule cna_pancancer_junbin_qian:
+    input:
+        seurat_list=rules.sc_pancancer_junbin_qian_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/pancancer_junbin_qian_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/pancancer_junbin_qian"
+    threads: 10
+    resources:
+        mem_mb=300000,
+        walltime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/pancancer_junbin_qian_scevan.R"
