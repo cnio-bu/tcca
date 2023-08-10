@@ -317,3 +317,19 @@ rule cna_aml_audrey_lasry:
         "scevan"
     script:
         "../scripts/aml_audrey_lasry_scevan.R"
+
+rule cna_bcc_catherine_dyao:
+    input:
+        seurat_list=rules.sc_bcc_catherine_dyao_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/bcc_catherine_dyao_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/bcc_catherine_dyao"
+    threads: 10
+    resources:
+        mem_mb=300000,
+        walltime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/bcc_catherine_dyao_scevan.R"

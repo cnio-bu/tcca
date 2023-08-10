@@ -373,7 +373,7 @@ rule bc_crc_florian_uhlitz:
 
 rule bc_bcc_catherine_dyao:
     input:
-        seurat_list=rules.sc_bcc_catherine_dyao_seurat.output.seurat_list,
+        seurat_list=rules.cna_bcc_catherine_dyao.output.annotated_list,
     output:
         malignant_list=f"{results}/seurat/malignant/bcc_catherine_dyao.rds",
         bc_list=f"{results}/beyondcell/bcc_catherine_dyao.rds",
