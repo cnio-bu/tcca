@@ -255,7 +255,7 @@ rule bc_aml_audrey_lasry:
 
 rule bc_gbm_nourhan_abdelfattah:
     input:
-        seurat_list=rules.sc_gbm_nourhan_abdelfattah_seurat.output.seurat_list,
+        seurat_list=rules.cna_gbm_nourhan_abdelfattah.output.annotated_list,
     output:
         malignant_list=f"{results}/seurat/malignant/gbm_nourhan_abdelfattah.rds",
         bc_list=f"{results}/beyondcell/gbm_nourhan_abdelfattah.rds",
@@ -272,7 +272,7 @@ rule bc_gbm_nourhan_abdelfattah:
 
 rule bc_cc_xiaosong_lu:
     input:
-        seurat_list=rules.sc_cc_xiaosong_lu_seurat.output.seurat_list,
+        seurat_list=rules.cna_cc_xiaosong_lu.output.annotated_list,
     output:
         malignant_list=f"{results}/seurat/malignant/cc_xiaosong_lu.rds",
         bc_list=f"{results}/beyondcell/cc_xiaosong_lu.rds",
@@ -390,7 +390,7 @@ rule bc_bcc_catherine_dyao:
 
 rule bc_uvm_michael_durante:
     input:
-        seurat_list=rules.sc_uvm_michael_durante_seurat.output.seurat_list,
+        seurat_list=rules.cna_uvm_michael_durante.output.annotated_list,
     output:
         malignant_list=f"{results}/seurat/malignant/uvm_michael_durante.rds",
         bc_list=f"{results}/beyondcell/uvm_michael_durante.rds",
@@ -474,7 +474,7 @@ rule bc_chol_min_zhang:
 
 rule bc_skcm_chao_zhang:
     input:
-        seurat_list=rules.sc_skcm_chao_zhang_seurat.output.seurat_list,
+        seurat_list=rules.cna_skcm_chao_zhang.output.annotated_list,
     output:
         malignant_list=f"{results}/seurat/malignant/skcm_chao_zhang.rds",
         bc_list=f"{results}/beyondcell/skcm_chao_zhang.rds",
@@ -522,7 +522,7 @@ rule bc_cell_lines_gabriella_kinker:
 
 rule bc_bmets_youmna_kfoury:
     input:
-        seurat_list=rules.sc_bmets_youmna_kfoury_seurat.output.seurat_list,
+        seurat_list=rules.cna_bmets_youmna_kfoury.output.annotated_list,
     output:
         malignant_list=f"{results}/seurat/malignant/bmets_youmna_kfoury.rds",
         bc_list=f"{results}/beyondcell/bmets_youmna_kfoury.rds",
@@ -555,7 +555,7 @@ rule bc_nsclc_stefan_salcher:
 
 rule bc_eac_thomas_carroll:
     input:
-        seurat_list=rules.sc_eac_thomas_carroll_seurat.output.seurat_list,
+        seurat_list=rules.cna_eac_thomas_carroll.output.annotated_list,
     output:
         malignant_list=f"{results}/seurat/malignant/eac_thomas_carroll.rds",
         bc_list=f"{results}/beyondcell/eac_thomas_carroll.rds",

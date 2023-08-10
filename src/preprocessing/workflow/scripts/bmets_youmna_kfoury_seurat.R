@@ -120,6 +120,7 @@ filtered_sc <- lapply(filtered_sc, normalize_and_scale)
 #Load metadata from the study and annotate seurat objects
 meta <- read.table(metadata, header=TRUE, sep =",")
 meta$sample <- gsub("^(.*?)_.*$", "\\1", meta$barcode)
+meta$patient <- gsub("^(.*?)-.*$", "\\1", meta$barcode)
 
 filtered_sc_clinical <- lapply(filtered_sc, fill_metadata)
 
