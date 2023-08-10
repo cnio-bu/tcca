@@ -136,7 +136,7 @@ rule bc_luad_philip_bisschof:
 
 rule bc_pdac_junya_peng:
     input:
-        seurat_list=rules.sc_pdac_junya_peng_seurat.output.seurat_list,
+        seurat_list=rules.cna_pdac_junya_peng.output.annotated_list,
     output:
         malignant_list=f"{results}/seurat/malignant/pdac_junya_peng.rds",
         bc_list=f"{results}/beyondcell/pdac_junya_peng.rds",

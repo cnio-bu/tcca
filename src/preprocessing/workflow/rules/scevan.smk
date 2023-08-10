@@ -205,3 +205,19 @@ rule cna_prad_sujun_chen:
         "scevan"
     script:
         "../scripts/prad_sujun_chen_scevan.R"
+
+rule cna_pdac_junya_peng:
+    input:
+        seurat_list=rules.sc_pdac_junya_peng_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/pdac_junya_peng_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/pdac_junya_peng"
+    threads: 10
+    resources:
+        mem_mb=300000,
+        walltime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/pdac_junya_peng_scevan.R"
