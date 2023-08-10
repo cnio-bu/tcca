@@ -289,7 +289,7 @@ rule bc_cc_xiaosong_lu:
 
 rule bc_pleural_rui_dong:
     input:
-        seurat_list=rules.sc_pleural_rui_dong_seurat.output.seurat_list,
+        seurat_list=rules.cna_pleural_rui_dong.output.annotated_list,
     output:
         malignant_list=f"{results}/seurat/malignant/pleural_rui_dong.rds",
         bc_list=f"{results}/beyondcell/pleural_rui_dong.rds",

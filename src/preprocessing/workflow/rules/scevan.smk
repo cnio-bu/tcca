@@ -381,3 +381,19 @@ rule cna_pancancer_sunny_wu:
         "scevan"
     script:
         "../scripts/pancancer_sunny_wu_scevan.R"
+
+rule cna_pleural_rui_dong:
+    input:
+        seurat_list=rules.sc_pleural_rui_dong_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/pleural_rui_dong_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/pleural_rui_dong"
+    threads: 10
+    resources:
+        mem_mb=300000,
+        walltime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/pleural_rui_dong_scevan.R"
