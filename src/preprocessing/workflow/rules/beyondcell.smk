@@ -17,7 +17,7 @@ rule bc_brmets_hugo_gonzalez:
 
 rule bc_pancancer_dalia_barkley:
     input:
-        seurat_list=rules.sc_pancancer_dalia_barkley_seurat.output.seurat_list,
+        seurat_list=rules.cna_pancancer_dalia_barkley.output.annotated_list,
     output:
         malignant_list=f"{results}/seurat/malignant/pancancer_dalia_barkley.rds",
         bc_list=f"{results}/beyondcell/pancancer_dalia_barkley.rds",

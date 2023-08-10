@@ -333,3 +333,19 @@ rule cna_bcc_catherine_dyao:
         "scevan"
     script:
         "../scripts/bcc_catherine_dyao_scevan.R"
+
+rule cna_pancancer_dalia_barkley:
+    input:
+        seurat_list=rules.sc_pancancer_dalia_barkley_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/pancancer_dalia_barkley_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/pancancer_dalia_barkley"
+    threads: 10
+    resources:
+        mem_mb=300000,
+        walltime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/pancancer_dalia_barkley_scevan.R"

@@ -23,8 +23,8 @@ filter_malignant <- function(sc) {
     
     # This dataset might be empty before even filtering
     if (!is.null(sc)) {
-        if (sum(sc@meta.data$type == "malignant") > 0) {
-            sc_filtered <- subset(x = sc, subset = type == "malignant")
+        if (sum(sc@meta.data$malignancy == TRUE) > 0) {
+            sc_filtered <- subset(x = sc, subset = malignancy == TRUE)
             return(sc_filtered)
         } else {
             return(NULL)
