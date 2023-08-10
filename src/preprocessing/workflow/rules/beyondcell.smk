@@ -1,6 +1,6 @@
 rule bc_brmets_hugo_gonzalez:
     input:
-        seurat_list=rules.sc_brmets_hugo_gonzalez_seurat.output.seurat_list,
+        seurat_list=rules.cna_brmets_hugo_gonzalez.output.annotated_list,
     output:
         malignant_list=f"{results}/seurat/malignant/brmets_hugo_gonzalez.rds",
         bc_list=f"{results}/beyondcell/brmets_hugo_gonzalez.rds",

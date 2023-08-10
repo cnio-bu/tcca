@@ -349,3 +349,19 @@ rule cna_pancancer_dalia_barkley:
         "scevan"
     script:
         "../scripts/pancancer_dalia_barkley_scevan.R"
+
+rule cna_brmets_hugo_gonzalez:
+    input:
+        seurat_list=rules.sc_brmets_hugo_gonzalez_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/brmets_hugo_gonzalez_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/brmets_hugo_gonzalez"
+    threads: 10
+    resources:
+        mem_mb=300000,
+        walltime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/brmets_hugo_gonzalez_scevan.R"
