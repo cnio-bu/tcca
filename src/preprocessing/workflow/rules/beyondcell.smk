@@ -323,7 +323,7 @@ rule bc_bone_yun_liu:
 
 rule bc_mmieloma_stephan_tirier:
     input:
-        seurat_list=rules.sc_mmieloma_stephan_tirier_seurat.output.seurat_list,
+        seurat_list=rules.cna_mmieloma_stephan_tirier.output.annotated_list,
     output:
         malignant_list=f"{results}/seurat/malignant/mmieloma_stephan_tirier.rds",
         bc_list=f"{results}/beyondcell/mmieloma_stephan_tirier.rds",

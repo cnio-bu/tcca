@@ -237,3 +237,19 @@ rule cna_chol_min_zhang:
         "scevan"
     script:
         "../scripts/chol_min_zhang_scevan.R"
+
+rule cna_mmieloma_stephan_tirier:
+    input:
+        seurat_list=rules.sc_mmieloma_stephan_tirier_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/mmieloma_stephan_tirier_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/mmieloma_stephan_tirier"
+    threads: 10
+    resources:
+        mem_mb=300000,
+        walltime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/mmieloma_stephan_tirier_scevan.R"
