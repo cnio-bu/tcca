@@ -68,7 +68,7 @@ rule bc_pancancer_sunny_wu:
 
 rule bc_luad_kim_nayoung:
     input:
-        seurat_list=rules.sc_luad_kim_nayoung_seurat.output.seurat_list,
+        seurat_list=rules.cna_luad_kim_nayoung.output.annotated_list,
     output:
         malignant_list=f"{results}/seurat/malignant/luad_kim_nayoung.rds",
         bc_list=f"{results}/beyondcell/luad_kim_nayoung.rds",

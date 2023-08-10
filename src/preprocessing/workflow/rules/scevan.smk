@@ -477,3 +477,19 @@ rule cna_adrenalnb_rui_chong:
         "scevan"
     script:
         "../scripts/adrenalnb_rui_chong_scevan.R"
+
+rule cna_luad_kim_nayoung:
+    input:
+        seurat_list=rules.sc_luad_kim_nayoung_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/luad_kim_nayoung_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/luad_kim_nayoung"
+    threads: 10
+    resources:
+        mem_mb=300000,
+        walltime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/luad_kim_nayoung_scevan.R"
