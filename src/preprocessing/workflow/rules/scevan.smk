@@ -541,3 +541,19 @@ rule cna_bone_yun_liu:
         "scevan"
     script:
         "../scripts/bone_yun_liu_scevan.R"
+
+rule cna_cll_ramon_massoni:
+    input:
+        seurat_list=rules.sc_cll_ramon_massoni_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/cll_ramon_massoni_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/cll_ramon_massoni"
+    threads: 10
+    resources:
+        mem_mb=300000,
+        walltime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/cll_ramon_massoni_scevan.R"

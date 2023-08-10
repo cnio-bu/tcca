@@ -221,7 +221,7 @@ rule bc_rcell_r_li:
 
 rule bc_cll_ramon_massoni:
     input:
-        seurat_list=rules.sc_cll_ramon_massoni_seurat.output.seurat_list,
+        seurat_list=rules.cna_cll_ramon_massoni.output.annotated_list,
     output:
         malignant_list=f"{results}/seurat/malignant/cll_ramon_massoni.rds",
         bc_list=f"{results}/beyondcell/cll_ramon_massoni.rds",
