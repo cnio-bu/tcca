@@ -306,7 +306,7 @@ rule bc_pleural_rui_dong:
 
 rule bc_bone_yun_liu:
     input:
-        seurat_list=rules.sc_bone_yun_liu_seurat.output.seurat_list,
+        seurat_list=rules.cna_bone_yun_liu.output.annotated_list,
     output:
         malignant_list=f"{results}/seurat/malignant/bone_yun_liu.rds",
         bc_list=f"{results}/beyondcell/bone_yun_liu.rds",

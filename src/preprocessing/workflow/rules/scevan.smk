@@ -525,3 +525,19 @@ rule cna_luad_philip_bisschof:
         "scevan"
     script:
         "../scripts/luad_philip_bisschof_scevan.R"
+
+rule cna_bone_yun_liu:
+    input:
+        seurat_list=rules.sc_bone_yun_liu_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/bone_yun_liu_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/bone_yun_liu"
+    threads: 10
+    resources:
+        mem_mb=300000,
+        walltime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/bone_yun_liu_scevan.R"
