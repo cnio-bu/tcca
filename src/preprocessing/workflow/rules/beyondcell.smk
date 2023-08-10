@@ -204,7 +204,7 @@ rule bc_pancancer_junbin_qian:
 
 rule bc_rcell_r_li:
     input:
-        seurat_list=rules.sc_rcell_r_li_seurat.output.seurat_list,
+        seurat_list=rules.cna_rcell_r_li.output.annotated_list,
     output:
         malignant_list=f"{results}/seurat/malignant/rcell_r_li.rds",
         bc_list=f"{results}/beyondcell/rcell_r_li.rds",

@@ -413,3 +413,19 @@ rule cna_brmets_jana_biermann:
         "scevan"
     script:
         "../scripts/brmets_jana_biermann_scevan.R"
+
+rule cna_rcell_r_li:
+    input:
+        seurat_list=rules.sc_rcell_r_li_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/rcell_r_li_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/rcell_r_li"
+    threads: 10
+    resources:
+        mem_mb=300000,
+        walltime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/rcell_r_li_scevan.R"
