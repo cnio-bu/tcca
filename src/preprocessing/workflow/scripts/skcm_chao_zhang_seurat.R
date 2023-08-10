@@ -27,24 +27,23 @@ generate_seurat_objects <- function(dgMat, sample) {
 filter_sc <- function(sc) {
     sc <- PercentageFeatureSet(sc, pattern = "^MT-", col.name = "percent.mt")
     sc <- PercentageFeatureSet(sc, pattern = "^RP[SL]", col.name = "percent.ribo")
-    
+
     sc_filtered <- subset(x = sc, subset = (percent.mt <= 10) &
                               (nFeature_RNA >= 1000 & nFeature_RNA <= 7000) &
                               (nCount_RNA > 500) & (percent.ribo <= 40)
     )
-    
+
     this_counts <- GetAssayData(sc_filtered, slot = "counts")
     nonzero_genes <- this_counts > 0
-    
+
     # Keep genes whose expression is found in at least 5% of the sample
     sample_cell_cutoff <- round(ncol(sc_filtered) / 100 * 5, digits = 0)
     genes_to_keep <- Matrix::rowSums(nonzero_genes) >= sample_cell_cutoff
-    
+
     new_filtered_sc <- CreateSeuratObject(
         counts = this_counts[genes_to_keep, ],
         meta.data = sc_filtered@meta.data
     )
-    
     return(new_filtered_sc)
 }
 
@@ -59,7 +58,6 @@ normalize_and_scale <- function(sc) {
 }
 
 fill_clinical <- function(sc) {
-    
     this_meta <- meta %>%
         filter(SampleID == as.character(unique(sc$orig.ident))) %>%
         uncount(weights = ncol(sc)) %>%
@@ -67,11 +65,9 @@ fill_clinical <- function(sc) {
     rownames(this_meta) <- colnames(sc)
     sc <- AddMetaData(object = sc, metadata = this_meta)
     return(sc)
-    
 }
 
 annotate_cna_clones <- function(sc){
-    
     this_mat <- Seurat::GetAssayData(sc, slot = "counts")
     cna_pred <- SCEVAN::pipelineCNA(
         count_mtx = this_mat,
@@ -81,7 +77,6 @@ annotate_cna_clones <- function(sc){
         plotTree = FALSE,
         organism = "human",
         SCEVANsignatures = TRUE
-        
     )
     sc <- AddMetaData(object = sc, metadata = cna_pred)
     return(sc)
@@ -114,9 +109,9 @@ filtered_sc <- lapply(filtered_sc, normalize_and_scale)
 meta <- read.csv(
     metadata,
     header=TRUE,
-    row.names= NULL,
+    row.names=NULL,
     sep="\t"
-    )  
+    )
 
 filtered_sc_clinical <- lapply(filtered_sc, fill_clinical)
 
