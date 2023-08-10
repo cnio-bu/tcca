@@ -21,7 +21,7 @@ annotate_cell_cycle <- function(sc){
 
 ## For this study, filter out non malignant cells
 filter_malignant <- function(sc){
-    malignant_subset <- subset(x = sc, subset = cna_clone == "CNA")
+    malignant_subset <- subset(x = sc, subset = malignancy == TRUE)
     return(malignant_subset)
 }
 

@@ -509,3 +509,19 @@ rule cna_urothelial_chen:
         "scevan"
     script:
         "../scripts/urothelial_chen_scevan.R"
+
+rule cna_luad_philip_bisschof:
+    input:
+        seurat_list=rules.sc_luad_philip_bisschof_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/luad_philip_bisschof_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/luad_philip_bisschof"
+    threads: 10
+    resources:
+        mem_mb=300000,
+        walltime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/luad_philip_bisschof_scevan.R"

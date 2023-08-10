@@ -119,7 +119,7 @@ rule bc_adrenalnb_rui_chong:
 
 rule bc_luad_philip_bisschof:
     input:
-        seurat_list=rules.sc_luad_philip_bisschof_seurat.output.seurat_list,
+        seurat_list=rules.cna_luad_philip_bisschof.output.annotated_list,
     output:
         malignant_list=f"{results}/seurat/malignant/luad_philip_bisschof.rds",
         bc_list=f"{results}/beyondcell/luad_philip_bisschof.rds",
