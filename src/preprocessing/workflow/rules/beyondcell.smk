@@ -238,7 +238,7 @@ rule bc_cll_ramon_massoni:
 
 rule bc_aml_audrey_lasry:
     input:
-        seurat_list=rules.sc_aml_audrey_lasry_seurat.output.seurat_list,
+        seurat_list=rules.cna_aml_audrey_lasry.output.annotated_list,
     output:
         malignant_list=f"{results}/seurat/malignant/aml_audrey_lasry.rds",
         bc_list=f"{results}/beyondcell/aml_audrey_lasry.rds",

@@ -301,3 +301,19 @@ rule cna_breast_sunny_wu:
         "scevan"
     script:
         "../scripts/breast_sunny_wu_scevan.R"
+
+rule cna_aml_audrey_lasry:
+    input:
+        seurat_list=rules.sc_aml_audrey_lasry_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/aml_audrey_lasry_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/aml_audrey_lasry"
+    threads: 10
+    resources:
+        mem_mb=300000,
+        walltime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/aml_audrey_lasry_scevan.R"
