@@ -340,7 +340,7 @@ rule bc_mmieloma_stephan_tirier:
 
 rule bc_all_maxime_caron:
     input:
-        seurat_list=rules.sc_all_maxime_caron_seurat.output.seurat_list,
+        seurat_list=rules.cna_all_maxime_caron.output.annotated_list,
     output:
         malignant_list=f"{results}/seurat/malignant/all_maxime_caron.rds",
         bc_list=f"{results}/beyondcell/all_maxime_caron.rds",

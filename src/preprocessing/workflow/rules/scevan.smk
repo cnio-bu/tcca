@@ -445,3 +445,19 @@ rule cna_synovial_jerby_arnon:
         "scevan"
     script:
         "../scripts/synovial_jerby_arnon_scevan.R"
+
+rule cna_all_maxime_caron:
+    input:
+        seurat_list=rules.sc_all_maxime_caron_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/all_maxime_caron_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/all_maxime_caron"
+    threads: 10
+    resources:
+        mem_mb=300000,
+        walltime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/all_maxime_caron_scevan.R"
