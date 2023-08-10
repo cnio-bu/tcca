@@ -189,3 +189,19 @@ rule cna_cell_lines_gabriella_kinker:
         "scevan"
     script:
         "../scripts/cell_lines_gabriella_kinker_scevan.R"
+
+rule cna_prad_sujun_chen:
+    input:
+        seurat_list=rules.sc_prad_sujun_chen_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/prad_sujun_chen_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/prad_sujun_chen"
+    threads: 10
+    resources:
+        mem_mb=300000,
+        walltime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/prad_sujun_chen_scevan.R"

@@ -441,7 +441,7 @@ rule bc_brca_bhupinder_pal:
 
 rule bc_prad_sujun_chen:
     input:
-        seurat_list=rules.sc_prad_sujun_chen_seurat.output.seurat_list,
+        seurat_list=rules.cna_prad_sujun_chen.output.annotated_list,
     output:
         malignant_list=f"{results}/seurat/malignant/prad_sujun_chen.rds",
         bc_list=f"{results}/beyondcell/prad_sujun_chen.rds",
