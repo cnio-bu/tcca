@@ -51,7 +51,7 @@ rule bc_breast_sunny_wu:
 
 rule bc_pancancer_sunny_wu:
     input:
-        seurat_list=rules.sc_pancancer_sunny_wu_seurat.output.seurat_list,
+        seurat_list=rules.cna_pancancer_sunny_wu.output.annotated_list,
     output:
         malignant_list=f"{results}/seurat/malignant/pancancer_sunny_wu.rds",
         bc_list=f"{results}/beyondcell/pancancer_sunny_wu.rds",

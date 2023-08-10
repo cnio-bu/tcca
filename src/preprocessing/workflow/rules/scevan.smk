@@ -365,3 +365,19 @@ rule cna_brmets_hugo_gonzalez:
         "scevan"
     script:
         "../scripts/brmets_hugo_gonzalez_scevan.R"
+
+rule cna_pancancer_sunny_wu:
+    input:
+        seurat_list=rules.sc_pancancer_sunny_wu_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/pancancer_sunny_wu_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/pancancer_sunny_wu"
+    threads: 10
+    resources:
+        mem_mb=300000,
+        walltime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/pancancer_sunny_wu_scevan.R"
