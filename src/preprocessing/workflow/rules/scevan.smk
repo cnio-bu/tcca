@@ -429,3 +429,19 @@ rule cna_rcell_r_li:
         "scevan"
     script:
         "../scripts/rcell_r_li_scevan.R"
+
+rule cna_synovial_jerby_arnon:
+    input:
+        seurat_list=rules.sc_synovial_jerby_arnon_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/synovial_jerby_arnon_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/synovial_jerby_arnon"
+    threads: 10
+    resources:
+        mem_mb=300000,
+        walltime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/synovial_jerby_arnon_scevan.R"

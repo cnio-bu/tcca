@@ -153,7 +153,7 @@ rule bc_pdac_junya_peng:
 
 rule bc_synovial_jerby_arnon:
     input:
-        seurat_list=rules.sc_synovial_jerby_arnon_seurat.output.seurat_list,
+        seurat_list=rules.cna_synovial_jerby_arnon.output.annotated_list,
     output:
         malignant_list=f"{results}/seurat/malignant/synovial_jerby_arnon.rds",
         bc_list=f"{results}/beyondcell/synovial_jerby_arnon.rds",
