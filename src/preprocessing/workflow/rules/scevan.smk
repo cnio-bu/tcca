@@ -285,3 +285,19 @@ rule cna_pancancer_junbin_qian:
         "scevan"
     script:
         "../scripts/pancancer_junbin_qian_scevan.R"
+
+rule cna_breast_sunny_wu:
+    input:
+        seurat_list=rules.sc_breast_sunny_wu_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/breast_sunny_wu_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/breast_sunny_wu"
+    threads: 10
+    resources:
+        mem_mb=300000,
+        walltime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/breast_sunny_wu_scevan.R"

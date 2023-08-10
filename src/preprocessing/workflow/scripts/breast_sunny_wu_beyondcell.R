@@ -22,9 +22,9 @@ annotate_cell_cycle <- function(sc){
 ## For this study, filter out non malignant cells
 filter_malignant <- function(sc) {
   
-  types_to_keep <- "Cancer Epithelial"
-  if (sum(sc@meta.data$celltype_major == types_to_keep) > 1) {
-    sc_filtered <- subset(x = sc, subset = celltype_major == types_to_keep)
+  types_to_keep <- TRUE
+  if (sum(sc@meta.data$malignancy == types_to_keep) > 1) {
+    sc_filtered <- subset(x = sc, subset = malignancy == types_to_keep)
     return(sc_filtered)
     
   } else {
