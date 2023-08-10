@@ -253,3 +253,19 @@ rule cna_mmieloma_stephan_tirier:
         "scevan"
     script:
         "../scripts/mmieloma_stephan_tirier_scevan.R"
+
+rule cna_rcell_kevin_bi:
+    input:
+        seurat_list=rules.sc_rcell_kevin_bi_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/rcell_kevin_bi_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/rcell_kevin_bi"
+    threads: 10
+    resources:
+        mem_mb=300000,
+        walltime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/rcell_kevin_bi_scevan.R"

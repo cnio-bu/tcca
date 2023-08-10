@@ -170,7 +170,7 @@ rule bc_synovial_jerby_arnon:
 
 rule bc_rcell_kevin_bi:
     input:
-        seurat_list=rules.sc_rcell_kevin_bi_seurat.output.seurat_list,
+        seurat_list=rules.cna_rcell_kevin_bi.output.annotated_list,
     output:
         malignant_list=f"{results}/seurat/malignant/rcell_kevin_bi.rds",
         bc_list=f"{results}/beyondcell/rcell_kevin_bi.rds",
