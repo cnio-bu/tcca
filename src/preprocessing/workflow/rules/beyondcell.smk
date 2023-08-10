@@ -102,7 +102,7 @@ rule bc_urothelial_chen:
 
 rule bc_adrenalnb_rui_chong:
     input:
-        seurat_list=rules.sc_adrenalnb_rui_chong_seurat.output.seurat_list,
+        seurat_list=rules.cna_adrenalnb_rui_chong.output.annotated_list,
     output:
         malignant_list=f"{results}/seurat/malignant/adrenalnb_rui_chong.rds",
         bc_list=f"{results}/beyondcell/adrenalnb_rui_chong.rds",

@@ -461,3 +461,19 @@ rule cna_all_maxime_caron:
         "scevan"
     script:
         "../scripts/all_maxime_caron_scevan.R"
+
+rule cna_adrenalnb_rui_chong:
+    input:
+        seurat_list=rules.sc_adrenalnb_rui_chong_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/adrenalnb_rui_chong_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/adrenalnb_rui_chong"
+    threads: 10
+    resources:
+        mem_mb=300000,
+        walltime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/adrenalnb_rui_chong_scevan.R"
