@@ -458,7 +458,7 @@ rule bc_prad_sujun_chen:
 
 rule bc_chol_min_zhang:
     input:
-        seurat_list=rules.sc_chol_min_zhang_seurat.output.seurat_list,
+        seurat_list=rules.cna_chol_min_zhang.output.annotated_list,
     output:
         malignant_list=f"{results}/seurat/malignant/chol_min_zhang.rds",
         bc_list=f"{results}/beyondcell/chol_min_zhang.rds",

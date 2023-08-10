@@ -221,3 +221,19 @@ rule cna_pdac_junya_peng:
         "scevan"
     script:
         "../scripts/pdac_junya_peng_scevan.R"
+
+rule cna_chol_min_zhang:
+    input:
+        seurat_list=rules.sc_chol_min_zhang_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/chol_min_zhang_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/chol_min_zhang"
+    threads: 10
+    resources:
+        mem_mb=300000,
+        walltime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/chol_min_zhang_scevan.R"
