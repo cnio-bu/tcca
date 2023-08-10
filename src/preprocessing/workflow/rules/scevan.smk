@@ -173,3 +173,19 @@ rule cna_brca_bhupinder_pal:
         "scevan"
     script:
         "../scripts/brca_bhupinder_pal_scevan.R"
+
+rule cna_cell_lines_gabriella_kinker:
+    input:
+        seurat_list=rules.sc_cell_lines_gabriella_kinker_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/cell_lines_gabriella_kinker_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/cell_lines_gabriella_kinker"
+    threads: 10
+    resources:
+        mem_mb=300000,
+        walltime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/cell_lines_gabriella_kinker_scevan.R"
