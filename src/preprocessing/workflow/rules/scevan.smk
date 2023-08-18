@@ -5,7 +5,7 @@ rule cna_crc_florian_uhlitz:
         annotated_list=f"{results}/seurat/annotated/crc_florian_uhlitz_annotated.rds",
     params:
         cna_res=f"{results}/cna/crc_florian_uhlitz"
-    threads: 10
+    threads: 5
     resources:
         mem_mb=300000,
         walltime=240,
@@ -21,7 +21,7 @@ rule cna_oc_ec_matthew_regner:
         annotated_list=f"{results}/seurat/annotated/oc_ec_matthew_regner_annotated.rds",
     params:
         cna_res=f"{results}/cna/oc_ec_matthew_regner"
-    threads: 10
+    threads: 5
     resources:
         mem_mb=300000,
         walltime=240,
@@ -37,7 +37,7 @@ rule cna_nsclc_stefan_salcher:
         annotated_list=f"{results}/seurat/annotated/nsclc_stefan_salcher_annotated.rds",
     params:
         cna_res=f"{results}/cna/nsclc_stefan_salcher"
-    threads: 10
+    threads: 5
     resources:
         mem_mb=300000,
         walltime=240,
@@ -53,7 +53,7 @@ rule cna_esca_xiannian_zhang:
         annotated_list=f"{results}/seurat/annotated/esca_xiannian_zhang_annotated.rds",
     params:
         cna_res=f"{results}/cna/esca_xiannian_zhang"
-    threads: 10
+    threads: 5
     resources:
         mem_mb=300000,
         walltime=240,
@@ -69,7 +69,7 @@ rule cna_uvm_michael_durante:
         annotated_list=f"{results}/seurat/annotated/uvm_michael_durante_annotated.rds",
     params:
         cna_res=f"{results}/cna/uvm_michael_durante"
-    threads: 10
+    threads: 5
     resources:
         mem_mb=300000,
         walltime=240,
@@ -85,7 +85,7 @@ rule cna_bmets_youmna_kfoury:
         annotated_list=f"{results}/seurat/annotated/bmets_youmna_kfoury_annotated.rds",
     params:
         cna_res=f"{results}/cna/bmets_youmna_kfoury"
-    threads: 10
+    threads: 5
     resources:
         mem_mb=300000,
         walltime=240,
@@ -101,7 +101,7 @@ rule cna_eac_thomas_carroll:
         annotated_list=f"{results}/seurat/annotated/eac_thomas_carroll_annotated.rds",
     params:
         cna_res=f"{results}/cna/eac_thomas_carroll"
-    threads: 10
+    threads: 5
     resources:
         mem_mb=300000,
         walltime=240,
@@ -117,7 +117,7 @@ rule cna_cc_xiaosong_lu:
         annotated_list=f"{results}/seurat/annotated/cc_xiaosong_lu_annotated.rds",
     params:
         cna_res=f"{results}/cna/cc_xiaosong_lu"
-    threads: 10
+    threads: 5
     resources:
         mem_mb=300000,
         walltime=240,
@@ -133,7 +133,7 @@ rule cna_gbm_nourhan_abdelfattah:
         annotated_list=f"{results}/seurat/annotated/gbm_nourhan_abdelfattah_annotated.rds",
     params:
         cna_res=f"{results}/cna/gbm_nourhan_abdelfattah"
-    threads: 10
+    threads: 5
     resources:
         mem_mb=300000,
         walltime=240,
@@ -149,7 +149,7 @@ rule cna_skcm_chao_zhang:
         annotated_list=f"{results}/seurat/annotated/skcm_chao_zhang_annotated.rds",
     params:
         cna_res=f"{results}/cna/skcm_chao_zhang"
-    threads: 10
+    threads: 5
     resources:
         mem_mb=300000,
         walltime=240,
@@ -165,7 +165,7 @@ rule cna_brca_bhupinder_pal:
         annotated_list=f"{results}/seurat/annotated/brca_bhupinder_pal_annotated.rds",
     params:
         cna_res=f"{results}/cna/brca_bhupinder_pal"
-    threads: 10
+    threads: 5
     resources:
         mem_mb=300000,
         walltime=240,
@@ -181,7 +181,7 @@ rule cna_cell_lines_gabriella_kinker:
         annotated_list=f"{results}/seurat/annotated/cell_lines_gabriella_kinker_annotated.rds",
     params:
         cna_res=f"{results}/cna/cell_lines_gabriella_kinker"
-    threads: 10
+    threads: 5
     resources:
         mem_mb=300000,
         walltime=240,
@@ -197,7 +197,7 @@ rule cna_prad_sujun_chen:
         annotated_list=f"{results}/seurat/annotated/prad_sujun_chen_annotated.rds",
     params:
         cna_res=f"{results}/cna/prad_sujun_chen"
-    threads: 10
+    threads: 5
     resources:
         mem_mb=300000,
         walltime=240,
@@ -213,7 +213,7 @@ rule cna_pdac_junya_peng:
         annotated_list=f"{results}/seurat/annotated/pdac_junya_peng_annotated.rds",
     params:
         cna_res=f"{results}/cna/pdac_junya_peng"
-    threads: 10
+    threads: 5
     resources:
         mem_mb=300000,
         walltime=240,
@@ -229,7 +229,7 @@ rule cna_chol_min_zhang:
         annotated_list=f"{results}/seurat/annotated/chol_min_zhang_annotated.rds",
     params:
         cna_res=f"{results}/cna/chol_min_zhang"
-    threads: 10
+    threads: 5
     resources:
         mem_mb=300000,
         walltime=240,
@@ -245,7 +245,7 @@ rule cna_mmieloma_stephan_tirier:
         annotated_list=f"{results}/seurat/annotated/mmieloma_stephan_tirier_annotated.rds",
     params:
         cna_res=f"{results}/cna/mmieloma_stephan_tirier"
-    threads: 10
+    threads: 5
     resources:
         mem_mb=300000,
         walltime=240,
@@ -261,7 +261,7 @@ rule cna_rcell_kevin_bi:
         annotated_list=f"{results}/seurat/annotated/rcell_kevin_bi_annotated.rds",
     params:
         cna_res=f"{results}/cna/rcell_kevin_bi"
-    threads: 10
+    threads: 5
     resources:
         mem_mb=300000,
         walltime=240,
@@ -277,7 +277,7 @@ rule cna_pancancer_junbin_qian:
         annotated_list=f"{results}/seurat/annotated/pancancer_junbin_qian_annotated.rds",
     params:
         cna_res=f"{results}/cna/pancancer_junbin_qian"
-    threads: 10
+    threads: 5
     resources:
         mem_mb=300000,
         walltime=240,
@@ -293,7 +293,7 @@ rule cna_breast_sunny_wu:
         annotated_list=f"{results}/seurat/annotated/breast_sunny_wu_annotated.rds",
     params:
         cna_res=f"{results}/cna/breast_sunny_wu"
-    threads: 10
+    threads: 5
     resources:
         mem_mb=300000,
         walltime=240,
@@ -309,7 +309,7 @@ rule cna_aml_audrey_lasry:
         annotated_list=f"{results}/seurat/annotated/aml_audrey_lasry_annotated.rds",
     params:
         cna_res=f"{results}/cna/aml_audrey_lasry"
-    threads: 10
+    threads: 5
     resources:
         mem_mb=300000,
         walltime=240,
@@ -325,7 +325,7 @@ rule cna_bcc_catherine_dyao:
         annotated_list=f"{results}/seurat/annotated/bcc_catherine_dyao_annotated.rds",
     params:
         cna_res=f"{results}/cna/bcc_catherine_dyao"
-    threads: 10
+    threads: 5
     resources:
         mem_mb=300000,
         walltime=240,
@@ -341,7 +341,7 @@ rule cna_pancancer_dalia_barkley:
         annotated_list=f"{results}/seurat/annotated/pancancer_dalia_barkley_annotated.rds",
     params:
         cna_res=f"{results}/cna/pancancer_dalia_barkley"
-    threads: 10
+    threads: 5
     resources:
         mem_mb=300000,
         walltime=240,
@@ -357,7 +357,7 @@ rule cna_brmets_hugo_gonzalez:
         annotated_list=f"{results}/seurat/annotated/brmets_hugo_gonzalez_annotated.rds",
     params:
         cna_res=f"{results}/cna/brmets_hugo_gonzalez"
-    threads: 10
+    threads: 5
     resources:
         mem_mb=300000,
         walltime=240,
@@ -373,7 +373,7 @@ rule cna_pancancer_sunny_wu:
         annotated_list=f"{results}/seurat/annotated/pancancer_sunny_wu_annotated.rds",
     params:
         cna_res=f"{results}/cna/pancancer_sunny_wu"
-    threads: 10
+    threads: 5
     resources:
         mem_mb=300000,
         walltime=240,
@@ -389,7 +389,7 @@ rule cna_pleural_rui_dong:
         annotated_list=f"{results}/seurat/annotated/pleural_rui_dong_annotated.rds",
     params:
         cna_res=f"{results}/cna/pleural_rui_dong"
-    threads: 10
+    threads: 5
     resources:
         mem_mb=300000,
         walltime=240,
@@ -405,7 +405,7 @@ rule cna_brmets_jana_biermann:
         annotated_list=f"{results}/seurat/annotated/brmets_jana_biermann_annotated.rds",
     params:
         cna_res=f"{results}/cna/brmets_jana_biermann"
-    threads: 10
+    threads: 5
     resources:
         mem_mb=300000,
         walltime=240,
@@ -421,7 +421,7 @@ rule cna_rcell_r_li:
         annotated_list=f"{results}/seurat/annotated/rcell_r_li_annotated.rds",
     params:
         cna_res=f"{results}/cna/rcell_r_li"
-    threads: 10
+    threads: 5
     resources:
         mem_mb=300000,
         walltime=240,
@@ -437,7 +437,7 @@ rule cna_synovial_jerby_arnon:
         annotated_list=f"{results}/seurat/annotated/synovial_jerby_arnon_annotated.rds",
     params:
         cna_res=f"{results}/cna/synovial_jerby_arnon"
-    threads: 10
+    threads: 5
     resources:
         mem_mb=300000,
         walltime=240,
@@ -453,7 +453,7 @@ rule cna_all_maxime_caron:
         annotated_list=f"{results}/seurat/annotated/all_maxime_caron_annotated.rds",
     params:
         cna_res=f"{results}/cna/all_maxime_caron"
-    threads: 10
+    threads: 5
     resources:
         mem_mb=300000,
         walltime=240,
@@ -469,7 +469,7 @@ rule cna_adrenalnb_rui_chong:
         annotated_list=f"{results}/seurat/annotated/adrenalnb_rui_chong_annotated.rds",
     params:
         cna_res=f"{results}/cna/adrenalnb_rui_chong"
-    threads: 10
+    threads: 5
     resources:
         mem_mb=300000,
         walltime=240,
@@ -485,7 +485,7 @@ rule cna_luad_kim_nayoung:
         annotated_list=f"{results}/seurat/annotated/luad_kim_nayoung_annotated.rds",
     params:
         cna_res=f"{results}/cna/luad_kim_nayoung"
-    threads: 10
+    threads: 5
     resources:
         mem_mb=300000,
         walltime=240,
@@ -501,7 +501,7 @@ rule cna_urothelial_chen:
         annotated_list=f"{results}/seurat/annotated/urothelial_chen_annotated.rds",
     params:
         cna_res=f"{results}/cna/urothelial_chen"
-    threads: 10
+    threads: 5
     resources:
         mem_mb=300000,
         walltime=240,
@@ -517,7 +517,7 @@ rule cna_luad_philip_bisschof:
         annotated_list=f"{results}/seurat/annotated/luad_philip_bisschof_annotated.rds",
     params:
         cna_res=f"{results}/cna/luad_philip_bisschof"
-    threads: 10
+    threads: 5
     resources:
         mem_mb=300000,
         walltime=240,
@@ -533,7 +533,7 @@ rule cna_bone_yun_liu:
         annotated_list=f"{results}/seurat/annotated/bone_yun_liu_annotated.rds",
     params:
         cna_res=f"{results}/cna/bone_yun_liu"
-    threads: 10
+    threads: 5
     resources:
         mem_mb=300000,
         walltime=240,
@@ -549,7 +549,7 @@ rule cna_cll_ramon_massoni:
         annotated_list=f"{results}/seurat/annotated/cll_ramon_massoni_annotated.rds",
     params:
         cna_res=f"{results}/cna/cll_ramon_massoni"
-    threads: 10
+    threads: 5
     resources:
         mem_mb=300000,
         walltime=240,
