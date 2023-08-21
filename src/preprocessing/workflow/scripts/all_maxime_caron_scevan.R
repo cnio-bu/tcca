@@ -10,18 +10,6 @@ cna_dir <- snakemake@params[["cna_res"]]
 ## SNAKEMAKE params
 threads_to_use <- snakemake@threads
 
-## Function definitions
-rename_columns <- function(sc, malignancy_colname, malignant_names, cell_type_colname, sample_colname, patient_colname){
-  sc@meta.data <- sc@meta.data %>%
-    mutate(malignancy = ifelse(sc@meta.data[, malignancy_colname] %in% malignant_names, TRUE, FALSE))
-  
-  colnames(sc@meta.data)[colnames(sc@meta.data) == cell_type_colname] <- "cell_type"
-  colnames(sc@meta.data)[colnames(sc@meta.data) == sample_colname] <- "sample"
-  colnames(sc@meta.data)[colnames(sc@meta.data) == patient_colname] <- "patient"
-  
-  return(sc)
-}
-
 SCEVAN_pred <- function(sc){
   #Correction of cellnames
   newcells <- gsub("\\.", "-", Cells(sc)) #SCEVAN has problems with rownames containing both "." and "-" and it crashes with some samples ("undefined columns selected")
@@ -64,16 +52,8 @@ setwd(cna_dir)
 ## Read data
 seu <- readRDS(file = full_seurat_list)
 
-## Add and rename standarized columns: malignancy, cell_type, sample, patient
-full_annotated_list <- lapply(seu, rename_columns, 
-                              malignancy_colname = "Celltype..malignancy.", 
-                              malignant_names = c("Malignant cells"),
-                              cell_type_colname = "Celltype..major.lineage.",
-                              sample_colname = "Sample", 
-                              patient_colname = "Patient")
-
 ## Fill in SCEVAN predictions with standarized format: scevan_prediction, scevan_subclone
-full_annotated_list_scevan <- lapply(full_annotated_list, SCEVAN_pred)
+full_annotated_list_scevan <- lapply(full_seurat_list, SCEVAN_pred)
 
 ## Save
 saveRDS(object = full_annotated_list_scevan, file = where_to_save)
