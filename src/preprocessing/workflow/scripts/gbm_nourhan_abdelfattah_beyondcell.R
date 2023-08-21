@@ -21,12 +21,12 @@ annotate_cell_cycle <- function(sc){
 
 # keep malignants cells only
 filter_malignants <- function(sc) {
-    if (sum(sc$malignancy == TRUE, na.rm = TRUE) > 0) {
-            sc_filtered <- subset(x = sc, subset = malignancy == TRUE)
-            return(sc_filtered)
-        } else {
-            return(NULL)
-        }
+    if (sum(sc@meta.data$malignancy == TRUE) > 0) {
+        sc_filtered <- subset(x = sc, subset = malignancy == TRUE)
+        return(sc_filtered)
+    } else {
+        return(NULL)
+    }
     
 }
 

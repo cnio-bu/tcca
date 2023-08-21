@@ -19,19 +19,17 @@ annotate_cell_cycle <- function(sc){
     return(sc)
 }
 
-## For this study, filter out non malignant cells
-filter_malignant <- function(sc) {
-  
-  types_to_keep <- TRUE
-  if (sum(sc@meta.data$malignancy == types_to_keep) > 1) {
-    sc_filtered <- subset(x = sc, subset = malignancy == types_to_keep)
-    return(sc_filtered)
+# keep malignants cells only
+filter_malignants <- function(sc) {
+    if (sum(sc@meta.data$malignancy == TRUE) > 0) {
+        sc_filtered <- subset(x = sc, subset = malignancy == TRUE)
+        return(sc_filtered)
+    } else {
+        return(NULL)
+    }
     
-  } else {
-    return(NULL)
-  }
-  
 }
+
 
 ## Calculate bcscores sample wise, for each sample, for malignant pops. only
 gs <- beyondcell::GetCollection(SSc, n.genes = 250, include.pathways = FALSE)

@@ -19,16 +19,15 @@ annotate_cell_cycle <- function(sc){
   return(sc)
 }
 
-
-## For this study, filter out non malignant cells
-filter_malignant <- function(sc) {
-  types_of_interest <- c(TRUE)
-  if (sum(sc$malignancy %in% types_of_interest) > 1) {
-    sc_filtered <- subset(x = sc, subset = malignancy %in% types_of_interest)
-    return(sc_filtered)
-  } else {
-    return(NULL)
-  }
+# keep malignants cells only
+filter_malignants <- function(sc) {
+    if (sum(sc@meta.data$malignancy == TRUE) > 0) {
+        sc_filtered <- subset(x = sc, subset = malignancy == TRUE)
+        return(sc_filtered)
+    } else {
+        return(NULL)
+    }
+    
 }
 
 ## Calculate bcscores sample wise, for each sample, for malignant pops. only

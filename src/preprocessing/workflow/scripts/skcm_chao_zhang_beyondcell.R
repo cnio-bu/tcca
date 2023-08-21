@@ -21,14 +21,14 @@ annotate_cell_cycle <- function(sc){
 
 # keep malignants cells only
 filter_malignants <- function(sc) {
-  if (sum(sc@meta.data$malignancy == TRUE) > 0) {
-    sc_filtered <- subset(x = sc, subset = malignancy == TRUE)
-    return(sc_filtered)
-  } else {
-    return(NULL)
-  }
+    if (sum(sc@meta.data$malignancy == TRUE) > 0) {
+        sc_filtered <- subset(x = sc, subset = malignancy == TRUE)
+        return(sc_filtered)
+    } else {
+        return(NULL)
+    }
+    
 }
-
 ## Calculate bcscores sample wise, for each sample, for malignant pops. only
 gs <- beyondcell::GetCollection(SSc, n.genes = 250, include.pathways = FALSE)
 get_bcscores <- function(sc){
