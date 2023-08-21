@@ -340,7 +340,7 @@ rule bc_mmieloma_stephan_tirier:
 
 rule bc_all_maxime_caron:
     input:
-        seurat_list=rules.sc_all_maxime_caron.output.seurat_list,
+        seurat_list=rules.sc_all_maxime_caron_seurat.output.seurat_list,
     output:
         malignant_list=f"{results}/seurat/malignant/all_maxime_caron.rds",
         bc_list=f"{results}/beyondcell/all_maxime_caron.rds",
@@ -474,7 +474,7 @@ rule bc_chol_min_zhang:
 
 rule bc_skcm_chao_zhang:
     input:
-        seurat_list=rules.sc__skcm_chao_zhang_seurat.output.seurat_list,
+        seurat_list=rules.sc_skcm_chao_zhang_seurat.output.seurat_list,
     output:
         malignant_list=f"{results}/seurat/malignant/skcm_chao_zhang.rds",
         bc_list=f"{results}/beyondcell/skcm_chao_zhang.rds",
