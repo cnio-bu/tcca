@@ -44,6 +44,18 @@ normalize_and_scale <- function(sc) {
     return(sc)
 }
 
+## Function definitions
+rename_columns <- function(sc, malignancy_colname, malignant_names, cell_type_colname, sample_colname, patient_colname){
+  sc@meta.data <- sc@meta.data %>%
+    mutate(malignancy = ifelse(sc@meta.data[, malignancy_colname] %in% malignant_names, TRUE, FALSE))
+  
+  colnames(sc@meta.data)[colnames(sc@meta.data) == cell_type_colname] <- "cell_type"
+  colnames(sc@meta.data)[colnames(sc@meta.data) == sample_colname] <- "sample"
+  colnames(sc@meta.data)[colnames(sc@meta.data) == patient_colname] <- "patient"
+  
+  return(sc)
+}
+
 #Add anotation to cells
 anot <- read.table(celltype,
                    sep = "\t",
@@ -77,6 +89,14 @@ filtered_sc <- lapply(filtered_sc, normalize_and_scale)
 
 # Get rid of "NULL" samples, there are no cells left in these
 filtered_sc[sapply(filtered_sc, is.null)] <- NULL
+
+## Add and rename standarized columns: malignancy, cell_type, sample, patient
+filtered_sc <- lapply(filtered_sc, rename_columns, 
+                              malignancy_colname = "cluster", 
+                              malignant_names = c("Ductal cell type 2"),
+                              cell_type_colname = "cluster",
+                              sample_colname = "orig.ident", 
+                              patient_colname = "Sample")
 
 ## Seurat object
 saveRDS(object = filtered_sc,

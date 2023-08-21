@@ -41,6 +41,18 @@ normalize_and_scale <- function(sc) {
     return(sc)
 }
 
+## Function definitions
+rename_columns <- function(sc, malignancy_colname, malignant_names, cell_type_colname, sample_colname, patient_colname){
+  sc@meta.data <- sc@meta.data %>%
+    mutate(malignancy = ifelse(sc@meta.data[, malignancy_colname] %in% malignant_names, TRUE, FALSE))
+  
+  colnames(sc@meta.data)[colnames(sc@meta.data) == cell_type_colname] <- "cell_type"
+  colnames(sc@meta.data)[colnames(sc@meta.data) == sample_colname] <- "sample"
+  colnames(sc@meta.data)[colnames(sc@meta.data) == patient_colname] <- "patient"
+  
+  return(sc)
+}
+
 ## load full mat
 full_mat <- readRDS(file = mat)
 cell_annot <- read.delim(annotations)
@@ -74,5 +86,13 @@ samples_list <- lapply(samples_list, normalize_and_scale)
 
 ## Get rid of the NULL elements
 samples_list[sapply(samples_list, is.null)] <- NULL
+
+## Add and rename standarized columns: malignancy, cell_type, sample, patient
+samples_list <- lapply(samples_list, rename_columns, 
+                              malignancy_colname = "Cell_subtype", 
+                              malignant_names = c("Malignant cells", "tS1", "tS2", "tS3"),
+                              cell_type_colname = "Cell_subtype",
+                              sample_colname = "orig.ident", 
+                              patient_colname = "Sample")
 
 saveRDS(object = samples_list, file = where_to_save)

@@ -54,6 +54,19 @@ normalize_and_scale <- function(sc) {
   return(sc)
 }
 
+## Function definitions
+rename_columns <- function(sc, malignancy_colname, malignant_names, cell_type_colname, sample_colname, patient_colname){
+  sc@meta.data <- sc@meta.data %>%
+    mutate(malignancy = ifelse(sc@meta.data[, malignancy_colname] %in% malignant_names, TRUE, FALSE))
+  
+  colnames(sc@meta.data)[colnames(sc@meta.data) == cell_type_colname] <- "cell_type"
+  colnames(sc@meta.data)[colnames(sc@meta.data) == sample_colname] <- "sample"
+  colnames(sc@meta.data)[colnames(sc@meta.data) == patient_colname] <- "patient"
+  
+  return(sc)
+}
+
+
 #Annotation with metadata from the authors (which includes copykat predictions)
 fill_metadata <- function(sc) {
   
@@ -113,6 +126,13 @@ meta <- mutate(meta,
                                           ifelse(seurat_clusters %in% c(0, 27), "GIST", "normal")))) #cancer cells based on the paper
 
 filtered_sc_clinical <- lapply(filtered_sc, fill_metadata)
+
+filtered_sc_clinical <- lapply(filtered_sc_clinical, rename_columns, 
+                              malignancy_colname = "malignancy", 
+                              malignant_names = c("ovarian cancer", "endometrial cancer", "GIST"),
+                              cell_type_colname = "cell.type",
+                              sample_colname = "Sample", 
+                              patient_colname = "patient")
 
 #Save
 saveRDS(object = filtered_sc_clinical, file = where_to_save)

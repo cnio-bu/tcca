@@ -1,6 +1,6 @@
 rule bc_brmets_hugo_gonzalez:
     input:
-        seurat_list=rules.cna_brmets_hugo_gonzalez.output.annotated_list,
+        seurat_list=rules.sc_brmets_hugo_gonzalez_seurat.output.seurat_list,
     output:
         malignant_list=f"{results}/seurat/malignant/brmets_hugo_gonzalez.rds",
         bc_list=f"{results}/beyondcell/brmets_hugo_gonzalez.rds",
@@ -17,7 +17,7 @@ rule bc_brmets_hugo_gonzalez:
 
 rule bc_pancancer_dalia_barkley:
     input:
-        seurat_list=rules.cna_pancancer_dalia_barkley.output.annotated_list,
+        seurat_list=rules.sc_pancancer_dalia_barkley_seurat.output.seurat_list,
     output:
         malignant_list=f"{results}/seurat/malignant/pancancer_dalia_barkley.rds",
         bc_list=f"{results}/beyondcell/pancancer_dalia_barkley.rds",
@@ -34,7 +34,7 @@ rule bc_pancancer_dalia_barkley:
 
 rule bc_breast_sunny_wu:
     input:
-        seurat_list=rules.cna_breast_sunny_wu.output.annotated_list,
+        seurat_list=rules.sc_breast_sunny_wu_seurat.output.seurat_list,
     output:
         malignant_list=f"{results}/seurat/malignant/breast_sunny_wu.rds",
         bc_list=f"{results}/beyondcell/breast_sunny_wu.rds",
@@ -51,7 +51,7 @@ rule bc_breast_sunny_wu:
 
 rule bc_pancancer_sunny_wu:
     input:
-        seurat_list=rules.cna_pancancer_sunny_wu.output.annotated_list,
+        seurat_list=rules.sc_pancancer_sunny_wu_seurat.output.seurat_list,
     output:
         malignant_list=f"{results}/seurat/malignant/pancancer_sunny_wu.rds",
         bc_list=f"{results}/beyondcell/pancancer_sunny_wu.rds",
@@ -68,7 +68,7 @@ rule bc_pancancer_sunny_wu:
 
 rule bc_luad_kim_nayoung:
     input:
-        seurat_list=rules.cna_luad_kim_nayoung.output.annotated_list,
+        seurat_list=rules.sc_luad_kim_nayoung_seurat.output.seurat_list,
     output:
         malignant_list=f"{results}/seurat/malignant/luad_kim_nayoung.rds",
         bc_list=f"{results}/beyondcell/luad_kim_nayoung.rds",
@@ -85,7 +85,7 @@ rule bc_luad_kim_nayoung:
 
 rule bc_urothelial_chen:
     input:
-        seurat_list=rules.cna_urothelial_chen.output.annotated_list,
+        seurat_list=rules.sc_urothelial_chen_seurat.output.seurat_list,
     output:
         malignant_list=f"{results}/seurat/malignant/urothelial_chen.rds",
         bc_list=f"{results}/beyondcell/urothelial_chen.rds",
@@ -102,7 +102,7 @@ rule bc_urothelial_chen:
 
 rule bc_adrenalnb_rui_chong:
     input:
-        seurat_list=rules.cna_adrenalnb_rui_chong.output.annotated_list,
+        seurat_list=rules.sc_adrenalnb_rui_chong_seurat.output.seurat_list,
     output:
         malignant_list=f"{results}/seurat/malignant/adrenalnb_rui_chong.rds",
         bc_list=f"{results}/beyondcell/adrenalnb_rui_chong.rds",
@@ -119,7 +119,7 @@ rule bc_adrenalnb_rui_chong:
 
 rule bc_luad_philip_bisschof:
     input:
-        seurat_list=rules.cna_luad_philip_bisschof.output.annotated_list,
+        seurat_list=rules.sc_luad_philip_bisschof_seurat.output.seurat_list,
     output:
         malignant_list=f"{results}/seurat/malignant/luad_philip_bisschof.rds",
         bc_list=f"{results}/beyondcell/luad_philip_bisschof.rds",
@@ -136,7 +136,7 @@ rule bc_luad_philip_bisschof:
 
 rule bc_pdac_junya_peng:
     input:
-        seurat_list=rules.cna_pdac_junya_peng.output.annotated_list,
+        seurat_list=rules.sc_pdac_junya_peng_seurat.output.seurat_list,
     output:
         malignant_list=f"{results}/seurat/malignant/pdac_junya_peng.rds",
         bc_list=f"{results}/beyondcell/pdac_junya_peng.rds",
@@ -153,7 +153,7 @@ rule bc_pdac_junya_peng:
 
 rule bc_synovial_jerby_arnon:
     input:
-        seurat_list=rules.cna_synovial_jerby_arnon.output.annotated_list,
+        seurat_list=rules.sc_synovial_jerby_arnon_seurat.output.seurat_list,
     output:
         malignant_list=f"{results}/seurat/malignant/synovial_jerby_arnon.rds",
         bc_list=f"{results}/beyondcell/synovial_jerby_arnon.rds",
@@ -170,7 +170,7 @@ rule bc_synovial_jerby_arnon:
 
 rule bc_rcell_kevin_bi:
     input:
-        seurat_list=rules.cna_rcell_kevin_bi.output.annotated_list,
+        seurat_list=rules.sc_rcell_kevin_bi_seurat.output.seurat_list,
     output:
         malignant_list=f"{results}/seurat/malignant/rcell_kevin_bi.rds",
         bc_list=f"{results}/beyondcell/rcell_kevin_bi.rds",
@@ -187,7 +187,7 @@ rule bc_rcell_kevin_bi:
 
 rule bc_pancancer_junbin_qian:
     input:
-        seurat_list=rules.cna_pancancer_junbin_qian.output.annotated_list,
+        seurat_list=rules.sc_pancancer_junbin_qian_seurat.output.seurat_list,
     output:
         malignant_list=f"{results}/seurat/malignant/pancancer_junbin_qian.rds",
         bc_list=f"{results}/beyondcell/pancancer_junbin_qian.rds",
@@ -204,7 +204,7 @@ rule bc_pancancer_junbin_qian:
 
 rule bc_rcell_r_li:
     input:
-        seurat_list=rules.cna_rcell_r_li.output.annotated_list,
+        seurat_list=rules.sc_rcell_r_li_seurat.output.seurat_list,
     output:
         malignant_list=f"{results}/seurat/malignant/rcell_r_li.rds",
         bc_list=f"{results}/beyondcell/rcell_r_li.rds",
@@ -221,7 +221,7 @@ rule bc_rcell_r_li:
 
 rule bc_cll_ramon_massoni:
     input:
-        seurat_list=rules.cna_cll_ramon_massoni.output.annotated_list,
+        seurat_list=rules.sc_cll_ramon_massoni_seurat.output.seurat_list,
     output:
         malignant_list=f"{results}/seurat/malignant/cll_ramon_massoni.rds",
         bc_list=f"{results}/beyondcell/cll_ramon_massoni.rds",
@@ -238,7 +238,7 @@ rule bc_cll_ramon_massoni:
 
 rule bc_aml_audrey_lasry:
     input:
-        seurat_list=rules.cna_aml_audrey_lasry.output.annotated_list,
+        seurat_list=rules.sc_aml_audrey_lasry_seurat.output.seurat_list,
     output:
         malignant_list=f"{results}/seurat/malignant/aml_audrey_lasry.rds",
         bc_list=f"{results}/beyondcell/aml_audrey_lasry.rds",
@@ -255,7 +255,7 @@ rule bc_aml_audrey_lasry:
 
 rule bc_gbm_nourhan_abdelfattah:
     input:
-        seurat_list=rules.cna_gbm_nourhan_abdelfattah.output.annotated_list,
+        seurat_list=rules.sc_gbm_nourhan_abdelfattah_seurat.output.seurat_list,
     output:
         malignant_list=f"{results}/seurat/malignant/gbm_nourhan_abdelfattah.rds",
         bc_list=f"{results}/beyondcell/gbm_nourhan_abdelfattah.rds",
@@ -272,7 +272,7 @@ rule bc_gbm_nourhan_abdelfattah:
 
 rule bc_cc_xiaosong_lu:
     input:
-        seurat_list=rules.cna_cc_xiaosong_lu.output.annotated_list,
+        seurat_list=rules.sc_cc_xiaosong_lu_seurat.output.seurat_list,
     output:
         malignant_list=f"{results}/seurat/malignant/cc_xiaosong_lu.rds",
         bc_list=f"{results}/beyondcell/cc_xiaosong_lu.rds",
@@ -289,7 +289,7 @@ rule bc_cc_xiaosong_lu:
 
 rule bc_pleural_rui_dong:
     input:
-        seurat_list=rules.cna_pleural_rui_dong.output.annotated_list,
+        seurat_list=rules.sc_pleural_rui_dong_seurat.output.seurat_list,
     output:
         malignant_list=f"{results}/seurat/malignant/pleural_rui_dong.rds",
         bc_list=f"{results}/beyondcell/pleural_rui_dong.rds",
@@ -306,7 +306,7 @@ rule bc_pleural_rui_dong:
 
 rule bc_bone_yun_liu:
     input:
-        seurat_list=rules.cna_bone_yun_liu.output.annotated_list,
+        seurat_list=rules.sc_bone_yun_liu_seurat.output.seurat_list,
     output:
         malignant_list=f"{results}/seurat/malignant/bone_yun_liu.rds",
         bc_list=f"{results}/beyondcell/bone_yun_liu.rds",
@@ -323,7 +323,7 @@ rule bc_bone_yun_liu:
 
 rule bc_mmieloma_stephan_tirier:
     input:
-        seurat_list=rules.cna_mmieloma_stephan_tirier.output.annotated_list,
+        seurat_list=rules.sc_mmieloma_stephan_tirier_seurat.output.seurat_list,
     output:
         malignant_list=f"{results}/seurat/malignant/mmieloma_stephan_tirier.rds",
         bc_list=f"{results}/beyondcell/mmieloma_stephan_tirier.rds",
@@ -340,7 +340,7 @@ rule bc_mmieloma_stephan_tirier:
 
 rule bc_all_maxime_caron:
     input:
-        seurat_list=rules.cna_all_maxime_caron.output.annotated_list,
+        seurat_list=rules.sc_all_maxime_caron.output.seurat_list,
     output:
         malignant_list=f"{results}/seurat/malignant/all_maxime_caron.rds",
         bc_list=f"{results}/beyondcell/all_maxime_caron.rds",
@@ -356,7 +356,7 @@ rule bc_all_maxime_caron:
 
 rule bc_crc_florian_uhlitz:
     input:
-        seurat_list=rules.cna_crc_florian_uhlitz.output.annotated_list,
+        seurat_list=rules.sc_crc_florian_uhlitz_seurat.output.seurat_list,
     output:
         malignant_list=f"{results}/seurat/malignant/crc_florian_uhlitz.rds",
         bc_list=f"{results}/beyondcell/crc_florian_uhlitz.rds",
@@ -373,7 +373,7 @@ rule bc_crc_florian_uhlitz:
 
 rule bc_bcc_catherine_dyao:
     input:
-        seurat_list=rules.cna_bcc_catherine_dyao.output.annotated_list,
+        seurat_list=rules.sc_bcc_catherine_dyao_seurat.output.seurat_list,
     output:
         malignant_list=f"{results}/seurat/malignant/bcc_catherine_dyao.rds",
         bc_list=f"{results}/beyondcell/bcc_catherine_dyao.rds",
@@ -390,7 +390,7 @@ rule bc_bcc_catherine_dyao:
 
 rule bc_uvm_michael_durante:
     input:
-        seurat_list=rules.cna_uvm_michael_durante.output.annotated_list,
+        seurat_list=rules.sc_uvm_michael_durante_seurat.output.seurat_list,
     output:
         malignant_list=f"{results}/seurat/malignant/uvm_michael_durante.rds",
         bc_list=f"{results}/beyondcell/uvm_michael_durante.rds",
@@ -407,7 +407,7 @@ rule bc_uvm_michael_durante:
 
 rule bc_esca_xiannian_zhang:
     input:
-        seurat_list=rules.cna_esca_xiannian_zhang.output.annotated_list,
+        seurat_list=rules.sc_esca_xiannian_zhang_seurat.output.seurat_list,
     output:
         malignant_list=f"{results}/seurat/malignant/esca_xiannian_zhang.rds",
         bc_list=f"{results}/beyondcell/esca_xiannian_zhang.rds",
@@ -424,7 +424,7 @@ rule bc_esca_xiannian_zhang:
 
 rule bc_brca_bhupinder_pal:
     input:
-        seurat_list=rules.cna_brca_bhupinder_pal.output.annotated_list,
+        seurat_list=rules.sc_brca_bhupinder_pal_seurat.output.seurat_list,
     output:
         malignant_list=f"{results}/seurat/malignant/brca_bhupinder_pal.rds",
         bc_list=f"{results}/beyondcell/brca_bhupinder_pal.rds",
@@ -441,7 +441,7 @@ rule bc_brca_bhupinder_pal:
 
 rule bc_prad_sujun_chen:
     input:
-        seurat_list=rules.cna_prad_sujun_chen.output.annotated_list,
+        seurat_list=rules.sc_prad_sujun_chen_seurat.output.seurat_list,
     output:
         malignant_list=f"{results}/seurat/malignant/prad_sujun_chen.rds",
         bc_list=f"{results}/beyondcell/prad_sujun_chen.rds",
@@ -458,7 +458,7 @@ rule bc_prad_sujun_chen:
 
 rule bc_chol_min_zhang:
     input:
-        seurat_list=rules.cna_chol_min_zhang.output.annotated_list,
+        seurat_list=rules.sc_chol_min_zhang_seurat.output.seurat_list,
     output:
         malignant_list=f"{results}/seurat/malignant/chol_min_zhang.rds",
         bc_list=f"{results}/beyondcell/chol_min_zhang.rds",
@@ -474,7 +474,7 @@ rule bc_chol_min_zhang:
 
 rule bc_skcm_chao_zhang:
     input:
-        seurat_list=rules.cna_skcm_chao_zhang.output.annotated_list,
+        seurat_list=rules.sc__skcm_chao_zhang_seurat.output.seurat_list,
     output:
         malignant_list=f"{results}/seurat/malignant/skcm_chao_zhang.rds",
         bc_list=f"{results}/beyondcell/skcm_chao_zhang.rds",
@@ -490,7 +490,7 @@ rule bc_skcm_chao_zhang:
 
 rule bc_brmets_jana_biermann:
     input:
-        seurat_list=rules.cna_brmets_jana_biermann.output.annotated_list,
+        seurat_list=rules.sc_brmets_jana_biermann_seurat.output.seurat_list,
     output:
         malignant_list=f"{results}/seurat/malignant/brmets_jana_biermann.rds",
         bc_list=f"{results}/beyondcell/brmets_jana_biermann.rds",
@@ -506,7 +506,7 @@ rule bc_brmets_jana_biermann:
 
 rule bc_cell_lines_gabriella_kinker:
     input:
-        seurat_list=rules.cna_cell_lines_gabriella_kinker.output.annotated_list,
+        seurat_list=rules.sc_cell_lines_gabriella_kinker_seurat.output.seurat_list,
     output:
         malignant_list=f"{results}/seurat/malignant/cell_lines_gabriella_kinker.rds",
         bc_list=f"{results}/beyondcell/cell_lines_gabriella_kinker.rds",
@@ -522,7 +522,7 @@ rule bc_cell_lines_gabriella_kinker:
 
 rule bc_bmets_youmna_kfoury:
     input:
-        seurat_list=rules.cna_bmets_youmna_kfoury.output.annotated_list,
+        seurat_list=rules.sc_bmets_youmna_kfoury_seurat.output.seurat_list,
     output:
         malignant_list=f"{results}/seurat/malignant/bmets_youmna_kfoury.rds",
         bc_list=f"{results}/beyondcell/bmets_youmna_kfoury.rds",
@@ -539,7 +539,7 @@ rule bc_bmets_youmna_kfoury:
         
 rule bc_nsclc_stefan_salcher:
     input:
-        seurat_list=rules.cna_nsclc_stefan_salcher.output.annotated_list,
+        seurat_list=rules.sc_nsclc_stefan_salcher_seurat.output.seurat_list,
     output:
         malignant_list=f"{results}/seurat/malignant/nsclc_stefan_salcher.rds",
         bc_list=f"{results}/beyondcell/nsclc_stefan_salcher.rds",
@@ -555,7 +555,7 @@ rule bc_nsclc_stefan_salcher:
 
 rule bc_eac_thomas_carroll:
     input:
-        seurat_list=rules.cna_eac_thomas_carroll.output.annotated_list,
+        seurat_list=rules.sc_eac_thomas_carroll_seurat.output.seurat_list,
     output:
         malignant_list=f"{results}/seurat/malignant/eac_thomas_carroll.rds",
         bc_list=f"{results}/beyondcell/eac_thomas_carroll.rds",
@@ -571,7 +571,7 @@ rule bc_eac_thomas_carroll:
 
 rule bc_oc_ec_matthew_regner:
     input:
-        seurat_list=rules.cna_oc_ec_matthew_regner.output.annotated_list,
+        seurat_list=rules.sc_oc_ec_matthew_regner_seurat.output.seurat_list,
     output:
         malignant_list=f"{results}/seurat/malignant/oc_ec_matthew_regner.rds",
         bc_list=f"{results}/beyondcell/oc_ec_matthew_regner.rds",

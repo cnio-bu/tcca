@@ -51,6 +51,20 @@ normalize_and_scale <- function(sc) {
     return(sc)
 }
 
+## Function definitions
+rename_columns <- function(sc, malignancy_colname, malignant_names, cell_type_colname, sample_colname){
+  sc@meta.data <- sc@meta.data %>%
+    mutate(malignancy = ifelse(sc@meta.data[, malignancy_colname] %in% malignant_names, TRUE, FALSE))
+  
+  colnames(sc@meta.data)[colnames(sc@meta.data) == cell_type_colname] <- "cell_type"
+  colnames(sc@meta.data)[colnames(sc@meta.data) == sample_colname] <- "sample"
+  
+  sc@meta.data <- sc@meta.data %>%
+    mutate(patient = sample)
+
+  return(sc)
+}
+
 all_seurat_objects = list()
 
 for(i in 1:nrow(dataset)) {
@@ -110,6 +124,13 @@ for(i in 1:nrow(dataset)) {
 filtered_sc <- lapply(all_seurat_objects, filter_sc)
 # Normalize
 filtered_sc <- lapply(filtered_sc, normalize_and_scale)
+
+## Add and rename standarized columns: malignancy, cell_type, sample, patient
+filtered_sc <- lapply(filtered_sc, rename_columns, 
+                              malignancy_colname = "Cell_Type", 
+                              malignant_names = c("MTC"),
+                              cell_type_colname = "Cell_Type",
+                              sample_colname = "orig.ident")
 
 
 saveRDS(object = filtered_sc, file = where_to_save)

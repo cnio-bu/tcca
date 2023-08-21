@@ -41,6 +41,18 @@ normalize_and_scale <- function(sc) {
     return(sc)
 }
 
+## Function definitions
+rename_columns <- function(sc, malignancy_colname, malignant_names, cell_type_colname, sample_colname, patient_colname){
+  sc@meta.data <- sc@meta.data %>%
+    mutate(malignancy = ifelse(sc@meta.data[, malignancy_colname] %in% malignant_names, TRUE, FALSE))
+  
+  colnames(sc@meta.data)[colnames(sc@meta.data) == cell_type_colname] <- "cell_type"
+  colnames(sc@meta.data)[colnames(sc@meta.data) == sample_colname] <- "sample"
+  colnames(sc@meta.data)[colnames(sc@meta.data) == patient_colname] <- "patient"
+  
+  return(sc)
+}
+
 
 all_cells <- Seurat::Read10X(
 data.dir = data_directory,
@@ -79,6 +91,16 @@ samples_filtered <- lapply(samples_filtered, normalize_and_scale)
 
 ## Get rid of the NULL elements/samples_filtered with no  cells left
 samples_filtered[sapply(samples_filtered, is.null)] <- NULL
+
+
+## Add and rename standarized columns: malignancy, cell_type, sample, patient
+samples_filtered <- lapply(samples_filtered, rename_columns, 
+                              malignancy_colname = "CellType", 
+                              malignant_names = c("Cancer/Epithelial", "Cancer/ Epithelial Cycling", "Cancer"),
+                              cell_type_colname = "CellType",
+                              sample_colname = "orig.ident", 
+                              patient_colname = "donor_id")
+
 
 saveRDS(
     object = samples_filtered,

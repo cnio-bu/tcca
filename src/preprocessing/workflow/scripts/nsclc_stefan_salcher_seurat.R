@@ -41,6 +41,17 @@ normalize_and_scale <- function(sc) {
     return(sc)
 }
 
+rename_columns <- function(sc, malignancy_colname, malignant_names, cell_type_colname, sample_colname, patient_colname){
+  sc@meta.data <- sc@meta.data %>%
+    mutate(malignancy = ifelse(sc@meta.data[, malignancy_colname] %in% malignant_names, TRUE, FALSE))
+  
+  colnames(sc@meta.data)[colnames(sc@meta.data) == cell_type_colname] <- "cell_type"
+  colnames(sc@meta.data)[colnames(sc@meta.data) == sample_colname] <- "sample"
+  colnames(sc@meta.data)[colnames(sc@meta.data) == patient_colname] <- "patient"
+  
+  return(sc)
+}
+
 seu <- readRDS(mat_file)
 DefaultAssay(seu) <- "RNA"
 
@@ -98,5 +109,11 @@ seu_list[sapply(seu_list, is.null)] <- NULL
 seu_list <- seu_list[sapply(seu_list, ncol) > 10]
 
 seu_list <- lapply(seu_list, normalize_and_scale)
+seu_list <- lapply(seu_list, rename_columns, 
+                              malignancy_colname = "cell_type", 
+                              malignant_names = c("malignant cell"),
+                              cell_type_colname = "cell_type_major",
+                              sample_colname = "sample", 
+                              patient_colname = "donor_id")
 
 saveRDS(seu_list, where_to_save)

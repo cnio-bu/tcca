@@ -48,6 +48,18 @@ normalize_and_scale <- function(sc) {
     return(sc)
 }
 
+rename_columns <- function(sc, malignancy_colname, malignant_names, cell_type_colname, sample_colname){
+  sc@meta.data <- sc@meta.data %>%
+    mutate(malignancy = ifelse(sc@meta.data[, malignancy_colname] %in% malignant_names, TRUE, FALSE))
+  
+  colnames(sc@meta.data)[colnames(sc@meta.data) == cell_type_colname] <- "cell_type"
+  colnames(sc@meta.data)[colnames(sc@meta.data) == sample_colname] <- "sample"
+  
+  sc@meta.data <- sc@meta.data %>%
+    mutate(patient = sample)
+
+  return(sc)
+}
 
 srt.list.primary.all <- lapply(srt.list.primary.all, change_to_rna)
 filtered_sc <- lapply(srt.list.primary.all, filter_sc)
@@ -55,6 +67,14 @@ filtered_sc <- lapply(filtered_sc, normalize_and_scale)
 
 # Get rid of "NULL" samples, there are no cells left in these
 filtered_sc[sapply(filtered_sc, is.null)] <- NULL
+
+
+## Add and rename standarized columns: malignancy, cell_type, sample, patient
+filtered_sc <- lapply(filtered_sc, rename_columns, 
+                              malignancy_colname = "type", 
+                              malignant_names = c("malignant"),
+                              cell_type_colname = "pop",
+                              sample_colname = "orig.ident")
 
 saveRDS(
     object = filtered_sc,

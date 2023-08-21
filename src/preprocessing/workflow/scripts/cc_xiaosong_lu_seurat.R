@@ -75,6 +75,17 @@ fill_metadata <- function(sc) {
     
 }
 
+## Function definitions
+rename_columns <- function(sc, malignancy_colname, malignant_names, cell_type_colname, sample_colname, patient_colname){
+  sc@meta.data <- sc@meta.data %>%
+    mutate(malignancy = ifelse(sc@meta.data[, malignancy_colname] %in% malignant_names, TRUE, FALSE))
+  
+  colnames(sc@meta.data)[colnames(sc@meta.data) == cell_type_colname] <- "cell_type"
+  colnames(sc@meta.data)[colnames(sc@meta.data) == sample_colname] <- "sample"
+  colnames(sc@meta.data)[colnames(sc@meta.data) == patient_colname] <- "patient"
+  
+  return(sc)
+}
 
 ##CODE
 #Load all samples
@@ -107,6 +118,14 @@ filtered_sc <- lapply(filtered_sc, normalize_and_scale)
 meta <- read.table(metadata, header=TRUE, row.names = 1, sep ="\t")  
 
 filtered_sc_clinical <- lapply(filtered_sc, fill_metadata)
+
+## Add and rename standarized columns: malignancy, cell_type, sample, patient
+filtered_sc_clinical <- lapply(filtered_sc_clinical, rename_columns, 
+                              malignancy_colname = "cell_type__ontology_label", 
+                              malignant_names = c("malignant cell"),
+                              cell_type_colname = "cell_type__ontology_label",
+                              sample_colname = "sample", 
+                              patient_colname = "donor_id")
 
 #Save
 saveRDS(object = filtered_sc_clinical, file = where_to_save)

@@ -40,6 +40,17 @@ normalize_and_scale <- function(sc) {
     return(sc)
 }
 
+rename_columns <- function(sc, sample_colname){
+  sc@meta.data <- sc@meta.data %>%
+    mutate(malignancy = TRUE,
+    cell_type = NA,
+    patient = NA)
+  
+  colnames(sc@meta.data)[colnames(sc@meta.data) == sample_colname] <- "sample"
+  
+  return(sc)
+}
+
 seu_obj <- readRDS(rdata)
 
 non_missing_cells <- seu_obj@meta.data %>%
@@ -51,5 +62,9 @@ seu_list <- Seurat::SplitObject(seu_obj, split.by = "Cell_line")
 
 filtered_sc <- lapply(X = seu_list, filter_sc)
 filtered_sc <- lapply(X = seu_list, normalize_and_scale)
+
+## Add and rename standarized columns: malignancy, cell_type, sample, patient
+filtered_sc <- lapply(filtered_sc, rename_columns, 
+                              sample_colname = "Cell_line")
 
 saveRDS(filtered_sc, where_to_save)

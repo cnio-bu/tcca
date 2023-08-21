@@ -56,6 +56,17 @@ annotate_clinical_data <- function(sc){
 
 }
 
+rename_columns <- function(sc, malignancy_colname, malignant_names, cell_type_colname, sample_colname, patient_colname){
+  sc@meta.data <- sc@meta.data %>%
+    mutate(malignancy = ifelse(sc@meta.data[, malignancy_colname] %in% malignant_names, TRUE, FALSE))
+  
+  colnames(sc@meta.data)[colnames(sc@meta.data) == cell_type_colname] <- "cell_type"
+  colnames(sc@meta.data)[colnames(sc@meta.data) == sample_colname] <- "sample"
+  colnames(sc@meta.data)[colnames(sc@meta.data) == patient_colname] <- "patient"
+  
+  return(sc)
+}
+
 all_samples <- list.files(data_directory, full.names = TRUE)
 all_seurat_objects <- list()
 
@@ -82,5 +93,13 @@ names(all_seurat_objects) <- basename(all_samples)
 filtered_sc <- lapply(all_seurat_objects, filter_sc)
 filtered_sc <- lapply(filtered_sc, normalize_and_scale)
 filtered_sc <- lapply(filtered_sc, annotate_clinical_data)
+
+## Add and rename standarized columns: malignancy, cell_type, sample, patient
+filtered_sc <- lapply(filtered_sc, rename_columns, 
+                              malignancy_colname = "malignant", 
+                              malignant_names = c("malignant"),
+                              cell_type_colname = "cell_type_main",
+                              sample_colname = "orig.ident", 
+                              patient_colname = "patient")
 
 saveRDS(object = filtered_sc, file = where_to_save)

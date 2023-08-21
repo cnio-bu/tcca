@@ -43,6 +43,20 @@ normalize_and_scale <- function(sc) {
     return(sc)
 }
 
+## Function definitions
+rename_columns <- function(sc, malignancy_colname, malignant_names, cell_type_colname, sample_colname){
+  sc@meta.data <- sc@meta.data %>%
+    mutate(malignancy = ifelse(sc@meta.data[, malignancy_colname] %in% malignant_names, TRUE, FALSE))
+  
+  colnames(sc@meta.data)[colnames(sc@meta.data) == cell_type_colname] <- "cell_type"
+  colnames(sc@meta.data)[colnames(sc@meta.data) == sample_colname] <- "sample"
+  
+  sc@meta.data <- mutate(sc@meta.data,
+  patient = gsub("^(.*?)\\..*$", "\\1", sample))
+
+  return(sc)
+}
+
 ## This is a seurat obj. with an unknown v. Converting it to Seurat 4.
 mat <- GetAssayData(seurat_object, slot = "counts")
 meta.data <- seurat_object@meta.data
@@ -68,6 +82,13 @@ filtered_sc <- lapply(filtered_sc, normalize_and_scale)
 
 # Get rid of "NULL" samples, there are no cells left in these
 filtered_sc[sapply(filtered_sc, is.null)] <- NULL
+
+## Add and rename standarized columns: malignancy, cell_type, sample, patient
+filtered_sc <- lapply(filtered_sc, rename_columns, 
+                              malignancy_colname = "characteristics..cell.type", 
+                              malignant_names = c("Malignant"),
+                              cell_type_colname = "characteristics..cell.type",
+                              sample_colname = "characteristics..sample")
 
 ## Seurat object
 saveRDS(object = filtered_sc,

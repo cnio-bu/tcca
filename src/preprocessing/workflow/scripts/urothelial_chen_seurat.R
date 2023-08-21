@@ -43,6 +43,19 @@ normalize_and_scale <- function(sc) {
     return(sc)
 }
 
+## Function definitions
+rename_columns <- function(sc, cell_type_colname, sample_colname){
+  sc$malignancy <- grepl("Epithelial",sc$cluster_sample)
+
+  colnames(sc@meta.data)[colnames(sc@meta.data) == cell_type_colname] <- "cell_type"
+  colnames(sc@meta.data)[colnames(sc@meta.data) == sample_colname] <- "sample"
+  
+  sc@meta.data <- sc@meta.data %>%
+    mutate(patient = sample)
+
+  return(sc)
+}
+
 ## Reset idents
 sc_Chen_BUC$old_ident <- sc_Chen_BUC$orig.ident
 sc_Chen_BUC$orig.ident <- sc_Chen_BUC$Sample
@@ -56,6 +69,11 @@ filtered_sc <- lapply(samples_list, filter_sc)
 
 ## Normalize and scale data
 filtered_sc <- lapply(filtered_sc, normalize_and_scale)
+
+## Add and rename standarized columns: malignancy, cell_type, sample, patient
+filtered_sc <- lapply(filtered_sc, rename_columns, 
+                              cell_type_colname = "cluster_sample",
+                              sample_colname = "orig.ident")
 
 ## Seurat object
 saveRDS(

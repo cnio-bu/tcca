@@ -82,6 +82,18 @@ annotate_cna_clones <- function(sc){
     return(sc)
 }
 
+## Function definitions
+rename_columns <- function(sc, malignancy_colname, malignant_names, sample_colname, patient_colname){
+  sc@meta.data <- sc@meta.data %>%
+    mutate(malignancy = ifelse(sc@meta.data[, malignancy_colname] %in% malignant_names, TRUE, FALSE))
+  
+  #colnames(sc@meta.data)[colnames(sc@meta.data) == cell_type_colname] <- "cell_type"
+  colnames(sc@meta.data)[colnames(sc@meta.data) == sample_colname] <- "sample"
+  colnames(sc@meta.data)[colnames(sc@meta.data) == patient_colname] <- "patient"
+  sc@meta.data$cell_type <- NA #MISSING CELL TYPE ANNOTATION
+  return(sc)
+}
+
 ##CODE
 #Load all samples
 all_samples <- list.dirs(data_directory,
@@ -121,6 +133,13 @@ setwd(cna_dir)
 
 #Annotate CNA
 annotated_sc <- lapply(filtered_sc_clinical, annotate_cna_clones)
+
+## Add and rename standarized columns: malignancy, cell_type, sample, patient
+annotated_sc <- lapply(annotated_sc, rename_columns, 
+                              malignancy_colname = "class", 
+                              malignant_names = c("tumor"),
+                              sample_colname = "orig.ident", 
+                              patient_colname = "patient")
 
 #Save
 saveRDS(object = annotated_sc, file = where_to_save)

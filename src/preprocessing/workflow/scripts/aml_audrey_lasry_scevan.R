@@ -70,7 +70,8 @@ full_annotated_list <- lapply(seu, rename_columns,
                               malignant_names = c("malignant"),
                               cell_type_colname = "Celltype..major.lineage.",
                               sample_colname = "biosample_id", 
-                              patient_colname = "donor_id")
+                              patient_colname = "donor_id"
+                              )
 
 ## Fill in SCEVAN predictions with standarized format: scevan_prediction, scevan_subclone
 full_annotated_list_scevan <- lapply(full_annotated_list, SCEVAN_pred)

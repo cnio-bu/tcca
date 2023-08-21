@@ -70,6 +70,17 @@ fill_copy_number <- function(sc){
     return(sc)
 }
 
+rename_columns <- function(sc, malignancy_colname, malignant_names, sample_colname, patient_colname){
+  sc@meta.data <- sc@meta.data %>%
+    mutate(malignancy = ifelse(sc@meta.data[, malignancy_colname] %in% malignant_names, TRUE, FALSE),
+    cell_type = NA)
+  
+  colnames(sc@meta.data)[colnames(sc@meta.data) == sample_colname] <- "sample"
+  colnames(sc@meta.data)[colnames(sc@meta.data) == patient_colname] <- "patient"
+  
+  return(sc)
+}
+
 ## Get all samples
 all_samples <- list.dirs(data_directory,
                          recursive = FALSE,
@@ -119,5 +130,12 @@ filtered_sc <- lapply(filtered_sc, normalize_and_scale)
 # Annotation
 filtered_sc_clinical <- lapply(filtered_sc, fill_clinical)
 filtered_clinical_annotated <- lapply(filtered_sc_clinical, fill_copy_number)
+
+## Add and rename standarized columns: malignancy, cell_type, sample, patient
+filtered_clinical_annotated <- lapply(filtered_clinical_annotated, rename_columns, 
+                              malignancy_colname = "cna_clone", 
+                              malignant_names = c("CNA"),
+                              sample_colname = "sample_id", 
+                              patient_colname = "patient_id")
 
 saveRDS(object = filtered_clinical_annotated, file = where_to_save)
