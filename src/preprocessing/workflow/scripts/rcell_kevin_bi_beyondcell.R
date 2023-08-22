@@ -63,19 +63,19 @@ saveRDS(object = bcs, file = bc_list)
 
 ## Generate and save reports
 single_cell_report <- data.frame(
-  sample = sapply(seu, FUN = function(x){unique(x$orig.ident)}),
-  cells = sapply(seu, FUN = function(x){nrow(x@meta.data)})
+    sample = sapply(seu, FUN = function(x){unique(x@meta.data$sample)}),
+    cells = sapply(seu, FUN = function(x){nrow(x@meta.data)})
 )
 
 bc_report <- data.frame(
-  sample = sapply(malignants, FUN = function(x){ unique(x$orig.ident)}),
-  malignants = sapply(malignants, FUN = function(x){ nrow(x@meta.data)}),
-  drug_sigs = sapply(bcs, FUN = function(x){ nrow(x@normalized)})
+    sample = sapply(malignants, FUN = function(x){ unique(x@meta.data$sample)}),
+    malignants = sapply(malignants, FUN = function(x){ nrow(x@meta.data)}),
+    drug_sigs = sapply(bcs, FUN = function(x){ nrow(x@normalized)})
 )
 
 single_cell_report <- single_cell_report %>%
-  full_join(y = bc_report, by = "sample") %>%
-  replace_na(list(malignants = 0, drug_sigs = 0))
+    full_join(y = bc_report, by = "sample") %>%
+    replace_na(list(malignants = 0, drug_sigs = 0))
 
 write.table(
   x = single_cell_report,
