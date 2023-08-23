@@ -19,7 +19,7 @@ SCEVAN_pred <- function(sc){
   normalcells <- rownames(sc@meta.data[sc@meta.data$malignancy == FALSE,])
   
   #Generate SCEVAN annotation
-  sample <- levels(sc@meta.data$orig.ident) #Get sample for naming the output results
+  sample <- unique(sc@meta.data$sample) #Get sample for naming the output results
   count_mtx <- Seurat::GetAssayData(object = sc, slot = "counts")
   results <- SCEVAN::pipelineCNA(count_mtx = count_mtx,
                                  sample = sample,
