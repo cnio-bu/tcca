@@ -24,7 +24,7 @@ def get_brmets_features(wc):
     hugo_files = datasets.loc[datasets["study"] == "brmets_hugo_gonzalez", "filename"]
 
     return expand(
-        f"{raw_data}/brmets_hugo_gonzalez/{{sample}}_features.rds", sample=hugo_files
+        f"{raw_data}/brmets_hugo_gonzalez/{{sample}}_features.tsv", sample=hugo_files
     )
 
 
@@ -32,7 +32,7 @@ def get_brmets_barcodes(wc):
     hugo_files = datasets.loc[datasets["study"] == "brmets_hugo_gonzalez", "filename"]
 
     return expand(
-        f"{raw_data}/brmets_hugo_gonzalez/{{sample}}_barcodes.rds", sample=hugo_files
+        f"{raw_data}/brmets_hugo_gonzalez/{{sample}}_barcodes.tsv", sample=hugo_files
     )
 
 
