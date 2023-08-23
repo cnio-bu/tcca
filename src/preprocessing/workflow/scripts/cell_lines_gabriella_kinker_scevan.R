@@ -17,7 +17,7 @@ SCEVAN_pred <- function(sc){
   sc <- RenameCells(sc, new.names = newcells)
   
   #Generate SCEVAN annotation
-  sample <- levels(sc@meta.data$orig.ident) #Get sample for naming the output results
+  sample <- levels(sc@meta.data$sample) #Get sample for naming the output results
   count_mtx <- Seurat::GetAssayData(object = sc, slot = "counts")
   results <- SCEVAN::pipelineCNA(count_mtx = count_mtx,
                                  sample = sample,
