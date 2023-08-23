@@ -13,7 +13,7 @@ rule sc_brmets_hugo_gonzalez_seurat:
     conda:
         "../envs/seurat.yaml"
     script:
-        "../../scripts/brmets_hugo_gonzalez_seurat.R"
+        "../scripts/brmets_hugo_gonzalez_seurat.R"
 
 
 rule sc_pancancer_dalia_barkley_seurat:
