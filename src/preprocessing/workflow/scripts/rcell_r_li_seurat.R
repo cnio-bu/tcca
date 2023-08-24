@@ -77,7 +77,7 @@ gc()
 ## Split Seurat object by patient
 seurat_list <- Seurat::SplitObject(
     object = full_seu,
-    split.by = "patient"
+    split.by = "orig.ident"
     )
 
 rm(full_seu)
