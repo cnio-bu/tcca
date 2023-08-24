@@ -1,5 +1,6 @@
 library("beyondcell")
 library("Seurat")
+library("tidyverse")
 
 ## SNAKEMAKE I/O
 full_seurat_list <- snakemake@input[["seurat_list"]]
