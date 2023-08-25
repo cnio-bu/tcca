@@ -69,16 +69,13 @@ sc_Peng_PDAC@meta.data <- merge(sc_Peng_PDAC@meta.data,
                                 all.x = T
                                 )
 
-row.names(sc_Peng_PDAC@meta.data) <- sc_Peng_PDAC@meta.data$Row.names
+rownames(sc_Peng_PDAC@meta.data) <- sc_Peng_PDAC@meta.data$Row.names
 sc_Peng_PDAC@meta.data <- sc_Peng_PDAC@meta.data[,-1]
 
-# Change default ident for later split and QC
-sc_Peng_PDAC@meta.data$orig.ident <- sc_Peng_PDAC@meta.data$Sample
-Idents(sc_Peng_PDAC) <- "orig.ident"
 
 ## Split the merged obj
 samples_list <- Seurat::SplitObject(object = sc_Peng_PDAC,
-                                    split.by = "orig.ident"
+                                    split.by = "Sample"
                                     )
 
 ## Filter cells
@@ -95,7 +92,7 @@ filtered_sc <- lapply(filtered_sc, rename_columns,
                               malignancy_colname = "cluster", 
                               malignant_names = c("Ductal cell type 2"),
                               cell_type_colname = "cluster",
-                              sample_colname = "orig.ident", 
+                              sample_colname = "Sample", 
                               patient_colname = "Sample")
 
 ## Seurat object
