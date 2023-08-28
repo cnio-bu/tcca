@@ -84,7 +84,7 @@ seu <- Seurat::CreateSeuratObject(
 seu_list <- Seurat::SplitObject(object = seu, split.by = "Patient")
 
 seu_list <- lapply(seu_list, filter_sc)
-seu_list <- lapply(seu_list, normalize_and_scale())
+seu_list <- lapply(seu_list, normalize_and_scale)
 ## Add and rename standarized columns: malignancy, cell_type, sample, patient
 seu_list <- lapply(seu_list, rename_columns, 
                               malignancy_colname = "Celltype..major.lineage.",
