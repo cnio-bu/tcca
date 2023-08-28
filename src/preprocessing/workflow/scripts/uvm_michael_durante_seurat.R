@@ -2,7 +2,7 @@ library("Seurat")
 library("tidyverse")
 
 ## SNAKEMAKE I/O
-mat_file      <- snakemake@input[["matrix"]]
+mat_file      <- snakemake@params[["data_dir"]]
 metadata      <- snakemake@input[["metadata"]]
 where_to_save <- snakemake@output[["seurat_list"]]
 
