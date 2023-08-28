@@ -49,20 +49,31 @@ rename_columns <- function(sc, malignancy_colname, malignant_names, cell_type_co
   return(sc)
 }
 
-mat <- Seurat::Read10X_h5(filename = mat_file)
-metadata <- data.table::fread(input = metadata)  %>%
-    as.data.frame()
+mat <- Seurat::Read10X()(filename = mat_file)
 
-rownames(metadata) <- metadata$Cell
+metadata <- data.table::fread(input = metadata) %>%
+    mutate(
+    cell_id = gsub(pattern = "^.*@", replacement = "", x = Cell)
+  ) %>%
+  distinct(cell_id, .keep_all = TRUE) %>%
+  as.data.frame()
+
 metadata$Cell <- NULL
+#Add patient column (only one sample per patient)
+metadata <- mutate(metadata, sample = Patient) 
 
-metadata <- mutate(metadata,
-               patient = Sample) #Add patient column (only one sample per patient)
+## Keep cells with annot only
+cells_to_keep <- intersect(colnames(mat), metadata$cell_id)
+mat <- mat[, cells_to_keep]
+metadata <- metadata[metadata$cell_id %in% cells_to_keep, ]
+rownames(metadata) <- metadata$cell_id
+
 
 seu <- Seurat::CreateSeuratObject(
     counts = mat,
     meta.data = metadata,
-    project = "uvm"
+    project = "uvm",
+    assay = "RNA"
     )
 
 seu_list <- Seurat::SplitObject(object = seu, split.by = "Patient")
@@ -71,10 +82,10 @@ seu_list <- lapply(seu_list, filter_sc)
 seu_list <- lapply(seu_list, scale_data_find_variables)
 ## Add and rename standarized columns: malignancy, cell_type, sample, patient
 seu_list <- lapply(seu_list, rename_columns, 
-                              malignancy_colname = "Celltype..major.lineage.", 
+                              malignancy_colname = "Celltype..major.lineage.",
                               malignant_names = c("Malignant"),
                               cell_type_colname = "Celltype..major.lineage.",
-                              sample_colname = "Sample", 
+                              sample_colname = "sample",
                               patient_colname = "patient")
 
 saveRDS(seu_list, where_to_save)
