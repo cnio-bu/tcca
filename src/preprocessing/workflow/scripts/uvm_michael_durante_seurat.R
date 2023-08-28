@@ -54,7 +54,7 @@ rename_columns <- function(sc, malignancy_colname, malignant_names, cell_type_co
   return(sc)
 }
 
-mat <- Seurat::Read10X()(filename = mat_file)
+mat <- Seurat::Read10X(filename = mat_file)
 
 metadata <- data.table::fread(input = metadata) %>%
     mutate(
