@@ -399,7 +399,7 @@ rule sc_uvm_michael_durante_seurat:
         mem_mb=get_resource("defaults", "mem_mb"),
         walltime=get_resource("defaults", "walltime"),
     params:
-        data_dir = f"{raw_data}/uvm_michael_durante/GSM147091"
+        data_dir = f"{raw_data}/uvm_michael_durante/GSM4147091"
     conda:
         "../envs/seurat.yaml"
     script:
