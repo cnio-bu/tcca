@@ -62,8 +62,11 @@ annot <- data.table::fread(celltype) %>%
 
 rownames(annot) <- annot$Cell
 
+## common cells
+cells_to_keep <- intersect(colnames(sc_Peng_PDAC), annot$Cell)
+
 full_seu <- Seurat::CreateSeuratObject(
-  counts = sc_Peng_PDAC@assays$RNA@counts,
+  counts = sc_Peng_PDAC@assays$RNA@counts[, cells_to_keep],
   assay = "RNA",
   meta.data = annot,
   project = "PDAC_Junya_Peng"
