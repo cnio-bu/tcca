@@ -31,11 +31,16 @@ filter_sc <- function(sc) {
     return(new_filtered_sc)
 }
 
-scale_data_find_variables <- function(sc) {
+normalize_and_scale <- function(sc) {
+    sc <- Seurat::NormalizeData(sc,
+                                normalization.method = "LogNormalize",
+                                scale.factor = 10000
+                                )
     sc <- Seurat::FindVariableFeatures(sc, selection.method = "vst")
     sc <- Seurat::ScaleData(sc, features = rownames(sc))
     return(sc)
 }
+
 
 ## Function definitions
 rename_columns <- function(sc, malignancy_colname, malignant_names, cell_type_colname, sample_colname, patient_colname){
@@ -79,7 +84,7 @@ seu <- Seurat::CreateSeuratObject(
 seu_list <- Seurat::SplitObject(object = seu, split.by = "Patient")
 
 seu_list <- lapply(seu_list, filter_sc)
-seu_list <- lapply(seu_list, scale_data_find_variables)
+seu_list <- lapply(seu_list, normalize_and_scale())
 ## Add and rename standarized columns: malignancy, cell_type, sample, patient
 seu_list <- lapply(seu_list, rename_columns, 
                               malignancy_colname = "Celltype..major.lineage.",
