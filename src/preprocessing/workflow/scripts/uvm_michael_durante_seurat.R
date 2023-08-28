@@ -65,7 +65,10 @@ metadata <- data.table::fread(input = metadata) %>%
 
 metadata$Cell <- NULL
 #Add patient column (only one sample per patient)
-metadata <- mutate(metadata, sample = Patient) 
+metadata <- metadata %>%
+    mutate(sample = Patient,
+    "patient" = Patient,
+    )
 
 ## Keep cells with annot only
 cells_to_keep <- intersect(colnames(mat), metadata$cell_id)
@@ -81,7 +84,7 @@ seu <- Seurat::CreateSeuratObject(
     assay = "RNA"
     )
 
-seu_list <- Seurat::SplitObject(object = seu, split.by = "Patient")
+seu_list <- Seurat::SplitObject(object = seu, split.by = "patient")
 
 seu_list <- lapply(seu_list, filter_sc)
 seu_list <- lapply(seu_list, normalize_and_scale)
