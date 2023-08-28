@@ -126,7 +126,7 @@ rule sc_luad_philip_bisschof_seurat:
 rule sc_pdac_junya_peng_seurat:
     input:
         object_list=f"{raw_data}/pdac_junya_peng/pdac_junya_peng.RData",
-        celltype=f"{raw_data}/pdac_junya_peng/all_celltype.txt",
+        celltype=f"{raw_data}/pdac_junya_peng/PAAD_CRA001160_CellMetainfo_table.tsv",
     output:
         seurat_list=f"{results}/seurat/raw/pdac_junya_peng.rds",
     threads: get_resource("defaults", "threads")

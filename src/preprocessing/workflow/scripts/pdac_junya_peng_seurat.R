@@ -57,25 +57,24 @@ rename_columns <- function(sc, malignancy_colname, malignant_names, cell_type_co
 }
 
 #Add anotation to cells
-anot <- read.table(celltype,
-                   sep = "\t",
-                   header = T,
-                   row.names = 1
-                   )
+annot <- data.table::fread(celltype) %>%
+    as.data.frame()
 
-sc_Peng_PDAC@meta.data <- merge(sc_Peng_PDAC@meta.data,
-                                anot,
-                                by = "row.names",
-                                all.x = T
-                                )
+rownames(annot) <- annot$Cell
 
-rownames(sc_Peng_PDAC@meta.data) <- sc_Peng_PDAC@meta.data$Row.names
-sc_Peng_PDAC@meta.data <- sc_Peng_PDAC@meta.data[,-1]
+full_seu <- Seurat::CreateSeuratObject(
+  counts = sc_Peng_PDAC@assays$RNA@counts,
+  assay = "RNA",
+  meta.data = annot,
+  project = "PDAC_Junya_Peng"
+)
 
+rm(sc_Peng_PDAC)
+gc()
 
 ## Split the merged obj
-samples_list <- Seurat::SplitObject(object = sc_Peng_PDAC,
-                                    split.by = "Sample"
+samples_list <- Seurat::SplitObject(object = full_seu,
+                                    split.by = "Patient"
                                     )
 
 ## Filter cells
@@ -88,12 +87,13 @@ filtered_sc <- lapply(filtered_sc, normalize_and_scale)
 filtered_sc[sapply(filtered_sc, is.null)] <- NULL
 
 ## Add and rename standarized columns: malignancy, cell_type, sample, patient
-filtered_sc <- lapply(filtered_sc, rename_columns, 
-                              malignancy_colname = "cluster", 
-                              malignant_names = c("Ductal cell type 2"),
-                              cell_type_colname = "cluster",
-                              sample_colname = "Sample", 
-                              patient_colname = "Sample")
+filtered_sc <- lapply(filtered_sc, rename_columns,
+                              malignancy_colname = "Celltype..major.lineage.",
+                              malignant_names = c("Malignant"),
+                              cell_type_colname = "Celltype..major.lineage.",
+                              sample_colname = "Patient",
+                              patient_colname = "Patient"
+                              )
 
 ## Seurat object
 saveRDS(object = filtered_sc,
