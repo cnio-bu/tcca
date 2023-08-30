@@ -564,3 +564,18 @@ rule dep_oc_ec_matthew_regner:
         "../envs/beyondcell.yaml"
     script:
         "../scripts/general_functional_enrichment.R"
+
+rule dep_pdac_shu_zhang:
+    input:
+        malignant_cells=rules.bc_pdac_shu_zhang.output.malignant_list,
+        gsets="/storage/scratch01/shared/projects/bc-meta/reference/all_dependencies.gmt",
+    output:
+        bc_list=f"{results}/dependencies/pdac_shu_zhang.rds",
+    threads: get_resource("default_deps", "threads")
+    resources:
+        mem_mb=get_resource("default_deps", "mem_mb"),
+        walltime=180
+    conda:
+        "../envs/beyondcell.yaml"
+    script:
+        "../scripts/general_functional_enrichment.R"

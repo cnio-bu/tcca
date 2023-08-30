@@ -89,6 +89,8 @@ rule all:
         f"{results}/functional/nsclc_stefan_salcher.rds",
         f"{results}/functional/eac_thomas_carroll.rds",
         f"{results}/functional/oc_ec_matthew_regner.rds",
+        f"{results}/functional/pdac_shu_zhang.rds"
+
 
 
 rule dependencies:
@@ -127,7 +129,9 @@ rule dependencies:
         f"{results}/dependencies/bmets_youmna_kfoury.rds",
         f"{results}/dependencies/nsclc_stefan_salcher.rds",
         f"{results}/dependencies/eac_thomas_carroll.rds",
-        f"{results}/dependencies/oc_ec_matthew_regner.rds"
+        f"{results}/dependencies/oc_ec_matthew_regner.rds",
+        f"{results}/dependencies/pdac_shu_zhang.rds"
+
 
 
 
