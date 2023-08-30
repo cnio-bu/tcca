@@ -584,3 +584,19 @@ rule bc_oc_ec_matthew_regner:
       "../envs/beyondcell.yaml"
     script:
       "../scripts/oc_ec_matthew_regner_beyondcell.R"
+
+rule bc_pdac_shu_zhang:
+    input:
+        seurat_list=rules.sc_pdac_shu_zhang_seurat.output.seurat_list,
+    output:
+        malignant_list=f"{results}/seurat/malignant/pdac_shu_zhang.rds",
+        bc_list=f"{results}/beyondcell/pdac_shu_zhang.rds",
+        report=f"{results}/reports/cells_pdac_shu_zhang.tsv",
+    threads: get_resource("default_bc", "threads"),
+    resources:
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=get_resource("default_bc", "walltime"),
+    conda:
+        "../envs/beyondcell.yaml"
+    script:
+        "../scripts/pdac_shu_zhang_beyondcell.R"

@@ -557,3 +557,19 @@ rule cna_cll_ramon_massoni:
         "scevan"
     script:
         "../scripts/cll_ramon_massoni_scevan.R"
+
+rule cna_pdac_shu_zhang:
+    input:
+        seurat_list=rules.sc_pdac_shu_zhang_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/pdac_shu_zhang_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/pdac_shu_zhang"
+    threads: 5
+    resources:
+        mem_mb=300000,
+        walltime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/pdac_shu_zhang_scevan.R"

@@ -597,3 +597,21 @@ rule sc_oc_ec_matthew_regner_seurat:
       "../envs/seurat.yaml"
     script:
       "../scripts/oc_ec_matthew_regner_seurat.R"
+
+rule sc_pdac_shu_zhang_seurat:
+    input:
+        metadata=f"{raw_data}/pdac_shu_zhang/GSE197177_RAW/patient_metadata.tsv",
+    output:
+        seurat_list=f"{results}/seurat/raw/pdac_shu_zhang.rds",
+        out_dir=directory(f"{results}/cna/pdac_shu_zhang/output"),
+    params:
+        data_dir=f"{raw_data}/pdac_shu_zhang/GSE197177_RAW/",
+        cna_res=f"{results}/cna/pdac_shu_zhang",
+    threads: 5
+    resources:
+        mem_mb=300000,
+        walltime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/pdac_shu_zhang_seurat.R"
