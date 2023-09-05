@@ -253,6 +253,21 @@ rule mod_cc_xiaosong_lu:
         "../scripts/therapeutic_module_extraction.R"
 
 
+rule mod_crc_florian_uhlitz:
+    input:
+        bc_list=rules.bc_crc_florian_uhlitz.output.bc_list,
+    output:
+        module_dir=directory(f"{results}/modules/crc_florian_uhlitz")
+    threads: get_resource("default_bc", "threads")
+    resources:
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=get_resource("default_bc", "walltime"),
+    conda:
+        "../envs/drug_modules.yaml"
+    script:
+        "../scripts/therapeutic_module_extraction.R"
+
+
 rule mod_pleural_rui_dong:
     input:
         bc_list=rules.bc_pleural_rui_dong.output.bc_list,
