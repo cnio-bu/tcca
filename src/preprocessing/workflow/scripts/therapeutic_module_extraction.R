@@ -1,7 +1,6 @@
 library("beyondcell")
 library("fabia")
-library("biclust")
-library("Seurat")
+library("tidyverse")
 
 ### SNAKEMAKE I/O ###
 bc_list <- snakemake@input[["bc_list"]]
