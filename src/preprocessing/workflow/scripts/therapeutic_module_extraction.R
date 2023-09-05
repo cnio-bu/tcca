@@ -29,6 +29,8 @@ for(sample in all_samples){
     )
     
     ## save the objects before table extraction, just in case
+    dir.create(where_to_save, showWarnings = FALSE)
+
     sample_name <- unique(sample@meta.data$sample)
     save_dir <- paste0(where_to_save, "/", sample_name, "_biclusters.rds")
     saveRDS(object = res, file = save_dir)
