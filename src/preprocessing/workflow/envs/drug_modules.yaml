@@ -1,0 +1,10 @@
+---
+name: drug_modules
+channels:
+  - conda-forge
+  - bioconda
+  - bu_cnio
+dependencies:
+  - r-beyondcell=2.1.0
+  - bioconductor-fabia
+  - r-tidyverse

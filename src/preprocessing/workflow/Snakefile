@@ -133,6 +133,44 @@ rule dependencies:
         f"{results}/dependencies/pdac_shu_zhang.rds"
 
 
+rule modules:
+    input:
+        f"{results}/modules/brmets_hugo_gonzalez",
+        f"{results}/modules/pancancer_dalia_barkley",
+        f"{results}/modules/breast_sunny_wu",
+        f"{results}/modules/pancancer_sunny_wu",
+        f"{results}/modules/luad_kim_nayoung",
+        f"{results}/modules/urothelial_chen",
+        f"{results}/modules/adrenalnb_rui_chong",
+        f"{results}/modules/luad_philip_bisschof",
+        f"{results}/modules/pancancer_junbin_qian",
+        f"{results}/modules/aml_audrey_lasry",
+        f"{results}/modules/cll_ramon_massoni",
+        f"{results}/modules/gbm_nourhan_abdelfattah",
+        f"{results}/modules/synovial_jerby_arnon",
+        f"{results}/modules/pdac_junya_peng",
+        f"{results}/modules/cc_xiaosong_lu",
+        f"{results}/modules/rcell_kevin_bi",
+        f"{results}/modules/rcell_r_li",
+        f"{results}/modules/pleural_rui_dong",
+        f"{results}/modules/bone_yun_liu",
+        f"{results}/modules/mmieloma_stephan_tirier",
+        f"{results}/modules/all_maxime_caron",
+        f"{results}/modules/crc_florian_uhlitz",
+        f"{results}/modules/bcc_catherine_dyao",
+        f"{results}/modules/uvm_michael_durante",
+        f"{results}/modules/esca_xiannian_zhang",
+        f"{results}/modules/brca_bhupinder_pal",
+        f"{results}/modules/prad_sujun_chen",
+        f"{results}/modules/chol_min_zhang",
+        f"{results}/modules/skcm_chao_zhang",
+        f"{results}/modules/brmets_jana_biermann",
+        f"{results}/modules/cell_lines_gabriella_kinker",
+        f"{results}/modules/bmets_youmna_kfoury",
+        f"{results}/modules/nsclc_stefan_salcher",
+        f"{results}/modules/eac_thomas_carroll",
+        f"{results}/modules/oc_ec_matthew_regner",
+        f"{results}/modules/pdac_shu_zhang"
 
 
 include: "rules/preprocessing.smk"
@@ -140,3 +178,4 @@ include: "rules/scevan.smk"
 include: "rules/beyondcell.smk"
 include: "rules/functional.smk"
 include: "rules/dependencies.smk"
+include: "rules/modules.smk"
