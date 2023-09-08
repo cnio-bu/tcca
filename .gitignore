@@ -4,7 +4,12 @@
 .Ruserdata
 config/basics.tsv
 src/preprocessing/.snakemake
-raw/*
+src/fine_tune_spectral.R
+convengence_test.R
+test.tsv
+thyroid_weilin_pu.rds
 results/*
 spectral_clustering_sample_test
 output/*
+raw/*
+src/spectral_clustering_sample_test/beyondcell_analysis.R
