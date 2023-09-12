@@ -1,7 +1,9 @@
 library("Seurat")
 library("tidyverse")
 
-malignant_studies <- list.files(path = "raw/malignants/", full.names = TRUE)
+setwd("/storage/scratch01/shared/projects/bc-meta/single_cell/seurat/malignant")
+
+malignant_studies <- list.files(path = "./", full.names = TRUE)
 
 ## Load the very first study
 first_study <- readRDS(malignant_studies[1])
@@ -18,7 +20,7 @@ seu_first_study_merged <- merge(
 ## With the first study aggregated, start agg 1 study at a time.--
 for(study in malignant_studies[2:length(malignant_studies)]){
   this_study <- readRDS(study)
-  
+  print(paste0("Merging ", study))  
   seu_first_study_merged <- merge(
     x = seu_first_study_merged,
     y = this_study
@@ -26,5 +28,5 @@ for(study in malignant_studies[2:length(malignant_studies)]){
 }
 
 ## Save for later transform in v5
-saveRDS(object = seu_first_study_merged, file = "all_objects_v4_merged.rds")
+saveRDS(object = seu_first_study_merged, file = "/storage/scratch01/shared/projects/bc-meta/single_cell/seurat/all_objects_v4_merged.rds")
 
