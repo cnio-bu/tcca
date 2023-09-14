@@ -5,41 +5,35 @@ setwd("/storage/scratch01/shared/projects/bc-meta/single_cell/seurat/malignant")
 
 malignant_studies <- list.files(path = "./", full.names = TRUE)
 
-## Load the very first study
-first_study <- readRDS(malignant_studies[1])
-
-## first merge
-print("Perform first merge")
-seu_first_sample <- first_study[[1]]
-
-seu_first_study_merged <- merge(
-  x = seu_first_sample,
-  y = first_study[2:length(first_study)],
-  merge.data = TRUE,
-  )
-
 print("Load all objects")
-all_studies <- do.call(readRDS, malignant_studies[2:length(malignant_studies)])
+all_studies <- malignant_studies[1:length(malignant_studies)] %>%
+  map(readRDS)
+
 print("Flattening list")
-all_studies <- unlist(all_studies, recursive = FALSE)
+all_samples <- unlist(all_studies, recursive = FALSE)
 
+## Split in 100 samples chunks
+all_chunks <- 1:length(all_samples)
 
-## With the first study aggregated, start agg 1 study at a time.--
-#for(study in malignant_studies[2:length(malignant_studies)]){
-#  this_study <- readRDS(study)
-#  print(paste0("Merging ", study))  
-#  seu_first_study_merged <- merge(
-#    x = seu_first_study_merged,
-#    y = this_study
-#  )
-#}
+print("Split chunks")
+chunk_list <- split(all_chunks, ceiling(seq_along(all_chunks) / 100))
+for(chunk in chunk_list){
+  first_seu <- all_samples[[chunk[[1]]]]
+  print(paste0("Merge from", " ", unique(first_seu$sample)))
 
+  merged_seu <- merge(
+    x = first_seu,
+    y = all_samples[chunk[[2]]:chunk[length(chunk)]])
 
-print("Performing merge...")
-seu_first_study_merged <- merge(
-  x = seu_first_study_merged,
-  y = all_studies
-)
+    print("Saving chunk")
+    saveRDS(
+      object =merged_seu,
+      file = paste0(
+        "/storage/scratch01/shared/projects/bc-meta/single_cell/seurat/all_objects_v4_merged_",
+        max(chunk),
+        ".rds"
+        )
+    )
+}
 
-## Save for later transform in v5
-saveRDS(object = seu_first_study_merged, file = "/storage/scratch01/shared/projects/bc-meta/single_cell/seurat/all_objects_v4_merged.rds")
+print("DONE!")
