@@ -73,3 +73,8 @@ clinical_unique_samples <- raw_clinical_export %>%
             
         )
     )
+
+write_tsv(
+    x = clinical_unique_samples,
+    file = "results/annotation/clinical_metadata_v1_clean.tsv"
+    )

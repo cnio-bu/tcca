@@ -51,6 +51,13 @@ filter_malignant <- function(sc) {
 }
 
 tumor_subset <- filter_malignant(tumor)
+tumor_subset <- ScaleData(tumor_subset)
+tumor_subset <- RunPCA(tumor_subset)
+tumor_subset <- FindNeighbors(tumor_subset)
+tumor_subset <- FindClusters(object = tumor_subset)
+tumor_subset <- RunUMAP(tumor_subset, dims = 1:5)
+seu_umap <- DimPlot(object = tumor_subset)
+
 
 bc2 <- bcScore(sc = tumor_subset, gs = gs, expr.thres = 0.1)
 bc2@normalized[is.na(bc2@normalized)] <- 0
@@ -443,3 +450,25 @@ cell_wise_enrichment <- ggplot(
   geom_boxplot() + 
   geom_point(aes(color = tc), position = position_dodge(width=0.5)) +
   theme_bw()
+
+
+## Additional stuff for mtg
+bc_clusts2 <- bc_clusts + 
+    theme(
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line()
+    ) +
+    seu_umap$theme
+
+
+## double plot
+combined <- seu_umap | bc_clusts2
+
+ggsave(
+    plot = combined,
+    filename = "../../results/biclustering/mat_norm_bc_seu_clusters.png",
+    width = 14,
+    height = 7,
+    dpi = 300
+)

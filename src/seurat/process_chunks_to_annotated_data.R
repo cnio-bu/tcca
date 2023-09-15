@@ -47,9 +47,15 @@ all_chunks <- list.files(
 
 all_chunks_annotated <- lapply(X = all_chunks, regenerate_chunk_with_coding)
 
-full_object <- merge(
+full_object_1 <- merge(
     x = all_chunks_annotated[[1]],
-    y = all_chunks_annotated[2:length(all_chunks_annotated)]
+    y = all_chunks_annotated[2:5]
 )
 
-saveRDS(object = full_object, file = "/storage/scratch01/shared/projects/bc-meta/single_cell/full_merged.rds")
+full_object_2 <- merge(
+x = all_chunks_annotated[[6]],
+y = all_chunks_annotated[7:length(all_chunks_annotated)]
+)
+
+saveRDS(object = full_object_1, file = "/storage/scratch01/shared/projects/bc-meta/single_cell/full_merged.rds")
+saveRDS(object = full_object_2, file = "/storage/scratch01/shared/projects/bc-meta/single_cell/full_merged_2.rds")
