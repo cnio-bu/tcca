@@ -1,4 +1,7 @@
 library("tidyverse")
+library(mltools)
+library(data.table)
+library(cluster)
 
 clinical_database <- data.table::fread(
   "results/annotation/clinical_metadata_v2_clean.tsv"
@@ -46,7 +49,7 @@ modules_annotated_clinical <- modules_annotated %>%
       treated == "f" & study != "cell_lines_gabriella_kinker" & sample_type == "p" ~ "patient_primary_untreated",
       treated == "f" & study != "cell_lines_gabriella_kinker" & sample_type == "m" ~ "patient_metastatic_untreated",
       treated == "t" & study != "cell_lines_gabriella_kinker" & sample_type == "p" ~ "patient_primary_treated",
-      treated == "t" & study != "cell_lines_gabriella_kinker" & sample_type == "p" ~ "patient_metastatic_treated",
+      treated == "t" & study != "cell_lines_gabriella_kinker" & sample_type == "m" ~ "patient_metastatic_treated",
       study == "cell_lines_gabriella_kinker" ~ "cell_line",
       TRUE ~ "other"
     )
@@ -88,15 +91,27 @@ for(tumor in enough_samples){
   ## Generate module comparison matrix
   
 }
-combinations <- apply(combn(unique(test$sample), 2), 2, function(z) paste(sort(z), collapse = "-"))
 
-test2 <- test %>% 
-  group_by(bicluster, signature) %>%
-  summarise(
-    names = paste(sort(unique(sample)), collapse = "-")
+test <- modules_mt1 %>%
+    filter(tumor_type == "BRCA")
+
+test_wide <- test %>%
+    select(sample, signature, bicluster, cluster_contribution) %>%
+    mutate(
+        sample = paste(sample, bicluster, sep = "_")
     ) %>%
-  right_join(tibble(names = combinations), by = "names") %>%
-  group_by(names, bicluster) %>%
-  summarise(
-    n_overlap = sum(!is.na(signature))
-    )
+    select(-bicluster) %>%
+    mutate(
+        "value" = 1
+    ) %>%
+    pivot_wider(names_from = sample, values_from = cluster_contribution, values_fill = 0) %>%
+    as.data.frame()
+
+rownames(test_wide) <- test_wide$signature
+test_wide$signature <- NULL
+test_mat <- as.matrix(test_wide)
+
+dai_test <- dist(x = test_mat, method = "binary")
+tst <- hclust(d = dai_test, method = "complete")
+tst2 <- as.dendrogram(tst)
+plot(test_mat, pch=20, col=cutree(tst, 50))
