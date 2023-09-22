@@ -1,7 +1,7 @@
-library("tidyverse")
-library(mltools)
-library(data.table)
 library(cluster)
+library(data.table)
+library("tidyverse")
+library("ComplexHeatmap")
 
 clinical_database <- data.table::fread(
   "results/annotation/clinical_metadata_v2_clean.tsv"
@@ -95,23 +95,68 @@ for(tumor in enough_samples){
 test <- modules_mt1 %>%
     filter(tumor_type == "BRCA")
 
-test_wide <- test %>%
-    select(sample, signature, bicluster, cluster_contribution) %>%
+test_wide_2 <- test %>%
+    select(sample, signature, bicluster) %>%
+    filter(bicluster <= 5) %>%
     mutate(
         sample = paste(sample, bicluster, sep = "_")
-    ) %>%
-    select(-bicluster) %>%
-    mutate(
-        "value" = 1
-    ) %>%
-    pivot_wider(names_from = sample, values_from = cluster_contribution, values_fill = 0) %>%
+    )  %>%
+    group_by(sample, signature) %>%
+    tally() %>%
+    spread(signature, n, fill = 0) %>%
     as.data.frame()
 
-rownames(test_wide) <- test_wide$signature
-test_wide$signature <- NULL
-test_mat <- as.matrix(test_wide)
+rownames(test_wide_2) <- test_wide_2$sample
+test_wide_2$sample <- NULL
 
-dai_test <- dist(x = test_mat, method = "binary")
-tst <- hclust(d = dai_test, method = "complete")
-tst2 <- as.dendrogram(tst)
-plot(test_mat, pch=20, col=cutree(tst, 50))
+test_wide_2 <- as.matrix(test_wide_2)
+test_wide_2 <- ifelse(test_wide_2 == 0,FALSE,TRUE)
+
+test4 <- proxy::dist(
+    x = test_wide_2,
+    by_rows = FALSE,
+    pairwise = TRUE,
+    method = "jaccard",
+    )
+
+clust_mat <- hclust(test4, method = "complete")
+
+library(beyondcell)
+
+b <- drugInfo$IDs
+b <- b %>%
+    filter(collections == "SSc")
+
+moas <- drugInfo$MoAs
+b_annot <- b %>%
+    left_join(y = moas, by = "IDs")
+
+egfrs <- b_annot %>%
+    filter(main.MoAs %in% c("Cell cycle arrest","DNA replication inhibitor")) %>%
+    pull("IDs")
+
+
+egfrs_inhit <- data.frame("drug" = names(test4), "MoA" = names(test4) %in% egfrs)
+egfrs_inhit$MoA <- as.factor(egfrs_inhit$MoA)
+levels(egfrs_inhit$MoA) <- c("Other", "Cell cycle arrest")
+
+rownames(egfrs_inhit) <- egfrs_inhit$drug
+egfrs_inhit$drug <- NULL
+
+egfr_annot <- HeatmapAnnotation(
+    df = egfrs_inhit, name = "DNA replication inhibitor", which = "column"
+)
+
+
+heat <- Heatmap(
+    matrix = 1 - as.matrix(test4),
+    cluster_rows = clust_mat,
+    cluster_columns = clust_mat,
+    show_column_names = TRUE,
+    show_column_dend = FALSE,
+    show_row_names = FALSE,
+    column_names_gp = gpar(fontsize = 2),
+    top_annotation = egfr_annot
+    )
+
+
