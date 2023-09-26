@@ -15,7 +15,7 @@ module_list <- list.files(
     "results/modules",
     full.names = TRUE,
     recursive = TRUE,
-    pattern = ".tsv"
+    pattern = "*_clusters.tsv"
 )
 
 ## Load all modules
@@ -89,8 +89,9 @@ for(cancer in cancers_to_consider){
             information_content = unique(information_content),
             n.drugs = n()
         ) %>%
+        arrange(bicluster) %>%
         mutate(
-            bicluster = as.factor(bicluster)
+            bicluster = as_factor(bicluster)
         ) %>%
         group_by(study, sample) %>%
         mutate(
@@ -103,7 +104,7 @@ for(cancer in cancers_to_consider){
     print("Plotting distribution and cutoff")
     dist_plot_2 <- ggplot(data = dist_contribution) +
         geom_boxplot(aes(x = bicluster, y= cumulative_info)) +
-        geom_smooth(aes(x = as.numeric(bicluster), y = cumulative_info)) +
+        geom_smooth(aes(x = sort(as.numeric(bicluster)), y = cumulative_info)) +
         geom_hline(yintercept = 0.75) +
         scale_y_continuous(labels = scales::percent, n.breaks = 10) +
         ylab(label = "Relative contribution to total information content") +
@@ -158,6 +159,7 @@ for(cancer in cancers_to_consider){
                         "signature"
                     ]
                 )
+                
             ),
             negative_weight_intersect = length(
                 intersect(
@@ -174,16 +176,52 @@ for(cancer in cancers_to_consider){
                         "signature"
                     ]
                 )
+            ),
+            positive_weight_union = length(
+                dplyr::union(
+                    modules_mt_by_cancer[(
+                        modules_mt_by_cancer$sample == sample_1 &
+                            modules_mt_by_cancer$bicluster == bicluster_1 &
+                            sign(modules_mt_by_cancer$cluster_contribution) == 1),
+                        "signature"
+                    ],
+                    modules_mt_by_cancer[(
+                        modules_mt_by_cancer$sample == sample_2 &
+                            modules_mt_by_cancer$bicluster == bicluster_2 &
+                            sign(modules_mt_by_cancer$cluster_contribution) == 1),
+                        "signature"
+                    ]
+                )
+                
+            ),
+            negative_weight_union = length(
+                dplyr::union(
+                    modules_mt_by_cancer[(
+                        modules_mt_by_cancer$sample == sample_1 &
+                            modules_mt_by_cancer$bicluster == bicluster_1 &
+                            sign(modules_mt_by_cancer$cluster_contribution) == -1),
+                        "signature"
+                    ],
+                    modules_mt_by_cancer[(
+                        modules_mt_by_cancer$sample == sample_2 &
+                            modules_mt_by_cancer$bicluster == bicluster_2 &
+                            sign(modules_mt_by_cancer$cluster_contribution) == -1),
+                        "signature"
+                    ]
+                )
             )
+            
+            
         )
-    
     
         print("Generating graph data")
         relations_filtered <- relations %>%
             mutate(
-                weight = sum(positive_weight_intersect, negative_weight_intersect)
-            ) %>%
-            filter(weight > 3) %>% ## prune edges with too few conn.
+                positive_weight = positive_weight_intersect / positive_weight_union,
+                negative_weight = negative_weight_intersect / negative_weight_union,
+                weight = positive_weight + negative_weight
+                ) %>%
+            filter(weight > 0.25) %>% ## prune edges with 0 few conn.
             mutate(
                 from = paste0(sample_1, "_", bicluster_1),
                 to = paste0(sample_2, "_", bicluster_2)
@@ -225,7 +263,7 @@ for(cancer in cancers_to_consider){
                 bicluster,
                 tumor_type,
                 tumor_subtype, 
-                signatures,
+                signature,
                 n.members,
                 collapsed.MoAs
             )
@@ -233,6 +271,7 @@ for(cancer in cancers_to_consider){
         write.table(
             x = comms,
             file = paste0("results/modules/annotated/", cancer, "_communities.tsv"),
-            sep = "\t"
+            sep = "\t",
+            row.names = FALSE
             )
-     }
+}
