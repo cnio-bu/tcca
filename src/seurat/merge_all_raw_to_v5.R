@@ -72,10 +72,13 @@ for(study_name in malignant_studies){
         meta.data = meta.data,
         project = this_study
         )
+
     print("Seurat v5")
+
     saveRDS(
         object = seu_v5,
         file = paste0(this_study, "_v5.Rds"),
         destdir = "/storage/scratch01/shared/projects/bc-meta/single_cell/seurat/all_cell_types/" 
     )
+
 }
