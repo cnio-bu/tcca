@@ -27,18 +27,54 @@ all_modules_non_treated <- all_modules_non_treated[
 mt1_modules_by_cancer <- all_modules_non_treated %>%
     bind_rows() 
 
-communities_tumor_type <- mt1_modules_by_cancer %>%
-    group_by(tumor_type, community, signature) %>%
+## Collapse to constellation plot
+extract_modules <- function(dt){
+    dt <- dt %>%
+        group_by(community) %>%
+        mutate(
+            n.samples = length(unique(sample)),
+            n.edges = length(unique(edge))
+        ) %>%
+        group_by(community, signature) %>%
+        reframe(
+            n.samples = n.samples,
+            n.edges = n.edges,
+            n.appearances = n (),
+            collapsed.MoAs = collapsed.MoAs
+        ) %>%
+        filter(
+            n.appearances >= round(0.5 * n.samples, digits = 0)
+        ) %>%
+        distinct() 
+    
+    return(dt)
+}
+
+modules_fixed <- lapply(all_modules_non_treated, FUN = extract_modules)
+
+c <- modules_fixed[[3]]
+
+tes2 <- tes %>%
+    group_by(community) %>%
     mutate(
+        n.samples = length(unique(sample)),
+        n.edges = length(unique(edge))
+    ) %>%
+    group_by(community, signature) %>%
+    reframe(
+        n.samples = n.samples,
+        n.edges = n.edges,
+        n.appearances = n (),
+        collapsed.MoAs = collapsed.MoAs
+    ) %>%
+    filter(
+        n.appearances >= round(0.5 * n.samples, digits = 0)
+    ) %>%
+    distinct() 
+
+tes3 <- tes2 %>%
+    group_by(community, collapsed.MoAs) %>%
+    summarise(
         n.appearances = n()
     ) %>%
-    ungroup() %>%
-    group_by(tumor_type, community) %>%
-    mutate(
-        n.samples = length(unique(sample))
-    )
-
-
-
-## Collapse to constellation plot
-
+    arrange(community, desc(n.appearances))
