@@ -14,6 +14,9 @@ treated_modules <- grep(
     value = FALSE
     )
 
+moas <- readr::read_tsv(file = "reference/final_moas - Collapsed.tsv") %>%
+    distinct(IDs, collapsed.MoAs, .keep_all = TRUE)
+
 all_modules_treated <- all_modules_mt1[treated_modules]
 all_modules_non_treated <- all_modules_mt1[-treated_modules]
 
@@ -40,41 +43,148 @@ extract_modules <- function(dt){
             n.samples = n.samples,
             n.edges = n.edges,
             n.appearances = n (),
-            collapsed.MoAs = collapsed.MoAs
+            collapsed.MoAs = collapsed.MoAs,
+            tumor_type = tumor_type
         ) %>%
         filter(
-            n.appearances >= round(0.5 * n.samples, digits = 0)
+            n.appearances >= round(0.5 * n.edges, digits = 0)
         ) %>%
         distinct() 
     
     return(dt)
 }
 
-modules_fixed <- lapply(all_modules_non_treated, FUN = extract_modules)
+modules_fixed <- lapply(
+    all_modules_non_treated,
+    FUN = extract_modules
+    )
 
-c <- modules_fixed[[3]]
-
-tes2 <- tes %>%
-    group_by(community) %>%
+modules_agg <- modules_fixed %>%
+    bind_rows() %>%
     mutate(
-        n.samples = length(unique(sample)),
-        n.edges = length(unique(edge))
+        cancer_edge = paste0(tumor_type, "_", community)
     ) %>%
-    group_by(community, signature) %>%
-    reframe(
-        n.samples = n.samples,
-        n.edges = n.edges,
-        n.appearances = n (),
-        collapsed.MoAs = collapsed.MoAs
-    ) %>%
-    filter(
-        n.appearances >= round(0.5 * n.samples, digits = 0)
-    ) %>%
-    distinct() 
+    as.data.frame()
 
-tes3 <- tes2 %>%
-    group_by(community, collapsed.MoAs) %>%
-    summarise(
-        n.appearances = n()
+## Generate edge data
+module_edges <- modules_agg %>%
+    select(cancer_edge, tumor_type) %>%
+    distinct(.keep_all = FALSE) %>%
+    as.data.frame()
+
+combinations <- combn(module_edges$cancer_edge, m = 2, simplify = TRUE)
+combinations <- as.data.frame(t(combinations))
+
+## Generate vertex data
+relations <- data.frame(
+    from = combinations$V1,
+    to = combinations$V2
+) %>%
+    separate(col = "from", into = c("tumor_1", "community_1"), sep = "_", remove = FALSE) %>%
+    separate(col = "to", into = c("tumor_2", "community_2"), sep = "_", remove = FALSE) %>%
+    filter(tumor_1 != tumor_2) %>%
+    rowwise() %>%
+    mutate(
+        positive_weight_intersect = length(
+            intersect(
+                modules_agg[modules_agg$cancer_edge == from,
+                    "signature"
+                ],
+                modules_agg[
+                    modules_agg$cancer_edge == to,
+                    "signature"
+                ]
+            )
+        ),
+        positive_weight_union = length(
+            dplyr::union(
+                modules_agg[modules_agg$cancer_edge == from,
+                            "signature"
+                ],
+                modules_agg[
+                    modules_agg$cancer_edge == to,
+                    "signature"
+                ]
+            )
+            
+        )
+    )
+
+
+relations_filtered <- relations %>%
+    mutate(
+        weight = positive_weight_intersect / positive_weight_union
     ) %>%
-    arrange(community, desc(n.appearances))
+    filter(weight > 0.1) %>% ## prune edges with 0 few conn.
+    select(from, to, weight)
+
+g <- graph_from_data_frame(
+    relations_filtered,
+    directed = FALSE,
+    vertices=module_edges
+)
+
+fc <- fastgreedy.community(
+    graph = (g),
+    weights = relations_filtered$weight
+)
+
+
+piti = c("#6cca8e","#8398dc","#ea95ae","#1dade6", "#ff5f76", "#ffb6b6","#fff154","#ba7fff","#ffdd56", "#4b71e5",# "#cccccc",
+         "#ff6600","#add82f","#ff3333","#0dba3c", "#ff864c", "#c4ea94","#666699","#888888","#b8c0ba", "#d58aca","#6da753","#ca9a8c","#ff4430","#e06d23")
+
+names(piti) <- c(1:24)
+
+V(g)$color <- piti[membership(fc)]
+g = simplify(g)
+Isolated = which(degree(g)==0)
+G2 = delete.vertices(g, Isolated)
+plot(G2, vertex.size = 4, vertex.label=NA)
+
+    
+comms <- data.frame(edge=fc$names, meta_community = fc$membership) %>%
+    group_by(meta_community) %>%
+        mutate(
+            n.cancer_edges = n()
+        ) %>%
+        filter(
+            n.cancer_edges >= 5
+        ) %>%
+        left_join(
+            y = modules_agg,
+            by = c("edge" = "cancer_edge")
+        )  %>%
+        left_join(
+            y = moas[, c("IDs", "preferred.drug.names")],
+            by = c("signature" = "IDs")
+        ) %>%
+        select(
+            edge,
+            community,
+            meta_community,
+            tumor_type,
+            signature,
+            n.cancer_edges,
+            collapsed.MoAs,
+            preferred.drug.names
+        )
+    
+write.table(
+    x = comms,
+    file = paste0("results/modules/annotated/patients_non_treated_meta_groups.tsv"),
+    sep = "\t",
+    row.names = FALSE
+    )
+
+
+comms_agg <- comms %>%
+    group_by(meta_community, collapsed.MoAs) %>%
+    mutate(n_sigs_in_moa = n()) %>%
+    ungroup() %>%
+    group_by(meta_community) %>%
+    mutate(
+        meta_size = n(),
+        n_sigs_moa_by_com = round(n_sigs_in_moa / meta_size, digits = 2)
+    ) %>%
+    arrange(meta_community, desc(n_sigs_in_moa)) 
+
