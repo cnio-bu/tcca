@@ -56,6 +56,13 @@ modules_annotated_clinical <- modules_annotated %>%
         )
     )
 
+write.table(
+    x = modules_annotated_clinical,
+    file = "results/annotation/modules_annotated_clinical.tsv",
+    sep="\t",
+    row.names = FALSE
+)
+
 ## Perform aggregation of metagroup 1
 modules_mt1 <- modules_annotated_clinical %>%
     filter(metagroup == "patient_primary_untreated")
@@ -269,11 +276,26 @@ for(cancer in cancers_to_consider){
             )
         
         write.table(
+            x = relations_filtered,
+            file = paste0("results/modules/annotated/",cancer, "_relationships.tsv"),
+            sep = "\t",
+            row.names = FALSE
+        )
+        
+        write.table(
+            x = module_edges,
+            file = paste0("results/modules/annotated/",cancer, "_edges.tsv"),
+            sep = "\t",
+            row.names = FALSE
+        )
+        
+        write.table(
             x = comms,
             file = paste0("results/modules/annotated/", cancer, "_communities.tsv"),
             sep = "\t",
             row.names = FALSE
             )
+        
 }
 
 
@@ -493,9 +515,24 @@ for(cancer in cancers_to_consider){
         )
     
     write.table(
+        x = relations_filtered,
+        file = paste0("results/modules/annotated/",cancer, "_treated_relationships.tsv"),
+        sep = "\t",
+        row.names = FALSE
+    )
+    
+    write.table(
+        x = module_edges,
+        file = paste0("results/modules/annotated/",cancer, "_treated_edges.tsv"),
+        sep = "\t",
+        row.names = FALSE
+    )
+    
+    write.table(
         x = comms,
         file = paste0("results/modules/annotated/", cancer, "_treated_communities.tsv"),
         sep = "\t",
         row.names = FALSE
     )
 }
+
