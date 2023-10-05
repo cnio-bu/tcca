@@ -139,8 +139,9 @@ V(g)$color <- piti[membership(fc)]
 g = simplify(g)
 Isolated = which(degree(g)==0)
 G2 = delete.vertices(g, Isolated)
-plot(G2, vertex.size = 4, vertex.label=NA)
+plot(G2, vertex.size = 4)
 
+plot(g, vertex.size = 4)
     
 comms <- data.frame(edge=fc$names, meta_community = fc$membership) %>%
     group_by(meta_community) %>%
@@ -186,5 +187,9 @@ comms_agg <- comms %>%
         meta_size = n(),
         n_sigs_moa_by_com = round(n_sigs_in_moa / meta_size, digits = 2)
     ) %>%
-    arrange(meta_community, desc(n_sigs_in_moa)) 
+    select(meta_community, n_sigs_in_moa, meta_size, collapsed.MoAs) %>%
+    distinct() %>%
+    arrange(meta_community, desc(n_sigs_in_moa))
 
+
+write_tsv(x = comms_agg, file = "results/modules/annotated/metagroup_patients_untreated.tsv")
