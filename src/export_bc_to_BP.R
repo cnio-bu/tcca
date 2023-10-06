@@ -39,7 +39,7 @@ for(study in all.studies){
         full_mat <- do.call(cbind.fill, study_matrices)
         full_mat <- as(full_mat, "sparseMatrix")
         full_meta <- study_meta %>%
-           bind_rows(.id = "sample")
+           bind_rows(.id = "sample_study")
      }else{
      full_mat <- study_matrices[[1]]
      full_mat <- as(full_mat, "sparseMatrix")
