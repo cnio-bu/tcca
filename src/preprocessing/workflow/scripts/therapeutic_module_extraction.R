@@ -34,23 +34,27 @@ for(sample in all_samples){
     save_dir <- paste0(where_to_save, "/", sample_name, "_biclusters.rds")
     saveRDS(object = res, file = save_dir)
     
-    ## expand the module table and save in tab format. 
+    ## expand the module table and save in tab format.
     biclusters <- extractBic(fact = res, thresZ = 0.5)
     
     all_biclusters <- list()
     for(i in c(1:50)){
         this_biclust <- biclusters$bic[i, ]
         ## check length of the bicluster rowwise (aka drugs)
-        if(length(this_biclust$bixn) <= 5){
+        if(length(this_biclust$bixn) <= 5) {
             next
-        }else{
+        }else {
             named_list_sigs <- this_biclust$bixn
             sig_contributions <- this_biclust$bixv
+            named_list_cells <- this_biclust$biypn
+            cell_contributions <- this_biclust$biypv
             names(sig_contributions) <- named_list_sigs
+            names(cell_contributions) <- named_list_cells
             all_biclusters[[i]] <- sig_contributions
+            all_cells[[i]] <- cell_contributions
         }
     }
-    
+
     bicluster_table <- enframe(all_biclusters) %>%
         unnest_longer(col = "value") %>%
         rename(
@@ -58,17 +62,23 @@ for(sample in all_samples){
             "cluster_contribution" = value,
             "signature" = value_id
         )
+
+    cell_table <- enframe(all_cells) %>%
+        unnest_longer(col = "value", simplify = TRUE) %>%
+        rename(
+        "bicluster" = name,
+        "cluster_cell_contribution" = value,
+        "cell_name" = value_id
+    )
     
-    bicluster_table$information_content <- res@avini[bicluster_table$bicluster]
+    cell_table$information_content <- res@avini[cell_table$bicluster]
     
     save_table <- paste0(where_to_save, "/", sample_name, "_clusters.tsv")
     ## save file
     write.table(
-        x = bicluster_table,
+        x = cell_table,
         file = save_table,
         sep="\t",
         row.names = FALSE
         )
 }
-
-
