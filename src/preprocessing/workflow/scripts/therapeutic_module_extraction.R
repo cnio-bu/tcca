@@ -38,6 +38,7 @@ for(sample in all_samples){
     biclusters <- extractBic(fact = res, thresZ = 0.5)
     
     all_biclusters <- list()
+    all_cells <- list()
     for(i in c(1:50)){
         this_biclust <- biclusters$bic[i, ]
         ## check length of the bicluster rowwise (aka drugs)
