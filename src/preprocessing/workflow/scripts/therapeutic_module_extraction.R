@@ -72,6 +72,13 @@ for(sample in all_samples){
         "cell_name" = value_id
     )
     
+    cell_table <- cell_table %>%
+        right_join(
+            bicluster_table,
+            by = "bicluster",
+            relationship = "many-to-many"
+            )
+    
     cell_table$information_content <- res@avini[cell_table$bicluster]
     
     save_table <- paste0(where_to_save, "/", sample_name, "_clusters.tsv")
