@@ -4,8 +4,6 @@ library(tidyverse)
 library(BPCells)
 library(Seurat)
 
-setwd("/home/lsagarcia/Documentos/bc-meta")
-
 ## Set options
 options(future.globals.maxSize = 1e9)
 options(Seurat.object.assay.version = 'v5')
@@ -98,7 +96,7 @@ seu <- Seurat::ProjectData(
     refdata = list(therapeutic_clusters_0.2 = "therapeutic_clusters_sketched_0.2")
 )
 
-write_tsv(seu@meta.data, "/home/lsagarcia/Documentos/bc-meta/results/annotation/tcs.tsv")
+write_tsv(seu@meta.data, "results/annotation/tcs.tsv")
 
 seu <- Seurat::SketchData(
     object = seu,
