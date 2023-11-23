@@ -1,0 +1,590 @@
+IDs	original.IDs	studies	DB.IDs	PubChem.CIDs	preferred.drug.names	collections	Santi.MoAs	main.MoAs	collapsed.MoAs
+sig-21263	K63784565	PRISM	DB12385	97226	10-HYDROXYCAMPTOTHECIN	SSc	topoisomerase inhibitor	DNA replication inhibitor	DNA related agent
+sig-21293	K68552125	PRISM	NA	27924	12-O-TETRADECANOYLPHORBOL-13-ACETATE	SSc	Other	PKC activator	Kinase inhibitor
+sig-21114	K23853216	CTRP	NA	1750826	1S,3R-RSL-3	SSc	Other	Ferroptosis inducer	Ferroptosis inducer
+sig-20969	A09890259	CTRP	NA	9866186	3-CL-AHPC	SSc	Other	Nuclear receptor binder	Other
+sig-21182	K45293975	PRISM	DB01933	72271	7-HYDROXYSTAUROSPORINE	SSc	CDK inhibitor	Cell cycle arrest	Cell cycle arrest
+sig-21049	K07303502	CTRP	NA	5280436	AA-COCF3	SSc	Other	Lipid metabolism inhibitor	Metabolism disruptor
+sig-21254	K62391742	CTRP	NA	49846579	ABT-199	SSc	Other	Pro-apoptotic agent	Pro-apoptotic agent
+sig-21223	K56301217	CTRP	NA	11228183	ABT-737	SSc	Other	Pro-apoptotic agent	Pro-apoptotic agent
+sig-20948	1910	GDSC	NA	11228183	ABT737	SSc	Apoptosis regulation	Pro-apoptotic agent	Pro-apoptotic agent
+sig-20935	1804	GDSC	NA	8269	ACETALAX	SSc	Other	Laxative	Other
+sig-20887	1032	GDSC	DB08916	10184653	AFATINIB	SSc	EGFR inhibitor	ErbB inhibitor	EGFR inhibitor
+sig-21279	K66175015	CTRP	DB08916	10184653	AFATINIB	SSc	EGFR inhibitor	ErbB inhibitor	EGFR inhibitor
+sig-21280	K66175015	PRISM	DB08916	10184653	AFATINIB	SSc	EGFR inhibitor	ErbB inhibitor	EGFR inhibitor
+sig-20950	1912	GDSC	DB11648	46843057	AFURESERTIB	SSc	AKT inhibitor	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-21195	K49522529	PRISM	DB01436	5282181	ALFACALCIDOL	SSc	NA	Vitamin D receptor agonist	Other
+sig-21323	K75295174	CTRP	DB05220	24771867	ALISERTIB	SSc	Aurora kinases inhibitor	Cell cycle arrest	Cell cycle arrest
+sig-21324	K75295174	PRISM	DB05220	24771867	ALISERTIB	SSc	Aurora kinases inhibitor	Cell cycle arrest	Cell cycle arrest
+sig-20890	1051	GDSC	DB05220	24771867	ALISERTIB	SSc	Other	Cell cycle arrest	Cell cycle arrest
+sig-21422	M07476339	CTRP	NA	NA	ALISERTIB:NAVITOCLAX (2:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-21216	K54997624	PRISM	DB12015	56649450	ALPELISIB	SSc	NA	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-21362	K83988098	PRISM	DB12442	5288674	ALVESPIMYCIN	SSc	HSP inhibitor	HSP inhibitor	HSP inhibitor
+sig-21294	K68682020	CTRP	DB03496	5287969	ALVOCIDIB	SSc	CDK inhibitor	Cell cycle arrest	Cell cycle arrest
+sig-21047	K06854232	CTRP	NA	2126	AM-580	SSc	Other	Retinoid acid receptor agonist	Other
+sig-21109	K21728777	PRISM	NA	24856041	AMG900	SSc	Aurora kinases inhibitor	Cell cycle arrest	Cell cycle arrest
+sig-21186	K45724504	PRISM	NA	91518	ANGUIDINE	SSc	protein synthesis inhibitor	Protein synthesis inhibitor	Protein synthesis inhibitor
+sig-21270	K64606589	CTRP	NA	44593387	APICIDIN	SSc	HDAC inhibitor	Chromatin agent	Chromatin agent
+sig-21386	K90497590	PRISM	NA	10027278	AR-12	SSc	NA	PDPK1 inhibitor	Kinase inhibitor
+sig-21379	K89014967	PRISM	NA	44187362	AS-703026	SSc	NA	MAPK inhibitor	MAPK inhibitor
+sig-21033	K02834582	CTRP	NA	75972143	AT-406	SSc	Other	Pro-apoptotic agent	Pro-apoptotic agent
+sig-21075	K13390322	PRISM	NA	11338033	AT-7519	SSc	NA	Cell cycle arrest	Cell cycle arrest
+sig-21117	K24576554	PRISM	DB05169	135398495	AT-9283	SSc	Aurora kinases inhibitor	Cell cycle arrest	Cell cycle arrest
+sig-21230	K58435339	CTRP	NA	11955716	AT13387	SSc	HSP inhibitor	HSP inhibitor	HSP inhibitor
+sig-21066	K12040459	CTRP	NA	11175137	AT7867	SSc	AKT inhibitor	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-21125	K25987073	CTRP	NA	5470400	AUSTOCYSTIN D	SSc	NA	DNA replication inhibitor	DNA related agent
+sig-20975	A15100685	CTRP	NA	73707595	AVICIN D	SSc	NA	Natural product	Other
+sig-21139	K29905972	PRISM	DB06626	6450551	AXITINIB	SSc	NA	VEGFR inhibitor	VEGFR inhibitor
+sig-21138	K29905972	CTRP	DB06626	6450551	AXITINIB	SSc	VEGFR inhibitor	VEGFR inhibitor	VEGFR inhibitor
+sig-21234	K59146805	CTRP	NA	56973724	AZ-3146	SSc	Other	Cell cycle arrest	Cell cycle arrest
+sig-20906	1250	GDSC	NA	25099184	AZ960	SSc	Other	JAK-STAT signaling inhibitor	JAK-STAT signaling inhibitor
+sig-20910	1441	GDSC	NA	NA	AZD2014	SSc	mTOR/PI3K inhibitor	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-21118	K24593301	PRISM	NA	56599293	AZD3463	SSc	Other	ALK inhibitor	IGF1R signaling inhibitor
+sig-21118	K24593301	PRISM	NA	56599293	AZD3463	SSc	Other	IGF1R signaling inhibitor	IGF1R signaling inhibitor
+sig-21132	K28392481	CTRP	DB12247	51039095	AZD4547	SSc	Other	FGFR inhibitor	Kinase inhibitor
+sig-20921	1706	GDSC	NA	NA	AZD5153	SSc	Chromatin agents	Chromatin agent	Chromatin agent
+sig-20951	1916	GDSC	NA	25227436	AZD5363	SSc	AKT inhibitor	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-21412	K99023089	PRISM	NA	25227436	AZD5363	SSc	NA	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-20919	1617	GDSC	NA	49847690	AZD5582	SSc	Apoptosis regulation	Pro-apoptotic agent	Pro-apoptotic agent
+sig-20927	1720	GDSC	DB14792	131634760	AZD5991	SSc	Apoptosis regulation	Pro-apoptotic agent	Pro-apoptotic agent
+sig-21233	K58772419	CTRP	DB14980	44137675	AZD6482	SSc	mTOR/PI3K inhibitor	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-20952	1917	GDSC	NA	54761306	AZD6738	SSc	Other	DNA damage response inhibitor	DNA related agent
+sig-20886	1022	GDSC	DB12242	11152667	AZD7762	SSc	CDK inhibitor	Cell cycle arrest	Cell cycle arrest
+sig-21369	K86525559	CTRP	DB12242	11152667	AZD7762	SSc	CHK inhibitor	Cell cycle arrest	Cell cycle arrest
+sig-21370	K86525559	PRISM	DB12242	11152667	AZD7762	SSc	CHK inhibitor	Cell cycle arrest	Cell cycle arrest
+sig-20894	1059	GDSC	DB12774	25262965	AZD8055	SSc	mTOR/PI3K inhibitor	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-21301	K69932463	CTRP	DB12774	25262965	AZD8055	SSc	mTOR/PI3K inhibitor	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-21302	K69932463	PRISM	DB12774	25262965	AZD8055	SSc	mTOR/PI3K inhibitor	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-21161	K37687095	PRISM	DB06061	16666708	AZD8330	SSc	MEK inhibitor	MAPK inhibitor	MAPK inhibitor
+sig-21410	K98572433	PRISM	NA	11488320	AZD8931	SSc	NA	ErbB inhibitor	EGFR inhibitor
+sig-21371	K86787118	CTRP	DB06733	6436223	BAFILOMYCIN A1	SSc	NA	ATPase inhibitor	ATP related agent
+sig-21264	K63923597	CTRP	DB11747	11497983	BARASERTIB	SSc	Aurora kinases inhibitor	Cell cycle arrest	Cell cycle arrest
+sig-21265	K63923597	PRISM	NA	16007391	BARASERTIB-HQPA	SSc	Aurora kinases inhibitor	Cell cycle arrest	Cell cycle arrest
+sig-21102	K20545304	PRISM	DB12651	400010	BARDOXOLONE	SSc	Other	ROS/RNS modulator	ROS/RNS modulator
+sig-21239	K59437938	CTRP	DB05983	139058496	BARDOXOLONE METHYL	SSc	NA	ROS/RNS modulator	ROS/RNS modulator
+sig-21357	K82818427	PRISM	DB03880	5362422	BATIMASTAT	SSc	Other	Proteolysis inhibitor	Other
+sig-21306	K70463136	PRISM	NA	67377767	BAY-87-2243	SSc	Other	Hypoxia response inhibitor	HSP inhibitor
+sig-21407	K97810537	PRISM	DB00394	21700	BECLOMETHASONE-DIPROPIONATE	SSc	glucocorticoid receptor agonist	Glucocorticoid receptor agonist	Glucocorticoid receptor agonist
+sig-21093	K17743125	CTRP	DB05015	6918638	BELINOSTAT	SSc	HDAC inhibitor	Chromatin agent	Chromatin agent
+sig-21317	K72723676	PRISM	DB11125	2335	BENZETHONIUM	SSc	Other	Ion channel blocker	Other
+sig-21136	K29415052	PRISM	NA	11978790	BGT226	SSc	mTOR/PI3K inhibitor	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-20897	1086	GDSC	DB16107	11364421	BI-2536	SSc	CDK inhibitor	Cell cycle arrest	Cell cycle arrest
+sig-21275	K64890080	CTRP	DB16107	11364421	BI-2536	SSc	PLK inhibitor	Cell cycle arrest	Cell cycle arrest
+sig-21276	K64890080	PRISM	DB16107	11364421	BI-2536	SSc	PLK inhibitor	Cell cycle arrest	Cell cycle arrest
+sig-21307	K70914287	PRISM	NA	6918508	BIBX-1382	SSc	NA	ErbB inhibitor	EGFR inhibitor
+sig-21095	K18589165	CTRP	DB11782	49836020	BIRINAPANT	SSc	Other	Pro-apoptotic agent	Pro-apoptotic agent
+sig-21308	K71221037	PRISM	DB11782	49836020	BIRINAPANT	SSc	Other	Pro-apoptotic agent	Pro-apoptotic agent
+sig-20995	A42083487	CTRP	NA	46930982	BLEOMYCIN A2	SSc	NA	DNA replication inhibitor	DNA related agent
+sig-20899	1091	GDSC	NA	135440466	BMS-536924	SSc	Other	IGF1R signaling inhibitor	IGF1R signaling inhibitor
+sig-21150	K34581968	CTRP	NA	135440466	BMS-536924	SSc	Other	IGF1R signaling inhibitor	IGF1R signaling inhibitor
+sig-21326	K76239644	PRISM	DB11665	11349170	BMS-690514	SSc	EGFR inhibitor	Multi-kinase inhibitor	EGFR inhibitor;VEGFR inhibitor
+sig-20962	2171	GDSC	DB15399	24785538	BMS-754807	SSc	AKT inhibitor	IGF1R signaling inhibitor	IGF1R signaling inhibitor
+sig-21074	K13049116	CTRP	DB15399	24785538	BMS-754807	SSc	AKT inhibitor	IGF1R signaling inhibitor	IGF1R signaling inhibitor
+sig-21377	K88510285	CTRP	DB00188	387447	BORTEZOMIB	SSc	Other	Ubiquitin-proteasome system inhibitor	Ubiquitin-proteasome system inhibitor
+sig-21378	K88510285	PRISM	DB00188	387447	BORTEZOMIB	SSc	Other	Ubiquitin-proteasome system inhibitor	Ubiquitin-proteasome system inhibitor
+sig-21387	K90746395	CTRP	DB06616	5328940	BOSUTINIB	SSc	SRC inhibitor	Multi-kinase inhibitor	BCR-ABL inhibitor;SRC inhibitor
+sig-21454	M76874421	CTRP	NA	NA	BRD-A02303741:NAVITOCLAX (2:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-21018	A86708339	CTRP	NA	2871966	BRD-A86708339	SSc	Other		Other
+sig-21020	A94377914	CTRP	NA	124202324	BRD-A94377914	SSc	HDAC inhibitor	Chromatin agent	Chromatin agent
+sig-21026	K01737880	CTRP	NA	44484893	BRD-K01737880	SSc	Other		Other
+sig-21427	M23096439	CTRP	NA	NA	BRD-K27188169:NAVITOCLAX (2:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-21142	K30748066	CTRP	NA	11257553	BRD-K30748066	SSc	CDK inhibitor	Cell cycle arrest	Cell cycle arrest
+sig-21149	K34222889	CTRP	NA	89928392	BRD-K34222889	SSc	Other	Piperlongumine analog	Other
+sig-21155	K35604418	CTRP	NA	135691163	BRD-K35604418	SSc	Other	Pro-apoptotic agent	Pro-apoptotic agent
+sig-21185	K45681478	CTRP	NA	1716436	BRD-K45681478	SSc	Other		Other
+sig-21217	K55116708	CTRP	NA	44507138	BRD-K55116708	SSc	Other		Other
+sig-21245	K61166597	CTRP	NA	67291369	BRD-K61166597	SSc	HDAC inhibitor	Chromatin agent	Chromatin agent
+sig-21262	K63431240	CTRP	NA	54618771	BRD-K63431240	SSc	Other		Other
+sig-21281	K66453893	CTRP	NA	44202524	BRD-K66453893	SSc	Other		Other
+sig-21282	K66532283	CTRP	NA	71466445	BRD-K66532283	SSc	HDAC inhibitor	Chromatin agent	Chromatin agent
+sig-21257	K62825658	CTRP	NA	54143018	BRD-K70511574	SSc	PLK inhibitor	Cell cycle arrest	Cell cycle arrest
+sig-21316	K71935468	CTRP	NA	6729245	BRD-K71935468	SSc	Other	ROS/RNS modulator	ROS/RNS modulator
+sig-21404	K94991378	CTRP	NA	6731789	BRD-K94991378	SSc	Other	ROS/RNS modulator	ROS/RNS modulator
+sig-21406	K97651142	CTRP	NA	NA	BRD-K97651142	SSc	Other	Aphrocallistin derivative	Other
+sig-21411	K99006945	CTRP	NA	71576742	BRD-K99006945	SSc	Other		Other
+sig-21381	K89329876	CTRP	NA	613000	BRD9876	SSc	Other	Cell cycle arrest	Cell cycle arrest
+sig-21455	M80099012	CTRP	NA	NA	BRD9876:MK-1775 (4:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-20982	A31107743	CTRP	DB07348	5287620	BREFELDIN A	SSc	NA	Protein trafficking inhibitor	Other
+sig-20986	A36057565	PRISM	NA	91930061	BRUCEANTIN	SSc	protein synthesis inhibitor	Protein synthesis inhibitor	Protein synthesis inhibitor
+sig-21215	K54997624	CTRP	NA	56649450	BYL-719	SSc	mTOR/PI3K inhibitor	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-21048	K06858286	PRISM	DB06772	9854073	CABAZITAXEL	SSc	Microtubule agents	Microtubule agent	Microtubule agent
+sig-21202	K51544265	CTRP	DB08875	25102847	CABOZANTINIB	SSc	VEGFR inhibitor	Multi-kinase inhibitor	VEGFR inhibitor
+sig-21129	K27316855	PRISM	DB00136	5280453	CALCITRIOL	SSc	NA	Vitamin D receptor agonist	Other
+sig-20879	1003	GDSC	DB04690	24360	CAMPTOTHECIN	SSc	DNA related agent	DNA replication inhibitor	DNA related agent
+sig-21166	K37890730	PRISM	DB04690	24360	CAMPTOTHECIN	SSc	topoisomerase inhibitor	DNA replication inhibitor	DNA related agent
+sig-21198	K50168500	CTRP	DB05424	156414	CANERTINIB	SSc	AKT inhibitor	ErbB inhibitor	EGFR inhibitor
+sig-21199	K50168500	PRISM	DB05424	156414	CANERTINIB	SSc	NA	ErbB inhibitor	EGFR inhibitor
+sig-21448	M63575423	CTRP	NA	NA	CARBOPLATIN:ETOPOSIDE (40:17 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-21083	K15179879	PRISM	DB08889	11556711	CARFILZOMIB	SSc	NA	Ubiquitin-proteasome system inhibitor	Ubiquitin-proteasome system inhibitor
+sig-21358	K83289131	CTRP	NA	44819697	CAY10618	SSc	inhibitor of nicotinamide phosphoribosyltransferase	NAMPT inhibitor	NAMPT inhibitor
+sig-21124	K25737009	CTRP	NA	24868309	CD-1530	SSc	Other	Retinoid acid receptor agonist	Other
+sig-21133	K28907958	CTRP	NA	135411	CD-437	SSc	Other	Retinoid acid receptor agonist	Other
+sig-20923	1709	GDSC	NA	NA	CDK9_5038	SSc	CDK inhibitor	Cell cycle arrest	Cell cycle arrest
+sig-20922	1708	GDSC	NA	NA	CDK9_5576	SSc	CDK inhibitor	Cell cycle arrest	Cell cycle arrest
+sig-21373	K86930074	CTRP	DB04849	9933475	CEDIRANIB	SSc	VEGFR inhibitor	VEGFR inhibitor	VEGFR inhibitor
+sig-21104	K20722021	PRISM	NA	56846693	CEP-32496	SSc	NA	RAF inhibitor	BRAF inhibitor
+sig-21295	K68904758	PRISM	NA	6436208	CEPHALOMANNINE	SSc	DNA related agent	Microtubule agent	Microtubule agent
+sig-21143	K31514534	CTRP	NA	72193861	CERANIB-2	SSc	Other	Lipid metabolism inhibitor	Metabolism disruptor
+sig-21313	K71487808	CTRP	NA	6184667	CH-55	SSc	Other	Retinoid acid receptor agonist	Other
+sig-21031	K02241333	PRISM	DB06852	11502647	CHIR-124	SSc	CHK inhibitor	Cell cycle arrest	Cell cycle arrest
+sig-21137	K29458283	CTRP	DB00291	2708	CHLORAMBUCIL	SSc	DNA related agent	DNA replication inhibitor	DNA related agent
+sig-21402	K94145482	CTRP	NA	375860	CHM-1	SSc	Other	Microtubule agent	Microtubule agent
+sig-21073	K13044802	CTRP	DB01188	2749	CICLOPIROX	SSc	Other	Antifungal agent	Other
+sig-20990	A38030642	CTRP	DB00091	5284373	CICLOSPORIN	SSc	Other	Immunosuppressive agent	Other
+sig-21065	K11740178	CTRP	NA	654092	CIL56	SSc	Other	Ferroptosis inducer	Ferroptosis inducer
+sig-21397	K93034159	PRISM	DB00242	20279	CLADRIBINE	SSc	Other	DNA replication inhibitor	DNA related agent
+sig-21148	K34022604	CTRP	DB00631	119182	CLOFARABINE	SSc	DNA related agent	DNA replication inhibitor	DNA related agent
+sig-21121	K24869513	PRISM	NA	56968072	CNX-2006	SSc	NA	ErbB inhibitor	EGFR inhibitor
+sig-21037	K03390685	PRISM	DB05239	16222096	COBIMETINIB	SSc	NA	MAPK inhibitor	MAPK inhibitor
+sig-21006	A59431241	CTRP	NA	73707525	COL-3	SSc	Other	Proteolysis inhibitor	Other
+sig-21021	K00259736	PRISM	DB01394	6167	COLCHICINE	SSc	Microtubule agents	Microtubule agent	Microtubule agent
+sig-21246	K61195623	PRISM	DB14680	5351344	COMBRETASTATIN-A-4	SSc	Microtubule agents	Microtubule agent	Microtubule agent
+sig-20996	A42556028	CTRP	NA	2874250	COMPOUND 1B	SSc	NA		Other
+sig-21112	K23547378	CTRP	NA	56946209	CR-1-31B	SSc	Other	Transcription inhibitor	Transcription inhibitor
+sig-21335	K78431006	CTRP	DB08865	11626560	CRIZOTINIB	SSc	Other	Multi-kinase inhibitor	MET inhibitor
+sig-21460	M95284333	CTRP	NA	71484070	CRIZOTINIB:PLX-4032 (2:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-21458	M89827113	PRISM	NA	76968376	CROMAKALIM	SSc	NA	Ion channel activator	Other
+sig-20978	A28105619	CTRP	NA	73707401	CUCURBITACIN I	SSc	NA	JAK-STAT signaling inhibitor	JAK-STAT signaling inhibitor
+sig-21172	K41278234	PRISM	DB12174	24756910	CUDC-101	SSc	EGFR inhibitor	ErbB inhibitor	EGFR inhibitor
+sig-21332	K77638923	PRISM	DB11891	54575456	CUDC-907	SSc	mTOR/PI3K inhibitor	Chromatin agent	Chromatin agent;PI3K/AKT/mTOR signaling inhibitor
+sig-21332	K77638923	PRISM	DB11891	54575456	CUDC-907	SSc	mTOR/PI3K inhibitor	PI3K/AKT/mTOR signaling inhibitor	Chromatin agent;PI3K/AKT/mTOR signaling inhibitor
+sig-21284	K67536197	PRISM	NA	25051	CYCLOCYTIDINE	SSc	DNA related agent	DNA replication inhibitor	DNA related agent
+sig-20881	1006	GDSC	DB00987	6253	CYTARABINE	SSc	Other	DNA replication inhibitor	DNA related agent
+sig-21144	K33106058	CTRP	NA	6253	CYTARABINE HYDROCHLORIDE	SSc	NA	DNA replication inhibitor	DNA related agent
+sig-21127	K26997899	PRISM	NA	3921152	D-64131	SSc	Microtubule agents	Microtubule agent	Microtubule agent
+sig-21059	K09951645	CTRP	DB08912	44462760	DABRAFENIB	SSc	BRAF inhibitor	Multi-kinase inhibitor	BRAF inhibitor
+sig-21060	K09951645	PRISM	DB08912	44462760	DABRAFENIB	SSc	BRAF inhibitor	Multi-kinase inhibitor	BRAF inhibitor
+sig-20909	1373	GDSC	DB08912	44462760	DABRAFENIB	SSc	ERK MAPK signaling	Multi-kinase inhibitor	BRAF inhibitor
+sig-21154	K35520305	CTRP	DB00851	135398738	DACARBAZINE	SSc	DNA related agent	DNA replication inhibitor	DNA related agent
+sig-21224	K56957086	PRISM	NA	6445533	DACINOSTAT	SSc	HDAC inhibitor	Chromatin agent	Chromatin agent
+sig-21227	K57169635	PRISM	DB11963	11511120	DACOMITINIB	SSc	NA	ErbB inhibitor	EGFR inhibitor
+sig-20949	1911	GDSC	DB00970	457193	DACTINOMYCIN	SSc	Other	Transcription inhibitor	Transcription inhibitor
+sig-20892	1057	GDSC	DB11651	11977753	DACTOLISIB	SSc	mTOR/PI3K inhibitor	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-21050	K07881437	PRISM	DB11778	11442891	DANUSERTIB	SSc	Aurora kinases inhibitor	Cell cycle arrest	Cell cycle arrest
+sig-21231	K58550667	CTRP	DB12731	6914657	DAPORINAD	SSc	inhibitor of nicotinamide phosphoribosyltransferase	NAMPT inhibitor	NAMPT inhibitor
+sig-20905	1248	GDSC	DB12731	6914657	DAPORINAD	SSc	Other	NAMPT inhibitor	NAMPT inhibitor
+sig-21194	K49328571	PRISM	DB01254	3062316	DASATINIB	SSc	NA	Multi-kinase inhibitor	BCR-ABL inhibitor;SRC inhibitor
+sig-20896	1079	GDSC	DB01254	3062316	DASATINIB	SSc	Other	Multi-kinase inhibitor	BCR-ABL inhibitor;SRC inhibitor
+sig-21193	K49328571	CTRP	DB01254	3062316	DASATINIB	SSc	SRC inhibitor	Multi-kinase inhibitor	BCR-ABL inhibitor;SRC inhibitor
+sig-21177	K43389675	PRISM	DB00694	30323	DAUNORUBICIN	SSc	Other	DNA replication inhibitor	DNA related agent
+sig-21341	K79254416	CTRP	DB01262	451668	DECITABINE	SSc	DNA related agent	DNA methyltransferase inhibitor	DNA related agent
+sig-21342	K79254416	PRISM	DB01262	451668	DECITABINE	SSc	DNA related agent	DNA methyltransferase inhibitor	DNA related agent
+sig-21446	M60251345	CTRP	NA	NA	DECITABINE:CARBOPLATIN (1:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-21438	M43399311	CTRP	NA	NA	DECITABINE:NAVITOCLAX (2:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-21251	K62304154	PRISM	DB06233	11520894	DEFOROLIMUS	SSc	mTOR/PI3K inhibitor	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-21236	K59325863	PRISM	DB11956	24800541	DELANZOMIB	SSc	proteasome inhibitor	Ubiquitin-proteasome system inhibitor	Ubiquitin-proteasome system inhibitor
+sig-20983	A35108200	CTRP	DB01234	5743	DEXAMETHASONE	SSc	Other	Glucocorticoid receptor agonist	Glucocorticoid receptor agonist
+sig-21113	K23779958	PRISM	DB11397	3039	DICHLORVOS	SSc	Other	Insecticide	Other
+sig-21147	K33720171	PRISM	DB06781	443936	DIFLUPREDNATE	SSc	glucocorticoid receptor agonist	Glucocorticoid receptor agonist	Glucocorticoid receptor agonist
+sig-20943	1827	GDSC	NA	243725	DIHYDROROTENONE	SSc	Other	Mitochondrial inhibitor	Other
+sig-20901	1180	GDSC	DB12021	46926350	DINACICLIB	SSc	CDK inhibitor	Cell cycle arrest	Cell cycle arrest
+sig-21077	K13662825	CTRP	DB12021	46926350	DINACICLIB	SSc	CDK inhibitor	Cell cycle arrest	Cell cycle arrest
+sig-21078	K13662825	PRISM	DB12021	46926350	DINACICLIB	SSc	NA	Cell cycle arrest	Cell cycle arrest
+sig-21277	K65814004	PRISM	NA	3101	DIPHENYLENEIODONIUM	SSc	Other	ROS/RNS modulator	ROS/RNS modulator
+sig-20941	1819	GDSC	DB01248	148124	DOCETAXEL	SSc	Microtubule agents	Microtubule agent	Microtubule agent
+sig-20967	A05821830	CTRP	DB01248	148124	DOCETAXEL	SSc	Microtubule agents	Microtubule agent	Microtubule agent
+sig-21141	K30577245	PRISM	DB01248	148124	DOCETAXEL	SSc	Microtubule agents	Microtubule agent	Microtubule agent
+sig-21447	M60574774	CTRP	NA	NA	DOCETAXEL:TANESPIMYCIN (2:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-21336	K78567475	PRISM	DB12730	9810929	DOLASTATIN-10	SSc	Microtubule agents	Microtubule agent	Microtubule agent
+sig-21388	K92093830	CTRP	DB00997	31703	DOXORUBICIN	SSc	Other	DNA replication inhibitor	DNA related agent
+sig-21389	K92093830	PRISM	DB00997	31703	DOXORUBICIN	SSc	topoisomerase inhibitor	DNA replication inhibitor	DNA related agent
+sig-21418	M01915239	CTRP	NA	NA	DOXORUBICIN:NAVITOCLAX (2:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-20998	A47953250	PRISM	NA	6442003	ECAMSULE-TRIETHANOLAMINE	SSc	NA		Other
+sig-21011	A68969091	PRISM	NA	3197	ECHINOMYCIN	SSc	DNA related agent	DNA replication inhibitor	DNA related agent
+sig-20924	1712	GDSC	NA	NA	EG5_9814	SSc	Other	Cell cycle arrest	Cell cycle arrest
+sig-21354	K82135108	PRISM	DB05719	300471	ELESCLOMOL	SSc	NA	ROS/RNS modulator	ROS/RNS modulator
+sig-20966	A04287157	CTRP	DB06194	11396600	ELOCALCITOL	SSc	Other	Vitamin D receptor agonist	Other
+sig-20918	1593	GDSC	DB11841	4261	ENTINOSTAT	SSc	Chromatin agents	Chromatin agent	Chromatin agent
+sig-21333	K77908580	CTRP	DB11841	4261	ENTINOSTAT	SSc	HDAC inhibitor	Chromatin agent	Chromatin agent
+sig-21220	K55591206	CTRP	NA	65064	EPIGALLOCATECHIN-3-MONOGALLATE	SSc	Other	ROS/RNS modulator	ROS/RNS modulator
+sig-20911	1511	GDSC	DB00445	41867	EPIRUBICIN	SSc	DNA related agent	DNA replication inhibitor	DNA related agent
+sig-21041	K04548931	PRISM	DB00445	41867	EPIRUBICIN	SSc	topoisomerase inhibitor	DNA replication inhibitor	DNA related agent
+sig-21315	K71823332	PRISM	NA	448799	EPOTHILONE-A	SSc	Microtubule agents	Microtubule agent	Microtubule agent
+sig-21290	K68164687	PRISM	DB03010	448013	EPOTHILONE-B	SSc	Microtubule agents	Microtubule agent	Microtubule agent
+sig-21206	K52762805	PRISM	NA	447865	EPOTHILONE-D	SSc	Microtubule agents	Microtubule agent	Microtubule agent
+sig-20976	A25004090	CTRP	NA	11214940	ERASTIN	SSc	Other	Ferroptosis inducer	Ferroptosis inducer
+sig-20976	A25004090	CTRP	NA	11214940	ERASTIN	SSc	Other	Ion channel blocker	Ferroptosis inducer
+sig-20925	1713	GDSC	NA	NA	ERK_2440	SSc	ERK MAPK signaling	MAPK inhibitor	MAPK inhibitor
+sig-20926	1714	GDSC	NA	NA	ERK_6604	SSc	ERK MAPK signaling	MAPK inhibitor	MAPK inhibitor
+sig-21304	K70401845	CTRP	DB00530	176870	ERLOTINIB	SSc	EGFR inhibitor	ErbB inhibitor	EGFR inhibitor
+sig-21305	K70401845	PRISM	DB00530	176870	ERLOTINIB	SSc	EGFR inhibitor	ErbB inhibitor	EGFR inhibitor
+sig-21430	M27152968	CTRP	NA	56832507	ERLOTINIB:PLX-4032 (2:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-21119	K24715592	PRISM	NA	2017	ETHACRIDINE-LACTATE-MONOHYDRATE	SSc	NA	DNA replication inhibitor	DNA related agent
+sig-21164	K37798499	CTRP	DB00773	36462	ETOPOSIDE	SSc	Other	DNA replication inhibitor	DNA related agent
+sig-21116	K24556407	CTRP	NA	72199292	ETP-46464	SSc	Other	DNA damage response inhibitor	DNA related agent
+sig-21076	K13514097	PRISM	DB01590	6442177	EVEROLIMUS	SSc	mTOR/PI3K inhibitor	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-21291	K68395654	PRISM	NA	509554	EVP4593	SSc	Other	NFkB signaling inhibitor	NFkB signaling inhibitor
+sig-21390	K92150287	PRISM	NA	151115	EXATECAN-MESYLATE	SSc	topoisomerase inhibitor	DNA replication inhibitor	DNA related agent
+sig-21094	K18157228	PRISM	DB12957	515328	FDCYD	SSc	DNA related agent	DNA methyltransferase inhibitor	DNA related agent
+sig-21201	K51318897	PRISM	DB11410	3334	FENBENDAZOLE	SSc	Microtubule agents	Microtubule agent	Microtubule agent
+sig-21232	K58550667	PRISM	NA	6914657	FK-866	SSc	NA	NAMPT inhibitor	NAMPT inhibitor
+sig-21190	K47832606	PRISM	DB00322	5790	FLOXURIDINE	SSc	DNA related agent	DNA replication inhibitor	DNA related agent
+sig-20939	1813	GDSC	DB01073	657237	FLUDARABINE	SSc	Other	DNA replication inhibitor	DNA related agent
+sig-21249	K61496577	PRISM	DB00663	16490	FLUMETHASONE	SSc	NA	Glucocorticoid receptor agonist	Glucocorticoid receptor agonist
+sig-21120	K24844714	CTRP	DB00544	3385	FLUOROURACIL	SSc	Other	DNA replication inhibitor	DNA related agent
+sig-21252	K62310379	PRISM	DB00588	444036	FLUTICASONE-PROPIONATE	SSc	glucocorticoid receptor agonist	Glucocorticoid receptor agonist	Glucocorticoid receptor agonist
+sig-21001	A52530402	CTRP	DB01095	446155	FLUVASTATIN	SSc	Other	HMGCR inhibitor	Statins
+sig-21039	K03449891	PRISM	DB12307	42642645	FORETINIB	SSc	NA	Multi-kinase inhibitor	VEGFR inhibitor;MET inhibitor
+sig-20957	2040	GDSC	DB12307	42642645	FORETINIB	SSc	Other	Multi-kinase inhibitor	VEGFR inhibitor;MET inhibitor
+sig-21038	K03449891	CTRP	DB12307	42642645	FORETINIB	SSc	VEGFR inhibitor	Multi-kinase inhibitor	VEGFR inhibitor;MET inhibitor
+sig-21019	A91658086	CTRP	NA	656346	FQI-1	SSc	Other	LSF1-mediated transcription inhibitor	Transcription inhibitor
+sig-21153	K35498412	CTRP	NA	56963564	FQI-2	SSc	Other	LSF1-mediated transcription inhibitor	Transcription inhibitor
+sig-21168	K38852836	PRISM	DB12047	135564985	GANETESPIB	SSc	NA	HSP inhibitor	HSP inhibitor
+sig-21296	K68938568	PRISM	DB12380	46940575	GDC-0152	SSc	Other	Pro-apoptotic agent	Pro-apoptotic agent
+sig-21286	K67578145	CTRP	NA	11717001	GDC-0879	SSc	BRAF inhibitor	RAF inhibitor	BRAF inhibitor
+sig-21207	K52911425	CTRP	NA	17755052	GDC-0941	SSc	mTOR/PI3K inhibitor	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-21208	K52911425	PRISM	NA	17755052	GDC-0941	SSc	mTOR/PI3K inhibitor	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-21111	K23228615	PRISM	NA	25254071	GDC-0980	SSc	NA	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-21266	K64052750	CTRP	DB00317	123631	GEFITINIB	SSc	AKT inhibitor	ErbB inhibitor	EGFR inhibitor
+sig-21267	K64052750	PRISM	DB00317	123631	GEFITINIB	SSc	AKT inhibitor	ErbB inhibitor	EGFR inhibitor
+sig-20902	1190	GDSC	DB00441	60750	GEMCITABINE	SSc	DNA related agent	DNA replication inhibitor	DNA related agent
+sig-21080	K15108141	CTRP	DB00441	60750	GEMCITABINE	SSc	DNA related agent	DNA replication inhibitor	DNA related agent
+sig-21081	K15108141	PRISM	DB00441	60750	GEMCITABINE	SSc	DNA related agent	DNA replication inhibitor	DNA related agent
+sig-21414	K99475619	PRISM	NA	10294813	GENZ-644282	SSc	topoisomerase inhibitor	DNA replication inhibitor	DNA related agent
+sig-21189	K47335880	CTRP	NA	148198	GMX-1778	SSc	inhibitor of nicotinamide phosphoribosyltransferase	NAMPT inhibitor	NAMPT inhibitor
+sig-20953	1926	GDSC	NA	70676303	GNE-317	SSc	mTOR/PI3K inhibitor	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-21042	K04923131	CTRP	NA	NA	GSK-3 INHIBITOR IX	SSc	NA	GSK3 inhibitor	Kinase inhibitor
+sig-21408	K98203492	CTRP	NA	71729975	GSK-J4	SSc	Other	Chromatin agent	Chromatin agent
+sig-21045	K06750613	CTRP	DB11962	23582824	GSK1059615	SSc	mTOR/PI3K inhibitor	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-21159	K36740062	PRISM	NA	46885626	GSK1070916	SSc	Aurora kinases inhibitor	Cell cycle arrest	Cell cycle arrest
+sig-21044	K06749501	PRISM	NA	25182616	GSK1838705A	SSc	NA	IGF1R signaling inhibitor	IGF1R signaling inhibitor
+sig-21122	K25412176	PRISM	NA	46843057	GSK2110183	SSc	NA	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-21051	K07972848	PRISM	NA	25167777	GSK2126458	SSc	mTOR/PI3K inhibitor	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-21393	K92428232	CTRP	NA	15983966	GSK461364	SSc	PLK inhibitor	Cell cycle arrest	Cell cycle arrest
+sig-21394	K92428232	PRISM	NA	15983966	GSK461364	SSc	PLK inhibitor	Cell cycle arrest	Cell cycle arrest
+sig-21052	K08109215	CTRP	NA	46943432	GSK525762A	SSc	Other	BET inhibitor	Transcription inhibitor
+sig-21385	K90382497	CTRP	NA	9826308	GW-843682X	SSc	PLK inhibitor	Cell cycle arrest	Cell cycle arrest
+sig-21152	K35329391	PRISM	NA	51038269	GZD824	SSc	Other	Multi-kinase inhibitor	BCR-ABL inhibitor
+sig-21200	K50501969	CTRP	NA	16065773	HBX-41108	SSc	Other	USP inhibitor	Other
+sig-21229	K58122457	PRISM	NA	NA	HESPERADIN	SSc	Aurora kinases inhibitor	Cell cycle arrest	Cell cycle arrest
+sig-21417	K99946902	PRISM	DB11254	3610	HEXYLRESORCINOL	SSc	Other	Anesthetic	Other
+sig-20981	A30032852	CTRP	DB01892	441298	HYPERFORIN	SSc	Other	Ion channel activator	Other
+sig-21000	A51571244	PRISM	NA	10407195	HYPOESTOXIDE	SSc	Other	NFkB signaling inhibitor	NFkB signaling inhibitor
+sig-21053	K08109215	PRISM	NA	46943432	I-BET-762	SSc	NA	Chromatin agent	Chromatin agent
+sig-21158	K36363294	CTRP	NA	52912189	I-BET151	SSc	Other	BET inhibitor	Transcription inhibitor
+sig-21303	K70301465	CTRP	DB09053	24821094	IBRUTINIB	SSc	Other	BTK inhibitor	Kinase inhibitor
+sig-21298	K69650333	PRISM	DB01177	42890	IDARUBICIN	SSc	topoisomerase inhibitor	Topoisomerase inhibitor	DNA related agent
+sig-21256	K62627508	PRISM	DB12325	53358942	IDASANUTLIN	SSc	NA	p53 activator/MDM2 inhibitor	p53 activator/MDM2 inhibitor
+sig-20932	1738	GDSC	NA	NA	IGF1R_3801	SSc	Other	IGF1R signaling inhibitor	IGF1R signaling inhibitor
+sig-21395	K92723993	CTRP	DB00619	5291	IMATINIB	SSc	Other	Multi-kinase inhibitor	BCR-ABL inhibitor
+sig-20964	A02481876	CTRP	NA	2949965	IMPORTAZOLE	SSc	Other	Nucleocytoplasmic transport inhibitor	Other
+sig-21091	K17610631	CTRP	DB06370	216468	INDISULAM	SSc	Other	Cell cycle arrest	Cell cycle arrest
+sig-21400	K93779381	PRISM	DB05013	6918670	INGENOL-MEBUTATE	SSc	Other	PKC activator	Kinase inhibitor
+sig-20898	1088	GDSC	DB00762	60838	IRINOTECAN	SSc	DNA related agent	DNA replication inhibitor	DNA related agent
+sig-21010	A68631409	CTRP	NA	151289	ISOEVODIAMINE	SSc	Other	NFkB signaling inhibitor	NFkB signaling inhibitor
+sig-21300	K69840642	CTRP	NA	24951314	ISOX	SSc	HDAC inhibitor	Chromatin agent	Chromatin agent
+sig-21274	K64881305	PRISM	DB06188	6851740	ISPINESIB	SSc	NA	Cell cycle arrest	Cell cycle arrest
+sig-21339	K78659596	PRISM	DB09570	25183872	IXAZOMIB	SSc	proteasome inhibitor	Ubiquitin-proteasome system inhibitor	Ubiquitin-proteasome system inhibitor
+sig-20933	1739	GDSC	NA	NA	JAK_8517	SSc	Other	JAK-STAT signaling inhibitor	JAK-STAT signaling inhibitor
+sig-21169	K38860038	PRISM	NA	1069686	JK-184	SSc	Other	Hedgehog pathway inhibitor	Other
+sig-21360	K83837640	PRISM	NA	11538455	JNJ-26481585	SSc	HDAC inhibitor	Chromatin agent	Chromatin agent
+sig-21213	K54606188	CTRP	NA	46907787	JQ-1	SSc	Other	Chromatin agent	Chromatin agent
+sig-21425	M11510342	CTRP	NA	NA	JQ-1:CARBOPLATIN (1:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-21459	M94343540	CTRP	NA	NA	JQ-1:MK-0752 (1:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-21456	M87479906	CTRP	NA	NA	JQ-1:NAVITOCLAX (2:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-21443	M56714493	CTRP	NA	NA	JQ-1:UNC0638 (2:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-21444	M56962220	CTRP	NA	NA	JQ-1:VORINOSTAT (2:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-20963	2172	GDSC	NA	46907787	JQ1	SSc	Chromatin agents	Chromatin agent	Chromatin agent
+sig-21214	K54606188	PRISM	NA	46907787	JQ1-(+)	SSc	Other	Chromatin agent	Chromatin agent
+sig-21002	A55312468	PRISM	NA	5702136	K-STROPHANTHIDIN	SSc	ATPase inhibitor	ATPase inhibitor	ATP related agent
+sig-20991	A38350138	PRISM	DB01026	456201	KETOCONAZOLE	SSc	NA	Antifungal agent	Other
+sig-21188	K47150025	PRISM	NA	11317348	KI-8751	SSc	NA	Multi-kinase inhibitor	VEGFR inhibitor
+sig-21187	K47150025	CTRP	NA	11317348	KI8751	SSc	VEGFR inhibitor	Multi-kinase inhibitor	VEGFR inhibitor
+sig-21312	K71467466	PRISM	NA	53495165	KPT-185	SSc	Other	Nucleocytoplasmic transport inhibitor	Other
+sig-21311	K71467466	CTRP	NA	53495165	KPT185	SSc	Other	Nucleocytoplasmic transport inhibitor	Other
+sig-21058	K09499853	CTRP	NA	11964036	KU 0060648	SSc	NA	DNA damage response inhibitor	DNA related agent
+sig-21285	K67566344	CTRP	NA	16736978	KU-0063794	SSc	mTOR/PI3K inhibitor	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-21108	K21718444	CTRP	NA	11427553	KW-2449	SSc	Aurora kinases inhibitor	Multi-kinase inhibitor	Cell cycle arrest
+sig-21140	K29968218	CTRP	NA	23635314	KX2-391	SSc	SRC inhibitor	Microtubule agent	SRC inhibitor
+sig-21140	K29968218	CTRP	NA	23635314	KX2-391	SSc	SRC inhibitor	SRC inhibitor	SRC inhibitor
+sig-21099	K19687926	CTRP	DB01259	208908	LAPATINIB	SSc	EGFR inhibitor	ErbB inhibitor	EGFR inhibitor
+sig-21100	K19687926	PRISM	DB01259	208908	LAPATINIB	SSc	NA	ErbB inhibitor	EGFR inhibitor
+sig-21463	1558	GDSC	DB01259	208908	LAPATINIB	SSc	NA	ErbB inhibitor	EGFR inhibitor
+sig-21029	K02130563	CTRP	NA	6918837	LBH-589	SSc	HDAC inhibitor	Chromatin agent	Chromatin agent
+sig-21055	K08248804	PRISM	DB12085	24737642	LCL-161	SSc	Other	Pro-apoptotic agent	Pro-apoptotic agent
+sig-21171	K39974922	CTRP	DB09078	9823820	LENVATINIB	SSc	VEGFR inhibitor	Multi-kinase inhibitor	VEGFR inhibitor
+sig-21130	K27624156	CTRP	NA	6917907	LEPTOMYCIN B	SSc	NA	Nucleocytoplasmic transport inhibitor	Other
+sig-20977	A27376179	PRISM	DB06469	9932888	LESTAURTINIB	SSc	Other	FLT3 inhibitor	VEGFR inhibitor
+sig-21151	K35189033	PRISM	DB00367	13109	LEVONORGESTREL	SSc	Other	Hormone therapy	Other
+sig-21003	A56085258	PRISM	NA	70311789	LGX818	SSc	Other	RAF inhibitor	BRAF inhibitor
+sig-21416	K99749624	CTRP	DB06080	11485656	LINIFANIB	SSc	VEGFR inhibitor	Multi-kinase inhibitor	VEGFR inhibitor
+sig-21012	A70155556	CTRP	DB00227	53232	LOVASTATIN	SSc	Other	HMGCR inhibitor	Statins
+sig-21024	K01436366	CTRP	NA	46843906	LRRK2-IN-1	SSc	Other	LRRK2 inhibitor	Kinase inhibitor
+sig-20915	1559	GDSC	NA	10096043	LUMINESPIB	SSc	Other	HSP inhibitor	HSP inhibitor
+sig-21165	K37865504	CTRP	NA	11507802	LY-2183240	SSc	Other	Lipid metabolism inhibitor	Metabolism disruptor
+sig-21334	K78055238	PRISM	DB11913	10029385	LY2090314	SSc	Other	GSK3 inhibitor	Kinase inhibitor
+sig-21123	K25630527	PRISM	NA	46213929	LY2784544	SSc	Other	JAK-STAT signaling inhibitor	JAK-STAT signaling inhibitor
+sig-21096	K18961567	PRISM	NA	44603533	LY2801653	SSc	NA	MET inhibitor	MET inhibitor
+sig-21090	K17203476	PRISM	DB13022	46944259	LY2874455	SSc	Other	FGFR inhibitor	Kinase inhibitor
+sig-21183	K45528773	PRISM	NA	3994	M-344	SSc	HDAC inhibitor	Chromatin agent	Chromatin agent
+sig-21337	K78599730	CTRP	NA	44483259	MANUMYCIN A	SSc	NA	FTase inhibitor	Other
+sig-21228	K57261999	CTRP	NA	24797083	MARINOPYRROLE A	SSc	NA	Pro-apoptotic agent	Pro-apoptotic agent
+sig-21086	K15898725	PRISM	NA	5282049	MAYTANSINOL-ISOBUTYRATE	SSc	Other	Microtubule agent	Microtubule agent
+sig-21103	K20655524	PRISM	NA	4045	MEFEXAMIDE	SSc	Other	Psychoactive drug	Other
+sig-21355	K82244583	PRISM	NA	10288191	MEK162	SSc	MEK inhibitor	MAPK inhibitor	MAPK inhibitor
+sig-21040	K04466929	CTRP	NA	6918878	MERCK60	SSc	HDAC inhibitor	Chromatin agent	Chromatin agent
+sig-21128	K27182532	PRISM	NA	44155856	METATINIB	SSc	Other	Protein fusion inhibitor	BCR-ABL inhibitor
+sig-21240	K59456551	CTRP	DB00563	126941	METHOTREXATE	SSc	Other	DNA replication inhibitor	DNA related agent
+sig-21403	K94441233	PRISM	DB06693	64715	MEVASTATIN	SSc	Other	HMGCR inhibitor	Statins
+sig-20945	1862	GDSC	NA	462382	MG-132	SSc	Other	Ubiquitin-proteasome system inhibitor	Ubiquitin-proteasome system inhibitor
+sig-21222	K56277358	CTRP	NA	24901704	MGCD-265	SSc	VEGFR inhibitor	Multi-kinase inhibitor	VEGFR inhibitor
+sig-20999	A48237631	PRISM	DB00305	5746	MITOMYCIN	SSc	DNA related agent	DNA replication inhibitor	DNA related agent
+sig-21242	K59670716	CTRP	DB00305	5746	MITOMYCIN	SSc	DNA related agent	DNA replication inhibitor	DNA related agent
+sig-20938	1810	GDSC	DB01204	4212	MITOXANTRONE	SSc	DNA related agent	DNA replication inhibitor	DNA related agent
+sig-21107	K21680192	PRISM	DB01204	4212	MITOXANTRONE	SSc	topoisomerase inhibitor	DNA replication inhibitor	DNA related agent
+sig-20900	1179	GDSC	DB11740	24856436	MK-1775	SSc	CDK inhibitor	Cell cycle arrest	Cell cycle arrest
+sig-21212	K54256913	CTRP	DB11740	24856436	MK-1775	SSc	Other	Cell cycle arrest	Cell cycle arrest
+sig-20891	1053	GDSC	NA	24964624	MK-2206	SSc	AKT inhibitor	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-21289	K68065987	CTRP	NA	24964624	MK-2206	SSc	AKT inhibitor	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-20987	A36275421	CTRP	NA	3689413	ML162	SSc	Other	Ferroptosis inducer	Ferroptosis inducer
+sig-21027	K01877528	CTRP	NA	49766530	ML210	SSc	Other	Ferroptosis inducer	Ferroptosis inducer
+sig-20993	A40802033	CTRP	NA	3384730	ML311	SSc	Other	Pro-apoptotic agent	Pro-apoptotic agent
+sig-21348	K81491172	CTRP	NA	135984461	ML320	SSc	Other	GSK3 inhibitor	Kinase inhibitor
+sig-21361	K83963101	PRISM	DB13061	11712649	MLN-8054	SSc	Aurora kinases inhibitor	Cell cycle arrest	Cell cycle arrest
+sig-21235	K59317601	PRISM	NA	45375953	MLN0128	SSc	NA	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-21338	K78659596	CTRP	NA	25183872	MLN2238	SSc	Other	Ubiquitin-proteasome system inhibitor	Ubiquitin-proteasome system inhibitor
+sig-21087	K16485616	PRISM	DB11830	9865515	MOCETINOSTAT	SSc	HDAC inhibitor	Chromatin agent	Chromatin agent
+sig-21376	K87737963	CTRP	DB11763	25062766	MOMELOTINIB	SSc	Other	JAK-STAT signaling inhibitor	JAK-STAT signaling inhibitor
+sig-20968	A06627858	PRISM	DB11430	134689114	MONENSIN	SSc	Other	Antimicrobial agent	Other
+sig-21184	K45551181	PRISM	NA	46909588	MPI-0479605	SSc	Other	Cell cycle arrest	Cell cycle arrest
+sig-21160	K37618799	PRISM	NA	393595	MRS-1220	SSc	Other	Synapse modulation	Other
+sig-21097	K19061412	PRISM	DB12682	6444692	MUBRITINIB	SSc	Other	ErbB inhibitor	EGFR inhibitor
+sig-21015	A76279427	CTRP	NA	73707382	MYRIOCIN	SSc	Other	Lipid metabolism inhibitor	Metabolism disruptor
+sig-21167	K38264551	CTRP	NA	71760897	NAKITERPIOSIN	SSc	Microtubule agents	Microtubule agent	Microtubule agent
+sig-21283	K67511046	PRISM	DB01183	5284596	NALOXONE	SSc	Other	Synapse modulation	Other
+sig-21046	K06792661	CTRP	NA	72376	NARCICLASINE	SSc	Other	Rho/Rho kinase/LIM kinase/cofilin signaling modulator	Other
+sig-20883	1011	GDSC	DB12340	24978538	NAVITOCLAX	SSc	Apoptosis regulation	Pro-apoptotic agent	Pro-apoptotic agent
+sig-21356	K82746043	CTRP	DB12340	24978538	NAVITOCLAX	SSc	Other	Pro-apoptotic agent	Pro-apoptotic agent
+sig-21436	M41956198	CTRP	NA	NA	NAVITOCLAX:BIRINAPANT (1:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-21451	M68535767	CTRP	NA	NA	NAVITOCLAX:GEMCITABINE (1:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-21452	M71072276	CTRP	NA	NA	NAVITOCLAX:MST-312 (1:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-21437	M43334969	CTRP	NA	NA	NAVITOCLAX:PIPERLONGUMINE (1:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-21421	M07227555	CTRP	NA	NA	NAVITOCLAX:PLURIPOTIN (1:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-21442	M55709992	CTRP	NA	NA	NAVITOCLAX:PLX-4032 (1:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-21420	M03799014	CTRP	NA	NA	NAVITOCLAX:SORAFENIB (1:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-21268	K64117221	CTRP	NA	1566236	NECROSULFONAMIDE	SSc	Other	Necrosis blocker	Other
+sig-21204	K51911221	PRISM	NA	65907	NEMORUBICIN	SSc	topoisomerase inhibitor	Topoisomerase inhibitor	DNA related agent
+sig-21255	K62479592	CTRP	NA	23661650	NEOPELTOLIDE	SSc	Other	Cellular respiration inhibitor	Metabolism disruptor
+sig-21367	K85606544	CTRP	DB11828	9915743	NERATINIB	SSc	EGFR inhibitor	ErbB inhibitor	EGFR inhibitor
+sig-21211	K53903639	CTRP	NA	19582717	NEURONAL DIFFERENTIATION INDUCER III	SSc	NA	Neuronal differentiation inducer	Other
+sig-21157	K35960502	CTRP	DB06803	4477	NICLOSAMIDE	SSc	Other	JAK-STAT signaling inhibitor	JAK-STAT signaling inhibitor
+sig-20885	1013	GDSC	DB04868	644241	NILOTINIB	SSc	Other	Multi-kinase inhibitor	BCR-ABL inhibitor
+sig-21349	K81528515	CTRP	DB04868	644241	NILOTINIB	SSc	Other	Multi-kinase inhibitor	BCR-ABL inhibitor
+sig-21192	K49075727	CTRP	DB09079	9809715	NINTEDANIB	SSc	VEGFR inhibitor	Multi-kinase inhibitor	VEGFR inhibitor
+sig-21413	K99170882	PRISM	NA	5351307	NSC-319726	SSc	Other	p53 activator/MDM2 inhibitor	p53 activator/MDM2 inhibitor
+sig-21016	A80213327	CTRP	NA	409805	NSC23766	SSc	Other	RAC1 inhibitor	Other
+sig-20972	A12230535	CTRP	NA	216345	NUTLIN-3	SSc	MDM inhibitor	p53 activator/MDM2 inhibitor	p53 activator/MDM2 inhibitor
+sig-20973	A12571627	CTRP	NA	90570	NVP-231	SSc	Other	Lipid metabolism inhibitor	Metabolism disruptor
+sig-21082	K15179513	CTRP	NA	NA	NVP-ADW742	SSc	Other	IGF1R signaling inhibitor	IGF1R signaling inhibitor
+sig-21173	K41859756	PRISM	NA	135539077	NVP-AUY922	SSc	NA	HSP inhibitor	HSP inhibitor
+sig-21067	K12184916	CTRP	NA	11977753	NVP-BEZ235	SSc	mTOR/PI3K inhibitor	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-21068	K12184916	PRISM	NA	11977753	NVP-BEZ235	SSc	mTOR/PI3K inhibitor	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-21106	K21025364	PRISM	NA	9934347	NVP-TAE226	SSc	Other	PTK inhibitor	Kinase inhibitor
+sig-21197	K50140147	CTRP	NA	16038120	NVP-TAE684	SSc	Other	ALK inhibitor	Kinase inhibitor
+sig-21085	K15600710	CTRP	DB12191	11404337	OBATOCLAX	SSc	Other	Pro-apoptotic agent	Pro-apoptotic agent
+sig-20895	1068	GDSC	NA	11404337	OBATOCLAX MESYLATE	SSc	NA	Pro-apoptotic agent	Pro-apoptotic agent
+sig-21028	K02113016	CTRP	DB09074	23725625	OLAPARIB	SSc	Other	PARP inhibitor	PARP inhibitor
+sig-21017	A81541225	CTRP	NA	NA	OLIGOMYCIN A	SSc	NA	ATP synthase inhibitor	ATP related agent
+sig-21327	K76674262	CTRP	DB04865	285033	OMACETAXINE MEPESUCCINATE	SSc	NA	Protein synthesis inhibitor	Protein synthesis inhibitor
+sig-21328	K76674262	PRISM	DB04865	285033	OMACETAXINE MEPESUCCINATE	SSc	NA	Protein synthesis inhibitor	Protein synthesis inhibitor
+sig-21179	K43449605	PRISM	NA	872445	ONCRASIN-1	SSc	Other	Pro-apoptotic agent	Pro-apoptotic agent
+sig-20988	A36331462	PRISM	DB11991	25067547	OPROZOMIB	SSc	proteasome inhibitor	Ubiquitin-proteasome system inhibitor	Ubiquitin-proteasome system inhibitor
+sig-21374	K87124298	CTRP	DB12387	72698550	OSI-027	SSc	mTOR/PI3K inhibitor	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-21319	K73309154	PRISM	NA	10317566	OSI-420	SSc	EGFR inhibitor	ErbB inhibitor	EGFR inhibitor
+sig-21174	K42805893	PRISM	DB09330	71496458	OSIMERTINIB	SSc	NA	ErbB inhibitor	EGFR inhibitor
+sig-21210	K53417444	PRISM	NA	NA	OTS167	SSc	Other	MELK inhibitor	Kinase inhibitor
+sig-20920	1626	GDSC	NA	9936746	OTX015	SSc	Chromatin agents	Chromatin agent	Chromatin agent
+sig-21180	K43471985	PRISM	NA	9936746	OTX015	SSc	Chromatin agents	Chromatin agent	Chromatin agent
+sig-21145	K33277808	PRISM	NA	439501	OUABAIN	SSc	ATPase inhibitor	ATPase inhibitor	ATP related agent
+sig-21156	K35708212	CTRP	NA	439501	OUABAIN	SSc	Other	ATPase inhibitor	ATP related agent
+sig-21426	M14820059	CTRP	DB00526	9887053	OXALIPLATIN	SSc	DNA related agent	DNA replication inhibitor	DNA related agent
+sig-21340	K78960041	PRISM	DB00526	9887053	OXALIPLATIN	SSc	NA	DNA replication inhibitor	DNA related agent
+sig-20980	A28746609	CTRP	DB01229	36314	PACLITAXEL	SSc	Microtubule agents	Microtubule agent	Microtubule agent
+sig-21250	K62008436	PRISM	DB01229	36314	PACLITAXEL	SSc	Microtubule agents	Microtubule agent	Microtubule agent
+sig-20980	A28746609	CTRP	DB01229	36314	PACLITAXEL	SSc	Microtubule agents	Pro-apoptotic agent	Microtubule agent
+sig-21250	K62008436	PRISM	DB01229	36314	PACLITAXEL	SSc	Microtubule agents	Pro-apoptotic agent	Microtubule agent
+sig-20928	1730	GDSC	NA	NA	PAK_5339	SSc	Other	PAK inhibitor	Kinase inhibitor
+sig-21030	K02130563	PRISM	DB06603	6918837	PANOBINOSTAT	SSc	NA	Chromatin agent	Chromatin agent
+sig-21032	K02407574	CTRP	NA	26596	PARBENDAZOLE	SSc	Microtubule agents	Microtubule agent	Microtubule agent
+sig-21350	K81651477	CTRP	DB13063	6473881	PARTHENOLIDE	SSc	Other	NFkB signaling inhibitor	NFkB signaling inhibitor
+sig-21321	K74514084	PRISM	DB06589	10113978	PAZOPANIB	SSc	NA	Multi-kinase inhibitor	VEGFR inhibitor
+sig-21320	K74514084	CTRP	DB06589	10113978	PAZOPANIB	SSc	VEGFR inhibitor	Multi-kinase inhibitor	VEGFR inhibitor
+sig-21196	K49865102	PRISM	DB07101	9826528	PD-0325901	SSc	MEK inhibitor	MAPK inhibitor	MAPK inhibitor
+sig-21092	K17702546	PRISM	NA	4708	PD-168393	SSc	EGFR inhibitor	ErbB inhibitor	EGFR inhibitor
+sig-21005	A57798112	PRISM	NA	10231331	PD-318088	SSc	MEK inhibitor	MAPK inhibitor	MAPK inhibitor
+sig-21004	A57798112	CTRP	NA	10231331	PD318088	SSc	MEK inhibitor	MAPK inhibitor	MAPK inhibitor
+sig-21056	K08799216	PRISM	DB05524	6445562	PELITINIB	SSc	NA	ErbB inhibitor	EGFR inhibitor
+sig-21013	A72716251	PRISM	DB13756	73438925	PERUVOSIDE	SSc	Other	Cardenolide	Other
+sig-20912	1529	GDSC	DB11759	16720766	PEVONEDISTAT	SSc	Other	NAE inhibitor	Other
+sig-21287	K67844266	CTRP	DB11759	16720766	PEVONEDISTAT	SSc	Other	NAE inhibitor	Other
+sig-21163	K37764012	PRISM	DB11775	25227462	PF-03758309	SSc	Other	PAK inhibitor	Kinase inhibitor
+sig-21064	K11593101	CTRP	NA	57519531	PF-184	SSc	Other	NFkB signaling inhibitor	NFkB signaling inhibitor
+sig-21162	K37764012	CTRP	NA	25227462	PF-3758309	SSc	Other	PAK inhibitor	Kinase inhibitor
+sig-21035	K03063480	PRISM	DB12611	16750408	PF-477736	SSc	CHK inhibitor	Cell cycle arrest	Cell cycle arrest
+sig-21272	K64800655	CTRP	DB12686	46191454	PHA-793887	SSc	CDK inhibitor	Cell cycle arrest	Cell cycle arrest
+sig-21273	K64800655	PRISM	DB12686	46191454	PHA-793887	SSc	CDK inhibitor	Cell cycle arrest	Cell cycle arrest
+sig-21244	K60997853	PRISM	NA	16718576	PHA-848125	SSc	NA	Cell cycle arrest	Cell cycle arrest
+sig-21062	K10843433	PRISM	DB00812	4781	PHENYLBUTAZONE	SSc	Other	Anti-inflammatory agent	Other
+sig-21288	K67868012	CTRP	NA	9884685	PI-103	SSc	DNA related agent	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-20893	1058	GDSC	DB11663	17755052	PICTILISIB	SSc	mTOR/PI3K inhibitor	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-21135	K29395450	CTRP	NA	6852167	PIK-93	SSc	mTOR/PI3K inhibitor	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-21325	K75958547	PRISM	DB08860	5282452	PITAVASTATIN	SSc	Other	HMGCR inhibitor	Statins
+sig-20979	A28467416	PRISM	DB13109	76958312	PKI-179	SSc	mTOR/PI3K inhibitor	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-21359	K83336168	CTRP	NA	73707398	PL-DI	SSc	Other	ROS/RNS modulator	ROS/RNS modulator
+sig-21415	K99498722	PRISM	DB05992	9949641	PLINABULIN	SSc	Microtubule agents	Microtubule agent	Microtubule agent
+sig-21409	K98538768	CTRP	NA	12003241	PLURIPOTIN	SSc	Other	MAPK inhibitor	MAPK inhibitor
+sig-21191	K47869605	PRISM	DB01179	10607	PODOPHYLLOTOXIN	SSc	Microtubule agents	Microtubule agent	Microtubule agent
+sig-20942	1825	GDSC	NA	234820	PODOPHYLLOTOXIN BROMIDE	SSc	NA		Other
+sig-21352	K81801188	PRISM	DB08052	24905142	PP-121	SSc	Other	Multi-kinase inhibitor	Kinase inhibitor
+sig-20994	A41304429	PRISM	DB01297	4883	PRACTOLOL	SSc	Other	Adrenergic receptor antagonist	Other
+sig-21014	A74914197	PRISM	DB06813	148121	PRALATREXATE	SSc	NA	DNA replication inhibitor	DNA related agent
+sig-21084	K15318909	CTRP	NA	322968	PRIMA-1	SSc	Other	p53 activator/MDM2 inhibitor	p53 activator/MDM2 inhibitor
+sig-20970	A10070317	PRISM	DB00571	4946	PROPRANOLOL	SSc	NA	Adrenergic receptor antagonist	Other
+sig-20971	A11815689	PRISM	NA	124079498	PROSCILLARIDIN-A	SSc	Other	DNA replication inhibitor	DNA related agent
+sig-21401	K93918653	CTRP	DB12874	24889392	QUIZARTINIB	SSc	VEGFR inhibitor	FLT3 inhibitor	VEGFR inhibitor
+sig-21079	K14870255	CTRP	NA	46215462	R428	SSc	Other	AXL inhibitor	Kinase inhibitor
+sig-21363	K84683831	PRISM	DB12339	11224409	RADEZOLID	SSc	Other	Antimicrobial agent	Other
+sig-21398	K93123848	CTRP	DB05984	11656518	RAF265	SSc	BRAF inhibitor	Multi-kinase inhibitor	BRAF inhibitor;VEGFR inhibitor
+sig-21399	K93123848	PRISM	DB05984	11656518	RAF265	SSc	BRAF inhibitor	Multi-kinase inhibitor	BRAF inhibitor;VEGFR inhibitor
+sig-21384	K89839824	PRISM	DB00293	135400182	RALTITREXED	SSc	Other	DNA replication inhibitor	DNA related agent
+sig-21368	K85751432	PRISM	DB06309	44182295	REFAMETINIB	SSc	MEK inhibitor	MAPK inhibitor	MAPK inhibitor
+sig-21088	K16730910	CTRP	DB08896	11167602	REGORAFENIB	SSc	BRAF inhibitor	Multi-kinase inhibitor	BRAF inhibitor;VEGFR inhibitor
+sig-21219	K55187425	PRISM	DB12146	6918736	RIGOSERTIB	SSc	NA	Cell cycle arrest	Cell cycle arrest;PI3K/AKT/mTOR signaling inhibitor
+sig-21218	K55187425	CTRP	DB12146	6918736	RIGOSERTIB	SSc	Other	Cell cycle arrest	Cell cycle arrest;PI3K/AKT/mTOR signaling inhibitor
+sig-21219	K55187425	PRISM	DB12146	6918736	RIGOSERTIB	SSc	NA	PI3K/AKT/mTOR signaling inhibitor	Cell cycle arrest;PI3K/AKT/mTOR signaling inhibitor
+sig-21218	K55187425	CTRP	DB12146	6918736	RIGOSERTIB	SSc	Other	PI3K/AKT/mTOR signaling inhibitor	Cell cycle arrest;PI3K/AKT/mTOR signaling inhibitor
+sig-21022	K00317371	CTRP	NA	374536	RITA	SSc	MDM inhibitor	p53 activator/MDM2 inhibitor	p53 activator/MDM2 inhibitor
+sig-21023	K00317371	PRISM	NA	374536	RITA	SSc	MDM inhibitor	p53 activator/MDM2 inhibitor	p53 activator/MDM2 inhibitor
+sig-21269	K64538373	PRISM	DB12933	11548630	RO-4987655	SSc	MEK inhibitor	MAPK inhibitor	MAPK inhibitor
+sig-21248	K61397605	PRISM	DB06176	5352062	ROMIDEPSIN	SSc	HDAC inhibitor	Chromatin agent	Chromatin agent
+sig-20944	1849	GDSC	NA	46236925	SABUTOCLAX	SSc	Apoptosis regulation	Pro-apoptotic agent	Pro-apoptotic agent
+sig-21009	A67788537	CTRP	NA	135659046	SALERMIDE	SSc	Other	Sirtuin inhibitor	Metabolism disruptor
+sig-21008	A64064900	PRISM	NA	16760643	SANGIVAMYCIN	SSc	DNA related agent	DNA replication inhibitor	DNA related agent
+sig-20913	1549	GDSC	DB12183	11488320	SAPITINIB	SSc	EGFR inhibitor	ErbB inhibitor	EGFR inhibitor
+sig-21098	K19540840	CTRP	DB11805	10302451	SARACATINIB	SSc	SRC inhibitor	Multi-kinase inhibitor	SRC inhibitor
+sig-21247	K61323504	CTRP	NA	3854666	SB-225002	SSc	Other	G protein-coupled receptor inhibitor	Other
+sig-21253	K62358710	CTRP	DB05546	9936388	SB-743921	SSc	Other	Cell cycle arrest	Cell cycle arrest
+sig-21292	K68532323	PRISM	DB05546	9936388	SB-743921	SSc	Other	Cell cycle arrest	Cell cycle arrest
+sig-21372	K86797399	PRISM	NA	49855250	SB-939	SSc	HDAC inhibitor	Chromatin agent	Chromatin agent
+sig-20903	1194	GDSC	NA	9858940	SB505124	SSc	Other	TGFbeta receptor inhibitor	Kinase inhibitor
+sig-21089	K17140735	CTRP	NA	4259181	SCH-79797	SSc	Other	Thrombotic response modulation	Other
+sig-21322	K75009076	PRISM	NA	46239015	SCH-900776	SSc	NA	Cell cycle arrest	Cell cycle arrest
+sig-20917	1564	GDSC	NA	24866313	SCH772984	SSc	ERK MAPK signaling	MAPK inhibitor	MAPK inhibitor
+sig-20931	1736	GDSC	DB11689	10127622	SELUMETINIB	SSc	ERK MAPK signaling	MAPK inhibitor	MAPK inhibitor
+sig-21225	K57080016	CTRP	DB11689	10127622	SELUMETINIB	SSc	MEK inhibitor	MAPK inhibitor	MAPK inhibitor
+sig-21226	K57080016	PRISM	DB11689	10127622	SELUMETINIB	SSc	NA	MAPK inhibitor	MAPK inhibitor
+sig-21449	M65857522	CTRP	NA	NA	SELUMETINIB:BRD-A02303741 (4:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-21440	M45217710	CTRP	NA	NA	SELUMETINIB:DECITABINE (4:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-21429	M25329837	CTRP	NA	NA	SELUMETINIB:GDC-0941 (4:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-21441	M46138460	CTRP	NA	NA	SELUMETINIB:JQ-1 (4:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-21432	M34300043	CTRP	NA	NA	SELUMETINIB:MK-2206 (8:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-21434	M39644375	CTRP	NA	NA	SELUMETINIB:NAVITOCLAX (8:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-21457	M89326994	CTRP	NA	NA	SELUMETINIB:PIPERLONGUMINE (8:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-21445	M58862563	CTRP	NA	NA	SELUMETINIB:PLX-4032 (8:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-21439	M45185124	CTRP	NA	NA	SELUMETINIB:TRETINOIN (2:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-21433	M39460218	CTRP	NA	NA	SELUMETINIB:UNC0638 (4:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-21462	M98616540	CTRP	NA	NA	SELUMETINIB:VORINOSTAT (8:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-20955	1941	GDSC	NA	11178236	SEPANTRONIUM BROMIDE	SSc	NA	Pro-apoptotic agent	Pro-apoptotic agent
+sig-21243	K60219430	CTRP	DB12027	11609586	SERDEMETAN	SSc	MDM inhibitor	p53 activator/MDM2 inhibitor	p53 activator/MDM2 inhibitor
+sig-21278	K65924316	PRISM	DB12027	11609586	SERDEMETAN	SSc	MDM inhibitor	p53 activator/MDM2 inhibitor	p53 activator/MDM2 inhibitor
+sig-21345	K81458380	CTRP	DB15408	24748573	SILMITASERTIB	SSc	Other	Casein kinase II inhibitor	Kinase inhibitor
+sig-21364	K84937637	CTRP	DB00877	5284616	SIROLIMUS	SSc	mTOR/PI3K inhibitor	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-21365	K84937637	PRISM	DB00877	5284616	SIROLIMUS	SSc	mTOR/PI3K inhibitor	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-21419	M02488208	CTRP	NA	NA	SIROLIMUS:BORTEZOMIB (250:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-21105	K20755323	PRISM	NA	753704	SKI-II	SSc	NA	Lipid metabolism inhibitor	Metabolism disruptor
+sig-21396	K92960067	CTRP	NA	568763	SMER-3	SSc	Other	Ubiquitin-proteasome system inhibitor	Ubiquitin-proteasome system inhibitor
+sig-20989	A36630025	CTRP	NA	104842	SN-38	SSc	Other	DNA replication inhibitor	DNA related agent
+sig-21382	K89561498	PRISM	NA	104842	SN-38	SSc	topoisomerase inhibitor	DNA replication inhibitor	DNA related agent
+sig-21178	K43389698	CTRP	DB05969	3025986	SNS-032	SSc	CDK inhibitor	Cell cycle arrest	Cell cycle arrest
+sig-21314	K71512533	PRISM	NA	24995524	SNS-314	SSc	Aurora kinases inhibitor	Cell cycle arrest	Cell cycle arrest
+sig-21309	K71281111	CTRP	NA	NA	SNX-2112	SSc	HSP inhibitor	HSP inhibitor	HSP inhibitor
+sig-21310	K71281111	PRISM	NA	NA	SNX-2112	SSc	HSP inhibitor	HSP inhibitor	HSP inhibitor
+sig-21450	M68452404	CTRP	NA	NA	SNX-2112:BORTEZOMIB (250:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-21115	K23984367	CTRP	DB00398	216239	SORAFENIB	SSc	BRAF inhibitor	Multi-kinase inhibitor	BRAF inhibitor;VEGFR inhibitor
+sig-21366	K84964099	CTRP	NA	51037431	SPAUTIN-1	SSc	Other	USP inhibitor	Other
+sig-21176	K43002771	PRISM	NA	9850876	SR-33805	SSc	Other	Ion channel blocker	Other
+sig-21063	K11172604	CTRP	NA	49793307	SR-II-138A	SSc	Other	Transcription inhibitor	Transcription inhibitor
+sig-20888	1034	GDSC	DB02010	44259	STAUROSPORINE	SSc	Other	Multi-kinase inhibitor	Kinase inhibitor
+sig-21110	K22477529	CTRP	NA	984333	STF-31	SSc	inhibitor of nicotinamide phosphoribosyltransferase	NAMPT inhibitor	NAMPT inhibitor
+sig-21034	K02965346	CTRP	NA	9549297	SU11274	SSc	Other	MET inhibitor	MET inhibitor
+sig-21061	K10670311	PRISM	DB00795	5339	SULFASALAZINE	SSc	Other	Cyclooxygenase inhibitor	Other
+sig-21175	K42828737	CTRP	DB01268	5329102	SUNITINIB	SSc	VEGFR inhibitor	Multi-kinase inhibitor	VEGFR inhibitor
+sig-21205	K52313696	PRISM	DB12291	2746	TACEDINALINE	SSc	NA	Chromatin agent	Chromatin agent
+sig-21126	K26667523	PRISM	DB12241	24963252	TAK-733	SSc	MEK inhibitor	MAPK inhibitor	MAPK inhibitor
+sig-21025	K01683783	PRISM	DB12756	16124208	TAK-901	SSc	Aurora kinases inhibitor	Cell cycle arrest	Cell cycle arrest
+sig-21405	K95142244	PRISM	DB11760	135565082	TALAZOPARIB	SSc	NA	PARP inhibitor	PARP inhibitor
+sig-20907	1259	GDSC	DB11760	135565082	TALAZOPARIB	SSc	Other	PARP inhibitor	PARP inhibitor
+sig-21375	K87512222	PRISM	NA	6918637	TALTOBULIN	SSc	Microtubule agents	Microtubule agent	Microtubule agent
+sig-21101	K20285085	CTRP	NA	11213558	TAMATINIB	SSc	Other	SYK inhibitor	Kinase inhibitor
+sig-21380	K89162000	CTRP	DB05465	3038522	TANDUTINIB	SSc	VEGFR inhibitor	Multi-kinase inhibitor	VEGFR inhibitor
+sig-21346	K81473043	CTRP	DB05134	6505803	TANESPIMYCIN	SSc	HSP inhibitor	HSP inhibitor	HSP inhibitor
+sig-21347	K81473043	PRISM	DB05134	6505803	TANESPIMYCIN	SSc	HSP inhibitor	HSP inhibitor	HSP inhibitor
+sig-21424	M09675615	CTRP	NA	11949685	TANESPIMYCIN:BORTEZOMIB (250:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-21435	M41695494	CTRP	NA	NA	TANESPIMYCIN:GEMCITABINE (1:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-21057	K09426783	PRISM	NA	135413533	TAS-103	SSc	topoisomerase inhibitor	DNA replication inhibitor	DNA related agent
+sig-20916	1561	GDSC	DB12108	51001932	TASELISIB	SSc	mTOR/PI3K inhibitor	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-21181	K44844162	PRISM	DB12108	51001932	TASELISIB	SSc	mTOR/PI3K inhibitor	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-20954	1930	GDSC	NA	10385095	TELOMERASE INHIBITOR IX	SSc	NA	Telomerase inhibitor	Other
+sig-21054	K08177763	CTRP	DB06287	6918289	TEMSIROLIMUS	SSc	mTOR/PI3K inhibitor	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-20937	1809	GDSC	DB00444	452548	TENIPOSIDE	SSc	DNA related agent	Topoisomerase inhibitor	DNA related agent
+sig-20984	A35588707	CTRP	DB00444	452548	TENIPOSIDE	SSc	Other	Topoisomerase inhibitor	DNA related agent
+sig-20985	A35588707	PRISM	DB00444	452548	TENIPOSIDE	SSc	topoisomerase inhibitor	Topoisomerase inhibitor	DNA related agent
+sig-21383	K89714990	PRISM	DB11466	59757	TEPOXALIN	SSc	NA	Anti-inflammatory agent	Other
+sig-20992	A39935389	PRISM	NA	17142	TEROXIRONE	SSc	DNA related agent	DNA replication inhibitor	DNA related agent
+sig-21072	K12502280	CTRP	NA	16722836	TG-101348	SSc	Other	JAK-STAT signaling inhibitor	JAK-STAT signaling inhibitor
+sig-21134	K29254801	PRISM	DB13245	5455	THIRAM	SSc	Other	Antifungal agent	Other
+sig-21259	K62965247	PRISM	DB04960	159324	TIPIFARNIB	SSc	Other	Farnesyltransferase inhibitor	Other
+sig-21261	K63195589	CTRP	NA	9935249	TIPIFARNIB-P1	SSc	Other	Farnesyltransferase inhibitor	Other
+sig-21258	K62965247	CTRP	NA	159324	TIPIFARNIB-P2	SSc	Other	Farnesyltransferase inhibitor	Other
+sig-21146	K33379087	CTRP	DB12200	11494412	TIVANTINIB	SSc	Microtubule agents	MET inhibitor	MET inhibitor
+sig-21209	K53414658	CTRP	DB11800	9911830	TIVOZANIB	SSc	VEGFR inhibitor	Multi-kinase inhibitor	VEGFR inhibitor
+sig-20936	1808	GDSC	DB01030	60700	TOPOTECAN	SSc	DNA related agent	DNA replication inhibitor	DNA related agent
+sig-21221	K55696337	CTRP	DB01030	60700	TOPOTECAN	SSc	Other	DNA replication inhibitor	DNA related agent
+sig-21391	K92241597	CTRP	DB11781	15547703	TOSEDOSTAT	SSc	Other	Aminopeptidase inhibitor	Metabolism disruptor
+sig-21392	K92241597	PRISM	DB11781	15547703	TOSEDOSTAT	SSc	Other	Aminopeptidase inhibitor	Metabolism disruptor
+sig-21238	K59369769	PRISM	NA	5494449	TOZASERTIB	SSc	Aurora kinases inhibitor	Cell cycle arrest	Cell cycle arrest
+sig-21203	K51575138	CTRP	NA	9903786	TPCA-1	SSc	Other	NFkB signaling inhibitor	NFkB signaling inhibitor
+sig-20908	1372	GDSC	DB08911	11707110	TRAMETINIB	SSc	ERK MAPK signaling	MAPK inhibitor	MAPK inhibitor
+sig-21070	K12343256	CTRP	DB08911	11707110	TRAMETINIB	SSc	MEK inhibitor	MAPK inhibitor	MAPK inhibitor
+sig-21071	K12343256	PRISM	DB08911	11707110	TRAMETINIB	SSc	MEK inhibitor	MAPK inhibitor	MAPK inhibitor
+sig-21271	K64634304	CTRP	DB00755	5538	TRETINOIN	SSc	Other	Retinoid acid receptor agonist	Other
+sig-21431	M31706333	CTRP	NA	NA	TRETINOIN:CARBOPLATIN (2:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-21453	M74379094	CTRP	NA	NA	TRETINOIN:NAVITOCLAX (4:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-21043	K05402890	CTRP	NA	17757146	TRIAZOLOTHIADIAZINE	SSc	Other	Phosphodiesterase inhibitor	Metabolism disruptor
+sig-21343	K80431395	PRISM	DB12405	65399	TRICIRIBINE	SSc	AKT inhibitor	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-21036	K03243820	PRISM	DB00432	6256	TRIFLURIDINE	SSc	DNA related agent	DNA replication inhibitor	DNA related agent
+sig-20974	A13122391	CTRP	DB12025	107985	TRIPTOLIDE	SSc	Other	Transcription inhibitor	Transcription inhibitor
+sig-21170	K39484304	PRISM	DB12025	107985	TRIPTOLIDE	SSc	Other	Transcription inhibitor	Transcription inhibitor
+sig-21131	K28360340	CTRP	NA	11455910	TW-37	SSc	Other	Pro-apoptotic agent	Pro-apoptotic agent
+sig-21241	K59574735	PRISM	DB03424	72172	UBENIMEX	SSc	NA	Leukotriene synthesis inhibitor	Metabolism disruptor
+sig-20929	1733	GDSC	NA	NA	ULK1_4989	SSc	Other	ULK inhibitor	Kinase inhibitor
+sig-21461	M97749165	CTRP	NA	NA	UNC0638:NAVITOCLAX (1:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-20914	1553	GDSC	DB11969	51042438	UPROSERTIB	SSc	AKT inhibitor	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-20960	2106	GDSC	DB11969	51042438	UPROSERTIB	SSc	AKT inhibitor	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-21318	K72951360	PRISM	DB00385	454216	VALRUBICIN	SSc	DNA related agent	DNA replication inhibitor	DNA related agent
+sig-21331	K77625799	CTRP	DB05294	3081361	VANDETANIB	SSc	VEGFR inhibitor	Multi-kinase inhibitor	EGFR inhibitor;VEGFR inhibitor
+sig-20947	1909	GDSC	DB11581	49846579	VENETOCLAX	SSc	Apoptosis regulation	Pro-apoptotic agent	Pro-apoptotic agent
+sig-20880	1004	GDSC	DB00570	13342	VINBLASTINE	SSc	Microtubule agents	Microtubule agent	Microtubule agent
+sig-20940	1818	GDSC	DB00541	5978	VINCRISTINE	SSc	Microtubule agents	Microtubule agent	Microtubule agent
+sig-21069	K12251893	PRISM	DB00541	5978	VINCRISTINE	SSc	Microtubule agents	Microtubule agent	Microtubule agent
+sig-21353	K82109576	CTRP	DB00541	5978	VINCRISTINE	SSc	Other	Microtubule agent	Microtubule agent
+sig-20958	2048	GDSC	DB00361	5311497	VINORELBINE	SSc	Microtubule agents	Microtubule agent	Microtubule agent
+sig-21297	K69280563	PRISM	DB00361	5311497	VINORELBINE	SSc	Microtubule agents	Microtubule agent	Microtubule agent
+sig-21299	K69776681	PRISM	DB12062	10461508	VOLASERTIB	SSc	NA	Cell cycle arrest	Cell cycle arrest
+sig-20884	1012	GDSC	DB02546	5311	VORINOSTAT	SSc	Chromatin agents	Chromatin agent	Chromatin agent
+sig-21344	K81418486	CTRP	DB02546	5311	VORINOSTAT	SSc	HDAC inhibitor	Chromatin agent	Chromatin agent
+sig-21423	M09269305	CTRP	NA	NA	VORINOSTAT:CARBOPLATIN (1:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-21428	M23798888	CTRP	NA	NA	VORINOSTAT:NAVITOCLAX (4:1 MOL/MOL)	SSc	NA	Combination drug	Combination drug
+sig-20930	1734	GDSC	NA	NA	VSP34_8731	SSc	Other		Other
+sig-20959	2096	GDSC	NA	11634725	VX-11E	SSc	ERK MAPK signaling	MAPK inhibitor	MAPK inhibitor
+sig-21237	K59369769	CTRP	NA	5494449	VX-680	SSc	Aurora kinases inhibitor	Cell cycle arrest	Cell cycle arrest
+sig-20889	1046	GDSC	NA	10384072	WEE1 INHIBITOR	SSc	NA	Cell cycle arrest	Cell cycle arrest
+sig-20956	1997	GDSC	NA	71297207	WEHI-539	SSc	Apoptosis regulation	Pro-apoptotic agent	Pro-apoptotic agent
+sig-20997	A45498368	PRISM	NA	25260757	WYE-125132	SSc	mTOR/PI3K inhibitor	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
+sig-21351	K81728688	CTRP	NA	44607531	WZ8040	SSc	Other	ErbB inhibitor	EGFR inhibitor
+sig-20965	A03506276	PRISM	DB12981	60147023	XL888	SSc	HSP inhibitor	HSP inhibitor	HSP inhibitor
+sig-21007	A62182663	CTRP	NA	44632017	YK 4-279	SSc	NA	Transcription inhibitor	Transcription inhibitor
+sig-20904	1239	GDSC	NA	44632017	YK-4-279	SSc	Other	Transcription inhibitor	Transcription inhibitor
+sig-21329	K76703230	CTRP	NA	10126189	YM-155	SSc	Other	Pro-apoptotic agent	Pro-apoptotic agent
+sig-21330	K76703230	PRISM	NA	10126189	YM-155	SSc	Other	Pro-apoptotic agent	Pro-apoptotic agent
+sig-21260	K63068307	CTRP	DB12904	11647372	ZSTK474	SSc	mTOR/PI3K inhibitor	PI3K/AKT/mTOR signaling inhibitor	PI3K/AKT/mTOR signaling inhibitor
