@@ -1,5 +1,3 @@
-library(ComplexHeatmap)
-library(uwot)
 library(tidyverse)
 library(BPCells)
 library(Seurat)
@@ -13,23 +11,12 @@ mat <- open_matrix_dir(dir = "results/beyondcell_bp/full_mat_beyondcell/")
 ## Load full database
 meta.data_full_clinical <- read_tsv(
     file = "results/annotation/beyondcell_metadata_with_clinical.tsv"
-    ) %>%
-    mutate(
-        original_cell_id = gsub(
-            pattern = "\\.\\.\\..*$", ## annoying ... by seurat
-            replacement = "",
-            x = cell
-            ),
-        new_cell_id = c(1:ncol(mat))
     )
 
 meta.data_full_clinical <- meta.data_full_clinical %>%
     as.data.frame()
 
 rownames(meta.data_full_clinical) <- meta.data_full_clinical$new_cell_id
-
-## rename mat cells while preserving original in metadata
-colnames(mat) <- c(1:ncol(mat))
 
 seu <- Seurat::CreateSeuratObject(
     counts = mat,
