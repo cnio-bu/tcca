@@ -76,34 +76,30 @@ meta.data_full <-  meta.data  %>%
              mutate(
                  "sample" = as.character(sample),
                  "patient" = as.character(patient),
+                 "sample" = str_trim(sample),
+                 "patient" = str_trim(patient)
              )) %>%
     bind_rows() %>%
     mutate(
         study = basename(study),
-        study = gsub(pattern="*.tsv", replacement="", x = study)
+        study = gsub(pattern = "*.tsv", replacement = "", x = study)
+    ) %>%
+    ## Exploit the fact that we loaded all the mats and meta.data in order
+    ## and the indexes will match. Forego  the old barcodes, they are messy
+    mutate(
+        new_cell_id = c(1:ncol(mat))
     )
 
 
 ## get clinical data
-clinical <- data.table::fread("results/annotation/clinical_metadata_v2_clean.tsv")
-clinical[
-    clinical$sample == "T19" &
-        clinical$study == "adrenalnb_rui_chong",
-    "sample"
-] <- "T19_1"
-
-meta.data_full <- meta.data_full %>%
-    mutate(
-        sample = case_when(
-            study == "adrenal_nb_rui_chong" & sample == "T19" ~ "T19_1",
-            TRUE ~ sample
-        )
+clinical <- data.table::fread(
+    "results/annotation/clinical_metadata_v3_clean.tsv"
     )
 
 ## Add clinical metadata
 meta.data_full_clinical <- meta.data_full %>%
     rownames_to_column("cell") %>%
-    left_join(
+    inner_join(
         y = clinical,
         by = c("sample" = "sample", "study" = "study")
     ) %>%
@@ -120,11 +116,19 @@ meta.data_full_clinical <- meta.data_full %>%
             pattern = "\\.\\.\\..*$", ## annoying ... by seurat
             replacement = "",
             x = cell
-        ),
-        new_cell_id = c(1:ncol(mat))
+        )
+    )
+
+colnames(mat) <- c(1:ncol(mat))
+mat2 <- mat[, meta.data_full_clinical$new_cell_id]
+
+write_matrix_dir(
+    mat = mat2,
+    dir = "results/beyondcell_bp/full_mat_beyondcell",
+    overwrite = TRUE
     )
 
 write_tsv(
-    x = meta.data_full_clinical, 
+    x = meta.data_full_clinical,
     file = "results/annotation/beyondcell_metadata_with_clinical.tsv"
     )
