@@ -38,11 +38,11 @@ pm_colors <- c("Metastasis" = "#C10044",
                "Primary" = "#F0BFD0")
 
 # Therapeutic clusters x5
-tcs_colors <- c("5"= "#33539E",
-                "4" = "#7FACD6",
-                "3" = "#BFB8DA",
-                "2" = "#E8B7D4",
-                "1" = "#A5678E")
+tcs_colors <- c("4"= "#33539E",
+                "3" = "#7FACD6",
+                "2" = "#BFB8DA",
+                "1" = "#E8B7D4",
+                "0" = "#A5678E")
 
 # Expression clusters x10
 ecs_colors <- c("10" ="#A7D676",
