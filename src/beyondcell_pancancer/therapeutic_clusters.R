@@ -98,3 +98,17 @@ sketched_mat <- seu[["sketch_50k"]]$data
 sketched_mat_5k <- seu[["sketch_5k"]]$data
 write_matrix_dir(mat = sketched_mat, dir = "results/beyondcell_bp/sketch_mat_beyondcell")
 write_matrix_dir(mat = sketched_mat_5k, dir = "results/beyondcell_bp/sketch_mat_beyondcell_5k")
+
+## export object
+saveRDS(object = seu, file = "results/beyondcell_bp/beyondcell_pancancer.Rds")
+
+DefaultAssay(seu) <- "RNA"
+
+## plot UMAP
+tcs_umap <- DimPlot(
+    object = seu,
+    group.by = "therapeutic_clusters_0.2",
+    reduction = "umap"
+    )
+
+saveRDS(object = tcs_umap, file = "results/beyondcell_bp/tcs_raw.rds")
