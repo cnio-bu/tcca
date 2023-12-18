@@ -96,7 +96,7 @@ rule mod_adrenalnb_rui_chong:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        walltime=180,
     conda:
         "../envs/drug_modules.yaml"
     script:
