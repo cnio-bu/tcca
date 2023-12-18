@@ -628,6 +628,6 @@ rule sc_aml_sander_lambo_seurat:
         mem_mb=64000,
         walltime=100,
     conda:
-        "scevan"
+      "../envs/seurat.yaml"
     script:
         "../scripts/aml_sander_lambo_seurat.R"
