@@ -2,24 +2,28 @@ library(BPCells)
 library(Seurat)
 library(tidyverse)
 
+## set wd, required for bpcells relative path alloc.
+setwd("/storage/scratch01/shared/projects/bc-meta/single_cell/seurat/all_cell_types")
+
 ## Tell Seurat to work with on disk storage
 options(future.globals.maxSize = 1e9)
 options(Seurat.object.assay.version = "v5")
 
 seu <- readRDS(
-    file = "seurat/all_cell_types/merged_bc_metanalysis_full.Rds"
+    file = "merged_bc_metanalysis_full.Rds"
     )
 
 
 raw_mat <- BPCells::open_matrix_dir(
-    dir = "seurat/all_cell_types/merged_bc_meta_counts"
+    dir = "merged_bc_meta_counts"
     )
 
 seu[["RNA"]]$counts <- raw_mat
 
+print("LOADED")
 ## Import the database
 clinical_metadata <- data.table::fread(
-    "annotation/clinical_metadata_v2_clean.tsv"
+    "clinical_metadata_v2_clean.tsv"
     )
 
 ## Subset the full object to keep samples with malignant data
@@ -29,7 +33,7 @@ samples_to_keep <- intersect(unique(seu$sample), clinical_metadata$sample)
 seu <- subset(seu, subset = sample %in% samples_to_keep)
 
 ## Normalize samples
-seu <- NormalizeData(seu)
+#seu <- NormalizeData(seu)
 
 ## Fix a """duplicated""" sample called "t19" in two instances
 meta.data <- seu@meta.data 
@@ -54,12 +58,10 @@ seu_cell_level_clinical$cell <- NULL
 
 seu@meta.data <- seu_cell_level_clinical
 
-missing_studies <- setdiff(all_studies, unique(seu@meta.data$study))
+## Split assay into n layers, each a sample
+print("Splitting")
+seu[["RNA"]] <- split(seu[["RNA"]], f = seu$sample)
 
-
-
-
-
-
-
-
+print("SPLITTED")
+saveRDS(object=seu, file = "seu_split.Rds", destdir="/storage/scratch01/shared/projects/bc-meta/single_cell/seurat/all_cell_types")
+print("SAVED")
