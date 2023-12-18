@@ -120,9 +120,9 @@ filtered_sc_clinical <- lapply(filtered_sc, fill_metadata)
 
 ## Add and rename standarized columns: malignancy, cell_type, sample, patient
 filtered_sc_clinical <- lapply(filtered_sc_clinical, rename_columns, 
-                              malignancy_colname = "CopyKatPrediction", 
-                              malignant_names = c("aneuploid"),
-                              cell_type_colname = "SubAssignment",
+                              malignancy_colname = "Assignment", 
+                              malignant_names = c("Glioma"),
+                              cell_type_colname = "Assignment",
                               sample_colname = "GSMID", 
                               patient_colname = "Patient")
 
