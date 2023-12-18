@@ -615,3 +615,19 @@ rule sc_pdac_shu_zhang_seurat:
         "scevan"
     script:
         "../scripts/pdac_shu_zhang_seurat.R"
+
+rule sc_aml_sander_lambo_seurat:
+    input:
+        geo_to_samples=f"{raw_data}/aml_sander_lambo/geo_to_sample.tsv",
+    output:
+        seurat_list=f"{results}/seurat/raw/aml_sander_lambo.rds",
+    params:
+        data_dir=f"{raw_data}/aml_sander_lambo",
+    threads: 1
+    resources:
+        mem_mb=64000,
+        walltime=100,
+    conda:
+        "scevan"
+    script:
+        "../scripts/aml_sander_lambo_seurat.R"

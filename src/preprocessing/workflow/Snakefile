@@ -89,7 +89,8 @@ rule all:
         f"{results}/functional/nsclc_stefan_salcher.rds",
         f"{results}/functional/eac_thomas_carroll.rds",
         f"{results}/functional/oc_ec_matthew_regner.rds",
-        f"{results}/functional/pdac_shu_zhang.rds"
+        f"{results}/functional/pdac_shu_zhang.rds",
+        f"{results}/functional/aml_sander_lambo.rds"
 
 
 
@@ -130,7 +131,8 @@ rule dependencies:
         f"{results}/dependencies/nsclc_stefan_salcher.rds",
         f"{results}/dependencies/eac_thomas_carroll.rds",
         f"{results}/dependencies/oc_ec_matthew_regner.rds",
-        f"{results}/dependencies/pdac_shu_zhang.rds"
+        f"{results}/dependencies/pdac_shu_zhang.rds",
+        f"{results}/dependencies/aml_sander_lambo.rds"
 
 
 rule modules:
@@ -170,7 +172,8 @@ rule modules:
         f"{results}/modules/nsclc_stefan_salcher",
         f"{results}/modules/eac_thomas_carroll",
         f"{results}/modules/oc_ec_matthew_regner",
-        f"{results}/modules/pdac_shu_zhang"
+        f"{results}/modules/pdac_shu_zhang",
+        f"{results}/modules/aml_sander_lambo"
 
 
 include: "rules/preprocessing.smk"

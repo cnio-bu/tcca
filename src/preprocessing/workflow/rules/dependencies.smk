@@ -579,3 +579,18 @@ rule dep_pdac_shu_zhang:
         "../envs/beyondcell.yaml"
     script:
         "../scripts/general_functional_enrichment.R"
+
+rule dep_aml_sander_lambo:
+    input:
+        malignant_cells=rules.bc_aml_sander_lambo.output.malignant_list,
+        gsets="/storage/scratch01/shared/projects/bc-meta/reference/all_dependencies.gmt",
+    output:
+        bc_list=f"{results}/dependencies/aml_sander_lambo.rds",
+    threads: get_resource("default_deps", "threads")
+    resources:
+        mem_mb=get_resource("default_deps", "mem_mb"),
+        walltime=180
+    conda:
+        "../envs/beyondcell.yaml"
+    script:
+        "../scripts/general_functional_enrichment.R"

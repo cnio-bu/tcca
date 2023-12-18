@@ -600,3 +600,19 @@ rule bc_pdac_shu_zhang:
         "../envs/beyondcell.yaml"
     script:
         "../scripts/pdac_shu_zhang_beyondcell.R"
+
+rule bc_aml_sander_lambo:
+    input:
+        seurat_list=rules.sc_aml_sander_lambo_seurat.output.seurat_list,
+    output:
+        malignant_list=f"{results}/seurat/malignant/aml_sander_lambo.rds",
+        bc_list=f"{results}/beyondcell/aml_sander_lambo.rds",
+        report=f"{results}/reports/cells_aml_sander_lambo.tsv",
+    threads: get_resource("default_bc", "threads"),
+    resources:
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=get_resource("default_bc", "walltime"),
+    conda:
+        "../envs/beyondcell.yaml"
+    script:
+        "../scripts/aml_sander_lambo_beyondcell.R"

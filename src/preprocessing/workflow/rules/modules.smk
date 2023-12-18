@@ -529,3 +529,17 @@ rule mod_pdac_shu_zhang:
         "../envs/drug_modules.yaml"
     script:
         "../scripts/therapeutic_module_extraction.R"
+
+rule mod_aml_sander_lambo:
+    input:
+        bc_list=rules.bc_aml_sander_lambo.output.bc_list,
+    output:
+        module_dir=directory(f"{results}/modules/aml_sander_lambo")
+    threads: get_resource("default_bc", "threads"),
+    resources:
+        mem_mb=get_resource("default_bc", "mem_mb"),
+        walltime=get_resource("default_bc", "walltime"),
+    conda:
+        "../envs/drug_modules.yaml"
+    script:
+        "../scripts/therapeutic_module_extraction.R"
