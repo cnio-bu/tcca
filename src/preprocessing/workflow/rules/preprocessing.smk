@@ -625,7 +625,7 @@ rule sc_aml_sander_lambo_seurat:
         data_dir=f"{raw_data}/aml_sander_lambo",
     threads: 1
     resources:
-        mem_mb=64000,
+        mem_mb=120000,
         walltime=100,
     conda:
       "../envs/seurat.yaml"
