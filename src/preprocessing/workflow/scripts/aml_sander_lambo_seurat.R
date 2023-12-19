@@ -111,7 +111,7 @@ seu_filtered <- lapply(seu_list, FUN = normalize_and_scale)
 seu_filtered <- lapply(seu_filtered,
                        rename_columns, 
                        malignancy_colname = "Malignant",
-                               malignant_names = c("Malignant cells"),
+                               malignant_names = c("Malignant"),
                                cell_type_colname = "Classified_Celltype",
                                sample_colname = "GEO_ID",
                                patient_colname = "Patient_ID"
