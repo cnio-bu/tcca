@@ -62,7 +62,7 @@ samples <- basename(sample_dirs)
 
 ## load metadata
 meta.files <- list.files(
-  path = "raw/aml_sander_lambo",
+  path = data_dir,
   pattern = "^GSM.*.tsv",
   recursive = FALSE,
   full.names = TRUE
