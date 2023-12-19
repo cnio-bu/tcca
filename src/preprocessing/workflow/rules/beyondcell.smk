@@ -610,7 +610,7 @@ rule bc_aml_sander_lambo:
         report=f"{results}/reports/cells_aml_sander_lambo.tsv",
     threads: get_resource("default_bc", "threads"),
     resources:
-        mem_mb=get_resource("default_bc", "mem_mb"),
+        mem_mb=180000,
         walltime=get_resource("default_bc", "walltime"),
     conda:
         "../envs/beyondcell.yaml"
