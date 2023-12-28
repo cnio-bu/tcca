@@ -106,7 +106,7 @@ for (i in c(1:length(samples))){
 ## Filter low QC cells
 seu_filtered <- lapply(seu_list, FUN = filter_sc)
 ## Normalize
-seu_filtered <- lapply(seu_list, FUN = normalize_and_scale)
+seu_filtered <- lapply(seu_filtered, FUN = normalize_and_scale)
 ## Add and rename standarized columns: malignancy, cell_type, sample, patient
 seu_filtered <- lapply(seu_filtered,
                        rename_columns, 
