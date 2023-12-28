@@ -19,7 +19,7 @@ cbind.fill<-function(...){
         rbind(x, matrix(, n-nrow(x), ncol(x))))) 
 }
 
-all_mats <- all_mats[2:36]
+all_mats <- all_mats[2:37]
 
 mats <- map(
     all_mats,
@@ -51,7 +51,7 @@ all.meta <- list.files(
 meta.data <- all.meta %>%
     map(read.table, row.names = 1, header = TRUE) 
 
-meta.data[[26]]$patient <- meta.data[[26]]$orig.ident
+meta.data[[27]]$patient <- meta.data[[27]]$orig.ident
 
 for(i in c(1:length(all.meta))){
     print(i)
