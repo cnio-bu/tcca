@@ -1,6 +1,4 @@
 library(BPCells)
-library(ComplexHeatmap)
-library(uwot)
 library(tidyverse)
 library(Seurat)
 
@@ -93,7 +91,7 @@ meta.data_full <-  meta.data  %>%
 
 ## get clinical data
 clinical <- data.table::fread(
-    "results/annotation/clinical_metadata_v3_clean.tsv"
+    "results/annotation/clinical_metadata_v4_clean.tsv"
     )
 
 ## Add clinical metadata
