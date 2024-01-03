@@ -4,7 +4,7 @@ library("tidyverse")
 library("ComplexHeatmap")
 
 clinical_database <- data.table::fread(
-  "results/annotation/clinical_metadata_v2_clean.tsv"
+  "results/annotation/clinical_metadata_v4_clean.tsv"
 ) %>%
   filter(
     tumor_subtype != "predicted_tumour" ## Get rid of non clear tumoral stuff
