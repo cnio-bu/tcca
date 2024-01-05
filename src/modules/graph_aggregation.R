@@ -4,7 +4,7 @@ library(tidyverse)
 library(multidplyr)
 
 ## setup parallel stuff
-cluster <- new_cluster(8)
+cluster <- new_cluster(16)
 cluster_library(cluster, "dplyr")
 
 moas <- readr::read_tsv(file = "reference/final_moas - Collapsed.tsv") %>%
