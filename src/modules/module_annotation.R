@@ -1,7 +1,5 @@
-library(cluster)
-library(data.table)
+library("data.table")
 library("tidyverse")
-library("ComplexHeatmap")
 
 clinical_database <- data.table::fread(
   "results/annotation/clinical_metadata_v4_clean.tsv"
