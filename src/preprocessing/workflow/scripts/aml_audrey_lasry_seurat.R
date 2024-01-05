@@ -115,7 +115,7 @@ filtered_sc <- lapply(filtered_sc, normalize_and_scale)
 filtered_sc <- lapply(filtered_sc, rename_columns, 
                               malignancy_colname = "malignant", 
                               malignant_names = c("malignant"),
-                              cell_type_colname = "Celltype..major.lineage.",
+                              cell_type_colname = "Cell_type_identity",
                               sample_colname = "biosample_id", 
                               patient_colname = "donor_id"
                               )
