@@ -1,6 +1,6 @@
 library("tidyverse")
 
-raw_clinical_export <- data.table::fread("results/annotation/clinical_metadata_v3.tsv")
+raw_clinical_export <- data.table::fread("results/annotation/clinical_metadata_v4.tsv")
 
 ## Remove duplicated samples
 samples_to_remove <- c(
@@ -76,5 +76,5 @@ clinical_unique_samples <- raw_clinical_export %>%
 
 write_tsv(
     x = clinical_unique_samples,
-    file = "results/annotation/clinical_metadata_v3_clean.tsv"
+    file = "results/annotation/clinical_metadata_v4_clean.tsv"
     )
