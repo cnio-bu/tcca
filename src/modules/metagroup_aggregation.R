@@ -1,36 +1,7 @@
 library(igraph)
+library(scales)
 library(tidyverse)
 
-all_modules_mt1 <- list.files(
-    path = "results/modules/annotated",
-    pattern = "communities.tsv",
-    full.names = TRUE
-    )
-
-
-treated_modules <- grep(
-    pattern = "_treated_",
-    x = all_modules_mt1,
-    value = FALSE
-    )
-
-moas <- readr::read_tsv(file = "reference/final_moas - Collapsed.tsv") %>%
-    distinct(IDs, collapsed.MoAs, .keep_all = TRUE)
-
-all_modules_treated <- all_modules_mt1[treated_modules]
-all_modules_non_treated <- all_modules_mt1[-treated_modules]
-
-all_modules_non_treated <- all_modules_non_treated %>% 
-    map(read_tsv, id = "module_source")
-
-all_modules_non_treated <- all_modules_non_treated[
-    sapply(all_modules_non_treated, nrow) > 0
-    ]
-
-mt1_modules_by_cancer <- all_modules_non_treated %>%
-    bind_rows() 
-
-## Collapse to constellation plot
 extract_modules <- function(dt){
     dt <- dt %>%
         group_by(community) %>%
@@ -42,20 +13,44 @@ extract_modules <- function(dt){
         reframe(
             n.samples = n.samples,
             n.edges = n.edges,
-            n.appearances = n (),
+            n.appearances = n(),
             collapsed.MoAs = collapsed.MoAs,
             tumor_type = tumor_type
         ) %>%
         filter(
-            n.appearances >= round(0.5 * n.edges, digits = 0)
+            n.appearances >= round(0.2 * n.edges, digits = 0)
         ) %>%
-        distinct() 
+        distinct()
     
     return(dt)
 }
 
+
+## Patients primary treated
+all_modules_treated <- list.files(
+    path = "results/modules/annotated",
+    pattern = "patient_primary_treated_.*_communities\\.tsv",
+    full.names = TRUE
+    )
+
+
+moas <- readr::read_tsv(file = "reference/final_moas - Collapsed.tsv") %>%
+    distinct(IDs, collapsed.MoAs, .keep_all = TRUE)
+
+all_modules_treated <- all_modules_treated %>%
+    map(read_tsv, id = "module_source")
+
+## ESCA = no communities
+all_modules_treated <- all_modules_treated[
+    sapply(all_modules_treated, nrow) > 0
+    ]
+
+mt1_modules_by_cancer <- all_modules_treated %>%
+    bind_rows()
+
+## Prepare communities for aggregation
 modules_fixed <- lapply(
-    all_modules_non_treated,
+    all_modules_treated,
     FUN = extract_modules
     )
 
@@ -106,7 +101,7 @@ relations <- data.frame(
                     "signature"
                 ]
             )
-            
+
         )
     )
 
@@ -137,13 +132,13 @@ names(piti) <- c(1:24)
 
 V(g)$color <- piti[membership(fc)]
 g = simplify(g)
-Isolated = which(degree(g)==0)
+Isolated = which(degree(g) == 0)
 G2 = delete.vertices(g, Isolated)
 plot(G2, vertex.size = 4)
 
 plot(g, vertex.size = 4)
-    
-comms <- data.frame(edge=fc$names, meta_community = fc$membership) %>%
+
+comms <- data.frame(edge = fc$names, meta_community = fc$membership) %>%
     group_by(meta_community) %>%
         mutate(
             n.cancer_edges = n()
@@ -169,10 +164,10 @@ comms <- data.frame(edge=fc$names, meta_community = fc$membership) %>%
             collapsed.MoAs,
             preferred.drug.names
         )
-    
+
 write.table(
     x = comms,
-    file = paste0("results/modules/annotated/patients_non_treated_meta_groups.tsv"),
+    file = paste0("results/modules/annotated/patients_primary_treated_meta_groups.tsv"),
     sep = "\t",
     row.names = FALSE
     )
@@ -191,5 +186,41 @@ comms_agg <- comms %>%
     distinct() %>%
     arrange(meta_community, desc(n_sigs_in_moa))
 
+drugs_com <- comms %>%
+    group_by(meta_community, signature) %>%
+    summarise(
+        n.appearances = n()
+    ) #%>%
+    #filter(n.appearances >= 3) %>%
+    #arrange(meta_community, desc(n.appearances)) %>%
+    #left_join(y = moas[,c("IDs", "preferred.drug.names", "collapsed.MoAs")],
+    #          by = c("signature" = "IDs")
+     #         )
 
-write_tsv(x = comms_agg, file = "results/modules/annotated/metagroup_patients_untreated.tsv")
+## Check the community to decide upon cutoff
+
+dplot <- ggplot(data = drugs_com,
+                aes(x  = n.appearances,
+                    colour = as.factor(meta_community)
+                    )
+                ) +
+    geom_line(aes(y = 1 - ..y..), stat = "ecdf") +
+    scale_x_continuous(
+        name = "N. appearances for drug",
+        limits = c(1, max(drugs_com$n.appearances)),
+        n.breaks = 10
+        ) +
+    scale_y_continuous(
+        name = "Proportion of drugs above threshold",
+        labels = scales::percent_format()
+        ) +
+    scale_colour_discrete(name = "Meta community") +
+    theme_bw()
+
+ggsave(
+    plot = dplot,
+    filename = "results/figures/proportion_drugset_dist.png",
+    dpi = 100,
+    height = 10,
+    width = 10
+    )
