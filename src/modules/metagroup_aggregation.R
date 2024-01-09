@@ -190,12 +190,12 @@ drugs_com <- comms %>%
     group_by(meta_community, signature) %>%
     summarise(
         n.appearances = n()
-    ) #%>%
-    #filter(n.appearances >= 3) %>%
-    #arrange(meta_community, desc(n.appearances)) %>%
-    #left_join(y = moas[,c("IDs", "preferred.drug.names", "collapsed.MoAs")],
-    #          by = c("signature" = "IDs")
-     #         )
+    ) %>%
+    filter(n.appearances >= 3) %>%
+    arrange(meta_community, desc(n.appearances)) %>%
+    left_join(y = moas[,c("IDs", "preferred.drug.names", "collapsed.MoAs")],
+              by = c("signature" = "IDs")
+              )
 
 ## Check the community to decide upon cutoff
 
@@ -223,4 +223,9 @@ ggsave(
     dpi = 100,
     height = 10,
     width = 10
+    )
+
+write.table(
+    x = drugs_com,
+    file = "results/modules/annotated/metagroup_patients_treated_consensus_drugs.tsv"
     )
