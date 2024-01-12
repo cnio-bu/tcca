@@ -209,22 +209,155 @@ metacom_change <- ggplot(
     data = metacom_enrichment,
     aes(fill = new_time, y = enrichment, x = metacommunity)
 ) +
-    geom_boxplot() +
+    geom_boxplot(outlier.shape = NA) +
     stat_compare_means(method = "wilcox.test") +
+    scale_y_continuous(limits = c(-6,6)) +
+    scale_x_discrete(
+        name = "",
+        labels = paste0("Meta community", " ", rep(1:6))
+        ) +
+    scale_fill_discrete(
+        name = "Timepoint",
+        labels = c("pre-treatment", "post-treatment")
+        ) +
+    ylab("Module enrichment score") +
     theme_bw() +
     theme(
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
-        axis.ticks.x = element_blank(),
         axis.line = element_line(colour = "black"),
         panel.border = element_blank(),
-        panel.background = element_blank()
+        panel.background = element_blank(),
+        axis.text.x = element_text(angle = 45, vjust = 1, hjust=1)
     )
 
 ggsave(
     plot = metacom_change,
     filename = "results/figures/treated_metacommunities_rm013_module.png",
-    dpi = 100
+    dpi = 100,
+    height = 14,
+    width = 14
     )
 
-## TODO: HEATMAP DE LOS MODULE SCORES!
+## HEATMAP DE LOS MODULE SCORES!
+module_mat <- bcrm13@meta.data %>%
+    rownames_to_column("cell_barcode") %>%
+    select(cell_barcode, metacom_1:metacom_6) %>%
+    as.data.frame()
+
+rownames(module_mat) <- module_mat$cell_barcode
+module_mat$cell_barcode <- NULL
+module_mat <- as.matrix(module_mat)
+
+top_annotation <- ComplexHeatmap::HeatmapAnnotation(
+    "timepoint" = cell_annot_df[, c("new_time")],
+    "1q amplification" = cell_annot_df[, c("sc_gain_1q")],
+    which = "column"
+    # col = pals,
+    #   annotation_name_side = "top",
+)
+
+
+b <- ComplexHeatmap::Heatmap(
+    mat = t(module_mat),
+    cluster_rows = FALSE,
+    cluster_columns = FALSE,
+    column_order = rownames(cell_annot_df[order(cell_annot_df$new_time), ]),
+    cluster_column_slices = TRUE,
+    clustering_distance_columns = "pearson",
+    column_split = cell_annot_df$new_time,
+    show_column_names = FALSE,
+    top_annotation = top_annotation
+)
+
+## All patients sketch by metacom variability
+bc <- SketchData(
+    object = bc,
+    assay = "RNA",
+    ncells = 10000,
+    sketched.assay = "sketch_10k_new",
+    method = "LeverageScore",
+    var.name = "leveragev2",
+    seed = 120394,
+    verbose = TRUE,
+    over.write = TRUE
+)
+
+DefaultAssay(bc) <- "sketch_10k_new"
+
+
+## Add treatment groups to bc
+additional_meta <- data.table::fread(
+    "reference/additional_metadata_mmieloma.tsv"
+    ) %>%
+    mutate(
+        treatment_group = replace_na(treatment_group, "None") 
+    ) %>%
+    select(-"1q_state") %>%
+    as.data.frame()
+
+bc_annotated_meta <- bc@meta.data %>%
+    rownames_to_column("rownames") %>%
+    left_join(y = additional_meta, by = c("PID_new" = "sample_id")) %>%
+    as.data.frame()
+
+rownames(bc_annotated_meta) <- bc_annotated_meta$rownames
+bc_annotated_meta$rownames <- NULL
+bc@meta.data <- bc_annotated_meta
+
+table(bc@meta.data[colnames(bc@assays$sketch_10k_new), "treatment_group"])
+
+## meki patients
+## HEATMAP DE LOS MODULE SCORES!
+module_mat <- bc@meta.data[colnames(bc@assays$sketch_10k_new$counts), ] %>%
+    rownames_to_column("cell_barcode") %>%
+    select(cell_barcode, metacom_1:metacom_6, treatment_group) %>%
+    as.data.frame()
+
+meki_mat <- module_mat %>%
+    filter(treatment_group == "MEKi") %>%
+    select(-treatment_group) %>%
+    as.data.frame()
+
+rownames(meki_mat) <- meki_mat$cell_barcode
+meki_mat$cell_barcode <- NULL
+meki_mat <- as.matrix(meki_mat)
+
+## MEKI multi-patient HEAT
+cell_annot_df <- bc@meta.data[colnames(bc@assays$sketch_10k_new$counts), c(
+    "PID_new",
+    "timepoint",
+    "sc_gain_1q"
+)]
+
+cell_annot_df$timepoint <- as.factor(cell_annot_df$timepoint)
+cell_annot_df$new_time <- fct_relevel(cell_annot_df$timepoint, "pre", "post", "post_2")
+
+top_annotation <- ComplexHeatmap::HeatmapAnnotation(
+    "Timepoint" = cell_annot_df[rownames(meki_mat), c("new_time")],
+    "Patient" = as.factor(cell_annot_df[rownames(meki_mat), c("PID_new")]),
+    "1q amplification" = cell_annot_df[rownames(meki_mat), c("sc_gain_1q")],
+    which = "column"
+    # col = pals,
+    #   annotation_name_side = "top",
+)
+
+cell_patient_order <- cell_annot_df[rownames(meki_mat), ]
+cell_patient_order <- rownames(cell_patient_order[order(cell_patient_order$PID_new), ])
+
+b <- ComplexHeatmap::Heatmap(
+    mat = t(meki_mat),
+    cluster_rows = FALSE,
+    cluster_columns = FALSE,
+    column_order = cell_patient_order,
+    cluster_column_slices = FALSE,
+    cluster_row_slices = TRUE,
+    clustering_distance_columns = "pearson",
+    column_split = cell_annot_df[rownames(meki_mat), ]$new_time,
+    column_gap = unit(2, "mm"),
+    show_column_names = FALSE,
+    top_annotation = top_annotation,
+    heatmap_width = unit(14, "npc"),
+    heatmap_height = unit(5, "npc")
+)
+
