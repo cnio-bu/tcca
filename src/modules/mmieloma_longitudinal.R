@@ -1,4 +1,5 @@
 library(ComplexHeatmap)
+library(circlize)
 library(igraph)
 library(ggpubr)
 library(Seurat)
@@ -315,7 +316,7 @@ module_mat <- bc@meta.data[colnames(bc@assays$sketch_10k_new$counts), ] %>%
     as.data.frame()
 
 meki_mat <- module_mat %>%
-    filter(treatment_group == "MEKi") %>%
+    filter(treatment_group == "PI") %>%
     select(-treatment_group) %>%
     as.data.frame()
 
@@ -327,7 +328,8 @@ meki_mat <- as.matrix(meki_mat)
 cell_annot_df <- bc@meta.data[colnames(bc@assays$sketch_10k_new$counts), c(
     "PID_new",
     "timepoint",
-    "sc_gain_1q"
+    "sc_gain_1q",
+    "drug_t1_response"
 )]
 
 cell_annot_df$timepoint <- as.factor(cell_annot_df$timepoint)
@@ -335,8 +337,8 @@ cell_annot_df$new_time <- fct_relevel(cell_annot_df$timepoint, "pre", "post", "p
 
 top_annotation <- ComplexHeatmap::HeatmapAnnotation(
     "Timepoint" = cell_annot_df[rownames(meki_mat), c("new_time")],
-    "Patient" = as.factor(cell_annot_df[rownames(meki_mat), c("PID_new")]),
     "1q amplification" = cell_annot_df[rownames(meki_mat), c("sc_gain_1q")],
+    "Treatment response" = cell_annot_df[rownames(meki_mat), c("drug_t1_response")],
     which = "column"
     # col = pals,
     #   annotation_name_side = "top",
@@ -345,19 +347,23 @@ top_annotation <- ComplexHeatmap::HeatmapAnnotation(
 cell_patient_order <- cell_annot_df[rownames(meki_mat), ]
 cell_patient_order <- rownames(cell_patient_order[order(cell_patient_order$PID_new), ])
 
+col_fun = colorRamp2(c(-2, 0, 2), c("blue", "white", "red"))
+col_fun(seq(-3, 3))
+
 b <- ComplexHeatmap::Heatmap(
     mat = t(meki_mat),
-    cluster_rows = FALSE,
+    col = col_fun,
+    cluster_rows = TRUE,
     cluster_columns = FALSE,
     column_order = cell_patient_order,
     cluster_column_slices = FALSE,
     cluster_row_slices = TRUE,
     clustering_distance_columns = "pearson",
-    column_split = cell_annot_df[rownames(meki_mat), ]$new_time,
+    column_split = cell_annot_df[rownames(meki_mat), ]$PID_new,
     column_gap = unit(2, "mm"),
     show_column_names = FALSE,
-    top_annotation = top_annotation,
-    heatmap_width = unit(14, "npc"),
-    heatmap_height = unit(5, "npc")
+  #  row_labels = paste0("Metacommunity ", c(1:6)),
+    row_names_side = "left",
+    top_annotation = top_annotation
 )
 
