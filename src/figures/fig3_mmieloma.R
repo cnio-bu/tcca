@@ -1,8 +1,7 @@
 library(ComplexHeatmap)
 library(circlize)
 library(igraph)
-library(ggpubr)
-library(Seurat)
+library(patchwork)
 library(tidyverse)
 
 ## load color pal
@@ -86,5 +85,43 @@ draw_and_save_heat <- function(mat){
     
 }
 
+
+## Generate MEKI heat and save 
+png(
+    filename = "results/figures/mmieloma_meki_heat.png",
+    width = 19,
+    height = 2.5,
+    units = "in",
+    res = 100
+    )
+draw(meki_heat)
+
+dev.off()
+
+## GENERATE PI heat and save
+pi_heat <- draw_and_save_heat(pi_mat)
+
+png(
+    filename = "results/figures/mmieloma_pi_heat.png",
+    width = 19,
+    height = 2.5,
+    units = "in",
+    res = 100
+)
+draw(pi_heat)
+
+dev.off()
+
+## Generate PIMID heat and save
 imid_heat <- draw_and_save_heat(imid_mat)
 
+png(
+    filename = "results/figures/mmieloma_imid_heat.png",
+    width = 48,
+    height = 2.5,
+    units = "in",
+    res = 100
+)
+draw(imid_heat)
+
+dev.off()
