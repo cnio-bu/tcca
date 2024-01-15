@@ -1,5 +1,6 @@
 library(ComplexHeatmap)
 library(circlize)
+library(ggpubr)
 library(igraph)
 library(patchwork)
 library(tidyverse)
@@ -127,3 +128,52 @@ png(
 draw(imid_heat)
 
 dev.off()
+
+## Calculate the shift in metacom. enrichment between responses
+full_mat <- meki_mat %>%
+    rbind(pi_mat) %>%
+    rbind(imid_mat) %>%
+    as.data.frame() %>%
+    rownames_to_column("cell_id")
+
+cell_annot_df <- cell_annot_df %>%
+    rownames_to_column("cell_id")
+
+full_mat_annotated <- full_mat %>%
+    left_join(y = cell_annot_df, by = "cell_id") %>%
+    pivot_longer(
+        cols = metacom_1:metacom_6,
+        names_to = "community",
+        values_to = "enrichment"
+        ) %>%
+    filter(new_time %in% c("Pretreated", "First line")) %>%
+   # group_by(PID_new, new_time, community, drug_t1_response) %>%
+   # summarise(
+   #     enrichment = median(enrichment)
+   #  ) %>%
+    mutate(
+        drug_t1_response = as_factor(drug_t1_response)
+    )
+
+full_mat_annotated$drug_t1_response <- fct_relevel(
+    full_mat_annotated$drug_t1_response,
+    "CR", "VGPR", "PR", "MR", "SD"
+    )
+
+disp_plot <- ggplot(
+    data = full_mat_annotated,
+    aes(x = community, y = enrichment, fill = new_time)) +
+    geom_boxplot() +
+    scale_fill_discrete(name = "Timepoint") +
+    facet_wrap(~drug_t1_response) + 
+    stat_compare_means(method = "wilcox.test", na.rm = TRUE, label = "p.signif") +
+    theme_bw()
+
+ggsave(
+    filename = "results/figures/mmieloma_metacom_timepoint.png",
+    plot = disp_plot,
+    dpi = 100,
+    width = 14,
+    height = 14
+    )
+
