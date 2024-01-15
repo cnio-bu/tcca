@@ -87,6 +87,8 @@ draw_and_save_heat <- function(mat){
 
 
 ## Generate MEKI heat and save 
+meki_heat <- draw_and_save_heat(meki_mat)
+
 png(
     filename = "results/figures/mmieloma_meki_heat.png",
     width = 19,
