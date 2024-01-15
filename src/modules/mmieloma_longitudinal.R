@@ -65,10 +65,22 @@ drugs_metacommunities_treated <- read.table(
     "results/modules/annotated/metagroup_patients_treated_consensus_drugs.tsv"
     )
 
+drugs_metacommunities_treated_full <- read.table(
+    "results/modules/annotated/metagroup_patients_treated_consensus_drugs_full.tsv"
+) %>%
+    group_by(meta_community) %>%
+    distinct(signature, .keep_all = TRUE)
+
+
 meta_coms_set <- split(
     drugs_metacommunities_treated$signature,
     drugs_metacommunities_treated$meta_community
     )
+
+meta_coms_set_full <- split(
+    drugs_metacommunities_treated_full$signature,
+    drugs_metacommunities_treated_full$meta_community
+)
 
 
 bc <- readRDS("results/mmieloma/bc_seu.Rds")
@@ -87,6 +99,16 @@ bc <- AddModuleScore(
     slot = "data",
     ctrl = 10
     )
+
+bc <- AddModuleScore(
+    object = bc,
+    features = meta_coms_set_full[1],
+    name = "metafull_",
+    seed = 120394,
+    slot = "data",
+    ctrl = 20,
+    nbin = 10
+)
 
 bcrm13 <- subset(bc, subset = PID_new == "RRMM13")
 
@@ -306,7 +328,7 @@ rownames(bc_annotated_meta) <- bc_annotated_meta$rownames
 bc_annotated_meta$rownames <- NULL
 bc@meta.data <- bc_annotated_meta
 
-table(bc@meta.data[colnames(bc@assays$sketch_10k_new), "treatment_group"])
+
 
 ## meki patients
 ## HEATMAP DE LOS MODULE SCORES!
@@ -316,13 +338,32 @@ module_mat <- bc@meta.data[colnames(bc@assays$sketch_10k_new$counts), ] %>%
     as.data.frame()
 
 meki_mat <- module_mat %>%
-    filter(treatment_group == "PI") %>%
+    filter(treatment_group == "MEKi") %>%
     select(-treatment_group) %>%
     as.data.frame()
 
 rownames(meki_mat) <- meki_mat$cell_barcode
 meki_mat$cell_barcode <- NULL
 meki_mat <- as.matrix(meki_mat)
+
+imid_mat <- module_mat %>%
+    filter(treatment_group == "IMiD") %>%
+    select(-treatment_group) %>%
+    as.data.frame()
+
+rownames(imid_mat) <- imid_mat$cell_barcode
+imid_mat$cell_barcode <- NULL
+imid_mat <- as.matrix(imid_mat)
+
+pi_mat <- module_mat %>%
+    filter(treatment_group == "PI") %>%
+    select(-treatment_group) %>%
+    as.data.frame()
+
+rownames(pi_mat) <- pi_mat$cell_barcode
+pi_mat$cell_barcode <- NULL
+pi_mat <- as.matrix(pi_mat)
+
 
 ## MEKI multi-patient HEAT
 cell_annot_df <- bc@meta.data[colnames(bc@assays$sketch_10k_new$counts), c(
@@ -335,35 +376,10 @@ cell_annot_df <- bc@meta.data[colnames(bc@assays$sketch_10k_new$counts), c(
 cell_annot_df$timepoint <- as.factor(cell_annot_df$timepoint)
 cell_annot_df$new_time <- fct_relevel(cell_annot_df$timepoint, "pre", "post", "post_2")
 
-top_annotation <- ComplexHeatmap::HeatmapAnnotation(
-    "Timepoint" = cell_annot_df[rownames(meki_mat), c("new_time")],
-    "1q amplification" = cell_annot_df[rownames(meki_mat), c("sc_gain_1q")],
-    "Treatment response" = cell_annot_df[rownames(meki_mat), c("drug_t1_response")],
-    which = "column"
-    # col = pals,
-    #   annotation_name_side = "top",
-)
+# Write annotation to disk
+write.table(x = cell_annot_df, file = "results/mmieloma/cell_annotation_10k.tsv")
 
-cell_patient_order <- cell_annot_df[rownames(meki_mat), ]
-cell_patient_order <- rownames(cell_patient_order[order(cell_patient_order$PID_new), ])
-
-col_fun = colorRamp2(c(-2, 0, 2), c("blue", "white", "red"))
-col_fun(seq(-3, 3))
-
-b <- ComplexHeatmap::Heatmap(
-    mat = t(meki_mat),
-    col = col_fun,
-    cluster_rows = TRUE,
-    cluster_columns = FALSE,
-    column_order = cell_patient_order,
-    cluster_column_slices = FALSE,
-    cluster_row_slices = TRUE,
-    clustering_distance_columns = "pearson",
-    column_split = cell_annot_df[rownames(meki_mat), ]$PID_new,
-    column_gap = unit(2, "mm"),
-    show_column_names = FALSE,
-  #  row_labels = paste0("Metacommunity ", c(1:6)),
-    row_names_side = "left",
-    top_annotation = top_annotation
-)
-
+# Write matrices to disk
+write.table(x = meki_mat, file = "results/mmieloma/meki_mat_enrichment.tsv")
+write.table(x = pi_mat, file = "results/mmieloma/pi_mat_enrichment.tsv")
+write.table(x = imid_mat, file = "results/mmieloma/imid_mat_enrichment.tsv")
