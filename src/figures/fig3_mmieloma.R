@@ -155,10 +155,17 @@ full_mat_annotated <- full_mat %>%
         drug_t1_response = as_factor(drug_t1_response)
     )
 
+additional_meta <- read_tsv("reference/additional_metadata_mmieloma.tsv") %>%
+    select(sample_id, treatment_group) %>%
+    deframe()
+ 
 full_mat_annotated$drug_t1_response <- fct_relevel(
     full_mat_annotated$drug_t1_response,
     "CR", "VGPR", "PR", "MR", "SD"
     )
+
+full_mat_annotated$treatment_group <- additional_meta[full_mat_annotated$PID_new] 
+full_mat_annotated$treatment_group <- as_factor(full_mat_annotated$treatment_group)
 
 disp_plot <- ggplot(
     data = full_mat_annotated,
@@ -176,4 +183,22 @@ ggsave(
     width = 14,
     height = 14
     )
+
+disp_plot_groups <- ggplot(
+    data = full_mat_annotated,
+    aes(x = community, y = enrichment, fill = new_time)) +
+    geom_boxplot() +
+    scale_fill_discrete(name = "Timepoint") +
+    facet_wrap(~treatment_group) + 
+    stat_compare_means(method = "wilcox.test", na.rm = TRUE, label = "p.signif") +
+    theme_bw()
+
+
+ggsave(
+    filename = "results/figures/mmieloma_metacom_treatments.png",
+    plot = disp_plot_groups,
+    dpi = 100,
+    width = 14,
+    height = 14
+)
 
