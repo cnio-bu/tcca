@@ -1,5 +1,6 @@
 library(ComplexHeatmap)
 library(circlize)
+library(limma)
 library(ggpubr)
 library(igraph)
 library(patchwork)
@@ -136,13 +137,25 @@ full_mat <- meki_mat %>%
     as.data.frame() %>%
     rownames_to_column("cell_id")
 
+# rownames(full_mat) <- full_mat$cell_id
+# full_mat$cell_id <- NULL
+# 
+# full_mat <- as.matrix(full_mat)
+# cell_annot_meta <- cell_annot_df[rownames(full_mat), ]
+# 
+# mat_rgrss <- t(full_mat)
+# mat_rgrss <- limma::removeBatchEffect(
+#     mat_rgrss,
+#     batch = cell_annot_meta$PID_new 
+#     )
+
 cell_annot_df <- cell_annot_df %>%
     rownames_to_column("cell_id")
 
 full_mat_annotated <- full_mat %>%
     left_join(y = cell_annot_df, by = "cell_id") %>%
     pivot_longer(
-        cols = metacom_1:metacom_6,
+        cols = com_1:com_16,
         names_to = "community",
         values_to = "enrichment"
         ) %>%
@@ -156,16 +169,18 @@ full_mat_annotated <- full_mat %>%
     )
 
 additional_meta <- read_tsv("reference/additional_metadata_mmieloma.tsv") %>%
-    select(sample_id, treatment_group) %>%
-    deframe()
+    select(sample_id, treatment_group, prev_therapies)
  
 full_mat_annotated$drug_t1_response <- fct_relevel(
     full_mat_annotated$drug_t1_response,
     "CR", "VGPR", "PR", "MR", "SD"
     )
 
-full_mat_annotated$treatment_group <- additional_meta[full_mat_annotated$PID_new] 
-full_mat_annotated$treatment_group <- as_factor(full_mat_annotated$treatment_group)
+full_mat_annotated <- full_mat_annotated %>%
+    left_join(additional_meta, by = c("PID_new" = "sample_id"))
+
+full_mat_annotated$treatment_group <- as.factor(full_mat_annotated$treatment_group)
+full_mat_annotated$prev_therapies <- as.factor(full_mat_annotated$prev_therapies)
 
 disp_plot <- ggplot(
     data = full_mat_annotated,
@@ -184,21 +199,134 @@ ggsave(
     height = 14
     )
 
+
+## TADO: correct for patient specific effects
 disp_plot_groups <- ggplot(
     data = full_mat_annotated,
     aes(x = community, y = enrichment, fill = new_time)) +
     geom_boxplot() +
+    scale_x_discrete(name = "", labels = paste0("Meta community ", rep(1:6))) +
     scale_fill_discrete(name = "Timepoint") +
+    scale_y_continuous(name = "", limits = c(-10, 10), n.breaks = 10) +
     facet_wrap(~treatment_group) + 
-    stat_compare_means(method = "wilcox.test", na.rm = TRUE, label = "p.signif") +
-    theme_bw()
+    stat_compare_means(
+        method = "wilcox.test",
+        na.rm = TRUE,
+        label = "p.format",
+        hide.ns = TRUE
+        ) +
+    theme_bw() +
+    theme(
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        #panel.border = element_blank(),
+        #panel.background = element_blank(),
+        #axis.line = element_line(),
+        axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1, face = "bold"),
+        legend.title = element_text(face = "bold")
+    )
 
 
 ggsave(
     filename = "results/figures/mmieloma_metacom_treatments.png",
     plot = disp_plot_groups,
     dpi = 100,
-    width = 14,
+    width = 21,
     height = 14
 )
 
+## Test if prev therapies  exacerbates any comm.
+disp_plot_prevs <- ggplot(
+    data = full_mat_annotated,
+    aes(x = community, y = enrichment, fill = prev_therapies)) +
+    geom_boxplot() +
+    scale_x_discrete(name = "", labels = paste0("Meta community ", rep(1:6))) +
+    scale_fill_discrete(name = "Timepoint") +
+    scale_y_continuous(name = "", limits = c(-10, 10), n.breaks = 10) +
+    stat_anova_test(
+  #      method = "wilcox.test",
+   #     na.rm = TRUE,
+    #    label = "p.format",
+     #   hide.ns = TRUE
+    ) +
+    theme_bw() +
+    theme(
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        #panel.border = element_blank(),
+        #panel.background = element_blank(),
+        #axis.line = element_line(),
+        axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1, face = "bold"),
+        legend.title = element_text(face = "bold")
+    )
+
+
+## com mat
+## TODO: REDO this code to be better
+com_mat = read.table("results/mmieloma/community_mat.tsv") %>%
+    filter(treatment_group == "MEKi")
+
+rownames(com_mat) <- com_mat$cell_barcode
+com_mat$cell_barcode <- NULL
+com_mat$treatment_group <- NULL
+com_mat <- as.matrix(com_mat)
+
+## Top annotation
+top_annotation <- ComplexHeatmap::HeatmapAnnotation(
+    "Timepoint" = cell_annot_df[rownames(com_mat), c("new_time")],
+    "1q amplification" = cell_annot_df[rownames(com_mat), c("sc_gain_1q")],
+    col = top_col,
+    which = "column"
+)
+
+cell_patient_order <- cell_annot_df[rownames(com_mat), ]
+cell_patient_order <- rownames(cell_patient_order[order(cell_patient_order$PID_new), ])
+
+
+b <- ComplexHeatmap::Heatmap(
+    t(com_mat),
+    show_row_names = TRUE,
+    cluster_rows = TRUE,
+    show_column_names = FALSE,
+    column_order = cell_patient_order,
+    column_split = data.frame(
+        cell_annot_df[rownames(com_mat), ]$drug_t1_response,
+        cell_annot_df[rownames(com_mat), ]$PID_new
+    ),
+    column_gap = unit(2, "mm"),
+    top_annotation = top_annotation
+    )
+
+disp_plot_groups_com <- ggplot(
+    data = full_mat_annotated,
+    aes(x = community, y = enrichment, fill = new_time)) +
+    geom_boxplot() +
+    #scale_x_discrete(name = "", labels = paste0("Meta community ", rep(1:6))) +
+    scale_fill_discrete(name = "Timepoint") +
+    scale_y_continuous(name = "", limits = c(-10, 10), n.breaks = 10) +
+    facet_wrap(~treatment_group) + 
+    stat_compare_means(
+        method = "wilcox.test",
+        na.rm = TRUE,
+        label = "p.signif",
+        hide.ns = TRUE
+    ) +
+    theme_bw() +
+    theme(
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        #panel.border = element_blank(),
+        #panel.background = element_blank(),
+        #axis.line = element_line(),
+        axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1, face = "bold"),
+        legend.title = element_text(face = "bold")
+    )
+
+
+ggsave(
+    disp_plot_groups_com,
+    filename = "results/figures/communities_change_ojo_rep.png",
+    dpi = 300,
+    width = 28,
+    height = 28
+    )
