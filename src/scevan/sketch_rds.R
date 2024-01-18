@@ -44,7 +44,7 @@ write.table(sketch_metadata,
   sep = "\t")
 
 
-DefaultAssay(obj) <- "RNA"
+DefaultAssay(seu) <- "RNA"
 
 seu <- SketchData(
   object = seu,
