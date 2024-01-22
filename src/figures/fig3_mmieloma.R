@@ -227,3 +227,34 @@ ggsave(
     width = 21,
     height = 14
 )
+
+
+## study metacom change by 1a amp.
+disp_plot_amp <- ggplot(
+    data = full_mat_annotated[!(is.na(full_mat_annotated$drug_t1_response)), ],
+    aes(x = community, y = enrichment, fill = sc_gain_1q)) +
+    geom_boxplot() +
+    scale_fill_discrete(name = "1q. status") +
+    scale_x_discrete(labels = paste0("Metacomunity ", rep(1:6))) +
+    ylab("") +
+    xlab("") +
+    facet_wrap(treatment_group ~ new_time, ncol = 2) + 
+    stat_compare_means(method = "wilcox.test", na.rm = TRUE, label = "p.signif") +
+    theme_bw() + 
+    theme(
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        #panel.border = element_blank(),
+        #panel.background = element_blank(),
+        #axis.line = element_line(),
+        axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1, face = "bold"),
+        legend.title = element_text(face = "bold")
+    )
+
+ggsave(
+    plot = disp_plot_amp,
+    filename = "results/figures/mmieloma_metacom_timepoint_amp.png",
+    dpi = 100,
+    width = 7,
+    height = 14
+    )
