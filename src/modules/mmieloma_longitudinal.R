@@ -5,7 +5,7 @@ library(ggpubr)
 library(Seurat)
 library(tidyverse)
 
-options(Seurat.object.assay.version = 'v5')
+options(Seurat.object.assay.version = "v5")
 
 # 
 # mmieloma_communities <- data.table::fread(
@@ -65,22 +65,10 @@ drugs_metacommunities_treated <- read.table(
     "results/modules/annotated/metagroup_patients_treated_consensus_drugs.tsv"
     )
 
-drugs_metacommunities_treated_full <- read.table(
-    "results/modules/annotated/metagroup_patients_treated_consensus_drugs_full.tsv"
-) %>%
-    group_by(meta_community) %>%
-    distinct(signature, .keep_all = TRUE)
-
-
 meta_coms_set <- split(
     drugs_metacommunities_treated$signature,
     drugs_metacommunities_treated$meta_community
     )
-
-meta_coms_set_full <- split(
-    drugs_metacommunities_treated_full$signature,
-    drugs_metacommunities_treated_full$meta_community
-)
 
 
 bc <- readRDS("results/mmieloma/bc_seu.Rds")
@@ -91,32 +79,75 @@ bc@assays$RNA$data@matrix@matrix@dir <- c("./results/mmieloma/mmieloma_bc/")
 
 DefaultAssay(bc) <- "RNA"
 
+
+## Test, for each patient, the overall number of features and cells
+sample_mat_averages <- bc@assays$RNA$data
+sample_mat_averages <- colMeans(sample_mat_averages)
+
+sample_mat_averages_annotated <- sample_mat_averages %>%
+    as.data.frame() %>%
+    rownames_to_column("cell_id") %>%
+    rename("average_bcscore" = ".") %>%
+    left_join(y = bc@meta.data[, c(
+        "Cell_barcode",
+        "PID_new",
+        "PID_sample_new",
+        "timepoint")],
+        by = c("cell_id" = "Cell_barcode")
+        )
+
+## Add treatment groups to bc
+additional_meta <- data.table::fread(
+    "reference/additional_metadata_mmieloma.tsv"
+) %>%
+    mutate(
+        treatment_group = replace_na(treatment_group, "None") 
+    ) %>%
+    select(-"1q_state") %>%
+    as.data.frame()
+
+sample_mat_averages_annotated <- sample_mat_averages_annotated %>%
+    left_join(y = additional_meta, by = c("PID_new" = "sample_id"))
+
+
+averages_bscore_ggplot <- ggplot(
+    data = sample_mat_averages_annotated,
+    aes(
+        x = PID_new,
+        y = average_bcscore,
+        fill = timepoint
+        )
+    ) +
+    geom_boxplot() +
+    facet_grid(~treatment_group) +
+    theme_bw() +
+    theme(
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.text.x = element_text(face = "bold", angle = 45, hjust = 1),
+        legend.title = element_text(face = "bold")
+    )
+
+ggsave(
+    filename = "results/mmieloma/raw_bscores_averages.png",
+    averages_bscore_ggplot,
+    dpi = 100, height = 7,
+    width = 14
+    )
+
+## Regress out patient specific effects
+bc_mat <- bc@assays$RNA$data
+
+bc <- Seurat::ScaleData(object = bc, vars.to.regress = "PID_new")
+
 bc <- AddModuleScore(
     object = bc,
     features = meta_coms_set,
     name = "metacom_",
     seed = 120394,
-    slot = "data",
+    slot = "scale.data",
     ctrl = 10
-    )
-
-bc <- AddModuleScore(
-    object = bc,
-    features = meta_coms_set_full[1],
-    name = "metafull_",
-    seed = 120394,
-    slot = "data",
-    ctrl = 20,
-    nbin = 10
 )
-
-bcrm13 <- subset(bc, subset = PID_new == "RRMM13")
-
-bc13mat <- as.matrix(bcrm13@assays$RNA$data)
-bc13mat <- scale(bc13mat, center = TRUE, scale = TRUE)
-
-top_rv <- matrixStats::rowVars(bc13mat)
-top_rv <- top_rv[top_rv >= 2]
 
 
 ## load drug data
@@ -126,172 +157,6 @@ drugs <- data.table::fread("reference/final_moas - Collapsed.tsv") %>%
     as.data.frame()
 
 rownames(drugs) <- drugs$IDs
-
-cell_annot_df <- bcrm13@meta.data[, c(
-    "timepoint",
-    "sample_id",
-    "sc_gain_1q",
-    "metacom_1",
-    "metacom_2",
-    "metacom_3",
-    "metacom_4",
-    "metacom_5",
-    "metacom_6"
-    )]
-
-cell_annot_df$bortezo <- bc13mat["sig-21377", rownames(cell_annot_df)]
-cell_annot_df$timepoint <- as.factor(cell_annot_df$timepoint)
-cell_annot_df$new_time <- fct_relevel(cell_annot_df$timepoint, "pre", "post")
-
-right_annotation <- ComplexHeatmap::HeatmapAnnotation(
-    "timepoint" = cell_annot_df[, c("new_time")],
-    "bortezo" = anno_barplot(cell_annot_df[, "bortezo"]),
-    "1q amplification" = cell_annot_df[, c("sc_gain_1q")],
-    which = "row",
-   # col = pals,
- #   annotation_name_side = "top",
-    annotation_name_rot = 45
-)
-
-top_annotation <- ComplexHeatmap::HeatmapAnnotation(
-    "meta_community" = as.factor(drugs_metacommunities_treated[, c("meta_community")]),
-    which = "column",
-    annotation_name_side = "left"
-)
-
-a <- ComplexHeatmap::Heatmap(
-    mat = t(bc13mat[drugs_metacommunities_treated$signature,]),
-    cluster_rows = FALSE,
- #   row_order = rownames(cell_annot_df[order(cell_annot_df$new_time), ]),
-    row_split = cell_annot_df$new_time,
-    cluster_row_slices = TRUE,
-    clustering_distance_rows = "pearson",
-    #cluster_columns = TRUE,
-    cluster_columns =  FALSE,
-    cluster_column_slices = TRUE,
-    column_split = drugs_metacommunities_treated$meta_community,
-    clustering_distance_columns = "pearson",
-    show_column_names = TRUE,
-    show_row_names = FALSE,
-    column_names_rot = 45,
-    column_names_gp = grid::gpar(fontsize = 4),
-    column_names_side = "top",
-    column_title = NULL,
-    heatmap_width = unit(8, "in"),
-    heatmap_height = unit(14, "in"),
-    column_labels = drugs_metacommunities_treated$preferred.drug.names,
-    right_annotation = right_annotation,
-    top_annotation = top_annotation
-)
-
-png(filename = "results/rrmm_13_top40.png",
-    res = 300,
-    width = 14, 
-    height = 18,
-    units = "in",
-    )
-a
-dev.off()
-
-bortezo_change <- ggplot(
-    data = cell_annot_df,
-    aes(y = bortezo, fill = as.factor(sc_gain_1q))
-    ) +
-    geom_boxplot() +
-    theme_bw() +
-    scale_fill_discrete(name = "1q amplified", labels = c("No", "Yes")) +
-    scale_y_continuous(name = "Bortezomib bcScore", n.breaks = 10) +
-    theme(
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.ticks.x = element_blank(),
-        axis.text.x = element_blank(),
-        axis.line = element_line(colour = "black"),
-        panel.border = element_blank(),
-        panel.background = element_blank()
-    )
-
-ggsave(
-    plot = bortezo_change,
-    filename = "results/figures/bortezomib_rm13_1q_amplification.png",
-    dpi = 100,
-    height = 7,
-    width = 7
-    )
-
-
-metacom_enrichment = cell_annot_df %>%
-    select(new_time, sample_id, metacom_1:metacom_6) %>%
-    pivot_longer(
-        cols = metacom_1:metacom_6,
-        names_to = "metacommunity",
-        values_to = "enrichment"
-        )
-
-metacom_change <- ggplot(
-    data = metacom_enrichment,
-    aes(fill = new_time, y = enrichment, x = metacommunity)
-) +
-    geom_boxplot(outlier.shape = NA) +
-    stat_compare_means(method = "wilcox.test") +
-    scale_y_continuous(limits = c(-6,6)) +
-    scale_x_discrete(
-        name = "",
-        labels = paste0("Meta community", " ", rep(1:6))
-        ) +
-    scale_fill_discrete(
-        name = "Timepoint",
-        labels = c("pre-treatment", "post-treatment")
-        ) +
-    ylab("Module enrichment score") +
-    theme_bw() +
-    theme(
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.line = element_line(colour = "black"),
-        panel.border = element_blank(),
-        panel.background = element_blank(),
-        axis.text.x = element_text(angle = 45, vjust = 1, hjust=1)
-    )
-
-ggsave(
-    plot = metacom_change,
-    filename = "results/figures/treated_metacommunities_rm013_module.png",
-    dpi = 100,
-    height = 14,
-    width = 14
-    )
-
-## HEATMAP DE LOS MODULE SCORES!
-module_mat <- bcrm13@meta.data %>%
-    rownames_to_column("cell_barcode") %>%
-    select(cell_barcode, metacom_1:metacom_6) %>%
-    as.data.frame()
-
-rownames(module_mat) <- module_mat$cell_barcode
-module_mat$cell_barcode <- NULL
-module_mat <- as.matrix(module_mat)
-
-top_annotation <- ComplexHeatmap::HeatmapAnnotation(
-    "timepoint" = cell_annot_df[, c("new_time")],
-    "1q amplification" = cell_annot_df[, c("sc_gain_1q")],
-    which = "column"
-    # col = pals,
-    #   annotation_name_side = "top",
-)
-
-
-b <- ComplexHeatmap::Heatmap(
-    mat = t(module_mat),
-    cluster_rows = FALSE,
-    cluster_columns = FALSE,
-    column_order = rownames(cell_annot_df[order(cell_annot_df$new_time), ]),
-    cluster_column_slices = TRUE,
-    clustering_distance_columns = "pearson",
-    column_split = cell_annot_df$new_time,
-    show_column_names = FALSE,
-    top_annotation = top_annotation
-)
 
 ## All patients sketch by metacom variability
 bc <- SketchData(
@@ -308,17 +173,10 @@ bc <- SketchData(
 
 DefaultAssay(bc) <- "sketch_10k_new"
 
+## Scale and regress the sketch too
+bc <- Seurat::ScaleData(object = bc, vars.to.regress = "PID_new")
 
-## Add treatment groups to bc
-additional_meta <- data.table::fread(
-    "reference/additional_metadata_mmieloma.tsv"
-    ) %>%
-    mutate(
-        treatment_group = replace_na(treatment_group, "None") 
-    ) %>%
-    select(-"1q_state") %>%
-    as.data.frame()
-
+## Add annotation of treatment groups to bc object
 bc_annotated_meta <- bc@meta.data %>%
     rownames_to_column("rownames") %>%
     left_join(y = additional_meta, by = c("PID_new" = "sample_id")) %>%
@@ -328,11 +186,8 @@ rownames(bc_annotated_meta) <- bc_annotated_meta$rownames
 bc_annotated_meta$rownames <- NULL
 bc@meta.data <- bc_annotated_meta
 
-
-
-## meki patients
-## HEATMAP DE LOS MODULE SCORES!
-module_mat <- bc@meta.data[colnames(bc@assays$sketch_10k_new$counts), ] %>%
+## Export sketched mats for each treatment group to draw a heatmap
+module_mat <- bc@meta.data[colnames(bc@assays$sketch_10k_new$scale.data), ] %>%
     rownames_to_column("cell_barcode") %>%
     select(cell_barcode, metacom_1:metacom_6, treatment_group) %>%
     as.data.frame()
@@ -366,7 +221,7 @@ pi_mat <- as.matrix(pi_mat)
 
 
 ## MEKI multi-patient HEAT
-cell_annot_df <- bc@meta.data[colnames(bc@assays$sketch_10k_new$counts), c(
+cell_annot_df <- bc@meta.data[colnames(bc@assays$RNA$counts), c(
     "PID_new",
     "timepoint",
     "sc_gain_1q",
@@ -374,93 +229,66 @@ cell_annot_df <- bc@meta.data[colnames(bc@assays$sketch_10k_new$counts), c(
 )]
 
 cell_annot_df$timepoint <- as.factor(cell_annot_df$timepoint)
-cell_annot_df$new_time <- fct_relevel(cell_annot_df$timepoint, "pre", "post", "post_2")
+cell_annot_df$new_time <- fct_relevel(
+    cell_annot_df$timepoint,
+    "pre", "post", "post_2"
+    )
 
 # Write annotation to disk
-write.table(x = cell_annot_df, file = "results/mmieloma/cell_annotation_10k.tsv")
+write.table(x = cell_annot_df, file = "results/mmieloma/cell_annotation.tsv")
 
 # Write matrices to disk
 write.table(x = meki_mat, file = "results/mmieloma/meki_mat_enrichment.tsv")
 write.table(x = pi_mat, file = "results/mmieloma/pi_mat_enrichment.tsv")
 write.table(x = imid_mat, file = "results/mmieloma/imid_mat_enrichment.tsv")
 
+# Export full metacom mat with 90k cells too
+full_mat_90k <-  bc@meta.data[colnames(bc@assays$RNA$scale.data), ] %>%
+    rownames_to_column("cell_barcode") %>%
+    select(cell_barcode, metacom_1:metacom_6, treatment_group) %>%
+    as.data.frame()
 
-## Start again but now perform the analysis comm-wise instead of metacom-wise
-## TADO: move this to their own script. This is awful
-mmieloma_comms <- read.table(
-    "results/modules/annotated/patient_primary_treated_MM_communities.tsv",
-    header = TRUE
+write.table(x = full_mat_90k, file = "results/mmieloma/full_mat_metacom.tsv")
+
+## Generate one last plot after regressing out the patient effect
+sample_mat_averages_rgrss <- bc@assays$RNA$scale.data
+sample_mat_averages_rgrss <- colMeans(sample_mat_averages_rgrss)
+
+sample_mat_averages_annotated_rgrss <- sample_mat_averages_rgrss %>%
+    as.data.frame() %>%
+    rownames_to_column("cell_id") %>%
+    rename("average_bcscore" = ".") %>%
+    left_join(y = bc@meta.data[, c(
+        "Cell_barcode",
+        "PID_new",
+        "PID_sample_new",
+        "timepoint",
+        "treatment_group")],
+        by = c("cell_id" = "Cell_barcode")
     )
 
-drugs_com <- mmieloma_comms %>%
-    group_by(community, signature) %>%
-    summarise(
-        n.appearances = n()
-     ) 
-   
-## Check the community to decide upon cutoff
-dplot <- ggplot(data = drugs_com,
-                aes(x  = n.appearances,
-                    colour = as.factor(community)
-                )
+
+averages_bscore_ggplot <- ggplot(
+    data = sample_mat_averages_annotated_rgrss,
+    aes(
+        x = PID_new,
+        y = average_bcscore,
+        fill = timepoint
+    )
 ) +
-    geom_line(aes(y = 1 - ..y..), stat = "ecdf") +
-    scale_x_continuous(
-        name = "",
-        limits = c(1, max(drugs_com$n.appearances)),
-        n.breaks = max(drugs_com$n.appearances)
-    ) +
-    scale_y_continuous(
-        name = "Proportion of drugs above threshold",
-        labels = scales::percent_format()
-    ) +
-    scale_colour_discrete(name = "Community") +
+    geom_boxplot() +
+    facet_grid(~treatment_group) +
     theme_bw() +
     theme(
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
-        panel.border = element_blank(),
-        panel.background = element_blank(),
-        axis.line = element_line(),
-        axis.text.x = element_text(face = "bold"),
+        axis.text.x = element_text(face = "bold", angle = 45, hjust = 1),
         legend.title = element_text(face = "bold")
     )
 
 ggsave(
-    filename = "results/figures/mmieloma_communities_by_drug.png",
-    plot = dplot,
-    dpi = 100
-    )
-
-drugs_com_filtered <- drugs_com %>%
-     filter(n.appearances >= 4) %>%
-     arrange(community, desc(n.appearances)) %>%
-     left_join(y = drugs[,c("IDs", "preferred.drug.names", "collapsed.MoAs")],
-               by = c("signature" = "IDs")
-     )
-
-coms_set <- split(
-    drugs_com_filtered$signature,
-    drugs_com_filtered$community
+    filename = "results/mmieloma/raw_bscores_averages_rgrss.png",
+    averages_bscore_ggplot,
+    dpi = 100, height = 7,
+    width = 14
 )
-
-bc <- readRDS("results/")
-bc <- AddModuleScore(
-    bc,
-    features = coms_set,
-    slot = "data",
-    seed = 120394,
-    ctrl = 10,
-    name = "com_"
-    )
-
-module_mat <- bc@meta.data[colnames(bc@assays$sketch_10k_new$counts), ] %>%
-    rownames_to_column("cell_barcode") %>%
-    select(cell_barcode, com_1:com_16, treatment_group) %>%
-    as.data.frame()
-
-write.table(
-    x = module_mat,
-    file = "results/mmieloma/community_mat.tsv",
-    sep = "\t"
-    )
