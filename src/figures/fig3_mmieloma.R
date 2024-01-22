@@ -258,3 +258,153 @@ ggsave(
     width = 7,
     height = 14
     )
+
+## Load UMAP data
+bc <- readRDS("results/mmieloma/bc_seu.Rds")
+meta.data <- bc@meta.data
+umap_reduction <- bc@reductions$full.umap@cell.embeddings
+umap_reduction <- umap_reduction %>%
+    as.data.frame() %>%
+    rownames_to_column("cell_id")
+
+full_mat_annotated_coords <- full_mat_annotated %>%
+    left_join(y = umap_reduction, by = "cell_id") %>%
+    pivot_wider(names_from = community, values_from = enrichment) %>%
+    mutate(
+        metacom_1 = scale(metacom_1),
+        metacom_2 = scale(metacom_2),
+        metacom_3 = scale(metacom_3),
+        metacom_4 = scale(metacom_4),
+        metacom_5 = scale(metacom_5),
+        metacom_6 = scale(metacom_6),
+        
+    )
+
+##   default <- c("#1D61F2", "#83A8F7", "#F7F7F7", "#FF9CBB", "#DA0078")
+
+draw_umap_metacom <- function(metacom){
+    
+    UMAP_module <- ggplot(
+        data = full_mat_annotated_coords,
+        aes(x = fullumap_1, y = fullumap_2)
+    ) +
+        geom_point(
+            aes_string(color = paste0("metacom_", metacom)),
+            alpha = 0.7,
+            size = 4
+            ) +
+        scale_color_gradient2(
+            low = "#1D61F2",
+            mid = "#F7F7F7", 
+            high = "#DA0078"
+        ) +
+        theme_bw() + 
+        xlab("UMAP1") +
+        ylab("UMAP2") +
+        labs(color = paste0("Metacommunity ", metacom)) +
+        theme(
+            panel.grid.major = element_blank(),
+            panel.grid.minor = element_blank(),
+            panel.border = element_blank(),
+            panel.background = element_blank(),
+            axis.line = element_line(),
+            axis.text.x = element_blank(),
+            axis.ticks.x = element_blank(),
+            axis.text.y = element_blank(),
+            axis.ticks.y = element_blank(),
+            legend.title = element_text(face = "bold"),
+            axis.title = element_text(face = "bold")
+        )
+    
+    UMAP_module
+    
+}
+
+metacom_umap_1 <- draw_umap_metacom(1)   
+metacom_umap_2 <- draw_umap_metacom(2)   
+metacom_umap_3 <- draw_umap_metacom(3)   
+metacom_umap_4 <- draw_umap_metacom(4)   
+metacom_umap_5 <- draw_umap_metacom(5)   
+metacom_umap_6 <- draw_umap_metacom(6)   
+
+metacom_umap_patch <- (metacom_umap_1 + metacom_umap_2 + metacom_umap_3) /
+    (metacom_umap_4 + metacom_umap_5 + metacom_umap_6)
+
+ggsave(
+    plot = metacom_umap_patch,
+    filename = "results/figures/metacom_umap_enrichments.png",
+    dpi = 300,
+    width = 28,
+    height = 20
+    )
+
+## Draw TC
+tcs <- bc@meta.data %>%
+    rownames_to_column("cell_id") %>%
+    select(cell_id, therapeutic_clusters_1) %>%
+    deframe()
+
+
+full_mat_annotated_coords$tcs <- tcs[full_mat_annotated_coords$cell_id]
+
+UMAP_tcs <- ggplot(
+    data = full_mat_annotated_coords,
+    aes(x = fullumap_1, y = fullumap_2
+        )
+    ) +
+    geom_point(
+        aes(colour = tcs),
+        alpha = 0.7,
+        size = 3
+    ) +
+    theme_bw() + 
+    xlab("UMAP1") +
+    ylab("UMAP2") +
+    labs(colour = "Therapeutic cluster") +
+    theme(
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        panel.background = element_blank(),
+        axis.line = element_line(),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        legend.title = element_text(face = "bold"),
+        axis.title = element_text(face = "bold")
+        
+    )
+
+ggsave(
+    plot = UMAP_tcs,
+    filename = "results/figures/mmieloma_tcs_res1.png",
+    dpi = 300,
+    height = 10,
+    width = 14
+    )
+
+
+## Metacoms by tcs
+#TODO
+full_mat_annotated$tc <- tcs[full_mat_annotated$cell_id]
+
+tcs_metacoms <- ggplot(
+    data = full_mat_annotated,
+    aes(x = community, y = enrichment, fill = tc)) +
+    geom_boxplot() + 
+    stat_compare_means(method = "wilcox.test", na.rm = TRUE, label = "p.signif") +
+   # facet_wrap(~community, nrow = 2, ncol = 3) +
+    ylab("") +
+    xlab("") +
+    theme_bw() + 
+    theme(
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        #panel.border = element_blank(),
+        #panel.background = element_blank(),
+        #axis.line = element_line(),
+        axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1, face = "bold"),
+        legend.title = element_text(face = "bold")
+    )
+    
