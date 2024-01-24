@@ -107,4 +107,4 @@ module_mat <- bc@meta.data[colnames(bc@assays$RNA$data), ] %>%
     select(metacom_untreated_1:metacom_treated_6) %>%
     as.data.frame()
 
-write.table(x = module_mat, file = "results/aml/metacm_mat_full.tsv")
+write.table(x = module_mat, file = "results/aml/metacom_mat_full.tsv")
