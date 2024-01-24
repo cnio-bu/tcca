@@ -98,3 +98,13 @@ DefaultAssay(bc) <- "sketch_10k"
 module_mat_sketch <- bc@meta.data[colnames(bc@assays$sketch_10k$data), ] %>%
     select(metacom_untreated_1:metacom_treated_6) %>%
     as.data.frame()
+
+
+write.table(module_mat_sketch, file = "results/aml/metacom_mat_20k_sketch.tsv")
+
+## Export full mat for each treatment group for other analyses
+module_mat <- bc@meta.data[colnames(bc@assays$RNA$data), ] %>%
+    select(metacom_untreated_1:metacom_treated_6) %>%
+    as.data.frame()
+
+write.table(x = module_mat, file = "results/aml/metacm_mat_full.tsv")
