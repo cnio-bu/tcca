@@ -108,3 +108,6 @@ module_mat <- bc@meta.data[colnames(bc@assays$RNA$data), ] %>%
     as.data.frame()
 
 write.table(x = module_mat, file = "results/aml/metacom_mat_full.tsv")
+
+## Export bc metadata
+write.table(x = bc@meta.data, file = "results/aml/bc_metadata_annotated.tsv")
