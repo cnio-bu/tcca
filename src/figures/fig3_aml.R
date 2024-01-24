@@ -52,18 +52,20 @@ top_annotation <- ComplexHeatmap::HeatmapAnnotation(
 cell_patient_order <- cell_annot_sketch[rownames(sketched_subset), ]
 cell_patient_order <- rownames(cell_patient_order[order(cell_patient_order$Patient_ID), ])
 
+metacom_human_names <- gsub()
 
 b <- ComplexHeatmap::Heatmap(
     name = "Module score",
     mat = t(sketched_subset),
     #    col = col_fun,
-    cluster_rows = TRUE,
+    cluster_rows = FALSE,
     cluster_columns = FALSE,
     show_column_names = FALSE,
     column_order = cell_patient_order,
     column_split = data.frame(
-        cell_annot_sketch[rownames(sketched_subset), ]$Patient_Sample,
-        cell_annot_sketch[rownames(sketched_subset), ]$Patient_ID
+        cell_annot_sketch[rownames(sketched_subset), ]$Patient_ID,
+        cell_annot_sketch[rownames(sketched_subset), ]$Patient_Sample
     ),
+    column_labels = 
     top_annotation = top_annotation
 )
