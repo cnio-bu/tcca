@@ -70,7 +70,7 @@ extract_communities <- function(group, n_samples){
         print("Plotting distribution and cutoff")
         dist_plot_2 <- ggplot(data = dist_contribution) +
             geom_boxplot(aes(x = bicluster, y = cumulative_info)) +
-            geom_smooth(aes(x = sort(as.numeric(bicluster)), y = cumulative_info)) +
+            geom_smooth(aes(x = bicluster, y = cumulative_info)) +
             geom_hline(yintercept = 0.75) +
             scale_y_continuous(labels = scales::percent, n.breaks = 10) +
             ylab(label = "Relative contribution to total information content") +
@@ -269,4 +269,5 @@ extract_communities <- function(group, n_samples){
 extract_communities(group = "patient_primary_untreated", n_samples = 5)
 extract_communities(group = "patient_primary_treated", n_samples = 3)
 extract_communities(group = "patient_metastatic_untreated", n_samples = 3)
+
 extract_communities(group = "patient_metastatic_treated", n_samples = 3)
