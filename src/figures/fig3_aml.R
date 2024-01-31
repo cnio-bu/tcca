@@ -52,20 +52,68 @@ top_annotation <- ComplexHeatmap::HeatmapAnnotation(
 cell_patient_order <- cell_annot_sketch[rownames(sketched_subset), ]
 cell_patient_order <- rownames(cell_patient_order[order(cell_patient_order$Patient_ID), ])
 
-metacom_human_names <- gsub()
+metacom_human_names <- c(
+    paste(
+    "Metacommunity",
+    rep(c("untreated"), times = 6),
+    c(1:6)
+    ),
+    paste(
+        "Metacommunity",
+        rep(c("treated"), times = 6), 
+        c(1:6)
+    )
+)
 
 b <- ComplexHeatmap::Heatmap(
     name = "Module score",
-    mat = t(sketched_subset),
+    mat = scale(t(sketched_subset), center = TRUE, scale = TRUE),
     #    col = col_fun,
-    cluster_rows = FALSE,
-    cluster_columns = FALSE,
+    cluster_rows = TRUE,
+    clustering_distance_rows = "pearson",
+    cluster_row_slices = TRUE,
+    row_split = 7,
+    cluster_columns = TRUE,
     show_column_names = FALSE,
     column_order = cell_patient_order,
     column_split = data.frame(
         cell_annot_sketch[rownames(sketched_subset), ]$Patient_ID,
         cell_annot_sketch[rownames(sketched_subset), ]$Patient_Sample
     ),
-    column_labels = 
+    cluster_column_slices = TRUE,
+    clustering_distance_columns = "pearson",
+    row_labels = metacom_human_names,
+    row_names_side = "right",
     top_annotation = top_annotation
 )
+
+
+
+## overlap analysis
+metacom_untreated <- read.table(
+    "results/modules/annotated/metagroup_patients_untreated_consensus_drugs.tsv"
+    )
+
+studies <- data.table::fread("reference/final_moas - Collapsed.tsv") %>%
+    select(IDs, studies) %>%
+    deframe()
+
+metacom_untreated$study <- studies[metacom_untreated$signature]
+write.table(x = metacom_untreated, file = "annot.tsv")
+
+metacom_untreated_drugs <- split(
+    metacom_untreated$signature,
+    metacom_untreated$meta_community
+)
+
+metacom_treated <- read.table(
+    file = "results/modules/annotated/metagroup_patients_treated_consensus_drugs.tsv"
+    )
+
+metacom_treated_drugs <- split(
+    metacom_treated$signature,
+    metacom_treated$meta_community
+)
+
+## unt6 tt4
+common_drugs <- intersect(metacom_untreated_drugs[[5]], metacom_treated_drugs[[5]])
