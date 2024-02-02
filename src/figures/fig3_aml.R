@@ -38,55 +38,242 @@ sketched_subset <- sketched_mat[cell_annot_sketch[
     cell_annot_sketch$Subgroup == "RUNX", "cell_id"], 
 ]
 
-## test
-## Top annotation
-top_annotation <- ComplexHeatmap::HeatmapAnnotation(
-    "Timepoint" = cell_annot_sketch[rownames(sketched_subset), ]$Patient_Sample,
-    "Treatment outcome" = cell_annot_sketch[rownames(sketched_subset), ]$Treatment_Outcome,
-   # col = top_col,
-    which = "column"
-)
-
-
-
-cell_patient_order <- cell_annot_sketch[rownames(sketched_subset), ]
-cell_patient_order <- rownames(cell_patient_order[order(cell_patient_order$Patient_ID), ])
-
-metacom_human_names <- c(
-    paste(
-    "Metacommunity",
-    rep(c("untreated"), times = 6),
-    c(1:6)
-    ),
-    paste(
-        "Metacommunity",
-        rep(c("treated"), times = 6), 
-        c(1:6)
+draw_and_save_heat <- function(mat){
+    
+    ## Top annotation
+    ## color palette
+    timepoints_col <- c(sl_colors, treatment_colors[[1]])
+    names(timepoints_col) <- levels(cell_annot_sketch[rownames(mat), ]$Patient_Sample)
+    
+    top_col <- list("Timepoint" = timepoints_col)
+    
+    
+    top_annotation <- ComplexHeatmap::HeatmapAnnotation(
+        "Timepoint" = cell_annot_sketch[rownames(mat), ]$Patient_Sample,
+        "Treatment outcome" = cell_annot_sketch[rownames(mat), ]$Treatment_Outcome,
+        col = top_col,
+        which = "column",
+        show_annotation_name = FALSE
     )
+    
+    
+    
+    cell_patient_order <- cell_annot_sketch[rownames(mat), ]
+    cell_patient_order <- rownames(cell_patient_order[order(cell_patient_order$Patient_ID), ])
+    
+    metacom_human_names <- c(
+        paste(
+            "Metacommunity",
+            rep(c("untreated"), times = 6),
+            c(1:6)
+        ),
+        paste(
+            "Metacommunity",
+            rep(c("treated"), times = 6), 
+            c(1:6)
+        )
+    )
+    
+    b <- ComplexHeatmap::Heatmap(
+        name = "Module score",
+        mat = t(scale(mat, center = TRUE, scale = TRUE)),
+        # col = col_fun,
+        cluster_rows = TRUE,
+        clustering_distance_rows = "pearson",
+        cluster_row_slices = TRUE,
+        cluster_columns = FALSE,
+        show_column_names = FALSE,
+        column_order = cell_patient_order,
+        column_split = data.frame(
+            cell_annot_sketch[rownames(mat), ]$Patient_ID,
+            cell_annot_sketch[rownames(mat), ]$Patient_Sample
+        ),
+        cluster_column_slices = TRUE,
+        clustering_distance_columns = "pearson",
+        row_labels = metacom_human_names,
+        row_names_gp = gpar(fontsize = 8),
+        show_row_names = TRUE,
+        column_names_side = "bottom",
+        top_annotation = top_annotation,
+        column_title_gp = gpar(fontsize = 8),
+        column_title_rot = 45
+    )
+    
+    
+}
+
+## Generate RUNX heat and save 
+runx_heat <- draw_and_save_heat(sketched_mat[cell_annot_sketch[
+    cell_annot_sketch$Subgroup == "RUNX", "cell_id"], 
+]
+)
+## Generate FLT heat and save 
+flt_heat <- draw_and_save_heat(sketched_mat[cell_annot_sketch[
+    cell_annot_sketch$Subgroup == "FLT", "cell_id"], 
+]
+)
+## Generate CBFB heat and save 
+cbfb_heat <- draw_and_save_heat(sketched_mat[cell_annot_sketch[
+    cell_annot_sketch$Subgroup == "CBFB", "cell_id"], 
+]
+)
+## Generate KMT2A heat and save 
+kmt_heat <- draw_and_save_heat(sketched_mat[cell_annot_sketch[
+    cell_annot_sketch$Subgroup == "KMT2A", "cell_id"], 
+]
+)
+## Generate Other heat and save 
+other_abs_heat <- draw_and_save_heat(sketched_mat[cell_annot_sketch[
+    cell_annot_sketch$Subgroup == "Other", "cell_id"], 
+]
 )
 
-b <- ComplexHeatmap::Heatmap(
-    name = "Module score",
-    mat = scale(t(sketched_subset), center = TRUE, scale = TRUE),
-    #    col = col_fun,
-    cluster_rows = TRUE,
-    clustering_distance_rows = "pearson",
-    cluster_row_slices = TRUE,
-    row_split = 7,
-    cluster_columns = TRUE,
-    show_column_names = FALSE,
-    column_order = cell_patient_order,
-    column_split = data.frame(
-        cell_annot_sketch[rownames(sketched_subset), ]$Patient_ID,
-        cell_annot_sketch[rownames(sketched_subset), ]$Patient_Sample
-    ),
-    cluster_column_slices = TRUE,
-    clustering_distance_columns = "pearson",
-    row_labels = metacom_human_names,
-    row_names_side = "right",
-    top_annotation = top_annotation
+png(
+    filename = "results/figures/aml_runx_metacom_heat.png",
+    width = 19,
+    height = 4,
+    units = "in",
+    res = 200
 )
+draw(runx_heat)
 
+dev.off()
+
+png(
+    filename = "results/figures/aml_flt_metacom_heat.png",
+    width = 20,
+    height = 4,
+    units = "in",
+    res = 200
+)
+draw(flt_heat)
+
+dev.off()
+
+
+
+png(
+    filename = "results/figures/aml_cbfb_metacom_heat.png",
+    width = 19,
+    height = 4,
+    units = "in",
+    res = 200
+)
+draw(cbfb_heat)
+
+dev.off()
+
+png(
+    filename = "results/figures/aml_kmt_metacom_heat.png",
+    width = 24,
+    height = 8,
+    units = "in",
+    res = 200
+)
+draw(kmt_heat)
+
+dev.off()
+
+
+png(
+    filename = "results/figures/aml_other_metacom_heat.png",
+    width = 19,
+    height = 4,
+    units = "in",
+    res = 200
+)
+draw(other_abs_heat)
+
+dev.off()
+
+## test; get only diagnostic samples
+diax_mat <- sketched_mat[cell_annot_sketch[
+    cell_annot_sketch$Patient_Sample == "Diagnosis", "cell_id"], 1:6]
+
+## test; get only relapse samples
+relapse_mat <- sketched_mat[cell_annot_sketch[
+    cell_annot_sketch$Patient_Sample == "Relapse", "cell_id"], 1:6]
+
+
+draw_and_save_heat_cond2 <- function(mat){
+    
+    ## Top annotation
+    ## color palette
+    driver_col <- MoAs_colors[1:length(unique(cell_annot_sketch$Subgroup))]
+    names(driver_col) <- levels(cell_annot_sketch[rownames(mat), ]$Subgroup)
+    
+    top_col = list("Driver subgroup" = driver_col)
+
+    top_annotation <- ComplexHeatmap::HeatmapAnnotation(
+        "Driver subgroup" = cell_annot_sketch[rownames(mat), ]$Subgroup,
+        "Treatment outcome" = cell_annot_sketch[rownames(mat), ]$Treatment_Outcome,
+        col = top_col,
+        which = "column",
+        show_annotation_name = TRUE
+    )
+    
+    cell_patient_order <- cell_annot_sketch[rownames(mat), ]
+    cell_patient_order <- rownames(cell_patient_order[order(cell_patient_order$Patient_ID), ])
+    
+    metacom_human_names <- paste(
+            "Metacommunity",
+            rep(c("untreated"), times = 6),
+            c(1:6)
+        )
+    
+    
+    b <- ComplexHeatmap::Heatmap(
+        name = "Module score",
+        mat = t(scale(mat, center = TRUE, scale = TRUE)),
+        # col = col_fun,
+        cluster_rows = TRUE,
+        clustering_distance_rows = "pearson",
+        cluster_row_slices = TRUE,
+        cluster_columns = FALSE,
+        cluster_column_slices = TRUE,
+        clustering_distance_columns = "pearson",
+        show_column_names = FALSE,
+        column_order = cell_patient_order,
+        column_split = data.frame(
+            cell_annot_sketch[rownames(mat), ]$Subgroup,
+            cell_annot_sketch[rownames(mat), ]$Patient_ID
+        ),
+        row_labels = metacom_human_names,
+        row_names_gp = gpar(fontsize = 8),
+        show_row_names = TRUE,
+        column_names_side = "bottom",
+        top_annotation = top_annotation,
+        column_title_gp = gpar(fontsize = 8),
+        column_title_rot = 45
+    )
+    
+    
+}
+
+diax_heat <- draw_and_save_heat_cond2(diax_mat)
+relap_heat <- draw_and_save_heat_cond2(relapse_mat)
+
+png(
+    filename = "results/figures/aml_diagnosis_metacom_heat.png",
+    width = 19,
+    height = 4,
+    units = "in",
+    res = 200
+)
+draw(diax_heat)
+
+dev.off()
+
+png(
+    filename = "results/figures/aml_relapse_metacom_heat.png",
+    width = 19,
+    height = 4,
+    units = "in",
+    res = 200
+)
+draw(relap_heat)
+
+dev.off()
 
 
 ## overlap analysis
@@ -117,3 +304,5 @@ metacom_treated_drugs <- split(
 
 ## unt6 tt4
 common_drugs <- intersect(metacom_untreated_drugs[[5]], metacom_treated_drugs[[5]])
+
+
