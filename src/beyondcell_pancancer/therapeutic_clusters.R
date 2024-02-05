@@ -99,10 +99,48 @@ sketched_mat_5k <- seu[["sketch_5k"]]$data
 write_matrix_dir(mat = sketched_mat, dir = "results/beyondcell_bp/sketch_mat_beyondcell")
 write_matrix_dir(mat = sketched_mat_5k, dir = "results/beyondcell_bp/sketch_mat_beyondcell_5k")
 
+## Calculate module scores for all samples for metacoms 1/2
+DefaultAssay(seu) <- "RNA"
+
+drugs_metacommunities_untreated <- read.table(
+    "results/modules/annotated/metagroup_patients_untreated_consensus_drugs.tsv"
+)
+
+drugs_metacommunities_treated <- read.table(
+    "results/modules/annotated/metagroup_patients_treated_consensus_drugs.tsv"
+)
+
+meta_coms_set_untreated <- split(
+    drugs_metacommunities_untreated$signature,
+    drugs_metacommunities_untreated$meta_community
+)
+
+meta_coms_set_treated <- split(
+    drugs_metacommunities_treated$signature,
+    drugs_metacommunities_treated$meta_community
+)
+
+seu <- AddModuleScore(
+    object = seu,
+    features = meta_coms_set_untreated,
+    seed = 120394,
+    slot = "data",
+    name = "metacom_untreated_",
+    ctrl = 20
+)
+
+seu <- AddModuleScore(
+    object = seu,
+    features = meta_coms_set_treated,
+    seed = 120394,
+    slot = "data",
+    name = "metacom_treated_",
+    ctrl = 20
+)
+
 ## export object
 saveRDS(object = seu, file = "results/beyondcell_bp/beyondcell_pancancer.Rds")
 
-DefaultAssay(seu) <- "RNA"
 
 ## plot UMAP
 tcs_umap <- DimPlot(
