@@ -1,4 +1,5 @@
 library(BPCells)
+library(limma)
 library(Seurat)
 library(tidyverse)
 
@@ -37,4 +38,27 @@ metacoms <- mcs@meta.data %>%
     select(metacom_untreated_1:metacom_treated_6) %>%
     rownames_to_column("cell_id")
 
-functional_mat <- as.matrix(functional_mat)
+functional_mat <- as.matrix(functional_mat[1:5, ])
+
+met_to_tests <- metacoms[, c("cell_id", "metacom_untreated_1")]
+rownames(met_to_tests) <- met_to_tests$cell_id
+met_to_tests$cell_id <- NULL
+
+design <- model.matrix(~metacom_untreated_1, data = met_to_tests)
+
+fit <- lmFit(functional_mat, design)
+fit <- eBayes(fit)
+fit2 <- topTable(
+    fit = fit,
+    coef = "metacom_untreated_1",
+    number = Inf,
+    adjust.method = "fdr"
+    )
+
+functional_dt <- as.data.frame(t(functional_mat))
+functional_dt$metacom1 <- metacoms$metacom_untreated_1
+
+test <- ggplot(data = functional_dt, aes(x = scale(metacom1), y = scale(`HALLMARK-MITOTIC-SPINDLE`))) +
+    geom_point(alpha = 0.1) +
+    geom_smooth(method = "loess") + 
+    ggpubr::stat_cor()
