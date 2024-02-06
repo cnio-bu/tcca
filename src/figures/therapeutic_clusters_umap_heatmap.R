@@ -1,6 +1,5 @@
 library(BPCells)
 library(ComplexHeatmap)
-library(Seurat)
 library(tidyverse)
 
 ## Source TCCA palette
