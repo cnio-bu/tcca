@@ -1,3 +1,4 @@
+library(BPCells)
 library(ComplexHeatmap)
 library(circlize)
 library(ggpubr)
@@ -38,6 +39,36 @@ sketched_subset <- sketched_mat[cell_annot_sketch[
     cell_annot_sketch$Subgroup == "RUNX", "cell_id"], 
 ]
 
+## load bortezomib and sorafenib susceptibility data
+bc_seu <- open_matrix_dir("results/aml/aml_beyondcell_mat")
+
+## sig-21115 = SORAFENIB - CTRP
+## sig-21377 = BORTEZOMIB  - CTRP
+## sig-21378 = BORTEZOMIB - PRISM
+
+drugs_to_keep <- bc_seu[c("sig-21115", "sig-21377", "sig-21378"), ]
+drugs_to_keep <- as.matrix(drugs_to_keep)
+drugs_annot <- as.data.frame(t(drugs_to_keep))
+colnames(drugs_annot) <- c("sorafenib", "bortezomib_ctrp", "bortezomib_prism")
+
+drugs_annot$sorafenib <- scale(
+    x = drugs_annot$sorafenib,
+    center = TRUE,
+    scale = TRUE
+    )
+
+drugs_annot$bortezomib_ctrp <- scale(
+    x = drugs_annot$bortezomib_ctrp,
+    center = TRUE,
+    scale = TRUE
+    )
+
+drugs_annot$bortezomib_prism <- scale(
+    x = drugs_annot$bortezomib_prism,
+    center = TRUE,
+    scale = TRUE
+    )
+
 draw_and_save_heat <- function(mat){
     
     ## Top annotation
@@ -45,15 +76,31 @@ draw_and_save_heat <- function(mat){
     timepoints_col <- c(sl_colors, treatment_colors[[1]])
     names(timepoints_col) <- levels(cell_annot_sketch[rownames(mat), ]$Patient_Sample)
     
-    top_col <- list("Timepoint" = timepoints_col)
+    ##continuous heat pal
+    
+    top_col <- list(
+        "Timepoint" = timepoints_col,
+        "Sorafenib - CTRP" = colorRamp2(c(-6, 0, 6), c("blue", "white", "red")),
+        "Bortezomib - CTRP" = colorRamp2(c(-6, 0, 6), c("blue", "white", "red")),
+        "Bortezomib - PRISM" = colorRamp2(c(-6, 0, 6), c("blue", "white", "red"))
+        )
     
     
     top_annotation <- ComplexHeatmap::HeatmapAnnotation(
         "Timepoint" = cell_annot_sketch[rownames(mat), ]$Patient_Sample,
         "Treatment outcome" = cell_annot_sketch[rownames(mat), ]$Treatment_Outcome,
+        "Sorafenib - CTRP" =  drugs_annot[rownames(mat), ]$sorafenib,
+        "Bortezomib - CTRP" =  drugs_annot[rownames(mat), ]$bortezomib_ctrp,
+        "Bortezomib - PRISM" =  drugs_annot[rownames(mat), ]$bortezomib_prism,
         col = top_col,
         which = "column",
-        show_annotation_name = FALSE
+        show_annotation_name = TRUE,
+        annotation_legend_param = list("Sorafenib - CTRP" = list(
+            at = c(-6, 0, 6)
+            ),
+            "Bortezomib - CTRP" = list(at = c(-6, 0, 6)),
+            "Bortezomib - PRISM" = list(at = c(-6, 0, 6))
+        )
     )
     
     
@@ -202,14 +249,28 @@ draw_and_save_heat_cond2 <- function(mat){
     driver_col <- MoAs_colors[1:length(unique(cell_annot_sketch$Subgroup))]
     names(driver_col) <- levels(cell_annot_sketch[rownames(mat), ]$Subgroup)
     
-    top_col = list("Driver subgroup" = driver_col)
+    top_col = list(
+        "Driver subgroup" = driver_col,
+        "Sorafenib - CTRP" = colorRamp2(c(-4, 0, 4), c("blue", "white", "red")),
+        "Bortezomib - CTRP" = colorRamp2(c(-4, 0, 4), c("blue", "white", "red")),
+        "Bortezomib - PRISM" = colorRamp2(c(-4, 0, 4), c("blue", "white", "red"))
+        )
 
     top_annotation <- ComplexHeatmap::HeatmapAnnotation(
         "Driver subgroup" = cell_annot_sketch[rownames(mat), ]$Subgroup,
         "Treatment outcome" = cell_annot_sketch[rownames(mat), ]$Treatment_Outcome,
+        "Sorafenib - CTRP" =  drugs_annot[rownames(mat), ]$sorafenib,
+        "Bortezomib - CTRP" =  drugs_annot[rownames(mat), ]$bortezomib_ctrp,
+        "Bortezomib - PRISM" =  drugs_annot[rownames(mat), ]$bortezomib_prism,
         col = top_col,
         which = "column",
-        show_annotation_name = TRUE
+        show_annotation_name = TRUE,
+        annotation_legend_param = list("Sorafenib - CTRP" = list(
+            at = c(-4, 0, 4)
+        ),
+        "Bortezomib - CTRP" = list(at = c(-4, 0, 4)),
+        "Bortezomib - PRISM" = list(at = c(-4, 0, 4))
+        )
     )
     
     cell_patient_order <- cell_annot_sketch[rownames(mat), ]
