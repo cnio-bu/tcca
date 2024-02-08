@@ -4,15 +4,20 @@ library("tidyverse")
 
 ### SNAKEMAKE I/O ###
 bc_list <- snakemake@input[["bc_list"]]
+moas_table <- snakemake@input[["moas_table"]]
 where_to_save <- snakemake@output[["module_dir"]]
 
 all_samples <- readRDS(bc_list)
+moas <- read.table(moas_table, header = T, sep ="\t")
+moas <- filter(moas,  studies != "CTRP")
+sigs_to_keep <- moas$IDs
 
 for(sample in all_samples){
     
     ## get norm mat.
     normalized_bc <- sample@normalized
-    
+    normalized_bc <- subset(normalized_bc, rownames(normalized_bc) %in% sigs_to_keep)
+
     ## C optimized code, let it run in single thread
     res <- fabia::fabias(
         X = normalized_bc,

@@ -1,8 +1,9 @@
 rule mod_brmets_hugo_gonzalez:
     input:
         bc_list=rules.bc_brmets_hugo_gonzalez.output.bc_list,
+        moas_table= "../../reference/final_moas - Collapsed.tsv",
     output:
-        module_dir=directory(f"{results}/modules/brmets_hugo_gonzalez")
+        module_dir=directory(f"{results}/modules_noCTRP/brmets_hugo_gonzalez")
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -16,8 +17,9 @@ rule mod_brmets_hugo_gonzalez:
 rule mod_pancancer_dalia_barkley:
     input:
         bc_list=rules.bc_pancancer_dalia_barkley.output.bc_list,
+        moas_table= "../../reference/final_moas - Collapsed.tsv",
     output:
-        module_dir=directory(f"{results}/modules/pancancer_dalia_barkley")
+        module_dir=directory(f"{results}/modules_noCTRP/pancancer_dalia_barkley")
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -31,8 +33,9 @@ rule mod_pancancer_dalia_barkley:
 rule mod_breast_sunny_wu:
     input:
         bc_list=rules.bc_breast_sunny_wu.output.bc_list,
+        moas_table= "../../reference/final_moas - Collapsed.tsv",
     output:
-        module_dir=directory(f"{results}/modules/breast_sunny_wu")
+        module_dir=directory(f"{results}/modules_noCTRP/breast_sunny_wu")
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -46,8 +49,9 @@ rule mod_breast_sunny_wu:
 rule mod_pancancer_sunny_wu:
     input:
         bc_list=rules.bc_pancancer_sunny_wu.output.bc_list,
+        moas_table= "../../reference/final_moas - Collapsed.tsv",
     output:
-        module_dir=directory(f"{results}/modules/pancancer_sunny_wu")
+        module_dir=directory(f"{results}/modules_noCTRP/pancancer_sunny_wu")
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -61,8 +65,9 @@ rule mod_pancancer_sunny_wu:
 rule mod_luad_kim_nayoung:
     input:
         bc_list=rules.bc_luad_kim_nayoung.output.bc_list,
+        moas_table= "../../reference/final_moas - Collapsed.tsv",
     output:
-        module_dir=directory(f"{results}/modules/luad_kim_nayoung")
+        module_dir=directory(f"{results}/modules_noCTRP/luad_kim_nayoung")
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -76,8 +81,9 @@ rule mod_luad_kim_nayoung:
 rule mod_urothelial_chen:
     input:
         bc_list=rules.bc_urothelial_chen.output.bc_list,
+        moas_table= "../../reference/final_moas - Collapsed.tsv",
     output:
-        module_dir=directory(f"{results}/modules/urothelial_chen")
+        module_dir=directory(f"{results}/modules_noCTRP/urothelial_chen")
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -91,8 +97,9 @@ rule mod_urothelial_chen:
 rule mod_adrenalnb_rui_chong:
     input:
         bc_list=rules.bc_adrenalnb_rui_chong.output.bc_list,
+        moas_table= "../../reference/final_moas - Collapsed.tsv",
     output:
-        module_dir=directory(f"{results}/modules/adrenalnb_rui_chong")
+        module_dir=directory(f"{results}/modules_noCTRP/adrenalnb_rui_chong")
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -106,8 +113,9 @@ rule mod_adrenalnb_rui_chong:
 rule mod_luad_philip_bisschof:
     input:
         bc_list=rules.bc_luad_philip_bisschof.output.bc_list,
+        moas_table= "../../reference/final_moas - Collapsed.tsv",
     output:
-        module_dir=directory(f"{results}/modules/luad_philip_bisschof")
+        module_dir=directory(f"{results}/modules_noCTRP/luad_philip_bisschof")
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -121,8 +129,9 @@ rule mod_luad_philip_bisschof:
 rule mod_pdac_junya_peng:
     input:
         bc_list=rules.bc_pdac_junya_peng.output.bc_list,
+        moas_table= "../../reference/final_moas - Collapsed.tsv",
     output:
-        module_dir=directory(f"{results}/modules/pdac_junya_peng")
+        module_dir=directory(f"{results}/modules_noCTRP/pdac_junya_peng")
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -136,8 +145,9 @@ rule mod_pdac_junya_peng:
 rule mod_synovial_jerby_arnon:
     input:
         bc_list=rules.bc_synovial_jerby_arnon.output.bc_list,
+        moas_table= "../../reference/final_moas - Collapsed.tsv",
     output:
-        module_dir=directory(f"{results}/modules/synovial_jerby_arnon")
+        module_dir=directory(f"{results}/modules_noCTRP/synovial_jerby_arnon")
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -151,8 +161,9 @@ rule mod_synovial_jerby_arnon:
 rule mod_rcell_kevin_bi:
     input:
         bc_list=rules.bc_rcell_kevin_bi.output.bc_list,
+        moas_table= "../../reference/final_moas - Collapsed.tsv",
     output:
-        module_dir=directory(f"{results}/modules/rcell_kevin_bi")
+        module_dir=directory(f"{results}/modules_noCTRP/rcell_kevin_bi")
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -166,8 +177,9 @@ rule mod_rcell_kevin_bi:
 rule mod_pancancer_junbin_qian:
     input:
         bc_list=rules.bc_pancancer_junbin_qian.output.bc_list,
+        moas_table= "../../reference/final_moas - Collapsed.tsv",
     output:
-        module_dir=directory(f"{results}/modules/pancancer_junbin_qian")
+        module_dir=directory(f"{results}/modules_noCTRP/pancancer_junbin_qian")
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -181,8 +193,9 @@ rule mod_pancancer_junbin_qian:
 rule mod_rcell_r_li:
     input:
         bc_list=rules.bc_rcell_r_li.output.bc_list,
+        moas_table= "../../reference/final_moas - Collapsed.tsv",
     output:
-        module_dir=directory(f"{results}/modules/rcell_r_li")
+        module_dir=directory(f"{results}/modules_noCTRP/rcell_r_li")
     threads: get_resource("defaults", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -196,8 +209,9 @@ rule mod_rcell_r_li:
 rule mod_cll_ramon_massoni:
     input:
         bc_list=rules.bc_cll_ramon_massoni.output.bc_list,
+        moas_table= "../../reference/final_moas - Collapsed.tsv",
     output:
-        module_dir=directory(f"{results}/modules/cll_ramon_massoni")
+        module_dir=directory(f"{results}/modules_noCTRP/cll_ramon_massoni")
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -211,8 +225,9 @@ rule mod_cll_ramon_massoni:
 rule mod_aml_audrey_lasry:
     input:
         bc_list=rules.bc_aml_audrey_lasry.output.bc_list,
+        moas_table= "../../reference/final_moas - Collapsed.tsv",
     output:
-        module_dir=directory(f"{results}/modules/aml_audrey_lasry")
+        module_dir=directory(f"{results}/modules_noCTRP/aml_audrey_lasry")
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -226,8 +241,9 @@ rule mod_aml_audrey_lasry:
 rule mod_gbm_nourhan_abdelfattah:
     input:
         bc_list=rules.bc_gbm_nourhan_abdelfattah.output.bc_list,
+        moas_table= "../../reference/final_moas - Collapsed.tsv",
     output:
-        module_dir=directory(f"{results}/modules/gbm_nourhan_abdelfattah")
+        module_dir=directory(f"{results}/modules_noCTRP/gbm_nourhan_abdelfattah")
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -241,8 +257,9 @@ rule mod_gbm_nourhan_abdelfattah:
 rule mod_cc_xiaosong_lu:
     input:
         bc_list=rules.bc_cc_xiaosong_lu.output.bc_list,
+        moas_table= "../../reference/final_moas - Collapsed.tsv",
     output:
-        module_dir=directory(f"{results}/modules/cc_xiaosong_lu")
+        module_dir=directory(f"{results}/modules_noCTRP/cc_xiaosong_lu")
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -256,8 +273,9 @@ rule mod_cc_xiaosong_lu:
 rule mod_crc_florian_uhlitz:
     input:
         bc_list=rules.bc_crc_florian_uhlitz.output.bc_list,
+        moas_table= "../../reference/final_moas - Collapsed.tsv",
     output:
-        module_dir=directory(f"{results}/modules/crc_florian_uhlitz")
+        module_dir=directory(f"{results}/modules_noCTRP/crc_florian_uhlitz")
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -271,8 +289,9 @@ rule mod_crc_florian_uhlitz:
 rule mod_pleural_rui_dong:
     input:
         bc_list=rules.bc_pleural_rui_dong.output.bc_list,
+        moas_table= "../../reference/final_moas - Collapsed.tsv",
     output:
-        module_dir=directory(f"{results}/modules/pleural_rui_dong")
+        module_dir=directory(f"{results}/modules_noCTRP/pleural_rui_dong")
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -286,8 +305,9 @@ rule mod_pleural_rui_dong:
 rule mod_bone_yun_liu:
     input:
         bc_list=rules.bc_bone_yun_liu.output.bc_list,
+        moas_table= "../../reference/final_moas - Collapsed.tsv",
     output:
-        module_dir=directory(f"{results}/modules/bone_yun_liu")
+        module_dir=directory(f"{results}/modules_noCTRP/bone_yun_liu")
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -301,8 +321,9 @@ rule mod_bone_yun_liu:
 rule mod_mmieloma_stephan_tirier:
     input:
         bc_list=rules.bc_mmieloma_stephan_tirier.output.bc_list,
+        moas_table= "../../reference/final_moas - Collapsed.tsv",
     output:
-        module_dir=directory(f"{results}/modules/mmieloma_stephan_tirier")
+        module_dir=directory(f"{results}/modules_noCTRP/mmieloma_stephan_tirier")
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -316,8 +337,9 @@ rule mod_mmieloma_stephan_tirier:
 rule mod_all_maxime_caron:
     input:
         bc_list=rules.bc_all_maxime_caron.output.bc_list,
+        moas_table= "../../reference/final_moas - Collapsed.tsv",
     output:
-        module_dir=directory(f"{results}/modules/all_maxime_caron")
+        module_dir=directory(f"{results}/modules_noCTRP/all_maxime_caron")
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -331,8 +353,9 @@ rule mod_all_maxime_caron:
 rule mod_bcc_catherine_dyao:
     input:
         bc_list=rules.bc_bcc_catherine_dyao.output.bc_list,
+        moas_table= "../../reference/final_moas - Collapsed.tsv",
     output:
-        module_dir=directory(f"{results}/modules/bcc_catherine_dyao")
+        module_dir=directory(f"{results}/modules_noCTRP/bcc_catherine_dyao")
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -346,8 +369,9 @@ rule mod_bcc_catherine_dyao:
 rule mod_uvm_michael_durante:
     input:
         bc_list=rules.bc_uvm_michael_durante.output.bc_list,
+        moas_table= "../../reference/final_moas - Collapsed.tsv",
     output:
-        module_dir=directory(f"{results}/modules/uvm_michael_durante")
+        module_dir=directory(f"{results}/modules_noCTRP/uvm_michael_durante")
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -361,8 +385,9 @@ rule mod_uvm_michael_durante:
 rule mod_esca_xiannian_zhang:
     input:
         bc_list=rules.bc_esca_xiannian_zhang.output.bc_list,
+        moas_table= "../../reference/final_moas - Collapsed.tsv",
     output:
-        module_dir=directory(f"{results}/modules/esca_xiannian_zhang")
+        module_dir=directory(f"{results}/modules_noCTRP/esca_xiannian_zhang")
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -376,8 +401,9 @@ rule mod_esca_xiannian_zhang:
 rule mod_brca_bhupinder_pal:
     input:
         bc_list=rules.bc_brca_bhupinder_pal.output.bc_list,
+        moas_table= "../../reference/final_moas - Collapsed.tsv",
     output:
-        module_dir=directory(f"{results}/modules/brca_bhupinder_pal")
+        module_dir=directory(f"{results}/modules_noCTRP/brca_bhupinder_pal")
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -391,8 +417,9 @@ rule mod_brca_bhupinder_pal:
 rule mod_prad_sujun_chen:
     input:
         bc_list=rules.bc_prad_sujun_chen.output.bc_list,
+        moas_table= "../../reference/final_moas - Collapsed.tsv",
     output:
-        module_dir=directory(f"{results}/modules/prad_sujun_chen")
+        module_dir=directory(f"{results}/modules_noCTRP/prad_sujun_chen")
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -406,8 +433,9 @@ rule mod_prad_sujun_chen:
 rule mod_chol_min_zhang:
     input:
         bc_list=rules.bc_chol_min_zhang.output.bc_list,
+        moas_table= "../../reference/final_moas - Collapsed.tsv",
     output:
-        module_dir=directory(f"{results}/modules/chol_min_zhang")
+        module_dir=directory(f"{results}/modules_noCTRP/chol_min_zhang")
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -420,8 +448,9 @@ rule mod_chol_min_zhang:
 rule mod_skcm_chao_zhang:
     input:
         bc_list=rules.bc_skcm_chao_zhang.output.bc_list,
+        moas_table= "../../reference/final_moas - Collapsed.tsv",
     output:
-        module_dir=directory(f"{results}/modules/skcm_chao_zhang")
+        module_dir=directory(f"{results}/modules_noCTRP/skcm_chao_zhang")
     threads: get_resource("default_bc", "threads"),
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -434,8 +463,9 @@ rule mod_skcm_chao_zhang:
 rule mod_brmets_jana_biermann:
     input:
         bc_list=rules.bc_brmets_jana_biermann.output.bc_list,
+        moas_table= "../../reference/final_moas - Collapsed.tsv",
     output:
-        module_dir=directory(f"{results}/modules/brmets_jana_biermann")
+        module_dir=directory(f"{results}/modules_noCTRP/brmets_jana_biermann")
     threads: get_resource("default_bc", "threads"),
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -448,8 +478,9 @@ rule mod_brmets_jana_biermann:
 rule mod_cell_lines_gabriella_kinker:
     input:
         bc_list=rules.bc_cell_lines_gabriella_kinker.output.bc_list,
+        moas_table= "../../reference/final_moas - Collapsed.tsv",
     output:
-        module_dir=directory(f"{results}/modules/cell_lines_gabriella_kinker")
+        module_dir=directory(f"{results}/modules_noCTRP/cell_lines_gabriella_kinker")
     threads: get_resource("default_bc", "threads"),
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -462,8 +493,9 @@ rule mod_cell_lines_gabriella_kinker:
 rule mod_bmets_youmna_kfoury:
     input:
         bc_list=rules.bc_bmets_youmna_kfoury.output.bc_list,
+        moas_table= "../../reference/final_moas - Collapsed.tsv",
     output:
-        module_dir=directory(f"{results}/modules/bmets_youmna_kfoury")
+        module_dir=directory(f"{results}/modules_noCTRP/bmets_youmna_kfoury")
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -477,8 +509,9 @@ rule mod_bmets_youmna_kfoury:
 rule mod_nsclc_stefan_salcher:
     input:
         bc_list=rules.bc_nsclc_stefan_salcher.output.bc_list,
+        moas_table= "../../reference/final_moas - Collapsed.tsv",
     output:
-        module_dir=directory(f"{results}/modules/nsclc_stefan_salcher")
+        module_dir=directory(f"{results}/modules_noCTRP/nsclc_stefan_salcher")
     threads: get_resource("default_bc", "threads"),
     resources:
         mem_mb=1440000,
@@ -491,8 +524,9 @@ rule mod_nsclc_stefan_salcher:
 rule mod_eac_thomas_carroll:
     input:
         bc_list=rules.bc_eac_thomas_carroll.output.bc_list,
+        moas_table= "../../reference/final_moas - Collapsed.tsv",
     output:
-        module_dir=directory(f"{results}/modules/eac_thomas_carroll")
+        module_dir=directory(f"{results}/modules_noCTRP/eac_thomas_carroll")
     threads: get_resource("default_bc", "threads"),
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -505,8 +539,9 @@ rule mod_eac_thomas_carroll:
 rule mod_oc_ec_matthew_regner:
     input:
         bc_list=rules.bc_oc_ec_matthew_regner.output.bc_list,
+        moas_table= "../../reference/final_moas - Collapsed.tsv",
     output:
-        module_dir=directory(f"{results}/modules/oc_ec_matthew_regner")
+        module_dir=directory(f"{results}/modules_noCTRP/oc_ec_matthew_regner")
     threads: get_resource("default_bc", "threads"),
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -519,8 +554,9 @@ rule mod_oc_ec_matthew_regner:
 rule mod_pdac_shu_zhang:
     input:
         bc_list=rules.bc_pdac_shu_zhang.output.bc_list,
+        moas_table= "../../reference/final_moas - Collapsed.tsv",
     output:
-        module_dir=directory(f"{results}/modules/pdac_shu_zhang")
+        module_dir=directory(f"{results}/modules_noCTRP/pdac_shu_zhang")
     threads: get_resource("default_bc", "threads"),
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
@@ -533,8 +569,9 @@ rule mod_pdac_shu_zhang:
 rule mod_aml_sander_lambo:
     input:
         bc_list=rules.bc_aml_sander_lambo.output.bc_list,
+        moas_table= "../../reference/final_moas - Collapsed.tsv",
     output:
-        module_dir=directory(f"{results}/modules/aml_sander_lambo")
+        module_dir=directory(f"{results}/modules_noCTRP/aml_sander_lambo")
     threads: get_resource("default_bc", "threads"),
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
