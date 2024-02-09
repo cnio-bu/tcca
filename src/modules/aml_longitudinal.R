@@ -111,3 +111,78 @@ write.table(x = module_mat, file = "results/aml/metacom_mat_full.tsv")
 
 ## Export bc metadata
 write.table(x = bc@meta.data, file = "results/aml/bc_metadata_annotated.tsv")
+
+saveRDS(object = bc, file = "results/aml/bc_object_annotated_metacoms.rds")
+
+## clusters and UMAP
+bc <- FindVariableFeatures(bc)
+VariableFeatures(bc) <- rownames(bc)
+
+bc <- ScaleData(bc)
+bc <- RunPCA(bc)
+bc <- FindNeighbors(bc, dims = 1:30)
+bc <- FindClusters(
+    bc,
+    cluster.name = "therapeutic_clusters_sketch",
+    resolution = 0.2
+    )
+
+bc <- RunUMAP(
+    bc,
+    dims = 1:30,
+    seed.use = 120394,
+    umap.method = "uwot",
+    return.model = T
+    )
+
+DimPlot(bc)
+
+bc <- ProjectData(
+    object = bc,
+    assay = "RNA",
+    full.reduction = "pca.full",
+    sketched.assay = "sketch_10k",
+    sketched.reduction = "pca",
+    umap.model = "umap",
+    dims = 1:30,
+    refdata = list(therapeutic_clusters = "therapeutic_clusters_sketch")
+)
+# now that we have projected the full dataset, switch back to analyzing all cells
+DefaultAssay(bc) <- "RNA"
+
+tcs <- DimPlot(bc, group.by = "therapeutic_clusters", raster = FALSE)
+
+saveRDS(object = bc, file = "results/aml/bc_object_annotated_metacoms.rds")
+
+## sig-21115 = SORAFENIB - CTRP
+## sig-21377 = BORTEZOMIB  - CTRP
+## sig-21378 = BORTEZOMIB - PRISM
+sorafe <- FeaturePlot(object = bc, features = c("sig-21115"), keep.scale = "all") +
+    scale_color_gradient2(
+        low = "#1D61F2",
+        mid = "#F7F7F7", 
+        high = "#DA0078"
+    ) +
+    ggtitle("Sorafenib - CTRP")
+
+bortezo <- FeaturePlot(object = bc, features = c("sig-21377"), keep.scale = "all") +
+    scale_color_gradient2(
+        low = "#1D61F2",
+        mid = "#F7F7F7", 
+        high = "#DA0078"
+    ) +
+    ggtitle("Bortezomib - CTRP")
+
+
+bortezo2 <- FeaturePlot(object = bc, features = c("sig-21378"), keep.scale = "all") +
+    scale_color_gradient2(
+        low = "#1D61F2",
+        mid = "#F7F7F7", 
+        high = "#DA0078"
+    ) +
+    ggtitle("Bortezomib - PRISM")
+
+
+test <- sorafe | bortezo | bortezo2
+
+relapse_tumors <- DimPlot(object = bc, group.by = c("Subgroup", "Patient_Sample"))
