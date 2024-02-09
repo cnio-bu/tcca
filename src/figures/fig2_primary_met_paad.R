@@ -99,3 +99,48 @@ sketched_mat_heat <- ComplexHeatmap::Heatmap(
     column_title_gp = gpar(fontsize = 8),
     column_title_rot = 45
 )
+
+png(
+    filename = "results/figures/paad_primary_met_clustered.png",
+    width = 19,
+    height = 4,
+    units = "in",
+    res = 200
+)
+draw(sketched_mat_heat)
+
+dev.off()
+
+sketched_mat_heat_sorted <- ComplexHeatmap::Heatmap(
+    name = "Module score",
+    mat = t(scale(sketched_mat, center = TRUE, scale = TRUE)),
+    cluster_rows = TRUE,
+    clustering_distance_rows = "pearson",
+    cluster_row_slices = TRUE,
+    cluster_columns = FALSE,
+    show_column_names = FALSE,
+    column_order = cell_patient_order,
+    column_split = data.frame(
+        cell_annot_sketch[rownames(sketched_mat), ]$patient,
+        cell_annot_sketch[rownames(sketched_mat), ]$tumor_site
+    ),
+    cluster_column_slices = TRUE,
+    clustering_distance_columns = "pearson",
+    row_labels = metacom_human_names,
+    row_names_gp = gpar(fontsize = 8),
+    show_row_names = TRUE,
+    column_names_side = "bottom",
+    top_annotation = top_annotation,
+    column_title_gp = gpar(fontsize = 8),
+)
+
+png(
+    filename = "results/figures/paad_primary_met_sorted.png",
+    width = 19,
+    height = 4,
+    units = "in",
+    res = 200
+)
+draw(sketched_mat_heat_sorted)
+
+dev.off()
