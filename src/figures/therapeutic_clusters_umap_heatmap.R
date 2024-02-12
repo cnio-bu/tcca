@@ -101,7 +101,6 @@ right_annotation <- ComplexHeatmap::HeatmapAnnotation(
 top_rv <- matrixStats::rowVars(sketched_mat)
 top_rv <- top_rv[top_rv >= 2]
 
-
 ## get drug names
 drugs <- data.table::fread("reference/final_moas - Collapsed.tsv") %>%
     select(IDs, preferred.drug.names, collapsed.MoAs) %>%
@@ -205,3 +204,81 @@ ggsave(
     height = 7,
     width = 7
     )
+
+
+## get metacommunities names
+metacoms_mt1 <- read.table(
+    "results/modules/annotated/metagroup_patients_untreated_consensus_drugs.tsv"
+    ) %>%
+    group_by(meta_community) %>%
+    filter(signature %in% mt_cols) %>%
+    arrange(desc(n.appearances)) %>%
+    slice_head(n = 10) %>%
+    select(meta_community, signature)
+
+
+## get drug names
+drugs <- data.table::fread("reference/final_moas - Collapsed.tsv") %>%
+    select(IDs, preferred.drug.names, collapsed.MoAs) %>%
+    mutate(
+        collapsed.MoAs = case_when(
+            collapsed.MoAs %in% names(MoAs_colors) ~ collapsed.MoAs,
+            TRUE ~ "Other"
+        )
+    ) %>%
+    distinct() %>%
+    as.data.frame()
+
+drugs <- drugs[drugs$IDs %in% metacoms_mt1$signature, ]
+rownames(drugs) <- drugs$IDs
+
+MoAs <- drugs[metacoms_mt1$signature, c("IDs", "collapsed.MoAs")]
+MoAs <- as.data.frame(MoAs$collapsed.MoAs)
+colnames(MoAs) <- "Mechanism of action"
+
+moa_pals <- list(
+    "Mechanism of action" = MoAs_colors
+)
+
+top_annotation <- ComplexHeatmap::HeatmapAnnotation(
+    "Mechanism of action" = MoAs$`Mechanism of action`,
+    "Metacommunity" = as.factor(metacoms_mt1$meta_community),
+    which = "column",
+    col = moa_pals,
+    show_annotation_name = FALSE
+)
+
+## testo baito
+mt_cols <- read_tsv("reference/final_moas - Collapsed.tsv")
+mt_cols <- mt_cols %>%
+    filter(studies != "CTRP") %>%
+    pull(IDs)
+
+test <- ComplexHeatmap::Heatmap(
+    mat = t(sketched_mat[metacoms_mt1$signature,]),
+    #col = circlize::colorRamp2(c(-4, 0, 4), c("blue", "white", "red")),
+    name = "Normalized Beyondcell score",
+    right_annotation = right_annotation,
+    top_annotation = top_annotation,
+    cluster_rows = FALSE,
+    row_order = rownames(cells_annot_df[order(cells_annot_df$`Therapeutic Cluster`), ]),
+    cluster_row_slices = TRUE,
+    row_split = cells_annot_df$`Therapeutic Cluster`,
+    row_title = NULL,
+    cluster_columns = FALSE,
+    cluster_column_slices = TRUE,
+    column_order = metacoms_mt1[order(metacoms_mt1$meta_community), ]$signature,
+    show_column_dend = FALSE,
+    column_split = metacoms_mt1$meta_community, 
+    clustering_distance_columns = "pearson",
+    clustering_distance_rows = "pearson",
+    show_column_names = TRUE,
+    column_labels = drugs[metacoms_mt1$signature, "preferred.drug.names"],
+    show_row_names = FALSE,
+    column_names_rot = 45,
+    column_names_gp = grid::gpar(fontsize = 6),
+    column_names_side = "top",
+    column_title = NULL,
+    heatmap_width = unit(8, "in"),
+    heatmap_height = unit(14, "in")
+)
