@@ -37,30 +37,50 @@ metacom_types <- meta.data %>%
         study,
         metacom_untreated_1:metacom_untreated_6
         ) %>%
-    filter(sample_type == "p" & treated == FALSE) %>%
-    group_by(sample, study) %>%
-    summarise(
-        avg_metacom1 = median(metacom_untreated_1),
+    filter(
+        sample_type == "p" &
+            treated == FALSE &
+            study != "cell_lines_gabriella_kinker"
+        ) %>%
+    pivot_longer(
+        cols = metacom_untreated_1:metacom_untreated_6,
+        names_to = "metacommunity",
+        values_to = "cell_enrichment"
+        ) %>%
+    group_by(sample, study, metacommunity) %>%
+    reframe(
+        sample_enrichment = median(cell_enrichment),
         tumor_type = tumor_type
     ) %>%
-    ungroup() %>%
     distinct()
-
-## tumors to keep
-tumors_to_keep <- table(metacom_types$tumor_type)
-tumors_to_keep <- tumors_to_keep[tumors_to_keep > 3]
+    
 
 metacom_types <- metacom_types %>%
-    filter(tumor_type %in% names(tumors_to_keep)) %>%
+    group_by(tumor_type, metacommunity) %>%
+    mutate(n_samples = n()) %>%
+    filter(
+        n_samples >= 3
+    ) %>%
     mutate(tumor_type = as_factor(tumor_type)) 
 
-metacom_types$tumor_type <- fct_reorder(metacom_types$tumor_type, metacom_types$avg_metacom1, .desc = TRUE)
+metacom_summary <- metacom_types %>%
+    group_by(metacommunity) %>%
+    mutate(
+        pancancer_median = round(median(sample_enrichment), digits = 3)
+    ) %>%
+    group_by(tumor_type, metacommunity) %>%
+    reframe(
+        average_enrichment = round(median(sample_enrichment), digits = 3),
+        enrichment_disp = round(sd(sample_enrichment), digits = 3),
+        pancancer_median = pancancer_median
+    ) %>%
+    distinct() %>%
+    arrange(
+        desc(average_enrichment)
+    )
 
-metacom_box <- ggplot(
-    data = metacom_types,
-    aes(y = avg_metacom1, x = tumor_type)) +
-    geom_point() +
-    geom_boxplot() +
-    scale_y_continuous(n.breaks = 10, limits = c(-1, 1)) +
-    stat_compare_means() +
-    theme_bw()
+
+write_tsv(
+    x = metacom_summary,
+    file = "results/modules/annotated/metacommunity_untreated_enrichment_by_cancer.tsv"
+    )
