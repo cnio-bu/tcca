@@ -1,6 +1,7 @@
 library(beyondcell)
 library(ComplexHeatmap)
 library(fabia)
+library(NbClust)
 library(tidyverse)
 
 pleural <- readRDS("results/pleural_rui_dong.rds")
@@ -110,7 +111,7 @@ dev.off()
 ## REDO fabia params
 ## Default fabia biclusters as done by bc-meta 2023
 res_big <- fabia::fabias(
-    X = norm_mat_cor,
+    X = norm_mat,
     p = 13, ## Hidden factors = biclusters. Max. to 50 (581 / 50 ~ 11 drugs)
     cyc = 50, ## iterations, keep it at 500
     spz = 0.5, ## minimum sparseness, Laplace.
@@ -160,8 +161,22 @@ table(bicluster_table_big$bicluster)
 ## Biclusters are from 6 to 90 drugs
 ## let's draw them
 
-## try to remove negative lines
-bicluster_table_big <- bicluster_table_big[bicluster_table_big$cluster_contribution <= 0, ]
+## Try to remove drugs whose sign is opposite from the bicluster consensus
+bicluster_table_big <- bicluster_table_big %>%
+    mutate(
+        sig_dir = sign(cluster_contribution)
+    ) %>%
+    group_by(bicluster) %>%
+    mutate(
+       dom_sig =  case_when(
+           sum(sig_dir) >= 0 ~ 1,
+           TRUE ~ -1
+       )
+    ) %>%
+    filter(
+        dom_sig == sig_dir
+    )
+
 
 png("results/figures/fabia_aware_heat_big.png", width = 14, height = 14, units = "in", res = 100)
 fabia_aware_correlation_heat <- ComplexHeatmap::Heatmap(
