@@ -21,7 +21,7 @@ for(sample in all_samples){
     ## C optimized code, let it run in single thread
     res <- fabia::fabias(
         X = normalized_bc,
-        p = 50, ## Hidden factors = biclusters. Max. to 50 (581 / 50 ~ 11 drugs)
+        p = 13, ## Hidden factors = biclusters. Use default params
         cyc = 500, ## iterations, keep it at 500
         spz = 0.5, ## minimum sparseness, Laplace.
         non_negative = 0, ## Allow negative factors a.k.a. negative vectors
@@ -29,7 +29,7 @@ for(sample in all_samples){
         center = 2, ## median centering
         lap = 1, ## minimal value of the variational param
         nL = 1, ## do not allow drugs to be in > 1 biclust, it will report mirrowed biclusts otherwise,
-        lL = 100, ## do not allow biclusters > 100 drugs. It tends to aggregate spurious clusters
+        lL = 0 ## forego cluster size
     )
     
     ## save the objects before table extraction, just in case
@@ -44,7 +44,7 @@ for(sample in all_samples){
     
     all_biclusters <- list()
     all_cells <- list()
-    for(i in c(1:50)){
+    for(i in c(1:13)){
         this_biclust <- biclusters$bic[i, ]
         ## check length of the bicluster rowwise (aka drugs)
         if(length(this_biclust$bixn) <= 5) {
@@ -67,6 +67,22 @@ for(sample in all_samples){
             "bicluster" = name,
             "cluster_contribution" = value,
             "signature" = value_id
+        )
+
+    ## Try to remove drugs whose sign is opposite from the bicluster consensus
+    bicluster_table <- bicluster_table %>%
+        mutate(
+            sig_dir = sign(cluster_contribution)
+        ) %>%
+        group_by(bicluster) %>%
+        mutate(
+        dom_sig =  case_when(
+            sum(sig_dir) >= 0 ~ 1,
+            TRUE ~ -1
+        )
+        ) %>%
+        filter(
+            dom_sig == sig_dir
         )
 
     cell_table <- enframe(all_cells) %>%
