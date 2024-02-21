@@ -71,7 +71,7 @@ extract_communities <- function(group, n_samples){
         dist_plot_2 <- ggplot(data = dist_contribution) +
             geom_boxplot(aes(x = bicluster, y = cumulative_info)) +
             geom_smooth(aes(x = bicluster, y = cumulative_info)) +
-            geom_hline(yintercept = 0.75) +
+           # geom_hline(yintercept = 0.75) +
             scale_y_continuous(labels = scales::percent, n.breaks = 10) +
             ylab(label = "Relative contribution to total information content") +
             theme_classic() 
@@ -86,7 +86,7 @@ extract_communities <- function(group, n_samples){
         
         dist_contribution <- dist_contribution %>%
             filter(
-                cumulative_info <= 0.75
+                cumulative_info <= 1 # Do not perform this filtering anymore
             ) %>%
             pull(sample_bicluster)
         
@@ -114,73 +114,44 @@ extract_communities <- function(group, n_samples){
             rowwise() %>%
             partition(cluster) %>%
             mutate(
-                positive_weight_intersect = nrow(
+                weight_intersect = nrow(
                     intersect(
                         modules_mt_by_cancer[(
                             modules_mt_by_cancer$sample == sample_1 &
-                                modules_mt_by_cancer$bicluster == bicluster_1 &
-                                sign(modules_mt_by_cancer$cluster_contribution) == 1),
+                                modules_mt_by_cancer$bicluster == bicluster_1
+                        ),
+                             #   sign(modules_mt_by_cancer$cluster_contribution) == 1),
                             "signature"
                         ],
                         modules_mt_by_cancer[(
                             modules_mt_by_cancer$sample == sample_2 &
-                                modules_mt_by_cancer$bicluster == bicluster_2 &
-                                sign(modules_mt_by_cancer$cluster_contribution) == 1),
+                                modules_mt_by_cancer$bicluster == bicluster_2
+                        ),
+                          #      sign(modules_mt_by_cancer$cluster_contribution) == 1),
                             "signature"
                         ]
                     )
                     
                 ),
-                negative_weight_intersect = nrow(
-                    intersect(
-                        modules_mt_by_cancer[(
-                            modules_mt_by_cancer$sample == sample_1 &
-                                modules_mt_by_cancer$bicluster == bicluster_1 &
-                                sign(modules_mt_by_cancer$cluster_contribution) == -1),
-                            "signature"
-                        ],
-                        modules_mt_by_cancer[(
-                            modules_mt_by_cancer$sample == sample_2 &
-                                modules_mt_by_cancer$bicluster == bicluster_2 &
-                                sign(modules_mt_by_cancer$cluster_contribution) == -1),
-                            "signature"
-                        ]
-                    )
-                ),
-                positive_weight_union = nrow(
+                weight_union = nrow(
                     dplyr::union(
                         modules_mt_by_cancer[(
                             modules_mt_by_cancer$sample == sample_1 &
-                                modules_mt_by_cancer$bicluster == bicluster_1 &
-                                sign(modules_mt_by_cancer$cluster_contribution) == 1),
+                                modules_mt_by_cancer$bicluster == bicluster_1
+                        ),
+                                #sign(modules_mt_by_cancer$cluster_contribution) == 1),
                             "signature"
                         ],
                         modules_mt_by_cancer[(
                             modules_mt_by_cancer$sample == sample_2 &
-                                modules_mt_by_cancer$bicluster == bicluster_2 &
-                                sign(modules_mt_by_cancer$cluster_contribution) == 1),
+                                modules_mt_by_cancer$bicluster == bicluster_2
+                        ),
+                                #sign(modules_mt_by_cancer$cluster_contribution) == 1),
                             "signature"
                         ]
                     )
                     
-                ),
-                negative_weight_union = nrow(
-                    dplyr::union(
-                        modules_mt_by_cancer[(
-                            modules_mt_by_cancer$sample == sample_1 &
-                                modules_mt_by_cancer$bicluster == bicluster_1 &
-                                sign(modules_mt_by_cancer$cluster_contribution) == -1),
-                            "signature"
-                        ],
-                        modules_mt_by_cancer[(
-                            modules_mt_by_cancer$sample == sample_2 &
-                                modules_mt_by_cancer$bicluster == bicluster_2 &
-                                sign(modules_mt_by_cancer$cluster_contribution) == -1),
-                            "signature"
-                        ]
-                    )
                 )
-                
                 
             ) %>%
             collect()
@@ -188,29 +159,46 @@ extract_communities <- function(group, n_samples){
         print("Generating graph data")
         relations_filtered <- relations %>%
             mutate(
-                positive_weight = positive_weight_intersect / positive_weight_union,
-                negative_weight = negative_weight_intersect / negative_weight_union,
-                weight = positive_weight + negative_weight
+                weight = weight_intersect /weight_union
             ) %>%
-            filter(weight > 0.25) %>% ## prune edges with 0 few conn.
+            filter(weight >= 0.25) %>% ## prune edges with 0 few conn.
             mutate(
                 from = paste0(sample_1, "_", bicluster_1),
                 to = paste0(sample_2, "_", bicluster_2)
             ) %>%
             select(from, to, weight)
         
-        g <- graph_from_data_frame(
-            relations_filtered,
-            directed = FALSE,
-            vertices = module_edges
+    g <- graph_from_data_frame(
+        relations_filtered,
+        directed = FALSE,
+        vertices = module_edges
+    )
+    
+    print("Fast greedy classif")
+    fc <- fastgreedy.community(
+        graph = (g),
+        weights = relations_filtered$weight
+    )
+    g = simplify(g)
+    plot(g, vertex.size = 4, vertex.label=NA)
+    
+    png(
+        filename = paste0(
+            "results/modules/annotated/",
+            group, "_",
+            cancer,
+            "_graph.png"
+            ),
+        height = 7,
+        width = 7,
+        units = "in",
+        res = 100
         )
-        
-        print("Fast greedy classif")
-        fc <- fastgreedy.community(
-            graph = (g),
-            weights = relations_filtered$weight
-        )
-        
+    
+    plot(g, vertex.size = 4, vertex.label=NA)
+    dev.off()
+
+   
         comms <- data.frame(edge = fc$names, community = fc$membership) %>%
             group_by(community) %>%
             mutate(
@@ -233,12 +221,12 @@ extract_communities <- function(group, n_samples){
                 sample,
                 bicluster,
                 tumor_type,
-                tumor_subtype, 
+                tumor_subtype,
                 signature,
                 n.members,
                 collapsed.MoAs
             )
-        
+
         write.table(
             x = relations_filtered,
             file = paste0("results/modules/annotated/", group, "_", cancer, "_relationships.tsv"),
@@ -269,5 +257,4 @@ extract_communities <- function(group, n_samples){
 extract_communities(group = "patient_primary_untreated", n_samples = 5)
 extract_communities(group = "patient_primary_treated", n_samples = 3)
 extract_communities(group = "patient_metastatic_untreated", n_samples = 3)
-
 extract_communities(group = "patient_metastatic_treated", n_samples = 3)
