@@ -1,4 +1,6 @@
+library(svglite)
 library(tidyverse)
+library(waffle)
 
 source(file = "src/figures/TCCA_palette.R")
 
@@ -64,16 +66,25 @@ patients_lines_dough <- ggplot(
     theme_void() +
     theme(
         legend.position = "none",
-        text = element_text(family = "Arial", size = 12)
+        text = element_text(family = "Arial", size = 24, color = "black")
         )
 
 ggsave(
     patients_lines_dough,
-    filename = "results/figures/patients_cell_lines_dough.png", 
-    dpi = 300,
-    height = 7,
-    width = 7
+    filename = "results/figures/patients_cell_lines_dough.png",
+    width = 7,
+    height = 7
     )
+
+## test
+pdf(
+    file = "results/figures/patients_cell_lines_dough.pdf",
+    width = 7,
+    height = 7
+    )
+
+plot(patients_lines_dough)
+dev.off()
 
 ## cancer type summary
 primary_met_by_cancer <- clinical_annotation_samples %>%
