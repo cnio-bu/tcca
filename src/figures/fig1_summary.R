@@ -143,9 +143,131 @@ primary_met_tops <- data.table::fread("results/annotation/clinical_metadata_v4_c
         study != "cell_lines_gabriella_kinker",
         sample_type == "p"
     ) %>%
-    group_by(tumor_type) %>%
+    group_by(tumor_type, treated) %>%
     summarise(
         n.samples = n()
     ) %>%
-    arrange(desc(n.samples)) %>%
-    head(10)
+    ungroup() %>%
+    group_by(tumor_type) %>%
+    mutate(
+        n.total = sum(n.samples)
+    ) %>%
+    mutate(
+        treated = case_when(
+            treated == "" ~ "unknown",
+            TRUE ~ treated
+        )
+    ) %>%
+    arrange(desc(n.total))
+
+primary_met_tops$tumor_type <- fct_reorder(
+    primary_met_tops$tumor_type,
+    primary_met_tops$n.total,
+    .desc = FALSE
+)
+
+
+primary_tumors_barplot <- ggplot(
+    data = primary_met_tops,
+    aes(x = n.samples,
+        y = tumor_type,
+        fill = treated,
+        label = n.samples
+        )
+    ) +
+    geom_bar(stat = "identity") +
+    geom_text(position = position_stack(vjust = 0.5)) +
+    ggtitle("Top 10 cancer types by number of patients") +
+    scale_fill_manual(
+        name = "Treatment information",
+        aesthetics = "fill",
+        values = c(
+            "t" = treatment_colors[["Treated"]],
+            "f" = treatment_colors[["Untreated"]],
+            "unknown" = "grey50"
+        ),
+        labels = c("Treated", "Untreated", "Unknown")
+        ) +
+    xlab("") +
+    ylab("") +
+    theme_bw() +
+    theme(
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        axis.line = element_line(),
+        axis.ticks.x.bottom = element_blank(),
+        axis.text.x = element_blank(),
+        text = element_text(family = "Arial")
+    )
+
+ggsave(
+    plot = primary_tumors_barplot,
+    filename = "results/figures/primary_tumors_barplot.png",
+    height = 7,
+    width = 7,
+    dpi = 100
+    )
+
+mets_top <- data.table::fread("results/annotation/clinical_metadata_v4_clean.tsv") %>%
+    filter(
+        study != "cell_lines_gabriella_kinker",
+        sample_type == "m"
+    ) %>%
+    group_by(refined_tumor_site, treated) %>%
+    summarise(
+        n.samples = n()
+    ) %>%
+    ungroup() %>%
+    group_by(refined_tumor_site) %>%
+    mutate(
+        n.total = sum(n.samples)
+    ) %>%
+    mutate(
+        treated = case_when(
+            treated == "" ~ "unknown",
+            TRUE ~ treated
+        )
+    ) %>%
+    arrange(desc(n.total))
+
+mets_top$refined_tumor_site <- fct_reorder(
+    mets_top$refined_tumor_site,
+    mets_top$n.total,
+    .desc = FALSE
+)
+
+
+met_tumors_barplot <- ggplot(
+    data = mets_top,
+    aes(x = n.samples,
+        y = refined_tumor_site,
+        fill = treated,
+        label = n.samples
+    )
+) +
+    geom_bar(stat = "identity") +
+    geom_text(position = position_stack(vjust = 0.5)) +
+    ggtitle("Top 10 cancer types by number of patients") +
+    scale_fill_manual(
+        name = "Treatment information",
+        aesthetics = "fill",
+        values = c(
+            "t" = treatment_colors[["Treated"]],
+            "f" = treatment_colors[["Untreated"]],
+            "unknown" = "grey50"
+        ),
+        labels = c("Treated", "Untreated", "Unknown")
+    ) +
+    xlab("") +
+    ylab("") +
+    theme_bw() +
+    theme(
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        axis.line = element_line(),
+        axis.ticks.x.bottom = element_blank(),
+        axis.text.x = element_blank(),
+        text = element_text(family = "Arial")
+    )
