@@ -1,3 +1,4 @@
+library(RColorBrewer)
 library(svglite)
 library(tidyverse)
 library(waffle)
@@ -100,7 +101,38 @@ primary_met_by_cancer <- clinical_annotation_samples %>%
     select(
         metagroup, n.patients
     ) %>%
-    deframe()
+    mutate(
+        metagroup = as_factor(metagroup)
+    )
 
-waffle(primary_met_by_cancer)
+levels(primary_met_by_cancer$metagroup) <- c(
+    "Primary tumor, untreated",
+    "Primary tumor, treated", 
+    "Primary tumor, unknown treatment",
+    "Metastasis, untreated",
+    "Metastasis, treated",
+    "Metastasis, unknown treatment"
+    )
+
+
+metagroup_waffle <- ggplot(
+    data = primary_met_by_cancer,
+    aes(fill = metagroup, values = n.patients)
+    ) +
+    geom_waffle(n_rows = 10, size = 0.33, color = "white") +
+    scale_fill_brewer(palette = "Set2", name = "") +
+    coord_equal() +
+    theme_void() +
+    theme(
+        text = element_text(family = "Arial", size = 11)
+    )
+
+
+ggsave(
+    filename = "results/figures/waffleplot_patients.png",
+    plot = metagroup_waffle,
+    width = 12,
+    height = 4,
+    dpi = 300
+    )
 
