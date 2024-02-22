@@ -89,18 +89,18 @@ dev.off()
 ## cancer type summary
 primary_met_by_cancer <- clinical_annotation_samples %>%
     filter(study != "cell_lines_gabriella_kinker") %>%
-    group_by(tumor_type, sample_type) %>%
-    mutate(
-        n.cells = n()
-    ) %>%
-    group_by(tumor_type, sample_type) %>%
+    group_by(sample_type, treated) %>%
     reframe(
-        n.patients = length(unique(patient)),
-        n.cells = n()
+        n.patients = n()
+    ) %>% 
+    arrange(desc(n.patients)) %>%
+    mutate(
+        metagroup = paste0(sample_type, "_", treated)
     ) %>%
-    filter(
-        sample_type == "p"
+    select(
+        metagroup, n.patients
     ) %>%
-    arrange(desc(n.patients))
+    deframe()
 
+waffle(primary_met_by_cancer)
 
