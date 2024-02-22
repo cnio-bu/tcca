@@ -136,3 +136,16 @@ ggsave(
     dpi = 300
     )
 
+
+## Primary / metastatic proportions
+primary_met_tops <- data.table::fread("results/annotation/clinical_metadata_v4_clean.tsv") %>%
+    filter(
+        study != "cell_lines_gabriella_kinker",
+        sample_type == "p"
+    ) %>%
+    group_by(tumor_type) %>%
+    summarise(
+        n.samples = n()
+    ) %>%
+    arrange(desc(n.samples)) %>%
+    head(10)
