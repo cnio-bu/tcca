@@ -160,6 +160,20 @@ primary_met_tops <- data.table::fread("results/annotation/clinical_metadata_v4_c
     ) %>%
     arrange(desc(n.total))
 
+## keep top 10 by grand total
+primary_top <- primary_met_tops %>%
+    group_by(tumor_type) %>%
+    reframe(
+        n.total = n.total
+    ) %>%
+    distinct(.keep_all = TRUE) %>%
+    arrange(desc(n.total)) %>%
+    head(10) %>%
+    pull(tumor_type)
+
+primary_met_tops <- primary_met_tops %>%
+    filter(tumor_type %in% primary_top)
+
 primary_met_tops$tumor_type <- fct_reorder(
     primary_met_tops$tumor_type,
     primary_met_tops$n.total,
@@ -177,7 +191,7 @@ primary_tumors_barplot <- ggplot(
     ) +
     geom_bar(stat = "identity") +
     geom_text(position = position_stack(vjust = 0.5)) +
-    ggtitle("Top 10 cancer types by number of patients") +
+    ggtitle("Top 10 primary tumor types by number of patients") +
     scale_fill_manual(
         name = "Treatment information",
         aesthetics = "fill",
@@ -190,6 +204,7 @@ primary_tumors_barplot <- ggplot(
         ) +
     xlab("") +
     ylab("") +
+    guides(fill = "none") +
     theme_bw() +
     theme(
         panel.grid.major = element_blank(),
