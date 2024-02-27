@@ -1,8 +1,39 @@
 library(ComplexHeatmap)
+library(circlize)
+library(clustree)
 library(edgeR)
+library(factoextra)
 library(fabia)
 library(GSVA)
+library(NbClust)
 library(tidyverse)
+
+
+## function fix for factoextra
+my_fviz_nbclust <- function(x, print.summary = TRUE, barfill = "steelblue", barcolor = "steelblue"){
+    best_nc <- x$Best.nc
+    best_nc <- as.data.frame(t(best_nc), stringsAsFactors = TRUE)
+    best_nc$Number_clusters <- as.factor(best_nc$Number_clusters)
+    
+    ss <- summary(best_nc$Number_clusters)
+    cat("Among all indices: \n===================\n")
+    for (i in 1:length(ss)) {
+        cat("*", ss[i], "proposed ", names(ss)[i], "as the best number of clusters\n")
+    }
+    cat("\nConclusion\n=========================\n")
+    cat("* According to the majority rule, the best number of clusters is ", 
+        names(which.max(ss)), ".\n\n")
+    
+    df <- data.frame(Number_clusters = names(ss), freq = ss, 
+                     stringsAsFactors = TRUE)
+    p <- ggpubr::ggbarplot(df, x = "Number_clusters", y = "freq", 
+                           fill = "steelblue", color = "steelblue") +
+        ggplot2::labs(x = "Number of clusters k", 
+                      y = "Frequency among all indices",
+                      title = paste0("Optimal number of clusters - k = ", 
+                                     names(which.max(ss))))
+    p
+}
 
 mat <- read_tsv(
     file = "results/functional/pancancer_pseudobulk.tsv",
@@ -53,18 +84,94 @@ colnames(gsva_es) <- gsub(pattern = "-", replacement = "_", x = colnames(gsva_es
 colnames(gsva_es) <- gsub(pattern = "\\.", replacement = "_", x = colnames(gsva_es))
 colnames(gsva_es)[colnames(gsva_es) == "T19_1_adrenalnb_rui_chong"] <- "T19_adrenalnb_rui_chong"
 
-n_hidden_factors = 20
+gsva_es_centered <- scale(x = t(gsva_es), center = TRUE, scale = TRUE)
+
+
+## Get hidden factors optimal
+feature_cors <- corrplot::corrplot(
+    cor(gsva_es_centered),
+    type = "upper",
+    method = "ellipse",
+    tl.cex = 0.9
+    )
+
+res.pca <- prcomp(t(gsva_es_centered))
+
+# Visualize eigenvalues/variances
+pca_screen <- fviz_screeplot(res.pca, addlabels = TRUE, ylim = c(0, 50))
+ggsave(
+    plot = pca_screen,
+    filename = "results/functional/screeplot_clustering_pseudobulk.png",
+    dpi = 300
+    )
+
+set.seed(120394)
+
+# function to compute total within-cluster sum of squares
+elbow_scree <- fviz_nbclust(
+    t(gsva_es_centered),
+    FUN = hcut,
+    k.max = 24,
+    method = "wss"
+    ) + 
+    theme_minimal()  + 
+    ggtitle("Optimal elbow for functional matrix")
+
+ggsave(
+    plot = elbow_scree,
+    filename = "results/functional/elbow_clustering_pseudobulk.png",
+    dpi = 300
+)
+
+# nbclust
+res.nbclust <- NbClust(t(gsva_es), 
+                       distance = "euclidean",
+                       min.nc = 2, 
+                       max.nc = 24, 
+                       method = "complete", 
+                       index ="all"
+                       )
+
+
+nbclust_plot <- my_fviz_nbclust(res.nbclust) + 
+    theme_minimal() + 
+    ggtitle("NbClust's optimal number of clusters")
+
+ggsave(
+    plot = nbclust_plot,
+    filename = "results/functional/consensus_index_clusters.png",
+    dpi = 300
+    )
+
+## clustree now
+tmp <- NULL
+for (k in 1:10){
+    tmp[k] <- kmeans(scale(t(gsva_es)), k, nstart = 30)
+}
+df <- data.frame(tmp)
+# add a prefix to the column names
+colnames(df) <- seq(1:10)
+colnames(df) <- paste0("k",colnames(df))
+# get individual PCA
+df.pca <- prcomp(df, center = TRUE, scale. = FALSE)
+ind.coord <- df.pca$x
+ind.coord <- ind.coord[,1:2]
+df <- bind_cols(as.data.frame(df), as.data.frame(ind.coord))
+clustree(df, prefix = "k")
+
+
+n_hidden_factors <- 7
 
 fabias <- fabia::fabias(
-    X = gsva_es,
+    X = t(gsva_es_centered),
     p = n_hidden_factors,
-    center = 2,
+    center = 0,
     norm = 0,
     nL = 1,
     non_negative = 1
     )
 
-res <- fabia::extractBic(fact = fabias, thresZ = 0.7)
+res <- fabia::extractBic(fact = fabias)
 
 all_biclusters <- list()
 all_samples <- list()
@@ -248,7 +355,7 @@ bulk_heat <- ComplexHeatmap::Heatmap(
     clustering_distance_rows = "pearson",
     clustering_distance_columns = "pearson",
     cluster_column_slices = FALSE,
-    cluster_row_slices = FALSE,
+    cluster_row_slices = TRUE,
     row_split = bicluster_table$bicluster,
     row_order = bicluster_table[order(bicluster_table$bicluster), ]$signature,
     column_split = sample_table$bicluster,
@@ -258,4 +365,19 @@ bulk_heat <- ComplexHeatmap::Heatmap(
     row_labels = row_labels
     )
 
+pdf(file = "results/figures/pseudobulk_heatmap.pdf", bg = "white")
+draw(bulk_heat)
+dev.off()
 
+
+png(
+    filename = "results/figures/pseudobulk_heatmap.png",
+    res = 300,
+    bg = "white",
+    units = "in",
+    width = 14,
+    height = 14
+    )
+
+draw(bulk_heat)
+dev.off()
