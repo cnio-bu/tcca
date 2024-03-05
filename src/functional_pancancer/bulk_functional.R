@@ -8,6 +8,8 @@ library(GSVA)
 library(NbClust)
 library(tidyverse)
 
+source(file = "src/figures/TCCA_palette.R")
+
 
 ## function fix for factoextra
 my_fviz_nbclust <- function(x, print.summary = TRUE, barfill = "steelblue", barcolor = "steelblue"){
@@ -292,7 +294,7 @@ clinical_features <- clinical_metadata %>%
     ) %>%
     mutate(
         summarised_tumor_site = case_when(
-            refined_tumor_site %in% names(translat_human_sites) ~ refined_tumor_site,
+            refined_tumor_site %in% names(translat_human_sites) ~ translat_human_sites[refined_tumor_site],
             TRUE ~ "Other"
         ),
         adult_pediatric = ifelse(age >= 16, "Adult", "Pediatric"),
@@ -311,13 +313,27 @@ clinical_features <- clinical_metadata %>%
     )
 
 
+pals = list(
+    "Age" = age_colors,
+    "Chromosomal sex" = sex_colors,
+    "Solid/Liquid" = sl_colors,
+    "Primary or metastasis" = pm_colors,
+    "Tumor site" = tumor_sites_colors,
+    "Treatment" = treatment_colors,
+    "Therapeutic Cluster" = tcs_colors
+)
+
 top_annotation <- ComplexHeatmap::HeatmapAnnotation(
-    "Primary or metastasis" = clinical_features$sample_type,
     "Age" = clinical_features$adult_pediatric,
+    "Chromosomal sex" = clinical_features$sex,
     "Treatment" = clinical_features$treated,
+    "Primary or metastasis" = clinical_features$sample_type,
+    "Tumor site" = clinical_features$summarised_tumor_site,
+    col = pals,
     which = "column"
 )
 
+## Use TCCA color palette
 
 row_labels <- rownames(gsva_es[bicluster_table$signature, ])
 row_labels <- gsub(pattern = "_UP", replacement = "", x = row_labels)
@@ -362,11 +378,16 @@ bulk_heat <- ComplexHeatmap::Heatmap(
     column_order = sample_table[order(sample_table$bicluster), ]$sample_study,
     row_names_gp = gpar(fontsize = 7),
     top_annotation = top_annotation,
-    row_labels = row_labels
+    row_labels = row_labels,
+    heatmap_legend_param = list(
+        title = "Enrichment score",
+        direction = "horizontal",
+        title_position = "lefttop"
+        )
     )
 
 pdf(file = "results/figures/pseudobulk_heatmap.pdf", bg = "white")
-draw(bulk_heat)
+draw(bulk_heat, heatmap_legend_side = "bottom")
 dev.off()
 
 
@@ -379,5 +400,6 @@ png(
     height = 14
     )
 
-draw(bulk_heat)
+draw(bulk_heat, heatmap_legend_side = "bottom")
 dev.off()
+
