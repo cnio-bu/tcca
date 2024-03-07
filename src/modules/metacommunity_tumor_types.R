@@ -84,3 +84,56 @@ write_tsv(
     x = metacom_summary,
     file = "results/modules/annotated/metacommunity_untreated_enrichment_by_cancer.tsv"
     )
+
+
+## metacom types 2
+metacom_types_highest_cell <- meta.data %>%
+    select(
+        cell,
+        sample,
+        tumor_type,
+        sample_type,
+        treated,
+        study,
+        metacom_untreated_1:metacom_untreated_6
+    ) %>%
+    filter(
+        sample_type == "p" &
+            treated == FALSE &
+            study != "cell_lines_gabriella_kinker"
+    ) %>%
+    pivot_longer(
+        cols = metacom_untreated_1:metacom_untreated_6,
+        names_to = "metacommunity",
+        values_to = "cell_enrichment"
+    ) %>%
+    group_by(cell) %>%
+    slice_max(order_by = cell_enrichment, n = 1)
+
+
+metacom_proportions <- metacom_types_highest_cell %>%
+    group_by(sample, study, metacommunity) %>%
+    summarise(
+        n.cells = n()
+    ) %>%
+    group_by(sample) %>%
+    mutate(
+        n.total = sum(n.cells),
+        n.prop = n.cells / n.total * 100,
+        n.prop = round(n.prop, digits = 2)
+    ) %>%
+    arrange(desc(n.prop)) %>%
+    group_by(sample) %>%
+    mutate(
+        best_metacom = head(metacommunity, n = 1)
+    )
+
+
+## add cancer types
+metacom_proportions_annotated <- metacom_proportions %>%
+    left_join(
+        y = meta.data[, c("sample", "study", "sample_type", "tumor_type")],
+        by = c("sample", "study")
+    ) %>%
+    distinct()
+    
