@@ -132,8 +132,105 @@ metacom_proportions <- metacom_types_highest_cell %>%
 ## add cancer types
 metacom_proportions_annotated <- metacom_proportions %>%
     left_join(
-        y = meta.data[, c("sample", "study", "sample_type", "tumor_type")],
+        y = meta.data[, c("sample", "study", "sample_type", "tumor_type", "tumor_subtype")],
         by = c("sample", "study")
     ) %>%
+    distinct() %>%
+    group_by(study, sample) %>%
+    mutate(
+        metacom_sd = sd(n.prop)
+    )
+
+metacom_dispersion_ctype <- metacom_proportions_annotated %>%
+    group_by(tumor_type, metacommunity) %>%
+    summarise(
+        avg_prop = median(n.prop),
+        prop_sd = sd(n.prop),
+        tumor_subtype = tumor_subtype
+    )
+
+metacom_densities <- ggplot(
+    data = metacom_dispersion_ctype,
+    aes(x = prop_sd, color = metacommunity)
+    ) +
+    geom_density(alpha = 0.3) +
+    scale_x_continuous(name = "Standard deviation of proportions") +
+    ylab("") +
+    scale_color_discrete(labels = paste("Metacommunity", c(1:6), sep = " ")) +
+    theme_minimal() +
+    ggtitle("Pancancer dispersion of cell proportions by metacommunity")
+
+
+metacom_averages <- ggplot(
+    data = metacom_dispersion_ctype,
+    aes(x = avg_prop, color = metacommunity)
+) +
+    geom_density(alpha = 0.3) +
+    scale_x_continuous(
+        name = "Average proportions",
+       # labels = scales::percent(100, scale = 1)
+        ) +
+    ylab("") +
+    scale_color_discrete(labels = paste("Metacommunity", c(1:6), sep = " ")) +
+    theme_minimal() +
+    ggtitle("Pancancer averages of cell proportions by metacommunity")
+
+
+## excelize for A.F.
+metacom_proportions_annotated_wide <- metacom_proportions_annotated %>%
+    pivot_wider(
+        id_cols = c("sample", "study", "tumor_type", "tumor_subtype"),
+        names_from = c("metacommunity"),
+        values_from = c("n.cells", "n.total", "n.prop", "metacom_sd")
+        )
+
+
+write_tsv(
+    x = metacom_proportions_annotated_wide,
+    file = "results/modules/annotated/metacom_proportions_primary_wide.tsv"
+    )
+
+
+## metacom best metacom by cancer type and sample
+metacom_proportions_annotated_sum <- metacom_proportions_annotated %>%
+    select(sample, tumor_type, tumor_subtype, study, best_metacom) %>%
     distinct()
-    
+
+metacom_sample_best <- table(
+    metacom_proportions_annotated_sum$tumor_type,
+    metacom_proportions_annotated_sum$best_metacom
+    )
+
+metacom_sample_best <- as.data.frame(metacom_sample_best)
+colnames(metacom_sample_best) <- c("Tumor type", "Metacommunity", "N.samples")
+
+metacom_sample_best_wide <- metacom_sample_best %>%
+    pivot_wider(
+        id_cols = c("Tumor type"),
+        names_from = "Metacommunity",
+        values_from = "N.samples"
+    )
+
+write_tsv(
+    x = metacom_sample_best_wide,
+    file = "results/modules/annotated/metacom_bests_primary.tsv"
+    )
+
+brca_tumor_best_metacoms <- metacom_proportions_annotated_sum %>%
+    filter(tumor_type == "BRCA")
+
+brca_tumor_best_metacoms <- table(
+    brca_tumor_best_metacoms$tumor_subtype,
+    brca_tumor_best_metacoms$best_metacom
+)
+
+brca_tumor_best_metacoms <- as.data.frame(brca_tumor_best_metacoms)
+colnames(brca_tumor_best_metacoms) <- c("Subtype", "Best metacommunity", "N.samples")
+
+brca_tumor_best_metacoms_wide <- brca_tumor_best_metacoms %>%
+    pivot_wider(id_cols = "Subtype", names_from = "Best metacommunity", values_from = "N.samples")
+
+write_tsv(
+    x = brca_tumor_best_metacoms_wide,
+    file = "results/modules/annotated/brca_subtypes_metacommunities_untreated.tsv"
+    )
