@@ -47,7 +47,7 @@ metagroups <- bind_rows(metagroup_drugset_1, metagroup_drugset_2)  %>%
         names_from = "metagroup",
         values_from = "meta_community"
     ) %>%
-    replace_na(list(MT1 = "mt1_unique", MT2 = "mt2_unique")) 
+    replace_na(list(MT1 = "mt2_unique", MT2 = "mt1_unique")) 
     mutate(
         MT1 = paste0("1_", MT1),
         MT2 = paste0("2_", MT2)
