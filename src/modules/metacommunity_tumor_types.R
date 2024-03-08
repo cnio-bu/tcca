@@ -1,5 +1,4 @@
 library(BPCells)
-library(ggpubr)
 library(Seurat)
 library(tidyverse)
 
@@ -174,13 +173,20 @@ write_tsv(
 
 
 ## metacom best metacom by cancer type and sample
-metacom_proportions_annotated_sum <- metacom_proportions_annotated %>%
-    select(sample, tumor_type, tumor_subtype, study, best_metacom) %>%
+metacom_proportions_annotated_sum <- metacom_proportions_annotated_wide %>%
+    select(
+        sample,
+        tumor_type,
+        tumor_subtype,
+        study,
+        best_metacom,
+        best_metacom_enrichment
+        ) %>%
     distinct()
 
 metacom_sample_best <- table(
     metacom_proportions_annotated_sum$tumor_type,
-    metacom_proportions_annotated_sum$best_metacom
+    metacom_proportions_annotated_sum$best_metacom_enrichment
     )
 
 metacom_sample_best <- as.data.frame(metacom_sample_best)
