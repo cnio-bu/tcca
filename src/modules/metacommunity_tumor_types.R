@@ -30,13 +30,22 @@ meta.data <- bc@meta.data
 metacom_types <- meta.data %>%
     select(
         cell,
+        new_cell_id,
         sample,
         tumor_type,
         sample_type,
         treated,
         study,
         metacom_untreated_1:metacom_untreated_6
-        ) %>%
+        )
+
+write_tsv(
+    x = metacom_types,
+    file = "results/modules/annotated/pancancer_modules_mt1.tsv"
+    )
+
+## Filter to keep MT1 samples
+metacom_types <- metacom_types %>%
     filter(
         sample_type == "p" &
             treated == FALSE &
