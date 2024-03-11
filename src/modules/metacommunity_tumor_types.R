@@ -178,30 +178,37 @@ metacom_proportions_annotated_sum <- metacom_proportions_annotated_wide %>%
         sample,
         tumor_type,
         tumor_subtype,
+        sample_type,
         study,
         best_metacom,
         best_metacom_enrichment
         ) %>%
     distinct()
 
-metacom_sample_best <- table(
+metacom_sample_best_by_freq <- table(
     metacom_proportions_annotated_sum$tumor_type,
-    metacom_proportions_annotated_sum$best_metacom_enrichment
+    metacom_proportions_annotated_sum$sample_type,
+    metacom_proportions_annotated_sum$best_metacom
     )
 
-metacom_sample_best <- as.data.frame(metacom_sample_best)
-colnames(metacom_sample_best) <- c("Tumor type", "Metacommunity", "N.samples")
+metacom_sample_best_by_freq <- as.data.frame(metacom_sample_best_by_freq)
+colnames(metacom_sample_best_by_freq) <- c(
+    "Tumor type",
+    "Sample type",
+    "Metacommunity",
+    "N.samples"
+    )
 
-metacom_sample_best_wide <- metacom_sample_best %>%
+metacom_sample_best_wide <- metacom_sample_best_by_freq %>%
     pivot_wider(
-        id_cols = c("Tumor type"),
+        id_cols = c("Tumor type", "Sample type"),
         names_from = "Metacommunity",
         values_from = "N.samples"
     ) 
 
 write_tsv(
     x = metacom_sample_best_wide,
-    file = "results/modules/annotated/metacom_bests_primary.tsv"
+    file = "results/modules/annotated/metacom_bests_primary_by_freq.tsv"
     )
 
 brca_tumor_best_metacoms <- metacom_proportions_annotated_sum %>%
