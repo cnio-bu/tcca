@@ -179,53 +179,200 @@ metacom_proportions_annotated_sum <- metacom_proportions_annotated_wide %>%
         tumor_type,
         tumor_subtype,
         sample_type,
+        treated,
         study,
         best_metacom,
         best_metacom_enrichment
         ) %>%
     distinct()
 
-metacom_sample_best_by_freq <- table(
-    metacom_proportions_annotated_sum$tumor_type,
-    metacom_proportions_annotated_sum$sample_type,
-    metacom_proportions_annotated_sum$best_metacom
+
+## frequency table of best metacommunity by enrichment and frequency
+## with only MT1 samples (primary tumors untreated)
+metacoms_proportions_mt1 <- metacom_proportions_annotated_sum %>%
+    filter(
+        study != "cell_lines_gabriella_kinker",
+        sample_type == "p",
+        treated == FALSE
     )
 
-metacom_sample_best_by_freq <- as.data.frame(metacom_sample_best_by_freq)
+
+metacom_sample_best_by_freq_mt1 <- table(
+    metacoms_proportions_mt1$tumor_type,
+    metacoms_proportions_mt1$best_metacom
+    )
+
+metacom_sample_best_by_freq <- as.data.frame(metacom_sample_best_by_freq_mt1)
 colnames(metacom_sample_best_by_freq) <- c(
     "Tumor type",
-    "Sample type",
     "Metacommunity",
     "N.samples"
     )
 
-metacom_sample_best_wide <- metacom_sample_best_by_freq %>%
+metacom_sample_best_wide_by_freq <- metacom_sample_best_by_freq %>%
     pivot_wider(
-        id_cols = c("Tumor type", "Sample type"),
+        id_cols = c("Tumor type"),
         names_from = "Metacommunity",
         values_from = "N.samples"
     ) 
 
 write_tsv(
-    x = metacom_sample_best_wide,
+    x = metacom_sample_best_wide_by_freq,
     file = "results/modules/annotated/metacom_bests_primary_by_freq.tsv"
     )
 
-brca_tumor_best_metacoms <- metacom_proportions_annotated_sum %>%
-    filter(tumor_type == "BRCA")
 
-brca_tumor_best_metacoms <- table(
-    brca_tumor_best_metacoms$tumor_subtype,
-    brca_tumor_best_metacoms$best_metacom
-)
-
-brca_tumor_best_metacoms <- as.data.frame(brca_tumor_best_metacoms)
-colnames(brca_tumor_best_metacoms) <- c("Subtype", "Best metacommunity", "N.samples")
-
-brca_tumor_best_metacoms_wide <- brca_tumor_best_metacoms %>%
-    pivot_wider(id_cols = "Subtype", names_from = "Best metacommunity", values_from = "N.samples")
+## get relative frequencies
+metacom_sample_best_wide_by_freq_rel <- metacom_sample_best_wide_by_freq %>%
+    rowwise() %>%
+    mutate(
+        "n.total" = sum(
+            metacom_untreated_1,
+            metacom_untreated_2,
+            metacom_untreated_3,
+            metacom_untreated_4,
+            metacom_untreated_5,
+            metacom_untreated_6
+            ),
+        metacom_untreated_1 = metacom_untreated_1 / n.total,
+        metacom_untreated_2 = metacom_untreated_2 / n.total,
+        metacom_untreated_3 = metacom_untreated_3 / n.total,
+        metacom_untreated_4 = metacom_untreated_4 / n.total,
+        metacom_untreated_5 = metacom_untreated_5 / n.total,
+        metacom_untreated_6 = metacom_untreated_6 / n.total
+        
+    )
 
 write_tsv(
-    x = brca_tumor_best_metacoms_wide,
-    file = "results/modules/annotated/brca_subtypes_metacommunities_untreated.tsv"
+    x = metacom_sample_best_wide_by_freq_rel,
+    file = "results/modules/annotated/metacom_best_primary_by_freq_rel.tsv"
     )
+
+## Now do the frequencies by metacommunity instead of by cancer type
+sample_metacom_best_wide_by_freq <- metacom_sample_best_by_freq %>%
+    group_by(
+        Metacommunity
+    ) %>%
+    mutate(
+        n.total = sum(N.samples),
+        n.prop = N.samples / n.total
+    ) %>%
+    ungroup() %>%
+    pivot_wider(
+        id_cols = c("Tumor type"),
+        id_expand = TRUE,
+        names_from = "Metacommunity",
+        values_from = "n.prop"
+    )
+   
+write_tsv(
+    x = sample_metacom_best_wide_by_freq,
+    file = "results/modules/annotated/primaries_best_metacom_by_freq.tsv"
+)
+
+
+
+## frequency table of best metacommunity by enrichment and frequency
+## with all patients, no cancer cell lines
+metacoms_proportions_patients <- metacom_proportions_annotated_sum %>%
+    filter(
+        study != "cell_lines_gabriella_kinker",
+    )
+
+metacom_sample_best_by_freq <- table(
+    metacoms_proportions_patients$tumor_type,
+    metacoms_proportions_patients$sample_type,
+    metacoms_proportions_patients$best_metacom
+)
+
+metacom_sample_best_by_freq <- as.data.frame(metacom_sample_best_by_freq)
+colnames(metacom_sample_best_by_freq) <- c(
+    "Tumor type",
+    "Primary or metastasis",
+    "Metacommunity",
+    "N.samples"
+)
+
+metacom_sample_best_wide_by_freq <- metacom_sample_best_by_freq %>%
+    pivot_wider(
+        id_cols = c("Tumor type", "Primary or metastasis"),
+        names_from = "Metacommunity",
+        values_from = "N.samples"
+    ) 
+
+write_tsv(
+    x = metacom_sample_best_wide_by_freq,
+    file = "results/modules/annotated/metacom_bests_full_cohort_by_freq.tsv"
+)
+
+
+## get relative frequencies
+metacom_sample_best_wide_by_freq_rel <- metacom_sample_best_wide_by_freq %>%
+    rowwise() %>%
+    mutate(
+        "n.total" = sum(
+            metacom_untreated_1,
+            metacom_untreated_2,
+            metacom_untreated_3,
+            metacom_untreated_4,
+            metacom_untreated_5,
+            metacom_untreated_6
+        ),
+        metacom_untreated_1 = metacom_untreated_1 / n.total,
+        metacom_untreated_2 = metacom_untreated_2 / n.total,
+        metacom_untreated_3 = metacom_untreated_3 / n.total,
+        metacom_untreated_4 = metacom_untreated_4 / n.total,
+        metacom_untreated_5 = metacom_untreated_5 / n.total,
+        metacom_untreated_6 = metacom_untreated_6 / n.total
+        
+    )
+
+write_tsv(
+    x = metacom_sample_best_wide_by_freq_rel,
+    file = "results/modules/annotated/metacom_best_patients_by_freq_rel.tsv"
+)
+
+## Now do the frequencies by metacommunity instead of by cancer type
+sample_metacom_best_wide_by_freq <- metacom_sample_best_by_freq %>%
+    group_by(
+        Metacommunity
+    ) %>%
+    mutate(
+        n.total = sum(N.samples),
+        n.prop = N.samples / n.total
+    ) %>%
+    ungroup() %>%
+    pivot_wider(
+        id_cols = c("Tumor type"),
+        id_expand = TRUE,
+        names_from = "Metacommunity",
+        values_from = "n.prop"
+    )
+
+
+
+
+
+
+
+
+
+
+# brca_tumor_best_metacoms <- metacom_proportions_annotated_sum %>%
+#     filter(tumor_type == "BRCA")
+# 
+# brca_tumor_best_metacoms <- table(
+#     brca_tumor_best_metacoms$tumor_subtype,
+#     brca_tumor_best_metacoms$best_metacom
+# )
+# 
+# brca_tumor_best_metacoms <- as.data.frame(brca_tumor_best_metacoms)
+# colnames(brca_tumor_best_metacoms) <- c("Subtype", "Best metacommunity", "N.samples")
+# 
+# brca_tumor_best_metacoms_wide <- brca_tumor_best_metacoms %>%
+#     pivot_wider(id_cols = "Subtype", names_from = "Best metacommunity", values_from = "N.samples")
+# 
+# write_tsv(
+#     x = brca_tumor_best_metacoms_wide,
+#     file = "results/modules/annotated/brca_subtypes_metacommunities_untreated.tsv"
+#     )
