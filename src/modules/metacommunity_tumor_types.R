@@ -41,6 +41,7 @@ metacom_types <- meta.data %>%
         treated,
         study,
         sample_study,
+        refined_tumor_site,
         metacom_untreated_1:metacom_untreated_6
         )
 
@@ -74,6 +75,7 @@ metacom_types_highest_cell <- metacom_sample_agg %>%
         treated,
         study,
         sample_study,
+        refined_tumor_site,
         metacom_untreated_1:metacom_untreated_6,
     ) %>%
     pivot_longer(
@@ -111,7 +113,14 @@ metacom_sample_agg <- metacom_sample_agg %>%
 
 ## add cancer types
 cancer_info <- meta.data %>%
-    select("sample_study", "sample_type", "treated", "tumor_type", "tumor_subtype") %>%
+    select(
+        "sample_study",
+        "sample_type",
+        "treated",
+        "tumor_type",
+        "tumor_subtype",
+        "refined_tumor_site"
+        ) %>%
     distinct()
 
 metacom_proportions_annotated <- metacom_proportions %>%
@@ -135,6 +144,7 @@ metacom_proportions_annotated_wide <- metacom_proportions_annotated %>%
             "tumor_type",
             "tumor_subtype",
             "sample_type",
+            "refined_tumor_site",
             "treated",
             "best_metacom",
             "n.total"
@@ -181,6 +191,7 @@ metacom_proportions_annotated_sum <- metacom_proportions_annotated_wide %>%
         sample_type,
         treated,
         study,
+        refined_tumor_site,
         best_metacom,
         best_metacom_enrichment
         ) %>%
@@ -343,7 +354,7 @@ sample_metacom_best_wide_by_freq <- metacom_sample_best_by_freq %>%
     ) %>%
     ungroup() %>%
     pivot_wider(
-        id_cols = c("Tumor type"),
+        id_cols = c("Tumor type", "Primary or metastasis"),
         id_expand = TRUE,
         names_from = "Metacommunity",
         values_from = "n.prop"
@@ -351,6 +362,86 @@ sample_metacom_best_wide_by_freq <- metacom_sample_best_by_freq %>%
 
 
 
+## Frequency table for brain mets
+metacoms_proportions_brain <- metacom_proportions_annotated_sum %>%
+    filter(
+        study != "cell_lines_gabriella_kinker",
+        sample_type == "m",
+        refined_tumor_site == "brain"
+        
+    )
+
+
+metacom_sample_best_by_freq_brain <- table(
+    metacoms_proportions_brain$tumor_type,
+    metacoms_proportions_brain$best_metacom
+)
+
+metacom_brain_best_by_freq <- as.data.frame(metacom_sample_best_by_freq_brain)
+colnames(metacom_brain_best_by_freq) <- c(
+    "Tumor type",
+    "Metacommunity",
+    "N.samples"
+)
+
+metacom_brain_best_wide_by_freq <- metacom_brain_best_by_freq %>%
+    pivot_wider(
+        id_cols = c("Tumor type"),
+        names_from = "Metacommunity",
+        values_from = "N.samples"
+    ) 
+
+write_tsv(
+    x = metacom_brain_best_wide_by_freq,
+    file = "results/modules/annotated/metacom_brain_by_freq.tsv"
+)
+
+
+## get relative frequencies
+metacom_brain_best_wide_by_freq_rel <- metacom_brain_best_wide_by_freq %>%
+    rowwise() %>%
+    mutate(
+        "n.total" = sum(
+            metacom_untreated_1,
+            metacom_untreated_2,
+            metacom_untreated_4,
+            metacom_untreated_5,
+            metacom_untreated_6
+        ),
+        metacom_untreated_1 = metacom_untreated_1 / n.total,
+        metacom_untreated_2 = metacom_untreated_2 / n.total,
+        metacom_untreated_4 = metacom_untreated_4 / n.total,
+        metacom_untreated_5 = metacom_untreated_5 / n.total,
+        metacom_untreated_6 = metacom_untreated_6 / n.total
+        
+    )
+
+write_tsv(
+    x = metacom_brain_best_wide_by_freq_rel,
+    file = "results/modules/annotated/metacom_brain_primary_by_freq_rel.tsv"
+)
+
+## Now do the frequencies by metacommunity instead of by cancer type
+sample_brain_metacom_best_wide_by_freq <- metacom_brain_best_by_freq %>%
+    group_by(
+        Metacommunity
+    ) %>%
+    mutate(
+        n.total = sum(N.samples),
+        n.prop = N.samples / n.total
+    ) %>%
+    ungroup() %>%
+    pivot_wider(
+        id_cols = c("Tumor type"),
+        id_expand = TRUE,
+        names_from = "Metacommunity",
+        values_from = "n.prop"
+    )
+
+write_tsv(
+    x = sample_brain_metacom_best_wide_by_freq,
+    file = "results/modules/annotated/brain_primaries_best_metacom_by_freq.tsv"
+)
 
 
 
