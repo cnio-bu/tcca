@@ -84,8 +84,15 @@ metacom_types_highest_cell <- metacom_sample_agg %>%
         values_to = "cell_enrichment"
     ) %>%
     group_by(new_cell_id) %>%
-    slice_max(order_by = cell_enrichment, n = 1)
+    slice_max(order_by = cell_enrichment, n = 1) %>%
+    mutate(
+        sensitivity = sign(cell_enrichment)
+    )
 
+write_tsv(
+    x = metacom_types_highest_cell,
+    file = "results/modules/annotated/malignant_cells_best_metacoms_all_cohort.tsv"
+    )
 
 metacom_proportions <- metacom_types_highest_cell %>%
     group_by(sample_study, metacommunity) %>%
