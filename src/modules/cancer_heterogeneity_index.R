@@ -1,3 +1,4 @@
+library(vegan)
 library(tidyverse)
 
 ith_by_sample <- data.table::fread(
@@ -12,29 +13,45 @@ ith_primaries_naive <- ith_by_sample %>%
         sample_type == "p",
         treated == FALSE
         ) %>%
+    filter(
+        !(study == "brca_bhupinder_pal" & tumor_subtype == "predicted_tumour")
+    ) %>%
     select(
         sample_study,
         tumor_type,
+        sample_type,
+        treated,
         n.prop_metacom_untreated_1,
         n.prop_metacom_untreated_2,
         n.prop_metacom_untreated_3,
         n.prop_metacom_untreated_4,
         n.prop_metacom_untreated_5,
         n.prop_metacom_untreated_6
-    ) %>%
-    pivot_longer(
-        cols = n.prop_metacom_untreated_1:n.prop_metacom_untreated_6,
-        names_to = "metacommunity",
-        values_to = "n.prop"
-    ) %>%
-    group_by(
-        
-    ) %>%
-    mutate(
-        
-    )
+    ) 
 
+## comm data
+ith_primaries_naive_mat <- ith_primaries_naive %>%
+    select(sample_study, n.prop_metacom_untreated_1:n.prop_metacom_untreated_6) %>%
+    as.data.frame()
 
-dispersion_plot <- ggplot(data = ith_primaries_naive, aes(x = tumor_type, y = n.prop_metacom_untreated_6)) +
+rownames(ith_primaries_naive_mat) <- ith_primaries_naive_mat$sample_study
+ith_primaries_naive_mat$sample_study <- NULL
+
+ith_primaries_naive_mat <- as.matrix(ith_primaries_naive_mat)
+ith_primaries_naive_mat[is.na(ith_primaries_naive_mat)] <- 0
+
+shan <- vegan::diversity(
+    x = ith_primaries_naive_mat,
+    index = "shannon",
+    MARGIN = 1,
+    groups = ith_primaries_naive$tumor_type,
+    equalize.groups = TRUE
+)
+ith_primaries_naive$shan <- shan
+ith_primaries_naive$tumor_type <- fct_reorder(ith_primaries_naive$tumor_type, ith_primaries_naive$shan)
+
+## test
+ith_shan <- ggplot(data = ith_primaries_naive, aes(y = shan, x = tumor_type)) +
     geom_boxplot() +
-    theme_minimal()
+    geom_point() +
+    scale_y_continuous(limits = c(0,2))
