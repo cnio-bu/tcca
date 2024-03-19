@@ -89,17 +89,153 @@ genomic_therapeutic_ith <- ith_primaries_naive %>%
     filter(
         !is.na(n.prop),
         !is.na(shan)
+    ) %>%
+    group_by(tumor_type) %>%
+    mutate(
+        mean_shan = mean(shan),
+        avg.clones = mean(n.prop),
+        n.samples = n()
+    ) %>%
+    filter(
+        n.samples > 5
     )
 
-## test
-genomic_therapeutic_ith <- genomic_therapeutic_ith %>%
-    filter(
-    #    sample_type == "p",
-    #       treated == FALSE
-          )
 
-test <- ggplot(data = genomic_therapeutic_ith, aes(x = shan, y = n.prop)) +
+
+mean_shan_levels <- ggplot(genomic_therapeutic_ith,
+                           aes(x = tumor_type,
+                               y = shan,
+                               color = tumor_type
+                               )
+                           ) +
+    geom_segment(aes(x =  tumor_type,
+                     xend = tumor_type,
+                     y = mean(genomic_therapeutic_ith$shan),
+                     yend = mean_shan
+                     )
+                 ) +
+    geom_jitter(size = 3, alpha = 0.25, width = 0.2) +
+    geom_hline(aes(yintercept = mean(genomic_therapeutic_ith$shan)), 
+               color = "gray70",
+               size = 0.6
+    ) +
+    stat_summary(fun = mean, geom = "point", size = 5) +
+    stat_summary(aes(label = sample),
+                 geom = "text",
+                 fun.y = function(y){ o <- jitter.stats(y)$out; if (o >= 3000) o else NA}
+    ) +
+    annotate("text",
+             x = 5.5,
+             y = 2000,
+             size = 3.8,
+             color = "gray20",
+             lineheight = .9,
+             label = "Pan-cancer therapeutic heterogeneity"
+    ) + 
+    coord_flip() +
+    scale_y_continuous(limits = c(1, 2), expand = c(0,0)) +
+    theme_bw() +
+    theme(panel.grid = element_blank(),
+          legend.position = "none",
+          text = element_text(family = "Arial"),
+          plot.caption = element_text(size = 9, color = "gray50"),
+          axis.line = element_line(colour = "black"),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.border = element_blank(),
+          panel.background = element_blank()
+    ) +
+    labs(y = "Therapeutic heterogeneity index",
+         x = ""
+    )
+
+ggsave(
+    plot = mean_shan_levels,
+    filename = "results/figures/mean_shan_levels.png",
+    dpi = 100,
+    height = 7,
+    width = 7
+    )
+
+
+mean_clonal_levels <- ggplot(genomic_therapeutic_ith,
+                           aes(x = tumor_type,
+                               y = n.prop,
+                               color = tumor_type
+                           )
+) +
+    geom_segment(aes(x =  tumor_type,
+                     xend = tumor_type,
+                     y = mean(genomic_therapeutic_ith$n.prop),
+                     yend = avg.clones
+    )
+    ) +
+    geom_jitter(size = 3, alpha = 0.25, width = 0.2) +
+    geom_hline(aes(yintercept = mean(genomic_therapeutic_ith$n.prop)), 
+               color = "gray70",
+               size = 0.6
+    ) +
+    stat_summary(fun = mean, geom = "point", size = 5) +
+    stat_summary(aes(label = sample),
+                 geom = "text",
+                 fun.y = function(y){ o <- jitter.stats(y)$out; if (o >= 3000) o else NA}
+    ) +
+    annotate("text",
+             x = 5.5,
+             y = 2000,
+             size = 3.8,
+             color = "gray20",
+             lineheight = .9,
+             label = "Pan-cancer clonal heterogeneity"
+    ) + 
+    coord_flip() +
+    scale_y_continuous(limits = c(0, 60), expand = c(0,0)) +
+    theme_bw() +
+    theme(panel.grid = element_blank(),
+          legend.position = "none",
+          text = element_text(family = "Arial"),
+          plot.caption = element_text(size = 9, color = "gray50"),
+          axis.line = element_line(colour = "black"),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.border = element_blank(),
+          panel.background = element_blank()
+    ) +
+    labs(y = "Clone proportion by 1000 cells",
+         x = ""
+    )
+
+ggsave(
+    plot = mean_clonal_levels,
+    filename = "results/figures/mean_clonal_levels.png",
+    dpi = 100,
+    height = 7,
+    width = 7
+)
+
+
+correlation_wrap <- ggplot(data = genomic_therapeutic_ith, aes(x = shan, y = n.prop)) +
     geom_point() +
     geom_smooth(method = "lm") +
-    ggpubr::stat_cor() +
-    facet_wrap(~tumor_type, nrow=8, ncol=8)
+    ggpubr::stat_cor(method = "spearman") +
+    facet_wrap(~tumor_type, ncol = 5, nrow = 5) +
+    theme_bw() + 
+    theme(panel.grid = element_blank(),
+          legend.position = "none",
+          text = element_text(family = "Arial"),
+          plot.caption = element_text(size = 9, color = "gray50"),
+          axis.line = element_line(colour = "black"),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.border = element_blank(),
+          panel.background = element_blank()
+    )
+ 
+
+ggsave(
+    plot = correlation_wrap,
+    filename = "results/figures/clonal_shan_correlation_cancer_type.png",
+    dpi = 300,
+    height = 21,
+    width = 21
+    )
