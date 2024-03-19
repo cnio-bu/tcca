@@ -42,6 +42,16 @@ samples_to_remove <- c(
 "BT1300"
 )
 
+## missasigned samples
+non_malignants <- (
+    raw_clinical_export$study == "brca_bhupinder_pal" &
+        raw_clinical_export$tumor_subtype == "predicted_tumour"
+)
+
+non_malignants <- raw_clinical_export[non_malignants, ]$sample
+
+samples_to_remove <- c(samples_to_remove, non_malignants)
+
 clinical_unique_samples <- raw_clinical_export %>%
     filter(
         !(sample %in% samples_to_remove) 
