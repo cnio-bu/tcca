@@ -11,6 +11,9 @@ mat <- open_matrix_dir(dir = "results/lvl1/pancancer_merged_mat")
 
 seu@assays$RNA$counts <- mat
 
+## Remove preneoplastic brca
+seu <- subset(seu, subset = study != "brca_bhupinder_pal" | tumor_subtype != "predicted_tumour")
+
 seu <- NormalizeData(seu)
 
 seu_bulk <- AggregateExpression(
