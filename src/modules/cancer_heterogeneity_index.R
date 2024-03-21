@@ -10,8 +10,8 @@ ith_by_sample <- data.table::fread(
 ith_primaries_naive <- ith_by_sample %>%
     filter(
         study != "cell_lines_gabriella_kinker",
-   #     sample_type == "p",
-    #    treated == FALSE
+        sample_type == "p",
+        treated == FALSE
         ) %>%
     filter(
         !(study == "brca_bhupinder_pal" & tumor_subtype == "predicted_tumour")
@@ -92,7 +92,7 @@ genomic_therapeutic_ith <- ith_primaries_naive %>%
     ) %>%
     group_by(tumor_type) %>%
     mutate(
-        mean_shan = mean(shan),
+        mean_shan = median(shan),
         avg.clones = mean(n.prop),
         n.samples = n()
     ) %>%
@@ -110,16 +110,16 @@ mean_shan_levels <- ggplot(genomic_therapeutic_ith,
                            ) +
     geom_segment(aes(x =  tumor_type,
                      xend = tumor_type,
-                     y = mean(genomic_therapeutic_ith$shan),
+                     y = median(genomic_therapeutic_ith$shan),
                      yend = mean_shan
                      )
                  ) +
     geom_jitter(size = 3, alpha = 0.25, width = 0.2) +
-    geom_hline(aes(yintercept = mean(genomic_therapeutic_ith$shan)), 
+    geom_hline(aes(yintercept = median(genomic_therapeutic_ith$shan)), 
                color = "gray70",
                size = 0.6
     ) +
-    stat_summary(fun = mean, geom = "point", size = 5) +
+    stat_summary(fun = median, geom = "point", size = 5) +
     stat_summary(aes(label = sample),
                  geom = "text",
                  fun.y = function(y){ o <- jitter.stats(y)$out; if (o >= 3000) o else NA}
