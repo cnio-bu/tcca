@@ -13,6 +13,12 @@ meta_coms_set <- split(
     metacom_untreated$meta_community
 )
 
+## Remove samples from predicted tumors brca
+bc <- subset(
+    bc,
+    subset = study != "brca_bhupinder_pal" | tumor_subtype != "predicted_tumour"
+    )
+
 
 bc <- AddModuleScore(
     object = bc,
