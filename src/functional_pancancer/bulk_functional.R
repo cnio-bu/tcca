@@ -37,16 +37,13 @@ my_fviz_nbclust <- function(x, print.summary = TRUE, barfill = "steelblue", barc
     p
 }
 
-mat <- read_tsv(
+mat <- read.table(
     file = "results/functional/pancancer_pseudobulk.tsv",
-    ) %>%
-    as.data.frame()
-
-rownames(mat) <- mat$gene
-mat$gene <- NULL
+    check.names = FALSE
+    )
 
 mat <- as.matrix(mat)
-
+#mat <- mat[, !grepl("cell.lines.gabriella.kinker", x = colnames(mat))]
 dge <- DGEList(counts = mat)
 dge <- calcNormFactors(object = dge, method = "TMM")
 
@@ -66,6 +63,10 @@ gsets <- GSEABase::getGmt(con = "reference/combined_gsets_functional.gmt")
 gsets_fix <- list()
 for(gset in gsets){
     gset@geneIds <- gset@geneIds[gset@geneIds != ""]
+    # 
+    # if(grepl(pattern = "MP", x = gset@setName)){
+    #     gsets_fix <- c(gsets_fix, gset)
+    # }
     gsets_fix <- c(gsets_fix, gset)
 }
 
@@ -88,6 +89,7 @@ colnames(gsva_es)[colnames(gsva_es) == "T19_1_adrenalnb_rui_chong"] <- "T19_adre
 
 gsva_es_centered <- scale(x = t(gsva_es), center = TRUE, scale = TRUE)
 
+write.table(x = gsva_es, file = "results/functional/pseudo_bulk_gsva.tsv")
 
 ## Get hidden factors optimal
 feature_cors <- corrplot::corrplot(
@@ -370,7 +372,7 @@ bulk_heat <- ComplexHeatmap::Heatmap(
     cluster_columns = FALSE,
     clustering_distance_rows = "pearson",
     clustering_distance_columns = "pearson",
-    cluster_column_slices = FALSE,
+    cluster_column_slices = TRUE,
     cluster_row_slices = TRUE,
     row_split = bicluster_table$bicluster,
     row_order = bicluster_table[order(bicluster_table$bicluster), ]$signature,
@@ -386,10 +388,13 @@ bulk_heat <- ComplexHeatmap::Heatmap(
         )
     )
 
-pdf(file = "results/figures/pseudobulk_heatmap.pdf", bg = "white")
-draw(bulk_heat, heatmap_legend_side = "bottom")
+svg(
+    filename = "results/figures/heatmap_all_samples_all_gsets.svg",
+    width = 14,
+    height = 14
+)
+draw(bulk_heat)
 dev.off()
-
 
 png(
     filename = "results/figures/pseudobulk_heatmap.png",
@@ -402,4 +407,31 @@ png(
 
 draw(bulk_heat, heatmap_legend_side = "bottom")
 dev.off()
+
+### test
+
+## bulk heat by fabia biclust
+bulk_heat <- ComplexHeatmap::Heatmap(
+    matrix = gsva_es,
+    show_column_names = FALSE,
+    cluster_rows = FALSE,
+    cluster_columns = TRUE,
+    clustering_distance_rows = "pearson",
+    clustering_distance_columns = "pearson",
+    cluster_column_slices = TRUE,
+    cluster_row_slices = TRUE,
+    row_split = c(1,1,1,1,1,2,2,2,3,3,3,3,4,4,4,4,4,5,5,6,7,8,9,9,10,11,11,11,11,11,12,12,12,13,13,13,13,13,14,14,14,14),
+#    row_order = bicluster_table[order(bicluster_table$bicluster), ]$signature,
+    column_split = 7,
+#    column_order = sample_table[order(sample_table$bicluster), ]$sample_study,
+    row_names_gp = gpar(fontsize = 7),
+    top_annotation = top_annotation,
+#    row_labels = row_labels,
+    heatmap_legend_param = list(
+        title = "Enrichment score",
+        direction = "horizontal",
+        title_position = "lefttop"
+    )
+)
+
 
