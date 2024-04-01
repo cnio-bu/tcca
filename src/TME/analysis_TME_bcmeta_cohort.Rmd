@@ -1,0 +1,1721 @@
+---
+title: "Analysis of the TME in the cohort of bc-meta"
+output: html_notebook
+params:
+    seurat_object_bpcells: "seu_lvl2_merged.Rds"
+---
+
+> Packages
+
+```{r, setup, message=FALSE}
+
+# # Install packages #
+# install.packages('Seurat')
+# 
+# setRepositories(ind = 1:3, addURLs = c('https://satijalab.r-universe.dev', 'https://bnprks.r-universe.dev/'))
+# install.packages(c("BPCells", "presto", "glmGamPoi"))
+# 
+# install.packages('Signac')
+# remotes::install_github("satijalab/seurat-data", quiet = TRUE)
+# remotes::install_github("satijalab/azimuth", quiet = TRUE)
+# remotes::install_github("satijalab/seurat-wrappers", quiet = TRUE)
+
+# load packages #
+
+library('dplyr')
+library('BPCells')
+library('Seurat')
+library('SeuratObject')
+library('SeuratDisk')
+#BiocManager::install("rhdf5")
+#library('Azimuth')
+library('SeuratData')
+library('ggplot2')
+
+options(Seurat.object.assay.version = "v5")
+options(future.globals.maxSize = 891289600) # (850 * 1024^2)
+knitr::opts_knit$set(root.dir = './data/merged/')
+
+# tcca palette
+tumor_sites_colors <- c("brain" = "#CA9A8C",
+                        "adrenal_gland" = "#FF9A4A",
+                        "breast" = "#FF8FAB",
+                        "skin" = "#5E2D2C",
+                        "lung" = "#A2F0EF",
+                        "soft_tissue" = "#FB6467",
+                        "esophagus" = "#5780FE", 
+                        "bladder" = "#58B368",
+                        "lymph_node" = "#B6F884",
+                        "liver" = "#309975",
+                        "pancreas" = "#B47EB3",
+                        "ovary" = "#9C0D38",
+                        "prostate" = "#005D95",
+                        "other" = "#BBB9B7")
+
+plot_umap <- function(x, labels, raw_mat_df, feature,
+                      colors=c("#ff7f00", "#e377c2", "#17becf"),
+                      pad=0.1, cex=0.6, pch=19, legend.suffix="",
+                      cex.main=1, cex.legend=0.85) {
+  
+  layout <- x
+  if (is(x, "umap")) {
+    layout <- x$layout %>% as.data.frame() %>% tibble::rownames_to_column(var = "sample")
+    layout_df <- dplyr::inner_join(layout, labels, by = "sample")
+    layout_df <- dplyr::inner_join(layout_df, raw_mat_df, by = c("sample", "consensus_hclust"))
+    layout_df <- layout_df %>% dplyr::filter(TME_feature == "Stromal")
+  }
+  # 
+  # xylim <- range(layout)
+  # xylim <- xylim + ((xylim[2]-xylim[1])*pad)*c(-0.5, 0.5)
+
+  plot <- layout_df %>% 
+    ggplot(aes(x=V1, y=V2, colour = consensus_hclust)) +
+    geom_point() +
+    scale_color_manual(values = colors_clustering[1:length(unique(layout_df$consensus_hclust))]) +
+    theme_classic() +
+    theme(axis.text = element_text(size = 12, color = "black")) +
+    labs(x = "UMAP 1", y = "UMAP 2")
+  
+  if(!is.null(feature)){
+    plot <- layout_df %>% 
+      ggplot(aes(x=V1, y=V2, colour = frac)) +
+      geom_point() +
+      scale_color_continuous(type = "viridis") +
+      theme_classic() +
+      theme(axis.text = element_text(size = 12, color = "black")) +
+      labs(x = "UMAP 1", y = "UMAP 2")
+  }
+      
+    # par(mar=c(1,1,1,1), ps=10)
+    # plot(xylim, xylim, type="n", axes=F, frame=F)
+    # rect(xylim[1], xylim[1], xylim[2], xylim[2], border="black", lwd=1)
+  
+  # points(layout[,1], layout[,2], col=colors[as.integer(labels)],
+  #        cex=cex, pch=pch)
+  # mtext(side=1, "UMAP 1", cex=cex.main)
+  # mtext(side=2, "UMAP 2", cex=cex.main)
+  
+  # labels.u <- unique(labels)
+  # legend.pos <- "topleft"
+  # legend.text <- as.character(labels.u)
+  # if (add) {
+  #   legend.pos <- "bottomleft"
+  #   legend.text <- paste(as.character(labels.u), legend.suffix)
+  # }
+  # 
+  # legend(legend.pos, legend=legend.text, inset=0.03,
+  #        col=colors[as.integer(labels.u)],
+  #        bty="n", pch=pch, cex=cex.legend)
+  
+  return(plot)
+}
+
+```
+
+> Read data
+
+```{r, include=FALSE}
+
+## read merged bc-meta seurat object, 
+merged_obj <- readRDS(params$seurat_object_bpcells)
+lvl2_metadata <- merged_obj@meta.data
+SeuratObject::Version(merged_obj)
+
+# .......................................................... #
+# Create new seurat object pointing to local directory
+# .......................................................... #
+# # open matrix from directory
+# mat <- open_matrix_dir(dir = "./data/merged_bc_meta_counts")
+# 
+# # overwrite current directory to previos directory
+# merged_bc_metanalysis_full[["RNA"]]$counts <- mat
+# 
+# # save new seurat object pointing to currect directory
+# SeuratObject::saveRDS(
+#   object = merged_bc_metanalysis_full,
+#   file = "merged_bc_metanalysis_full.Rds",
+#   destdir = "./data"
+# )
+
+```
+
+> Cell-type harmonization (low_res)
+
+- Mapping QC based on the provided mapping and prediction scores.
+
+1. The mapping scores are used to assess how whether the query cell type is well represented in the reference.
+
+2. The prediction scores are used to assess how confident are we about the annotation.
+
+* I would say that is more relevant to have a good reference rather than a closest cell type prediction. 
+
+- Cell types are harmonized regarding two different degrees of resolution.
+
+1. Low resolution: adiposeref_predicted.celltype.l1.score, tonsilref_predicted.celltype.l1.score, lungref_predicted.ann_level_4.score, pbmcref_predicted.celltype.l1.score, humancortexref_predicted.subclass.score, bonemarrowref_predicted.celltype.l2.score
+
+2. High resolution:
+
+```{r}
+
+#### Fix "duplicate"d T19 sample (adrenalnb_rui_chong & pdac_junya_peng)
+### Keep just pdac_junya_peng, as the other one cannot be found in cell-level annotations
+lvl2_metadata[
+    lvl2_metadata$sample == "T19" &
+    lvl2_metadata$study == "adrenalnb_rui_chong",
+    "sample"
+    ] <- "T19_1"
+
+merged_obj@meta.data <- lvl2_metadata
+
+#### Remove ambiguous BRCA samples (tumor_type == "BRCA" & tumor_subtype == "predicted_tumor, ~ 20 samples)
+merged_obj <- subset(merged_obj, subset = tumor_type == 'BRCA' & tumor_subtype == 'predicted_tumour', invert = TRUE)
+
+# Automatic cell-type annotation using Azimuth ---------------------------------
+
+## keep non-malignant cells (673 samples)
+merged_obj_M <- subset(merged_obj, malignancy == TRUE)
+bcmeta_annot_M <- merged_obj_M@meta.data
+merged_obj_nM <- subset(merged_obj, malignancy == FALSE)
+bcmeta_annot_nM <- merged_obj_nM@meta.data
+
+## load azimuth references using SeuratData
+available_data <- SeuratData::AvailableData()
+available_data[grep("Azimuth", available_data[, 3]), 1:3]
+
+name_refs <- c("pbmcref", "lungref", "pancreasref", "tonsilref", "adiposeref", "humancortexref", "bonemarrowref")
+# "kidneyref" not used (open issue in github, also original study normalizes data in a different way to seurat standards)
+
+## collect annotation results from cluster
+metadata_TME <- do.call(cbind, lapply(name_refs, function(X){
+  tmp_obj <- readRDS(file = paste0("../azimuth2/azimuth_annotation_TME_", X,".rds"))
+  tmp_metadata <- tmp_obj@meta.data
+  tmp_metadata <- tmp_metadata[, grep("predicted|mapping", colnames(tmp_metadata))]
+  colnames(tmp_metadata) <- paste0(X, "_", colnames(tmp_metadata))
+  return(tmp_metadata)
+}))
+
+metadata_TME <- cbind(bcmeta_annot_nM, metadata_TME)
+
+## Note that level 4 in lung, display "none" in some cases. We keep finest level to solve this.
+
+## Remove annotations that are too detailed
+metadata_TME <- metadata_TME %>%
+  select(!c(pbmcref_predicted.celltype.l3, pbmcref_predicted.celltype.l3.score, # pbmcref
+            humancortexref_predicted.class, humancortexref_predicted.class.score, # humancortexref
+            humancortexref_predicted.cluster, humancortexref_predicted.cluster.score, # humancortexref
+            humancortexref_predicted.cross_species_cluster, humancortexref_predicted.cross_species_cluster.score, # humancortexref
+            #pancreasref_predicted.annotation.l1, pancreasref_predicted.annotation.l1.score, pancreasref_mapping.score, # pancreasref
+            lungref_predicted.ann_level_1, lungref_predicted.ann_level_1.score, # lungref
+            lungref_predicted.ann_level_2, lungref_predicted.ann_level_2.score, # lungref
+            lungref_predicted.ann_level_5, lungref_predicted.ann_level_5.score, # lungref
+            #lungref_predicted.ann_finest_level, lungref_predicted.ann_finest_level.score, # lungref
+            tonsilref_predicted.celltype.l2, tonsilref_predicted.celltype.l2.score, # tonsilref,
+            adiposeref_predicted.celltype.l2, adiposeref_predicted.celltype.l2.score, # adiposeref
+         ))
+
+# Quality control metrics -----------------------------------------------------
+
+### MAPPING: reflects confidence that this cell is well represented by the reference ####
+tmp <- metadata_TME %>%
+  dplyr::mutate(tumor_site = ifelse(metadata_TME$refined_tumor_site %in% names(tumor_sites_colors),
+                                    refined_tumor_site, "other")) %>%
+  dplyr::rename("adipose" =  "adiposeref_mapping.score",
+                "tonsil" =  "tonsilref_mapping.score", 
+                "lung" =  "lungref_mapping.score",
+                "pbmc" =  "pbmcref_mapping.score",
+                "humancortex" =  "humancortexref_mapping.score",
+                "bonemarrow" =  "bonemarrowref_mapping.score",
+                "pancreas" = "pancreasref_mapping.score") %>%
+  dplyr::select(tumor_site, pbmc, lung, tonsil, adipose, humancortex, bonemarrow, pancreas) %>%
+  tidyr::pivot_longer(cols = !tumor_site, names_to = "reference", values_to = "mapping_score")
+  
+tmp %>%
+  ggplot(aes(x=reference, y=mapping_score, fill=tumor_site)) +
+  geom_boxplot(outlier.shape = NA) +
+  scale_fill_manual(values = tumor_sites_colors) +
+  theme_classic() +
+  theme(legend.position = "top",
+        axis.text.y = element_text(size=10, color = "black"),
+        axis.text.x = element_text(size=10, color = "black")) +
+  labs(x = "Azimuth reference", y = "Mapping score", fill = "Tumor site")
+
+ggsave(filename = "../../results/qc_mapping_azimuth2.png", width = 12, height = 8)
+
+### PREDICTION: reflect the confidence associated with each annotation ####
+
+tmp <- metadata_TME %>%
+  dplyr::mutate(tumor_site = ifelse(metadata_TME$refined_tumor_site %in% names(tumor_sites_colors),
+                                    refined_tumor_site, "other")) %>%
+  dplyr::rename("adipose" =  "adiposeref_predicted.celltype.l1.score",
+                "tonsil" =  "tonsilref_predicted.celltype.l1.score", 
+                "lung" =  "lungref_predicted.ann_level_4.score",
+                "lung_finest" = "lungref_predicted.ann_finest_level.score",
+                "pbmc" =  "pbmcref_predicted.celltype.l1.score",
+                "humancortex" =  "humancortexref_predicted.subclass.score",
+                "bonemarrow" =  "bonemarrowref_predicted.celltype.l2.score",
+                "pancreas" = "pancreasref_predicted.annotation.l1.score") %>%
+  dplyr::select(tumor_site, pbmc, lung, tonsil, adipose, humancortex, bonemarrow, pancreas) %>%
+  tidyr::pivot_longer(cols = !tumor_site, names_to = "reference", values_to = "prediction_score")
+  
+tmp %>%
+  ggplot(aes(x=reference, y=prediction_score, fill=tumor_site)) +
+  geom_boxplot(outlier.shape = NA) +
+  scale_fill_manual(values = tumor_sites_colors) +
+  theme_classic() +
+  theme(legend.position = "top",
+        axis.text.y = element_text(size=10, color = "black"),
+        axis.text.x = element_text(size=10, color = "black")) +
+  labs(x = "Azimuth reference", y = "Prediction score (Low resolution)", fill = "Tumor site")
+
+ggsave(filename = "../../results/qc_prediction_low_res_azimuth2.png", width = 12, height = 8)
+
+# Evaluate confidence of cell-type annotations ---------------------------------
+
+## Mapping scores
+mapping_df <- metadata_TME %>% 
+  select(cell, sample, tumor_site, 
+         pbmcref_mapping.score, 
+         lungref_mapping.score,
+         tonsilref_mapping.score, 
+         adiposeref_mapping.score, 
+         humancortexref_mapping.score, 
+         bonemarrowref_mapping.score,
+         pancreasref_mapping.score) %>%
+  dplyr::rename("adipose" =  "adiposeref_mapping.score",
+                "tonsil" =  "tonsilref_mapping.score", 
+                "lung" =  "lungref_mapping.score",
+                "pbmc" =  "pbmcref_mapping.score",
+                "humancortex" =  "humancortexref_mapping.score",
+                "bonemarrow" =  "bonemarrowref_mapping.score",
+                "pancreas" = "pancreasref_mapping.score") %>%
+  tidyr::pivot_longer(cols = !c(cell, sample, tumor_site),
+                      values_to = "mapping_score", 
+                      names_to = "reference") %>%
+  dplyr::mutate(tumor_site = ifelse(tumor_site %in% names(tumor_sites_colors), tumor_site, "other")) %>%
+  dplyr::mutate(tumor_site = factor(tumor_site, levels = names(tumor_sites_colors)))
+
+## Distribution
+mapping_df %>%
+  ggplot(aes(x=mapping_score, fill = tumor_site)) +
+  geom_histogram(bins = 100) +
+  scale_fill_manual(values = tumor_sites_colors) +
+  facet_wrap(. ~ reference, scales = "free")
+
+## Prediction scores
+prediction_scores_df <- metadata_TME %>% 
+  select(cell, sample, tumor_site, 
+         pbmcref_predicted.celltype.l1.score, 
+         lungref_predicted.ann_finest_level.score,
+         tonsilref_predicted.celltype.l1.score, 
+         adiposeref_predicted.celltype.l1.score, 
+         humancortexref_predicted.subclass.score, 
+         bonemarrowref_predicted.celltype.l2.score,
+         pancreasref_predicted.annotation.l1.score) %>%
+  dplyr::rename("adipose" =  "adiposeref_predicted.celltype.l1.score",
+                "tonsil" =  "tonsilref_predicted.celltype.l1.score", 
+                "lung" =  "lungref_predicted.ann_finest_level.score",
+                "pbmc" =  "pbmcref_predicted.celltype.l1.score",
+                "humancortex" =  "humancortexref_predicted.subclass.score",
+                "bonemarrow" =  "bonemarrowref_predicted.celltype.l2.score",
+                "pancreas" = "pancreasref_predicted.annotation.l1.score") %>%
+  tidyr::pivot_longer(cols = !c(cell, sample, tumor_site),
+                      values_to = "prediction_score", 
+                      names_to = "reference") %>%
+  dplyr::mutate(tumor_site = ifelse(tumor_site %in% names(tumor_sites_colors), tumor_site, "other")) %>%
+  dplyr::mutate(tumor_site = factor(tumor_site, levels = names(tumor_sites_colors)))
+
+## Predicted cell-type labels
+prediction_labels_df <- metadata_TME %>% 
+  select(cell, sample, cell_type, 
+         pbmcref_predicted.celltype.l2, 
+         lungref_predicted.ann_finest_level,
+         tonsilref_predicted.celltype.l1, 
+         adiposeref_predicted.celltype.l1, 
+         humancortexref_predicted.subclass, 
+         bonemarrowref_predicted.celltype.l2,
+         pancreasref_predicted.annotation.l1) %>%
+  dplyr::rename("adipose" =  "adiposeref_predicted.celltype.l1",
+                "tonsil" =  "tonsilref_predicted.celltype.l1", 
+                "lung" =  "lungref_predicted.ann_finest_level",
+                "pbmc" =  "pbmcref_predicted.celltype.l2",
+                "humancortex" = "humancortexref_predicted.subclass",
+                "bonemarrow" = "bonemarrowref_predicted.celltype.l2",
+                "pancreas" = "pancreasref_predicted.annotation.l1",
+                "author_cell_type" = "cell_type") %>%
+  tidyr::pivot_longer(cols = !c(cell, sample, author_cell_type),
+                      values_to = "predicted_cell_type", 
+                      names_to = "reference")
+
+## Put together mapping and prediction information
+mapping_df$prediction_score <- prediction_scores_df$prediction_score
+mapping_df$author_cell_type <- prediction_labels_df$author_cell_type
+mapping_df$predicted_cell_type <- prediction_labels_df$predicted_cell_type
+
+## Add confidence variable for azimuth annotation: "annotated_with_azimuth" (threshold 0.7 based on visualization)
+mapping_df <- mapping_df %>%
+  dplyr::mutate(azimuth_annotation = ifelse(mapping_score >= 0.7, TRUE, FALSE))
+
+### Save object
+saveRDS(mapping_df, file = "../azimuth2/azimuth_analysis.rds")
+
+### Add information to metadta object
+metadata_TME_v2 <- metadata_TME[, 1:29]
+
+### Save full metadata object
+saveRDS(metadata_TME_v2, file = "../azimuth2/refined_metadata_TME.rds")
+
+## Cell-type harmonization: 1st step manual curation ---------------------------
+
+## Correspondence author vs azimuth mapping ###
+author_vs_azimuth <- mapping_df %>% 
+  group_by(author_cell_type, predicted_cell_type) %>% 
+  summarise()
+
+### Author's ### (Check .csv files afterwards to remove inconsistencies)
+
+# # ** B cells **
+# B <- c("B cell", "B.cell", "B-cell", "B_cell", "B cells", "B-cells", "B_cells", "B.cells", "B.cell", "B.Cell", "B")
+# B_idx <- unlist(sapply(B, function(X) grep(X, author_vs_azimuth$author_cell_type)))
+# B_ids <- unique(author_vs_azimuth$author_cell_type[B_idx])
+# data.table::fwrite(as.data.frame(B_ids), file = "../azimuth/B_author_celltypes.csv", row.names = FALSE)
+# 
+# # ** T cells **
+# Tcell <- c("CD4 T", "CD8 T", "other T", "Treg", "CD4", "CD8", "T_cell", "T-cell", "T-Reg", 
+#            "Lymphocyte", "T cell", "T-Helper", "T.cell", "MAIT", "Tcell_Prolif","Tprolif", "TCells", "Tfh",
+#            "T/NK", "T and NK", "NKT", "NK_T_cells", "T_NK", "T:")
+# T_idx <- unlist(sapply(Tcell, function(X) grep(X, author_vs_azimuth$author_cell_type)))
+# T_ids <- unique(author_vs_azimuth$author_cell_type[T_idx])
+# data.table::fwrite(as.data.frame(T_ids), file = "../azimuth/Tcell_author_celltypes.csv", row.names = FALSE)
+# 
+# # ** NK cells ** (T and NK considered before as T cell)
+# NK <- c("NK")
+# NK_idx <- unlist(sapply(NK, function(X) grep(X, author_vs_azimuth$author_cell_type)))
+# NK_ids <- unique(author_vs_azimuth$author_cell_type[NK_idx])
+# data.table::fwrite(as.data.frame(NK_ids), file = "../azimuth/NK_author_celltypes.csv", row.names = FALSE)
+# 
+# # ** Plasma cells ** (B and Plasma considered as B cell before, Plasmablast considered separately)
+# Plasma <- c("Plasma", "Plasmablast", "Plasmocyte", "plasmocyte")
+# Plasma_idx <- unlist(sapply(Plasma, function(X) grep(X, author_vs_azimuth$author_cell_type)))
+# Plasma_ids <- unique(author_vs_azimuth$author_cell_type[Plasma_idx])
+# data.table::fwrite(as.data.frame(Plasma_ids), file = "../azimuth/Plasma_author_celltypes.csv", row.names = FALSE)
+# 
+# # ** Endothelial cells ** 
+# Endo <- c("Endo", "EC", "EPC")
+# Endo_idx <- unlist(sapply(Endo, function(X) grep(X, author_vs_azimuth$author_cell_type)))
+# Endo_ids <- unique(author_vs_azimuth$author_cell_type[Endo_idx])
+# data.table::fwrite(as.data.frame(Endo_ids), file = "../azimuth/Endothelial_author_celltypes.csv", row.names = FALSE)
+# 
+# # ** CAFs ** 
+# CAF <- c("stromal", "fibro", "CAF", "Fibroblast", "fibroblast", "FB", "Fibro")
+# CAF_idx <- unlist(sapply(CAF, function(X) grep(X, author_vs_azimuth$author_cell_type)))
+# CAF_ids <- unique(author_vs_azimuth$author_cell_type[CAF_idx])
+# data.table::fwrite(as.data.frame(CAF_ids), file = "../azimuth/CAFs_author_celltypes.csv", row.names = FALSE)
+# 
+# # ** DC ** 
+# DC <- c("Dendritic", "DC")
+# DC_idx <- unlist(sapply(DC, function(X) grep(X, author_vs_azimuth$author_cell_type)))
+# DC_ids <- unique(author_vs_azimuth$author_cell_type[DC_idx])
+# data.table::fwrite(as.data.frame(DC_ids), file = "../azimuth/DC_author_celltypes.csv", row.names = FALSE)
+# 
+# # ** Macrophages ** 
+# M <- c("Mφ", "Macrophage", "macrophage", "mac", "TAM", "Macro", "Mac")
+# M_idx <- unlist(sapply(M, function(X) grep(X, author_vs_azimuth$author_cell_type)))
+# M_ids <- unique(author_vs_azimuth$author_cell_type[M_idx])
+# data.table::fwrite(as.data.frame(M_ids), file = "../azimuth/Mp_author_celltypes.csv", row.names = FALSE)
+# 
+# # ** Monocytes ** 
+# Mono <- c("Classical monocytes", "CD16- Monocyte", "Monocyte")
+# Mono_idx <- unlist(sapply(Mono, function(X) grep(X, author_vs_azimuth$author_cell_type)))
+# Mono_ids <- unique(author_vs_azimuth$author_cell_type[Mono_idx])
+# data.table::fwrite(as.data.frame(Mono_ids), file = "../azimuth/Mo_author_celltypes.csv", row.names = FALSE)
+# 
+# # ** other ** 
+# other <- c("CNS", "glia", "Microglia", "MDSC", "LC", "Langerhan", "microglia", "Mast cells", "MAST", "Erythroblast", "Er", "Eryth",
+#            "Erythrocyte", "Neutrophil", "Basophil", "Eosinophil", "Mast", "Osteoblast", "Astrocyte",
+#            "Cholangiocyte", "Acinar", "smooth", "Smooth muscle cells", "Pericyte", "muscle", "Stellate", "SMC", "PVL",
+#            "stem", "GMP", "HSC", "Hepatocyte", "Keratinocyte", "Squamous", "Progenitor", "Neurons", "Normal Epithelial", "Oligo",
+#            "Nueroendocrine", "Other", "Myeloid", "Myeloid cells", "Myoepithelial", "Mouse 3T3 spike-in", "MitoHigh Myeloid", 
+#            "Misc/Undetermined", "Mesothelial cells", "Mesenchymal", "MSC", "Endocrine", "Doublets", "Ductal", "Epithelial",
+#            "Ciliated", "Club", "CLP", "Barretts", "Unassigned", "Undetermined", "Unknown", "Chondrocyte", "other")
+# 
+# other_idx <- unlist(sapply(other, function(X) grep(X, author_vs_azimuth$author_cell_type)))
+# other_ids <- unique(author_vs_azimuth$author_cell_type[other_idx])
+# data.table::fwrite(as.data.frame(other_ids), file = "../azimuth/other_author_celltypes.csv", row.names = FALSE)
+# 
+# # ** Malignant **
+# data.table::fwrite(as.data.frame(unique(bcmeta_annot_M$cell_type)), 
+#                    file = "../azimuth/Malignant_author_celltypes.csv", row.names = FALSE)
+
+### Azimuth ###
+
+# # ** B cells **
+# B <- c("B cell", "B")
+# B_idx <- unlist(sapply(B, function(X) grep(X, author_vs_azimuth$predicted_cell_type)))
+# B_ids <- unique(author_vs_azimuth$predicted_cell_type[B_idx])
+# data.table::fwrite(as.data.frame(B_ids), file = "../azimuth/B_azimuth_celltypes.csv", row.names = FALSE)
+# 
+# # ** T cells **
+# Tcell <- c("T", "T cell", "CD4", "CD8")
+# T_idx <- unlist(sapply(Tcell, function(X) grep(X, author_vs_azimuth$predicted_cell_type)))
+# T_ids <- unique(author_vs_azimuth$predicted_cell_type[T_idx])
+# T_ids <- T_ids[-grep("IT", T_ids)]
+# data.table::fwrite(as.data.frame(T_ids), file = "../azimuth/Tcell_azimuth_celltypes.csv", row.names = FALSE)
+# 
+# # ** NK cells **
+# NK <- c("NK", "Natural")
+# NK_idx <- unlist(sapply(NK, function(X) grep(X, author_vs_azimuth$predicted_cell_type)))
+# NK_ids <- unique(author_vs_azimuth$predicted_cell_type[NK_idx])
+# data.table::fwrite(as.data.frame(NK_ids), file = "../azimuth/NK_azimuth_celltypes.csv", row.names = FALSE)
+# 
+# # ** Plasma cells ** (Plasmablast considered separately)
+# Plasma <- c("Plasma", "Plasmablast", "Plasmocyte", "plasmocyte")
+# Plasma_idx <- unlist(sapply(Plasma, function(X) grep(X, author_vs_azimuth$predicted_cell_type)))
+# Plasma_ids <- unique(author_vs_azimuth$predicted_cell_type[Plasma_idx])
+# data.table::fwrite(as.data.frame(Plasma_ids), file = "../azimuth/Plasma_azimuth_celltypes.csv", row.names = FALSE)
+# 
+# # ** Endothelial cells ** 
+# Endo <- c("Endo", "EC", "EPC", "endothelial")
+# Endo_idx <- unlist(sapply(Endo, function(X) grep(X, author_vs_azimuth$predicted_cell_type)))
+# Endo_ids <- unique(author_vs_azimuth$predicted_cell_type[Endo_idx])
+# data.table::fwrite(as.data.frame(Endo_ids), file = "../azimuth/Endothelial_azimuth_celltypes.csv", row.names = FALSE)
+# 
+# # ** CAFs ** 
+# CAF <- c("stromal", "fibro", "CAF", "Fibroblast", "fibroblast", "FB", "Fibro")
+# CAF_idx <- unlist(sapply(CAF, function(X) grep(X, author_vs_azimuth$predicted_cell_type)))
+# CAF_ids <- unique(author_vs_azimuth$predicted_cell_type[CAF_idx])
+# data.table::fwrite(as.data.frame(CAF_ids), file = "../azimuth/CAFs_azimuth_celltypes.csv", row.names = FALSE)
+# 
+# # ** DC ** 
+# DC <- c("Dendritic", "DC", "dendritic")
+# DC_idx <- unlist(sapply(DC, function(X) grep(X, author_vs_azimuth$predicted_cell_type)))
+# DC_ids <- unique(author_vs_azimuth$predicted_cell_type[DC_idx])
+# data.table::fwrite(as.data.frame(DC_ids), file = "../azimuth/DC_azimuth_celltypes.csv", row.names = FALSE)
+# 
+# # ** Macrophages ** 
+# M <- c("Mφ", "Macrophage", "macrophage", "mac", "TAM", "Macro", "Mac")
+# M_idx <- unlist(sapply(M, function(X) grep(X, author_vs_azimuth$predicted_cell_type)))
+# M_ids <- unique(author_vs_azimuth$predicted_cell_type[M_idx])
+# data.table::fwrite(as.data.frame(M_ids), file = "../azimuth/Mp_azimuth_celltypes.csv", row.names = FALSE)
+# 
+# # ** Monocytes ** 
+# Mono <- c("Classical monocytes", "CD16- Monocyte", "Monocyte", "Mono", "monocyte")
+# Mono_idx <- unlist(sapply(Mono, function(X) grep(X, author_vs_azimuth$predicted_cell_type)))
+# Mono_ids <- unique(author_vs_azimuth$predicted_cell_type[Mono_idx])
+# data.table::fwrite(as.data.frame(Mono_ids), file = "../azimuth/Mo_azimuth_celltypes.csv", row.names = FALSE)
+# 
+# # ** other ** (double-check annotations, automatically not capturing everything)
+# other_ids <- setdiff(author_vs_azimuth$predicted_cell_type, 
+#                      c(T_ids, NK_ids, M_ids, Mono_ids, DC_ids, Endo_ids, CAF_ids, B_ids, Plasma_ids))
+# data.table::fwrite(as.data.frame(other_ids), file = "../azimuth/other_azimuth_celltypes.csv", row.names = FALSE)
+
+# ...................................... #
+## Cell-type harmonization: 2º Set up final objects with both author's and azimuth's annotations
+# ...................................... #
+
+## Read harmonized cell types
+author_harmonized_annots <- data.table::fread(file = "../nM_author-based_harmonization.csv")
+azimuth_harmonized_annots <- data.table::fread(file = "../nM_azimuth-based_harmonization.csv")
+
+## check all annotations are included in curated table
+setdiff(unique(mapping_df$predicted_cell_type), azimuth_harmonized_annots$Name) 
+
+## First, for confident annotations (TRUE) ##
+## Add azimuth annotation (if > 1 confident annotations, keep the one with higher prediction score)
+
+mapping_df_true <- mapping_df %>%
+  dplyr::filter(!predicted_cell_type %in% c("Cycling myeloid", "immune", "Stromal") & 
+                  azimuth_annotation == TRUE) %>%
+  dplyr::mutate(
+    predicted_cell_type_main = azimuth_harmonized_annots$cell_type_main[match(predicted_cell_type, azimuth_harmonized_annots$Name)],
+    predicted_cell_type_fine = azimuth_harmonized_annots$cell_type_fine[match(predicted_cell_type, azimuth_harmonized_annots$Name)]
+    ) %>%
+  dplyr::group_by(cell, sample, tumor_site, author_cell_type, azimuth_annotation) %>%
+  dplyr::summarise(reference = reference[which.max(prediction_score)],
+                   mapping_score = mapping_score[which.max(prediction_score)],
+                   azimuth_cell_type_main = predicted_cell_type_main[which.max(prediction_score)],
+                   azimuth_cell_type_fine = predicted_cell_type_fine[which.max(prediction_score)],
+                   prediction_score = prediction_score[which.max(prediction_score)])
+
+## Second, for non-confident annotations
+## Keep annotation based on the highest mapping score)
+mapping_df_false <- mapping_df %>%
+  dplyr::filter(!cell %in% unique(mapping_df_true$cell) &
+                  !predicted_cell_type %in% c("Cycling myeloid", "immune", "Stromal")) %>%
+  dplyr::mutate(
+    predicted_cell_type_main = azimuth_harmonized_annots$cell_type_main[match(predicted_cell_type, azimuth_harmonized_annots$Name)],
+    predicted_cell_type_fine = azimuth_harmonized_annots$cell_type_fine[match(predicted_cell_type, azimuth_harmonized_annots$Name)]
+    ) %>%
+  dplyr::group_by(cell, sample, tumor_site, author_cell_type, azimuth_annotation) %>%
+  dplyr::summarise(reference = reference[which.max(mapping_score)],
+                   mapping_score = mapping_score[which.max(mapping_score)],
+                   azimuth_cell_type_main = predicted_cell_type_main[which.max(mapping_score)],
+                   azimuth_cell_type_fine = predicted_cell_type_fine[which.max(mapping_score)],
+                   prediction_score = prediction_score[which.max(mapping_score)])
+
+## Put together
+azimuth_results <- rbind(mapping_df_true, mapping_df_false)
+azimuth_results <- azimuth_results %>% 
+  dplyr::ungroup() %>%
+  dplyr::select(!c(tumor_site, author_cell_type))
+
+## Update metadata object with authors' manually curated annotations (NAs increased from original by adding ambiguous annotations)
+harmonized_metadata_TME <- metadata_TME_v2 %>% 
+  dplyr::mutate(cell_type_main = 
+                  ifelse(cell_type %in% author_harmonized_annots$Name, 
+                         author_harmonized_annots$cell_type_main[match(cell_type, 
+                                                                  author_harmonized_annots$Name)], NA),
+                cell_type_fine = 
+                  ifelse(cell_type %in% author_harmonized_annots$Name, 
+                         author_harmonized_annots$cell_type_fine[match(cell_type, 
+                                                                  author_harmonized_annots$Name)], NA)
+  )
+
+## Update metadata object with azimuth's manually curated annotations
+harmonized_metadata_TME <- inner_join(harmonized_metadata_TME, 
+                                      azimuth_results,
+                                      by = c("cell", "sample"))
+
+## Add harmonized metadata to Seurat v5 object ##
+## Harmonize malignant cells annotations
+metadata <- merged_obj@meta.data
+harmonized_metadata_M <- metadata %>% 
+  #dplyr::rename("author_cell_type" = "cell_type") %>%
+  dplyr::filter(malignancy == TRUE) %>%
+  dplyr::mutate(cell_type_main = "Malignant",
+                cell_type_fine = NA,
+                azimuth_annotation = NA,
+                reference = NA, 
+                mapping_score = NA, 
+                azimuth_cell_type_main = NA, 
+                azimuth_cell_type_fine = NA, 
+                prediction_score = NA)
+
+## Put malignant and non-malignant annotations together
+harmonized_metadata <- rbind(harmonized_metadata_M, harmonized_metadata_TME)
+
+## save object
+saveRDS(harmonized_metadata, file = "../azimuth/harmonized_metadata.rds")
+
+## NA's in author's and azimuth's annotations
+table(is.na(harmonized_metadata_TME$cell_type_main)) # author --> 76171 NAs
+table(is.na(harmonized_metadata_TME$azimuth_cell_type_main)) # azimuth --> 0 NAs
+
+## If we don't have confident azimuth annotations 
+## which ones are missing in terms of author's? --> there would be 18448 remaining NA's
+table(is.na(harmonized_metadata_TME$cell_type_main), harmonized_metadata_TME$azimuth_annotation)
+ids_NAs <- which(is.na(harmonized_metadata_TME$cell_type_main) & !harmonized_metadata_TME$azimuth_annotation)
+tmp_NAs <- harmonized_metadata_TME[ids_NAs,]
+table(tmp_NAs$study)
+
+## Re-annotate aml_audrey_lasry with curated author annotations ----------------
+
+## subset aml_audrey_lasry
+tmp_bcmeta <- harmonized_metadata_TME %>%
+  tibble::rownames_to_column(var = "index") %>%
+  filter(study == "aml_audrey_lasry") %>%
+  mutate(cell_author = sapply(strsplit(cell, "_3"), head, 1),
+         index = as.numeric(index))
+
+## Add author's aml_audrey_lasry 
+author_annotations_audreay_lasry <- data.table::fread(file = "../metadata_clustering_w_header_upd.csv")
+
+## All cells present? YES
+tmp_authors <- author_annotations_audreay_lasry %>% 
+  filter(NAME %in% tmp_bcmeta$cell_author)
+
+## same order as tmp_bcmeta
+tmp_authors_df <- tmp_authors[match(tmp_bcmeta$cell_author, tmp_authors$NAME), ]
+all.equal(tmp_authors_df$NAME, tmp_bcmeta$cell_author)
+
+data.table::fwrite(as.data.frame(unique(tmp_authors$Broad_cell_identity)), 
+                   file = "../azimuth/aml_audrey_lasry_author_celltypes.csv", row.names = FALSE)
+
+tmp2 <- unique(tmp_authors$Broad_cell_identity)
+all(tmp2 %in% author_harmonized_annots$Name)
+
+## Add Broad_cell_identity to harmonized TME
+harmonized_metadata_TME[harmonized_metadata_TME$study == "aml_audrey_lasry", "cell_type"] <- tmp_authors_df$Broad_cell_identity
+
+harmonized_metadata_TME <- harmonized_metadata_TME %>% 
+  dplyr::mutate(cell_type_main = 
+                  ifelse(study == "aml_audrey_lasry",
+                         author_harmonized_annots$cell_type_main[match(cell_type, author_harmonized_annots$Name)],
+                         cell_type_main),
+                 cell_type_fine = 
+                  ifelse(study == "aml_audrey_lasry",
+                         author_harmonized_annots$cell_type_fine[match(cell_type, author_harmonized_annots$Name)],
+                         cell_type_fine)
+  )
+
+## Re-annotated all missing cells in aml_audrey_lasry: DONE
+table(is.na(harmonized_metadata_TME$cell_type_main)) # author --> 62615 NAs
+## If we don't have confident azimuth annotations, which ones are missing in terms of author's? --> 18251 NAs
+table(is.na(harmonized_metadata_TME$cell_type_main), harmonized_metadata_TME$azimuth_annotation)  
+ids_NAs <- which(is.na(harmonized_metadata_TME$cell_type_main) & !harmonized_metadata_TME$azimuth_annotation)
+tmp_NAs <- harmonized_metadata_TME[ids_NAs,]
+table(tmp_NAs$study)
+
+## Re-annotate pdac_shu_zhang, using singleR -----------------------------------
+## azimuth pancreas reference doesn't perform that good
+## Pablo tested another reference dataset which wasn't accurate neither, and 
+## this one was also included among the pancreas datasets used by azimuth)
+
+## read annotations from singleR
+pdac_shu_zhang_annot <- readRDS("../../data/pdac_shu_zhang_annotation_with_singleR.rds")
+pdac_shu_zhang_labels_df <- pdac_shu_zhang_annot@listData %>% as.data.frame()
+pdac_shu_zhang_labels_df$cell <- rownames(pdac_shu_zhang_annot)
+pdac_shu_zhang_labels_df$cell <- sapply(strsplit(pdac_shu_zhang_labels_df$cell, "_"), tail ,1)
+
+## subset pdac_shu_zhang
+tmp_pdac <- harmonized_metadata_TME %>% 
+  tibble::rownames_to_column(var = "index") %>%
+  filter(study == "pdac_shu_zhang") %>%
+  mutate(index = as.numeric(index),
+         cell_author = sapply(strsplit(cell, "_"), head, 1))
+
+## same order as tmp_bcmeta
+pdac_shu_zhang_labels_df <- pdac_shu_zhang_labels_df[match(tmp_pdac$cell_author, pdac_shu_zhang_labels_df$cell), ]
+## check
+all.equal(pdac_shu_zhang_labels_df$cell, tmp_pdac$cell_author)
+
+# ** pdac_shu_zhang **
+data.table::fwrite(as.data.frame(unique(pdac_shu_zhang_labels_df$labels)), 
+                   file = "../azimuth/pdac_shu_zhang_author_celltypes.csv", row.names = FALSE)
+
+## read harmonized labels
+singleR_harmonized_annots <- data.table::fread(file = "../nM_singleR-based_harmonization.csv")
+## check
+all(unique(pdac_shu_zhang_labels_df$labels) %in% singleR_harmonized_annots$Name)
+
+## Add label to harmonized TME
+harmonized_metadata_TME[harmonized_metadata_TME$study == "pdac_shu_zhang", "cell_type"] <- pdac_shu_zhang_labels_df$labels
+
+harmonized_metadata_TME <- harmonized_metadata_TME %>% 
+  dplyr::mutate(cell_type_main = 
+                  ifelse(study == "pdac_shu_zhang",
+                         singleR_harmonized_annots$cell_type_main[match(cell_type, singleR_harmonized_annots$Name)],
+                         cell_type_main),
+                 cell_type_fine = 
+                  ifelse(study == "pdac_shu_zhang",
+                         singleR_harmonized_annots$cell_type_fine[match(cell_type, singleR_harmonized_annots$Name)],
+                         cell_type_fine)
+  )
+
+# Now 13914 cells would not have annotation
+table(is.na(harmonized_metadata_TME$cell_type_main), harmonized_metadata_TME$azimuth_annotation)
+ids_NAs <- which(is.na(harmonized_metadata_TME$cell_type_main) & !harmonized_metadata_TME$azimuth_annotation)
+tmp_NAs <- harmonized_metadata_TME[ids_NAs,]
+table(tmp_NAs$study)
+
+## Re-annotate skcm_chao_zhang, using singleR ----------------------------------
+
+## read annotations from singleR
+skcm_chao_zhang_annot <- readRDS("../../data/skcm_chao_zhang_annotation_with_singleR.rds")
+skcm_chao_zhang_labels_df <- skcm_chao_zhang_annot@listData %>% as.data.frame()
+skcm_chao_zhang_labels_df$cell <- rownames(skcm_chao_zhang_annot)
+skcm_chao_zhang_labels_df$cell <- sapply(strsplit(skcm_chao_zhang_labels_df$cell, "_"), tail ,1)
+
+## subset skcm_chao_zhang
+tmp_skcm <- harmonized_metadata_TME %>% 
+  tibble::rownames_to_column(var = "index") %>%
+  filter(study == "skcm_chao_zhang") %>%
+  mutate(index = as.numeric(index),
+         cell_author = sapply(strsplit(cell, "_"), head, 1))
+
+## same order as tmp_bcmeta
+skcm_chao_zhang_labels_df <- skcm_chao_zhang_labels_df[match(tmp_skcm$cell_author, skcm_chao_zhang_labels_df$cell), ]
+
+## check
+all.equal(skcm_chao_zhang_labels_df$cell, tmp_skcm$cell_author)
+
+## harmonize cell types
+singleR_harmonized_annots <- data.table::fread(file = "../nM_singleR-based_harmonization.csv")
+
+## check
+all(unique(skcm_chao_zhang_labels_df$labels) %in% singleR_harmonized_annots$Name)
+
+## Add label to harmonized TME
+harmonized_metadata_TME[harmonized_metadata_TME$study == "skcm_chao_zhang", "cell_type"] <- skcm_chao_zhang_labels_df$labels
+
+harmonized_metadata_TME <- harmonized_metadata_TME %>% 
+  dplyr::mutate(cell_type_main = 
+                  ifelse(study == "skcm_chao_zhang",
+                         singleR_harmonized_annots$cell_type_main[match(cell_type, singleR_harmonized_annots$Name)],
+                         cell_type_main),
+                 cell_type_fine = 
+                  ifelse(study == "skcm_chao_zhang",
+                         singleR_harmonized_annots$cell_type_fine[match(cell_type, singleR_harmonized_annots$Name)],
+                         cell_type_fine)
+  )
+
+# Now 3936 cells would not have annotation
+table(is.na(harmonized_metadata_TME$cell_type_main), harmonized_metadata_TME$azimuth_annotation)
+ids_NAs <- which(is.na(harmonized_metadata_TME$cell_type_main) & !harmonized_metadata_TME$azimuth_annotation)
+tmp_NAs <- harmonized_metadata_TME[ids_NAs,]
+table(tmp_NAs$study)
+
+## Re-annotate luad_philip_bisschof, luad_kim_nayoung --------------------------
+## Decrease mapping threshold for lung reference from 0.7 to 0.6
+
+tmp <- harmonized_metadata_TME %>% 
+  filter(study %in% c("luad_philip_bisschof", "luad_kim_nayoung"))
+
+harmonized_metadata_TME <- harmonized_metadata_TME %>%
+    dplyr::mutate(azimuth_annotation = ifelse(
+      study %in% c("luad_philip_bisschof", "luad_kim_nayoung") & mapping_score >= 0.6, 
+      TRUE, azimuth_annotation))
+
+# Now 2093 cells would not have annotation
+table(is.na(harmonized_metadata_TME$cell_type_main), harmonized_metadata_TME$azimuth_annotation)
+ids_NAs <- which(is.na(harmonized_metadata_TME$cell_type_main) & !harmonized_metadata_TME$azimuth_annotation)
+tmp_NAs <- harmonized_metadata_TME[ids_NAs,]
+table(tmp_NAs$study)
+
+## For ambiguous author-based annotations, use azimuth ------------------------
+
+celltypes_toredo <- c(
+  "NK_T_cells_BUC1", "NK_T_cells_BUC2", "NK_T_cells_BUC3","NK_T_cells_BUC4","NK_T_cells_BUC5", 
+  "NK_T_cells_BUC6","NK_T_cells_BUC7","NK_T_cells_BUC8","NK_T_cells_NBM1","NK_T_cells_NBM2",
+  "NK_T_cells_NBM3", "T/NK cells", "T and NK", "T_cell", "T_cells", "T-cell", "T-cells", "T-cells Cycling",
+  "4-Lymphocytes", "2-T cell", "30-T cell", "Memory T-Helper", "MitoHigh T-Helper", "T.cell", "Tcell_Prolif",
+  "Tprolif", "TCells",
+  "CNS cells", "CD163+CD14+ DCs", "Mouse 3T3 spike-in", "Other", "other", "MitoHigh Myeloid",
+  "Myeloid", "Myeloid cells", 
+  "Unknown", "Undetermined", "Unassigned", "Misc/Undetermined", "Doublets", "Low-quality cells",
+  "Granulocyte", "Stromal", "Stromal cells", "Endocrine")
+
+harmonized_metadata_TME <- harmonized_metadata_TME %>%
+   dplyr::mutate(cell_type_main = ifelse(cell_type %in% celltypes_toredo, azimuth_cell_type_main, cell_type_main),
+                 cell_type_fine = ifelse(cell_type %in% celltypes_toredo, azimuth_cell_type_fine, cell_type_fine))
+
+## evaluate how many non-confident annotatioens are there?
+tmp <- harmonized_metadata_TME %>% filter(cell_type %in% celltypes_toredo)
+table(tmp$azimuth_annotation)
+## 41178 FALSE vs 177172 TRUE (qualitative agreement though)
+
+## Stick to author-based annotation, otherwise use azimuth's -------------------
+
+harmonized_metadata_TME <- harmonized_metadata_TME %>%
+  dplyr::mutate(cell_type_main = ifelse(is.na(cell_type_main) & azimuth_annotation == TRUE, 
+                                        azimuth_cell_type_main, cell_type_main)) 
+
+harmonized_metadata_TME <- harmonized_metadata_TME %>%
+  dplyr::mutate(cell_type_fine = ifelse(is.na(cell_type_fine) & azimuth_annotation == TRUE, 
+                                        azimuth_cell_type_fine, cell_type_fine))
+
+table(is.na(harmonized_metadata_TME$cell_type_main)) ## Left with 2093 NAs
+table(is.na(harmonized_metadata_TME$cell_type_fine)) ## Left with 2093 NAs
+tmp <- harmonized_metadata_TME %>% filter(is.na(cell_type_main))
+
+
+## Modify granulocyte cell_type_main -------------------------------------------
+## Use instead neutrophil, basophils and eosinophil
+
+harmonized_metadata_TME <- harmonized_metadata_TME %>%
+  dplyr::mutate(cell_type_main = ifelse(cell_type_main %in% c("Neutrophil", "Basophil"),
+                                        "Granulocyte", cell_type_main)) 
+
+## Put malignant and non-malignant annotations together
+harmonized_metadata <- rbind(harmonized_metadata_M, harmonized_metadata_TME)
+
+## save object
+saveRDS(harmonized_metadata_TME,
+        file = "../../results/harmonized_metadata_only_nonmalignant.rds")
+saveRDS(harmonized_metadata,
+        file = "../../results/harmonized_metadata_malignant_and_nonmalignant.rds")
+data.table::fwrite(harmonized_metadata_TME, 
+                   file = "../../results/harmonized_metadata_only_nonmalignant.csv", sep = ",")
+data.table::fwrite(harmonized_metadata, 
+                   file = "../../results/harmonized_metadata_malignant_and_nonmalignant.csv", sep = ",")
+
+# Now 2025 cells would not have annotation
+table(is.na(harmonized_metadata_TME$cell_type_main))
+ids_NAs <- which(is.na(harmonized_metadata_TME$cell_type_main))
+tmp_NAs <- harmonized_metadata_TME[ids_NAs,]
+table(tmp_NAs$study)
+
+TME_annotated_df <- harmonized_metadata_TME %>% select(cell, cell_type_main, cell_type_fine)
+data.table::fwrite(TME_annotated_df, 
+                   file = "../../results/harmonized_bcmeta_nonmalignant_annotation.csv", sep = ",")
+
+```
+
+> Description plots
+
+- Barplot (tumor types vs cell types (main, fine))
+- Table (tumor types vs % cell types)
+
+```{r}
+
+###################################################################
+## Barplot, cohort cellular description --> Top tumor types ##
+###################################################################
+
+## Use top 10 freq cancers 
+freq_tumors <- c("BRCA", "LUAD", "ESCA", "GBM", "SKCM", "MM", "PAAD", "LAML", "COAD", "LUSC")
+
+# tcca palette
+tumor_type_palette <- c("GBM" = "#CA9A8C",
+                        "LAML" = "#FF9A4A",
+                        "BRCA" = "#FF8FAB",
+                        "SKCM" = "#5E2D2C",
+                        "LUSC" = "#A2F0EF",
+                        "ESCA" = "#5780FE", 
+                        "BLCA" = "#58B368",
+                        "MM" = "#B6F884",
+                        "PAAD" = "#B47EB3",
+                        "COAD" = "#005D95",
+                        "LUAD" = "#BBB9B7")
+
+cell_type_palette <- c("goldenrod",
+                       "#a93fc5",
+                       "#5566ef",
+                       "#3c8200",
+                       "#c2b700",
+                       "#d47bff",
+                       "#01db7d",
+                       "#e20644",
+                       "#34dfab",
+                       "#a90044",
+                       "#7a92ff",
+                       "salmon",
+                       "#a11e14",
+                       "#ff945c",
+                       "#c69100",
+                       "#8eb1ff",
+                       "#f9632c",
+                       "#008f62",
+                       "#f59dff",
+                       "#255e28",
+                       "#c7cd4e",
+                       "#857cb0",
+                       "#eac250",
+                       "#704274",
+                       "#ba7e00",
+                       "#a4615c",
+                       "#f6bc6a",
+                       "#8e3621",
+                       "#f6b79b",
+                       "#c55f00",
+                       "#74490b",
+                       "#aac915")
+
+cell_type_palette <- c("#d82500",
+                       "#01d582",
+                       "#006cd1",
+                       "#935ee7",
+                       "#009f83",
+                       "#b3d266",
+                       "#d20086",
+                       "#7dda84",
+                       "#d4004a",
+                       "#f15b26",
+                       "#5fcaff",
+                       "#b66c00",
+                       "#008835",
+                       "#cb4dd0",
+                       "#df8f00",
+                       "#7591ff",
+                       "#f97d1b",
+                       "#394f94",
+                       "#f3be59",
+                       "#8e2c68",
+                       "#3d6700",
+                       "#d7bafd",
+                       "#b20010",
+                       "#a77096",
+                       "#726600",
+                       "#ffabba",
+                       "#993700",
+                       "#acd199",
+                       "#9c2432",
+                       "#f7b994",
+                       "#754823",
+                       "#ac7f59")
+
+names(cell_type_palette) <- c("Malignant", "Erythrocyte", "T", "Mono/Macro", "B", "NK", "Stem", "Plasmablast", "Plasma", "Megakaryocyte", "DC", "Endothelial", "Stromal", "Mast", "Endocrine", "Granulocyte", "Keratinocyte", "Osteoblast", "Epithelial", "Glial", "Exocrine", "Platelet", "Neuron", "Adipocyte", "Hepatocyte", "Cholangiocyte", "Neuroendocrine", "NKT", "Chondrocyte", "Erythroblast", "Myelocyte", "Neuroepithelial")
+
+names(cell_type_palette) <- na.omit(unique(harmonized_metadata$cell_type_main))
+
+## Get data 
+description_tmp <- harmonized_metadata %>% 
+  dplyr::filter(!is.na(cell_type_main)) %>%
+  dplyr::select(cell, cell_type_main, cell_type_fine, refined_tumor_site, tumor_type) %>%
+  dplyr::group_by(tumor_type, cell_type_main) %>%
+  dplyr::summarise(n=n()) %>%
+  dplyr::mutate(count = seq(1, length(cell_type_main)),
+                frac = n / sum(n))
+
+description_count <- description_tmp %>%
+  filter(tumor_type %in% freq_tumors) %>%
+  group_by(tumor_type) %>%
+  dplyr::summarise(n=n())
+
+description_barplot <- description_tmp %>% 
+  filter(tumor_type %in% freq_tumors) %>%
+  ggplot(aes(x = tumor_type, y = frac, fill = cell_type_main)) +
+  geom_bar(stat = "identity", position="fill") +
+  scale_fill_manual(values = cell_type_palette) +
+  geom_text(data = description_count, aes(x = tumor_type, y = 1.05, label = n),
+            size=5, colour="black", inherit.aes=FALSE) +
+  theme_classic() +
+  theme(axis.title.y = element_text(size = 16, family = "Helvetica", color = "black"),
+        axis.title.x = element_blank(),
+        axis.text = element_text(size = 14, family = "Helvetica", color = "black"),
+        legend.text = element_text(size = 12, family = "Helvetica", color = "black")) + 
+  guides(fill = guide_legend("Cell type")) +
+  labs(x = "Cancer type", y = "Cell type fractions")
+        
+###############################################################
+## Table, cohort cellular description --> all tumor types ##
+###############################################################
+
+description_table <- description_tmp %>% 
+  dplyr::mutate(frac = round(frac,3),
+                cell_type_main = paste0("% ", cell_type_main)) %>%
+  tidyr::pivot_wider(id_cols = tumor_type, names_from = cell_type_main, values_from = frac)
+
+data.table::fwrite(x = description_table, 
+                   file = "../../results/summary_table_cancertype_celltypeproportions.csv",
+                   sep = ",", row.names = FALSE)
+
+```
+
+> TME archetype characterization
+
+```{r}
+
+## metadata bc-meta cohort
+harmonized_metadata <- readRDS(file = "../../results/harmonized_metadata_malignant_and_nonmalignant.rds")
+
+## Exclude liquid tumors
+TME_annot <- harmonized_metadata %>%
+  dplyr::select(cell, sample, tumor_type, cell_type_main, cell_type_fine) %>%
+  dplyr::filter(!tumor_type %in% c("LAML", "ALL", "MM", "CLL")) %>%
+  dplyr::mutate(cell_type_fine = ifelse(
+    cell_type_main == "Malignant", "Malignant", cell_type_fine)
+  )
+
+# Sample-specific cell-type quantification -------------------------------------
+ 
+## 1. Get fractions for each sample
+
+## Main cell-type label
+TME_annot_main <- TME_annot %>% 
+  dplyr::filter(!is.na(cell_type_main)) %>%
+  dplyr::select(cell, sample, tumor_type, cell_type_main) %>%
+  dplyr::group_by(sample, tumor_type, cell_type_main) %>%
+  dplyr::summarise(n=n()) %>%
+  dplyr::mutate(count = seq(1, length(cell_type_main)),
+                frac = n / sum(n)) %>%
+  dplyr::mutate(three_feature_TME = NA)
+
+## Fine cell-type label
+TME_annot_fine <- TME_annot %>% 
+  dplyr::filter(!is.na(cell_type_main)) %>%
+  dplyr::select(cell, sample, tumor_type, cell_type_fine) %>%
+  dplyr::group_by(sample, tumor_type, cell_type_fine) %>%
+  dplyr::summarise(n=n()) %>%
+  dplyr::mutate(count = seq(1, length(cell_type_fine)),
+                frac = n / sum(n)) %>%
+  dplyr::mutate(eight_feature_TME = NA)
+
+# --------------------- #
+### Stroma annotation ###
+# --------------------- #
+
+stromal_idx <- grep("Stromal", TME_annot_main$cell_type_main)
+TME_annot_main$three_feature_TME[as.numeric(stromal_idx)] <- "Stromal"
+
+# --------------------- #
+### Lymphoid annotation ###
+# --------------------- #
+
+Lymphoid <- c("B", "T", "NK", "Plasma", "Plasmablast", "MAIT", "NKT")
+lymphoid_idx <- do.call(c, sapply(Lymphoid, function(X) grep(X, TME_annot_main$cell_type_main)))
+TME_annot_main$three_feature_TME[as.numeric(lymphoid_idx)] <- "Lymphoid"
+
+# --------------------- #
+### Myeloid annotation ###
+# --------------------- #
+
+Myeloid  <- c("Mono/Macro", "DC", "Mast", "Erythroblast", 
+              "Platelet", "Erythrocyte", "Granulocyte", "Megakaryocyte")
+myeloid_idx <- do.call(c, sapply(Myeloid, function(X) grep(X, TME_annot_main$cell_type_main)))
+TME_annot_main$three_feature_TME[as.numeric(myeloid_idx)] <- "Myeloid"
+
+## cellines are removed here
+TME_annot_main <- TME_annot_main %>% 
+  filter(!is.na(three_feature_TME)) %>%
+  select(!c(n, count, cell_type_main))
+
+# --------------------- #
+### Treg annotation ###
+# --------------------- #
+
+treg <- c("Treg")
+treg_idx <- do.call(c, lapply(treg, function(X) grep(X, TME_annot_fine$cell_type_fine)))
+TME_annot_fine$eight_feature_TME[as.numeric(treg_idx)] <- "Treg"
+
+# --------------------- #
+### CD4 T annotation ###
+# --------------------- #
+
+cd4t <- c("CD4", "Th")
+cd4t_idx <- do.call(c, sapply(cd4t, function(X) grep(X, TME_annot_fine$cell_type_fine)))
+TME_annot_fine$eight_feature_TME[as.numeric(cd4t_idx)] <- "CD4T"
+
+# --------------------- #
+### CD8 T annotation ###
+# --------------------- #
+
+cd8t <- c("CD8")
+cd8t_idx <- do.call(c, lapply(cd8t, function(X) grep(X, TME_annot_fine$cell_type_fine)))
+TME_annot_fine$eight_feature_TME[as.numeric(cd8t_idx)] <- "CD8T"
+
+# --------------------- #
+### Mo annotation ###
+# --------------------- #
+
+mo <- c("Mo")
+mo_idx <- do.call(c, lapply(mo, function(X) grep(X, TME_annot_fine$cell_type_fine)))
+TME_annot_fine$eight_feature_TME[as.numeric(mo_idx)] <- "Mo"
+
+# --------------------- #
+### Mp annotation ###
+# --------------------- #
+
+mp <- c("Mp")
+mp_idx <- do.call(c, lapply(mp, function(X) grep(X, TME_annot_fine$cell_type_fine)))
+TME_annot_fine$eight_feature_TME[as.numeric(mp_idx)] <- "Mp"
+
+# --------------------- #
+### cDC1 annotation ###
+# --------------------- #
+
+dc1 <- c("cDC1")
+dc1_idx <- do.call(c, lapply(dc1, function(X) grep(X, TME_annot_fine$cell_type_fine)))
+TME_annot_fine$eight_feature_TME[as.numeric(dc1_idx)] <- "cDC1"
+
+# --------------------- #
+### cDC2 annotation ###
+# --------------------- #
+
+dc2 <- c("cDC2")
+dc2_idx <- do.call(c, lapply(dc2, function(X) grep(X, TME_annot_fine$cell_type_fine)))
+TME_annot_fine$eight_feature_TME[as.numeric(dc2_idx)] <- "cDC2"
+
+# --------------------- #
+### endothelial annotation ###
+# --------------------- #
+
+endo <- c("Endothelial")
+endo_idx <- do.call(c, lapply(endo, function(X) grep(X, TME_annot_fine$cell_type_fine)))
+TME_annot_fine$eight_feature_TME[as.numeric(endo_idx)] <- "Endothelial"
+
+# --------------------- #
+### CAF annotation ###
+# --------------------- #
+
+caf <- c("CAF")
+caf_idx <- do.call(c, lapply(caf, function(X) grep(X, TME_annot_fine$cell_type_fine)))
+TME_annot_fine$eight_feature_TME[as.numeric(caf_idx)] <- "CAF"
+
+TME_annot_fine <- TME_annot_fine %>% 
+  filter(!is.na(eight_feature_TME)) %>%
+  select(!c(n, count, cell_type_fine))
+
+## Put together all features in a data.frame ##
+
+mat_TME_main <- TME_annot_main %>%
+  dplyr::group_by(sample, tumor_type, three_feature_TME) %>%
+  dplyr::summarise(frac_feature = sum(frac)) %>% 
+  dplyr::filter(!is.na(three_feature_TME)) %>%
+  tidyr::pivot_wider(id_cols = "sample", 
+                     names_from = three_feature_TME,
+                     values_from = frac_feature)
+
+mat_TME_fine <- TME_annot_fine %>%
+  dplyr::group_by(sample, tumor_type, eight_feature_TME) %>%
+  dplyr::summarise(frac_feature = sum(frac)) %>% 
+  dplyr::filter(!is.na(eight_feature_TME)) %>%
+  tidyr::pivot_wider(id_cols = "sample", 
+                     names_from = c(eight_feature_TME),
+                     values_from = frac_feature) 
+
+mat_TME <- left_join(mat_TME_main, mat_TME_fine)
+mat_TME <- mat_TME %>%
+  tibble::column_to_rownames(var = "sample") %>% 
+  as.data.frame()
+
+## set cell-type NAs set to 0,
+## assumption no measure = no presence rather than we don't have that information)
+
+mat_TME[is.na(mat_TME)] <- 0
+apply(mat_TME, 2, summary)
+range(mat_TME)
+
+mat_TME <- mat_TME[,c("Lymphoid", "Myeloid", "Stromal","Treg", "CD8T", "CD4T", "Mp", "Mo", "cDC1", "cDC2", "Endothelial", "CAF")]
+saveRDS(mat_TME, file = "../../results/bcmetaTME_scaled_cellfrac_heatmap.rds")
+
+```
+
+> Inspect communities based on TME features
+
+1. Define 10 TME features
+2. Neighborhood graph based KNN using euclidean distances. 
+k [3, 4, 5, …, 300]
+3. Identification of clusters using the Louvain method (i.e. maximizes network modularity)
+At each k, res [0.3, 0.4, 0.5, …, 2]
+4. Resulting clustering evaluated using the Davies Bouldin Index (DBI) which assess the ratio of the intra-cluster distance to inter-cluster distance. 
+
+Low DBI → Better separation between clusters, and more compact clusters
+
+```{r}
+
+## packages
+library('ConsensusClusterPlus')
+library('igraph')
+library('ggridges')
+library('GGally')
+library('dendextend')
+library('umap')
+library('NbClust')
+library('clv')
+
+## Visualize feature distributions ---------------------------------------------
+
+## TME matrix
+mat_TME <- readRDS(file = "../../results/bcmetaTME_scaled_cellfrac_heatmap.rds")
+
+## to data.frame
+mat_TME_df <- mat_TME  %>%
+  tibble::rownames_to_column(var = "sample") %>%
+  tidyr::pivot_longer(cols = !sample, 
+                      names_to = "TME_feature", 
+                      values_to = "frac")
+
+mat_TME_df$TME_feature <- factor(mat_TME_df$TME_feature,
+                                 levels = colnames(mat_TME))
+
+mat_breaks <- seq(min(mat_TME, na.rm = TRUE), max(mat_TME, na.rm = TRUE), length.out = 100)
+col_fun <- viridisLite::rocket(length(mat_breaks) - 1, direction = -1)
+
+## TME features palette
+tme_palette <- c("#2d7600",
+                 "#6f5be4",
+                 "#01d08a",
+                 "#ff78ee",
+                 "#778200",
+                 "#2991ff",
+                 "#f57b15",
+                 "#39d9ec",
+                 "#d30036",
+                 "#87935d",
+                 "#ff8575",
+                 "#946344")
+
+names(tme_palette) <- colnames(mat_TME)
+
+mat_TME_df %>%
+  ggplot(aes(x = frac, y = TME_feature, color = TME_feature, fill = TME_feature)) +
+  #geom_density_ridges() +
+  geom_boxplot() +
+  theme_classic() + 
+  coord_flip() +
+  scale_fill_manual(values = tme_palette, name = "TME feature") +
+  scale_color_manual(values = tme_palette, name = "TME feature") +
+  theme(axis.title = element_blank(), 
+        axis.text.x = element_text(size = 12, angle = 45, hjust = 1, color = "black"),
+        axis.text.y = element_text(size = 12, angle = 0, color = "black")) +
+  labs(x = "Proportions") +
+  guides(fill = "none", color = "none")
+
+## Definition of TME archetypes ------------------------------------------------
+
+## Annotation
+harmonized_metadata <- readRDS(file = "../../results/harmonized_metadata_malignant_and_nonmalignant.rds")
+
+## remove liquid tumors
+TME_annot <- harmonized_metadata %>%
+  dplyr::select(cell, sample, tumor_type, cell_type_main, cell_type_fine) %>%
+  dplyr::filter(!tumor_type %in% c("LAML", "ALL", "MM", "CLL")) %>%
+  dplyr::mutate(cell_type_fine = 
+                  ifelse(cell_type_main == "Malignant", "Malignant", cell_type_fine)
+  )
+
+## sample annotations
+annot <- TME_annot %>% 
+  dplyr::group_by(sample, tumor_type) %>%
+  dplyr::summarise() %>% 
+  tibble::column_to_rownames(var = "sample") %>%
+  dplyr::rename("Tumor type" = "tumor_type")
+
+obj_TME <- CreateSeuratObject(counts = t(mat_TME), 
+                              meta.data = annot,
+                              project = "TME",
+                              assay = "clustering",
+                              min.cells = 0,
+                              min.features = 0,
+                              names.field = 2,
+)
+
+## set data slot = counts lost
+obj_TME@assays$clustering$data <- obj_TME@assays$clustering$counts
+
+## Look into PCA space
+obj_TME <- FindVariableFeatures(obj_TME)
+obj_TME <- ScaleData(obj_TME)
+obj_TME <- RunPCA(obj_TME, npcs = 50)
+
+VizDimLoadings(obj_TME, dims = 1:11, reduction = "pca")
+DimHeatmap(obj_TME, dims = 1:11, balanced = TRUE)
+ElbowPlot(obj_TME, ndims = 11)
+
+saveRDS(object = obj_TME, file = "../../results/object_seurat_TME_features.rds")
+
+## Identify optimal clustering parameters --------------------------------------
+## Parameters k neighbours, res resolution
+
+# obj <- readRDS()
+# obj_TME <- lapply(3:300, function(X){
+#   obj_TME <- lapply(seq(.3,2,0.1), function(Y){
+# 
+#     obj <- FindNeighbors(obj, dims = 1:10, reduction = "pca", k.param = X)
+#     obj <- FindClusters(obj, cluster.name = "clusters", resolution = Y)
+#     dbi_perf <- evaluate_clustering(data = obj_TME@reductions$pca@cell.embeddings, membership = obj$seurat_clusters)
+# 
+#   return(list(object_seurat = obj, dbi_perf = dbi_perf))
+#   })
+#   return(obj_TME)
+# })
+
+## Evaluate clustering results according to DBI --------------------------------
+
+# evaluate_clustering <- function(data, membership){
+# 
+#   intraclust = c("centroid")
+#   interclust = c("centroid")
+# 
+#   if (length(unique(membership)) > 1) {
+# 
+#     clust_pred <- as.integer(membership)
+# 
+#     # compute intercluster distances and intracluster diameters
+#     cls.scatt <- cls.scatt.data(data, clust_pred, dist="euclidean")
+# 
+#     # compute Davies-Bouldin index
+#     dbi_out <- clv.Davies.Bouldin(cls.scatt, intraclust, interclust)
+# 
+#     return(dbi_out)
+#   }else{
+#     return(NULL)
+#   }
+# }
+       
+## Load performance results ----------------------------------------------------
+## Parameters k neighbours, res resolution that yielded to lowest DBI
+louvain_res <- readRDS(file = "../../results/lovuain_pca_space.rds")
+
+tmp <- lapply(1:length(3:300), function(X){
+  tmp <- lapply(1:length(seq(.3,2,0.1)), function(Y){
+    return(louvain_res[[X]][[Y]]$dbi_perf)
+  })
+  names(tmp) <- seq(.3,2,0.1)
+  return(tmp)
+})
+names(tmp) <- 3:300
+
+tmp2 <- unlist(tmp)
+
+## number of neighbours, k = 7
+k <- sapply(strsplit(names(which.min(tmp2)), split = ".", fixed = TRUE), head, 1)
+
+## resolution parameter, res = 0.7
+res <- sapply(strsplit(names(which.min(tmp2)), split = ".", fixed = TRUE), tail, 2)
+res <- paste(res, collapse = ".")
+
+## Neighbourhood graph (KNN) based on the euclidean distance in PCA space
+obj_TME <- FindNeighbors(obj_TME, dims = 1:10, reduction = "pca", k.param = as.numeric(k))
+
+## Definition of clusters based on Louvain algorithm, maximizing modularity
+obj_TME <- FindClusters(obj_TME, cluster.name = "clusters", algorithm = 1, resolution = as.numeric(res))
+
+color_clusters <- c("#c9593d",
+                    "#60b34d",
+                    "#9a56c8",
+                    "#b5b342",
+                    "#6e6fc7",
+                    "#c58942",
+                    "#cd62ba",
+                    "#4bb292",
+                    "#d2406c",
+                    "#687a37",
+                    "#6a99d3",
+                    "#bb688b")
+
+## UMAP plot
+obj_TME <- RunUMAP(obj_TME, dims = 1:10, reduction = "pca", reduction.name = "umap")
+DimPlot(obj_TME, cols = color_clusters)
+
+## PCA plot
+DimPlot(obj_TME, reduction = "pca", cols = color_clusters)
+
+# find all markers of each cluster
+cluster_markers <- lapply(0:11, function(X){
+  markers <- FindMarkers(obj_TME, ident.1 = X)
+  return(markers)
+})
+names(cluster_markers) <- 0:11
+
+markers <- FindMarkers(obj_TME, ident.1 = 0, ident.2 = 1)
+
+## Heatmap - markers
+cluster_makers_df <- do.call(rbind, lapply(0:11, function(X){
+  tmp <- cluster_markers[[as.character(X)]]
+  tmp$cluster <- X
+  tmp <- tmp %>% 
+    tibble::rownames_to_column(var = "TME_feature")
+  return(tmp)
+}))
+
+cluster_makers_df$TME_feature <- factor(cluster_makers_df$TME_feature, 
+                                        levels = rev(c("Lymphoid", "CD8T", "CD4T", "Treg",
+                                                       "Stromal", "CAF", "Endothelial", "Myeloid", "Mp", "Mo",
+                                                       "cDC1","cDC2")))
+
+lim <- min(range(cluster_makers_df$avg_log2FC))
+cluster_makers_df$avg_log2FC[which(cluster_makers_df$avg_log2FC > abs(lim))] <- abs(lim)
+
+cluster_makers_df %>%
+  ggplot(aes(x=as.factor(cluster), y=TME_feature, fill = avg_log2FC)) +
+  geom_tile() +
+  scale_fill_gradient2(low ="blue", mid = "white", high = "red", midpoint = 0) +
+  theme_classic() +
+  theme(axis.title = element_blank(), axis.text = element_text(size = 14, color = "black")) +
+  labs(x="Cluster", y = "TME feature", fill = "Average\nlog2\nFold-Change") +
+  geom_text(aes(label=ifelse(p_val_adj > .05, "X", "")))
+
+## Heatmap - samples
+
+mat_breaks <- seq(min(mat_TME, na.rm = TRUE), max(mat_TME, na.rm = TRUE), length.out = 100)
+mat_breaks[100] <- round(mat_breaks[100] )
+col_fun <- viridisLite::rocket(length(mat_breaks) - 1, direction = -1)
+
+heatmap <- DoHeatmap(obj_TME, 
+                     slot = "data", 
+                     features = rev(levels(cluster_makers_df$TME_feature)),
+                     group.colors = color_clusters,
+) + 
+  scale_fill_gradientn(colours = col_fun, values = mat_breaks) +
+  theme(axis.text.y = element_text(size = 12, color = "black"),
+        legend.text = element_text(size = 10, color = "black"))
+
+## Visualize feature distributions per cluster ---------------------------------
+
+obj_TME_cluster_1 <- subset(obj_TME, seurat_clusters == 1)
+cluster1 <- WhichCells(object = obj_TME_cluster_1)
+obj_TME_cluster_1 <- SetIdent(obj_TME_cluster_1, cells = cluster1, value = 1)
+
+RidgePlot(obj_TME_cluster_1, features = c("Myeloid", "Mp"), ncol = 4, idents = 1)
+
+## Establish a TME archetype for each sample -----------------------------------
+
+bcmeta_archetypes <- obj_TME@meta.data %>%
+  tibble::rownames_to_column(var = "sample") %>%
+  dplyr::mutate(archetype = as.numeric(seurat_clusters))
+
+bcmeta_archetypes$archetype <- factor(bcmeta_archetypes$archetype, levels = sort(unique(bcmeta_archetypes$archetype)))
+
+summary <- bcmeta_archetypes %>%
+  dplyr::group_by(`Tumor type`, archetype) %>%
+  dplyr::summarise(count = n()) %>%
+  ggplot(aes(x = archetype, y=`Tumor type`, fill = count)) +
+  ggplot2::geom_tile() + 
+  ggplot2::scale_fill_gradient(low = "white", high = "darkgreen") +
+  ggplot2::geom_text(aes(label = count), position = position_dodge2(0.2)) +
+  theme_classic() +
+  theme(axis.title = element_blank(), 
+        axis.text = element_text(size = 16, colour = "black"))
+  # scale_x_discrete(breaks = levels(bcmeta_archetypes$archetype),
+  #                  limits = c("skip", 
+  #                             levels(bcmeta_archetypes$archetype)[1], "skip", "skip",
+  #                             levels(bcmeta_archetypes$archetype)[2], "skip", "skip", 
+  #                             levels(bcmeta_archetypes$archetype)[3], "skip", "skip", 
+  #                             levels(bcmeta_archetypes$archetype)[4], "skip", "skip", 
+  #                             levels(bcmeta_archetypes$archetype)[5], "skip", "skip", 
+  #                             levels(bcmeta_archetypes$archetype)[6], "skip", "skip", 
+  #                             levels(bcmeta_archetypes$archetype)[7], "skip", "skip", 
+  #                             levels(bcmeta_archetypes$archetype)[8], "skip", "skip",
+  #                             levels(bcmeta_archetypes$archetype)[9], "skip", 
+  #                             levels(bcmeta_archetypes$archetype)[10],
+  #                             levels(bcmeta_archetypes$archetype)[11],
+  #                             levels(bcmeta_archetypes$archetype)[12]
+  #                             ))
+
+summary
+ggsave(filename = "../../figures/summary_samples_TME_archetypes.png", width = 14, height = 8)
+
+
+ggpubr::ggarrange(heatmap, summary, heights = c(1.5, 1), ncol = 1, nrow = 2, align = "v", )
+heatmap / summary
+
+bcmeta_archetypes <- bcmeta_archetypes %>%
+  dplyr::mutate(archetype = ifelse(archetype == 1, "Myeloid_centric", archetype)) %>%
+  dplyr::mutate(archetype = ifelse(archetype == 2, "Immune_rich_Treg_bias", archetype)) %>%
+  dplyr::mutate(archetype = ifelse(archetype == 3, "Immune_rich_cDC1_bias", archetype)) %>%
+  dplyr::mutate(archetype = ifelse(archetype == 4, "Immune_desert_cDC1_bias", archetype)) %>%
+  dplyr::mutate(archetype = ifelse(archetype == 5, "Immune_stromal_CAFlike_cDC1_cDC2_bias", archetype)) %>%
+  dplyr::mutate(archetype = ifelse(archetype == 6, "Immune_stromal_Endolike_Treg_cDC1_cDC2_bias", archetype)) %>%
+  dplyr::mutate(archetype = ifelse(archetype == 7, "Immune_stromal_cDC1_bias", archetype)) %>%
+  dplyr::mutate(archetype = ifelse(archetype == 8, "Tcell_centric_Mo_cDC1_cDC2_bias", archetype)) %>%
+  dplyr::mutate(archetype = ifelse(archetype == 9, "Myeloid_centric_Mp_bias", archetype)) %>%
+  dplyr::mutate(archetype = ifelse(archetype == 10, "Immune_desert_Endo_Mo_cDC2_bias", archetype)) %>%
+  dplyr::mutate(archetype = ifelse(archetype == 11, "Myeloid_centric_Mo_cDC1_cDC2_bias", archetype)) %>%
+  dplyr::mutate(archetype = ifelse(archetype == 12, "Immune_stromal_CAFlike", archetype)) %>%
+  dplyr::select(sample, archetype) %>%
+  dplyr::rename("TME_archetype" = "archetype")
+
+saveRDS(bcmeta_archetypes, file = "../../results/bcmeta_samples_TME_archetype.rds")
+data.table::fwrite(bcmeta_archetypes, 
+                   file = "../../results/bcmeta_samples_TME_archetype.csv",
+                   row.names = FALSE,
+                   quote = FALSE
+                   )
+
+```
+                                    
+> Investigate association between metacomunidades and TME archetipos (untreated-primary, BrM por separado)
+
+```{r}
+
+## Without BrMs ----------------------------------------------------------------
+
+## TME archetypes
+TME_annot <- harmonized_metadata %>%
+  dplyr::group_by(sample, tumor_type, treated, sample_type) %>%
+  dplyr::filter(sample %in% rownames(mat_TME) & !study %in% c("brmets_hugo_gonzalez", "brmets_jana_biermann")) %>%
+  dplyr::summarise()
+
+TME_annot <- inner_join(TME_annot, bcmeta_archetypes, by = "sample")
+TME_annot$TME_archetype <- gsub("_", "\n", TME_annot$TME_archetype)
+TME_annot$treated[TME_annot$treated == ""] <- NA
+
+TME_annot <- TME_annot %>%
+  dplyr::rename("Sample" = "sample",
+                "CancerType" = "tumor_type",
+                "SampleType" = "sample_type",
+                "Treated" = "treated",
+                "TMEarchetype" = "TME_archetype") 
+
+TME_annot <- TME_annot %>%
+  dplyr::ungroup() %>%
+  dplyr::select(Sample, TMEarchetype)
+
+## Therapeutic metacommunities
+drug_metacommunities <- data.table::fread("../../results/bcmeta_metacommunities.csv")
+drug_metacommunities <- drug_metacommunities %>%
+  dplyr::select(Sample, Study, `Cancer type`, Subtype, `Primary or metastasis`, Treated, `Best metacommunity by frequency`) %>%
+  dplyr::filter(Sample %in% rownames(mat_TME) & !Study %in% c("brmets_hugo_gonzalez", "brmets_jana_biermann")) %>%
+  dplyr::rename("CancerType" = `Cancer type`,
+                "SampleType" = `Primary or metastasis`,
+                "MetaCommunity" = `Best metacommunity by frequency`)
+
+df_drug_TME <- inner_join(drug_metacommunities, TME_annot, by = c("Sample"))
+
+#########################
+## Primary/Metastasis TME archetypes
+#########################
+
+dat_origin <- table(df_drug_TME$SampleType, df_drug_TME$TMEarchetype)
+
+## Chi-square test
+chisq.test(dat_origin, correct = FALSE)
+
+## Expected frequencies
+chisq.test(dat_origin)$expected
+
+## Fisher's exact test
+test <- fisher.test(dat_origin, workspace = 2e8)
+
+# combine plot and statistical test with ggbarstats
+library('ggstatsplot')
+
+ggbarstats(
+  df_drug_TME, SampleType, TMEarchetype,
+  results.subtitle = FALSE,
+  subtitle = paste0(
+    "Fisher's exact test", ", p-value = ",
+    ifelse(test$p.value < 0.001, "< 0.001", round(test$p.value, 3))
+  )
+)  +
+  theme(axis.title = element_blank(), 
+        axis.ticks.x = element_blank(), 
+        axis.text.y = element_text(size = 12, colour = "black"),
+        axis.text.x = element_text(size = 12, colour = "black", hjust = 0.5))
+
+ggsave(filename = "../../figures/PrimaryMetastasis_vs_TMEarchetype.png", width = 12, height = 8)
+
+#########################
+## Treatment vs TME archetypes
+#########################
+
+tmp <- df_drug_TME %>%
+  dplyr::filter(!Treated %in% c("Unknown"))
+
+dat_treatment <- table(tmp$Treated, tmp$TMEarchetype)
+
+## Chi-square test
+chisq.test(dat_treatment, correct = FALSE)
+
+## Expected frequencies
+chisq.test(dat_treatment)$expected
+
+## Fisher's exact test
+test <- fisher.test(dat_treatment, workspace = 2e9)
+
+# combine plot and statistical test with ggbarstats
+
+ggbarstats(
+  tmp, Treated, TMEarchetype,
+  results.subtitle = FALSE,
+  subtitle = paste0(
+    "Fisher's exact test", ", p-value = ",
+    ifelse(test$p.value < 0.001, "< 0.001", round(test$p.value, 3))
+  )
+)  +
+  theme(axis.title = element_blank(), 
+        axis.ticks.x = element_blank(), 
+        axis.text.y = element_text(size = 12, colour = "black"),
+        axis.text.x = element_text(size = 12, colour = "black", hjust = 0.5))
+
+ggsave(filename = "../../figures/TreatmentStatus_vs_TMEarchetype.png", width = 12, height = 8)
+
+#########################
+## Metacommunities vs TME archetypes
+#########################
+
+dat_drug <- table(df_drug_TME$MetaCommunity, df_drug_TME$TMEarchetype)
+
+## Chi-square test
+chisq_test <- chisq.test(dat_drug, correct = FALSE)
+
+## Expected frequencies
+chisq.test(dat_drug)$expected
+
+## Fisher's exact test --> leads to an error
+test <- fisher.test(dat_drug)
+
+# combine plot and statistical test with ggbarstats
+
+ggbarstats(
+  df_drug_TME, MetaCommunity, TMEarchetype,
+  results.subtitle = FALSE,
+  subtitle = paste0(
+    "Chi-square test", ", p-value = ",
+    ifelse(chisq_test$p.value < 0.001, "< 0.001", round(chisq_test$p.value, 3))
+  )
+)  +
+  theme(axis.title = element_blank(), 
+        axis.ticks.x = element_blank(), 
+        axis.text.y = element_text(size = 12, colour = "black"),
+        axis.text.x = element_text(size = 12, colour = "black", hjust = 0.5))
+
+ggsave(filename = "../../figures/MetaCommunity_vs_TMEarchetype.png", width = 12, height = 8)
+
+## With BrMs ----------------------------------------------------------------
+
+## TME archetypes
+TME_annot <- harmonized_metadata %>%
+  dplyr::group_by(sample, tumor_type, treated, sample_type) %>%
+  dplyr::filter(sample %in% rownames(mat_TME) & study %in% c("brmets_hugo_gonzalez", "brmets_jana_biermann")) %>%
+  dplyr::summarise()
+
+TME_annot <- inner_join(TME_annot, bcmeta_archetypes, by = "sample")
+TME_annot$TME_archetype <- gsub("_", "\n", TME_annot$TME_archetype)
+TME_annot$treated[TME_annot$treated == ""] <- NA
+
+TME_annot <- TME_annot %>%
+  dplyr::rename("Sample" = "sample",
+                "CancerType" = "tumor_type",
+                "SampleType" = "sample_type",
+                "Treated" = "treated",
+                "TMEarchetype" = "TME_archetype") 
+
+TME_annot <- TME_annot %>%
+  dplyr::ungroup() %>%
+  dplyr::select(Sample, TMEarchetype)
+
+## Therapeutic metacommunities
+drug_metacommunities <- data.table::fread("../../results/bcmeta_metacommunities.csv")
+drug_metacommunities <- drug_metacommunities %>%
+  dplyr::select(Sample, Study, `Cancer type`, Subtype, `Primary or metastasis`, Treated, `Best metacommunity by frequency`) %>%
+  dplyr::filter(Sample %in% rownames(mat_TME) & Study %in% c("brmets_hugo_gonzalez", "brmets_jana_biermann")) %>%
+  dplyr::rename("CancerType" = `Cancer type`,
+                "SampleType" = `Primary or metastasis`,
+                "MetaCommunity" = `Best metacommunity by frequency`)
+
+df_drug_TME <- inner_join(drug_metacommunities, TME_annot, by = c("Sample"))
+
+#########################
+## Treatment vs TME archetype
+#########################
+
+dat_treatment <- table(df_drug_TME$Treated, df_drug_TME$TMEarchetype)
+
+## Chi-square test
+chisq.test(dat_treatment, correct = FALSE)
+
+## Expected frequencies
+chisq.test(dat_treatment)$expected
+
+## Fisher's exact test
+test <- fisher.test(dat_treatment, workspace = 2e9)
+
+# combine plot and statistical test with ggbarstats
+
+ggbarstats(
+  df_drug_TME, Treated, TMEarchetype,
+  results.subtitle = FALSE,
+  subtitle = paste0(
+    "Fisher's exact test", ", p-value = ",
+    ifelse(test$p.value < 0.001, "< 0.001", round(test$p.value, 3))
+  )
+)  +
+  theme(axis.title = element_blank(), 
+        axis.ticks.x = element_blank(), 
+        axis.text.y = element_text(size = 12, colour = "black"),
+        axis.text.x = element_text(size = 12, colour = "black", hjust = 0.5))
+
+ggsave(filename = "../../figures/TreatmentStatus_vs_TMEarchetype_BrMs.png", width = 8, height = 8)
+
+#########################
+## Metacommunities vs TME archetypes
+#########################
+
+dat_drug <- table(df_drug_TME$MetaCommunity, df_drug_TME$TMEarchetype)
+
+## Chi-square test
+chisq_test <- chisq.test(dat_drug, correct = FALSE)
+
+## Fisher's exact test --> leads to an error
+fisher_test <- fisher.test(dat_drug)
+
+# combine plot and statistical test with ggbarstats
+
+ggbarstats(
+  df_drug_TME, MetaCommunity, TMEarchetype,
+  results.subtitle = FALSE,
+  subtitle = paste0(
+    "Fisher's Exact Test", ", p-value = ",
+    ifelse(fisher_test$p.value < 0.001, "< 0.001", round(fisher_test$p.value, 3))
+  )
+)  +
+  theme(axis.title = element_blank(), 
+        axis.ticks.x = element_blank(), 
+        axis.text.y = element_text(size = 12, colour = "black"),
+        axis.text.x = element_text(size = 12, colour = "black", hjust = 0.5))
+
+ggsave(filename = "../../figures/MetaCommunity_vs_TMEarchetype_BrMs.png", width = 8, height = 8)
+
+```
