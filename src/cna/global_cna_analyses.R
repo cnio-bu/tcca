@@ -37,26 +37,53 @@ new_metadata <- cna_mat@meta.data %>%
 
 rownames(new_metadata) <- new_metadata$row_names
 
-new_mat <- BPCells::open_matrix_dir(dir = "results/cna_mat_lvl1_gene/")
-new_mat <- new_mat[, new_metadata$row_names]
-
-seu <- CreateSeuratObject(counts = new_mat, meta.data = new_metadata)
-
-Idents(seu) <- seu$metacommunity
-
-## Done in new Seurat 5 due to bugs in the dev. version of v5
-seu@assays[["RNA"]]$data <- new_mat
-
-amps_dels <- FindAllMarkers(
-    verbose = TRUE,
-    object = seu,
-    assay = "RNA",
-    slot = "counts", 
-    test.use = "LR",
-    random.seed = 120394,
-    logfc.threshold = 0,
-    return.thresh = 1
+new_mat <- BPCells::open_matrix_dir(
+    dir = "/raid/lsagarcia/cna_lvl1_gene_transposed"
     )
 
+new_mat <- new_mat[, new_metadata$row_names]
+
+## Transpose storage order for wilcox
+new_mat <- transpose_storage_order(
+    new_mat,
+    tmpdir = "/raid/lsagarcia/tmp",
+    outdir = "/raid/lsagarcia/transposed_cna_mat"
+    )
+
+# seu <- CreateSeuratObject(counts = new_mat, meta.data = new_metadata)
+
+# Idents(seu) <- seu$metacommunity
+
+## Done in new Seurat 5 due to bugs in the dev. version of v5
+# seu@assays[["RNA"]]$data <- new_mat
+
+# amps_dels <- FindAllMarkers(
+#     verbose = TRUE,
+#     object = seu,
+#     assay = "RNA",
+#     slot = "counts", 
+#     test.use = "LR",
+#     random.seed = 120394,
+#     logfc.threshold = 0,
+#     return.thresh = 1
+#     )
+
 ## bp test
-amps_dels <- BPCells::marker_features(mat = new_mat, groups = new_metadata$metacommunity)
+new_mat_transposed <- BPCells::open_matrix_dir(dir = "/raid/lsagarcia/transposed_cna_mat/")
+
+amps_dels <- BPCells::marker_features(
+    mat = new_mat_transposed,
+    groups = new_metadata$metacommunity,
+    method = "wilcoxon"
+    )
+
+amp_dels_annotated <- amps_dels %>%
+    mutate(
+        padj = p.adjust(p_val_raw, method = "BH"),
+        log2fc = log2(foreground_mean/background_mean)
+    ) %>%
+    filter(
+        padj <= 0.01
+    ) %>%
+    group_by(foreground) %>%
+    arrange(desc(log2fc))
