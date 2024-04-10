@@ -26,7 +26,8 @@ ith_primaries_naive <- ith_by_sample %>%
         n.prop_metacom_untreated_3,
         n.prop_metacom_untreated_4,
         n.prop_metacom_untreated_5,
-        n.prop_metacom_untreated_6
+        n.prop_metacom_untreated_6,
+        best_metacom
     ) 
 
 ## comm data
@@ -239,3 +240,21 @@ ggsave(
     height = 21,
     width = 21
     )
+
+## Average shannon and clonal heterogeneity by therapeutic module
+metacom_by_shannon <- ggplot(
+    data = ith_primaries_naive,
+    aes(x = best_metacom, y = shan)
+    ) +
+    geom_boxplot() +
+    xlab("") +
+  #  ggpubr::stat_anova_test(p.adjust.method = "BH") +
+    ggpubr::stat_compare_means(
+        comparisons = list(
+            c("metacom_untreated_2", "metacom_untreated_1"),
+            c("metacom_untreated_3", "metacom_untreated_1"),
+            c("metacom_untreated_4", "metacom_untreated_1"),
+            c("metacom_untreated_5", "metacom_untreated_1"),
+            c("metacom_untreated_6", "metacom_untreated_1")
+            )) +
+    theme_minimal()
