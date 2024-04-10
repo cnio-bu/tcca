@@ -3,7 +3,7 @@ library(tidyverse)
 
 ith_by_sample <- data.table::fread(
     input  = "results/modules/annotated/metacom_proportions_primary_wide.tsv"
-    )
+)
 
 
 ## start with naive primaries
@@ -12,7 +12,7 @@ ith_primaries_naive <- ith_by_sample %>%
         study != "cell_lines_gabriella_kinker",
         sample_type == "p",
         treated == FALSE
-        ) %>%
+    ) %>%
     filter(
         !(study == "brca_bhupinder_pal" & tumor_subtype == "predicted_tumour")
     ) %>%
@@ -45,8 +45,8 @@ shan <- vegan::diversity(
     x = ith_primaries_naive_mat,
     index = "shannon",
     MARGIN = 1,
- #   groups = ith_primaries_naive$tumor_type,
-  #  equalize.groups = TRUE
+    #   groups = ith_primaries_naive$tumor_type,
+    #  equalize.groups = TRUE
 )
 ith_primaries_naive$shan <- shan
 ith_primaries_naive$tumor_type <- fct_reorder(ith_primaries_naive$tumor_type, ith_primaries_naive$shan)
@@ -107,14 +107,14 @@ mean_shan_levels <- ggplot(genomic_therapeutic_ith,
                            aes(x = tumor_type,
                                y = shan,
                                color = tumor_type
-                               )
-                           ) +
+                           )
+) +
     geom_segment(aes(x =  tumor_type,
                      xend = tumor_type,
                      y = median(genomic_therapeutic_ith$shan),
                      yend = mean_shan
-                     )
-                 ) +
+    )
+    ) +
     geom_jitter(size = 3, alpha = 0.25, width = 0.2) +
     geom_hline(aes(yintercept = median(genomic_therapeutic_ith$shan)), 
                color = "gray70",
@@ -156,14 +156,14 @@ ggsave(
     dpi = 100,
     height = 7,
     width = 7
-    )
+)
 
 
 mean_clonal_levels <- ggplot(genomic_therapeutic_ith,
-                           aes(x = tumor_type,
-                               y = n.prop,
-                               color = tumor_type
-                           )
+                             aes(x = tumor_type,
+                                 y = n.prop,
+                                 color = tumor_type
+                             )
 ) +
     geom_segment(aes(x =  tumor_type,
                      xend = tumor_type,
@@ -215,6 +215,7 @@ ggsave(
 )
 
 
+
 correlation_wrap <- ggplot(data = genomic_therapeutic_ith, aes(x = shan, y = n.prop)) +
     geom_point() +
     geom_smooth(method = "lm") +
@@ -231,7 +232,7 @@ correlation_wrap <- ggplot(data = genomic_therapeutic_ith, aes(x = shan, y = n.p
           panel.border = element_blank(),
           panel.background = element_blank()
     )
- 
+
 
 ggsave(
     plot = correlation_wrap,
@@ -239,22 +240,80 @@ ggsave(
     dpi = 300,
     height = 21,
     width = 21
-    )
+)
 
+avg_shan_by_metacom <- ith_primaries_naive %>%
+    group_by(best_metacom) %>%
+    summarise(
+        avg_shan = median(shan)
+    )
 ## Average shannon and clonal heterogeneity by therapeutic module
 metacom_by_shannon <- ggplot(
     data = ith_primaries_naive,
     aes(x = best_metacom, y = shan)
-    ) +
+) +
     geom_boxplot() +
+    scale_x_discrete(labels= c("TM 1", "TM 2", "TM 3", "TM 4", "TM 5", "TM 6")) +
     xlab("") +
-  #  ggpubr::stat_anova_test(p.adjust.method = "BH") +
-    ggpubr::stat_compare_means(
-        comparisons = list(
-            c("metacom_untreated_2", "metacom_untreated_1"),
-            c("metacom_untreated_3", "metacom_untreated_1"),
-            c("metacom_untreated_4", "metacom_untreated_1"),
-            c("metacom_untreated_5", "metacom_untreated_1"),
-            c("metacom_untreated_6", "metacom_untreated_1")
-            )) +
-    theme_minimal()
+    ylab("Shannon diversity") +
+    ggpubr::stat_pwc(method = "wilcox.test", p.adjust.method = "BH", hide.ns = TRUE) +
+    theme_minimal() +
+    theme(
+        panel.grid = element_blank(),
+        legend.position = "none",
+        text = element_text(family = "Arial"),
+        plot.caption = element_text(size = 9, color = "gray50"),
+        axis.line = element_line(colour = "black"),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        panel.background = element_blank()
+    )
+
+
+ggsave(
+    filename = "results/figures/metacom_by_shannon.png",
+    plot = metacom_by_shannon,
+    dpi = 100,
+    height = 7,
+    width = 7
+    )
+
+## Average shannon and clonal heterogeneity by therapeutic module
+avg_clonal_by_metacom <- genomic_therapeutic_ith %>%
+    group_by(best_metacom) %>%
+    summarise(
+        avg_metacom_clonal = median(avg.clones)
+    )
+
+metacom_by_clonal <- ggplot(
+    data = genomic_therapeutic_ith,
+    aes(x = best_metacom, y = avg.clones)
+) +
+    geom_point() +
+    geom_boxplot() +
+    scale_x_discrete(labels= c("TM 1", "TM 2", "TM 3", "TM 4", "TM 5", "TM 6")) +
+    xlab("") +
+    ylab("Clonal diversity") +
+    ggpubr::stat_pwc(method = "wilcox.test", p.adjust.method = "BH", hide.ns = TRUE) +
+    theme_minimal() +
+    theme(
+        panel.grid = element_blank(),
+        legend.position = "none",
+        text = element_text(family = "Arial"),
+        plot.caption = element_text(size = 9, color = "gray50"),
+        axis.line = element_line(colour = "black"),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        panel.background = element_blank()
+    )
+
+
+ggsave(
+    filename = "results/figures/metacom_by_clones.png",
+    plot = metacom_by_clonal,
+    dpi = 100,
+    height = 7,
+    width = 7
+)
