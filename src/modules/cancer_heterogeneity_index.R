@@ -5,6 +5,7 @@ ith_by_sample <- data.table::fread(
     input  = "results/modules/annotated/metacom_proportions_primary_wide.tsv"
 )
 
+source("src/figures/TCCA_palette.R")
 
 ## start with naive primaries
 ith_primaries_naive <- ith_by_sample %>%
@@ -317,3 +318,68 @@ ggsave(
     height = 7,
     width = 7
 )
+
+## test single plot
+genomic_clona_ith_long <- genomic_therapeutic_ith %>%
+    pivot_longer(
+        cols = c("mean_shan", "avg.clones"),
+        names_to = "diversity",
+        values_to = "val"
+        )
+
+metacom_clone_ith_single <- ggplot(
+    data = genomic_clona_ith_long,
+    aes( x= best_metacom,
+         y = val,
+         fill = diversity
+         )
+    ) + geom_boxplot()
+
+
+
+## Final figures
+
+## Exclude LAML since scEVAN performed notably bad
+genomic_therapeutic_ith_valid <- genomic_therapeutic_ith %>%
+    filter(tumor_type != "LAML")
+
+
+module_clonal_diversity <- ggplot(
+    data = genomic_therapeutic_ith_valid,
+    aes(x = best_metacom, y = n.prop, fill = best_metacom)
+) +
+    geom_boxplot() +
+    geom_jitter() +
+    scale_x_discrete(
+        labels= c("TM1", "TM2", "TM3", "TM4", "TM5", "TM6")
+        ) +
+    scale_y_continuous(n.breaks = 10) + 
+    scale_fill_manual(values = unname(module_colors)) +
+    xlab("") +
+    ylab("Clonal diversity") +
+    ggpubr::stat_pwc(
+        method = "wilcox.test",
+        p.adjust.method = "BH",
+        hide.ns = TRUE
+        ) +
+    theme_minimal() +
+    theme(
+        panel.grid = element_blank(),
+        legend.position = "none",
+        text = element_text(family = "Arial"),
+        plot.caption = element_text(size = 9, color = "gray50"),
+        axis.line = element_line(colour = "black"),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        panel.background = element_blank()
+    )
+
+
+ggsave(
+    filename = "results/figures/module_clonal_diversity.png",
+    plot = module_clonal_diversity,
+    dpi = 100,
+    height = 7,
+    width = 7
+       )
