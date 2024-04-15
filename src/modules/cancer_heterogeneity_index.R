@@ -351,7 +351,7 @@ module_clonal_diversity <- ggplot(
     geom_boxplot() +
     geom_jitter() +
     scale_x_discrete(
-        labels= c("TM1", "TM2", "TM3", "TM4", "TM5", "TM6")
+        labels= c("TM 1", "TM 2", "TM 3", "TM 4", "TM 5", "TM 6")
         ) +
     scale_y_continuous(n.breaks = 10) + 
     scale_fill_manual(values = unname(module_colors)) +
@@ -383,3 +383,29 @@ ggsave(
     height = 7,
     width = 7
        )
+
+## Average shannon and clonal heterogeneity by therapeutic module
+module_ith_diversity <- ggplot(
+    data = genomic_therapeutic_ith_valid,
+    aes(x = best_metacom, y = shan, fill = best_metacom)
+) +
+    geom_boxplot() +
+    geom_point() +
+    scale_x_discrete(labels= c("TM 1", "TM 2", "TM 3", "TM 4", "TM 5", "TM 6")) +
+    scale_y_continuous(n.breaks = 10) + 
+    scale_fill_manual(values = unname(module_colors)) +
+    xlab("") +
+    ylab("Shannon diversity") +
+    ggpubr::stat_pwc(method = "wilcox.test", p.adjust.method = "BH", hide.ns = TRUE) +
+    theme_minimal() +
+    theme(
+        panel.grid = element_blank(),
+        legend.position = "none",
+        text = element_text(family = "Arial"),
+        plot.caption = element_text(size = 9, color = "gray50"),
+        axis.line = element_line(colour = "black"),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        panel.background = element_blank()
+    )
