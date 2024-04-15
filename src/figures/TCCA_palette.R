@@ -82,3 +82,13 @@ MoAs_colors <- c("DNA related agent" = "#6cca8e", #This is the Pitiscale with so
                  "NFkB signaling inhibitor" = "#ff4430",
                  "ATP related agent" = "#e06d23",
                  "Other" = "#BBB9B7")
+
+## Therapeutic module colors
+module_colors <- c(
+    "TM1" = "#b6d7a8",
+    "TM2" = "#fce5cd",
+    "TM3" = "#c9daf8",
+    "TM4" = "#d9d2e9",
+    "TM5" = "#ead1dc",
+    "TM6" = "#dd7e6b"
+    )
