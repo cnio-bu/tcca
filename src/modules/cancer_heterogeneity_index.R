@@ -390,7 +390,7 @@ module_ith_diversity <- ggplot(
     aes(x = best_metacom, y = shan, fill = best_metacom)
 ) +
     geom_boxplot() +
-    geom_point() +
+    geom_jitter() +
     scale_x_discrete(labels= c("TM 1", "TM 2", "TM 3", "TM 4", "TM 5", "TM 6")) +
     scale_y_continuous(n.breaks = 10) + 
     scale_fill_manual(values = unname(module_colors)) +
@@ -409,3 +409,11 @@ module_ith_diversity <- ggplot(
         panel.border = element_blank(),
         panel.background = element_blank()
     )
+
+ggsave(
+    filename = "results/figures/module_ith_diversity.png",
+    plot = module_ith_diversity,
+    dpi = 100,
+    height = 7,
+    width = 7
+)
