@@ -71,3 +71,11 @@ saveRDS(
     object = meta.programs,
     file = "results/functional/metaprograms_sc_mat.rds"
     )
+
+## export the meta.data too for matching
+sc_mat_meta.data <- seu@meta.data
+
+sc_mat_meta.data <- sc_mat_meta.data %>%
+    rownames_to_column("original_rownames")
+
+write_tsv(sc_mat_meta.data, file = "results/functional/cell_level_mps_metadata.tsv")
