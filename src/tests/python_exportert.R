@@ -2,13 +2,14 @@ library(BPCells)
 library(tidyverse)
 
 mat <- BPCells::open_matrix_dir(dir = "results/lvl1/pancancer_merged_mat")
+mat_to_ints <- BPCells::convert_matrix_type(mat, type = "uint32_t")
 
 BPCells::write_matrix_anndata_hdf5(
-    mat = mat,
-    path = "/raid/lsagarcia/python_hdf5_mat"
+    mat = mat_to_ints,
+    path = "/raid/lsagarcia/seu_lvl1_counts.h5ad",
+    # group = "counts"
 )
 
-mat_to_ints <- BPCells::convert_matrix_type(mat, type = "uint32_t")
 
 BPCells::write_matrix_hdf5(
     mat = mat_to_ints,

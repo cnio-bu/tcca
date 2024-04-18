@@ -188,7 +188,6 @@ metacom_proportions_annotated_wide <- metacom_proportions_annotated_wide %>%
     dplyr::rename(
         "best_metacom_enrichment" = metacommunity
     )
-
 write_tsv(
     x = metacom_proportions_annotated_wide,
     file = "results/modules/annotated/metacom_proportions_primary_wide.tsv"
