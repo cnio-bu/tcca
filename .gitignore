@@ -13,3 +13,6 @@ spectral_clustering_sample_test
 output/*
 raw/*
 src/spectral_clustering_sample_test/beyondcell_analysis.R
+bulk_heat.RData
+reference/additional_metadata_mmieloma.tsv
+reference/harmonized_bcmeta_nonmalignant_annotation.csv
