@@ -23,6 +23,21 @@ adata.obs = metadata
 
 adata.layers["counts"] = adata.X.copy()
 sc.pp.normalize_total(adata)
+sc.pp.log1p(adata)
+
+adata.obs["sample_study"] = adata.obs["sample"].astype(str) + adata.obs["study"].astype(str)
+adata.obs["data_pmid"] = adata.obs["data_pmid"].astype(str)
+
+sc.pp.highly_variable_genes(
+    adata,
+ #   flavor="seurat_v3",
+ #   n_top_genes=2000,
+ #   layer="counts",
+    #batch_key="sample_study",
+    subset=True
+ #   span=0.5
+    )
+
 
 scvi.model.SCVI.setup_anndata(adata, layer="counts", batch_key=["sample", "study"])
 
