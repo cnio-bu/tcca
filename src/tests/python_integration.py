@@ -4,6 +4,8 @@ import scvi
 import torch
 
 scvi.settings.seed = 120394
+scvi.settings.dl_num_workers= 3
+
 print("Last run with scvi-tools version:", scvi.__version__)
 
 torch.set_float32_matmul_precision("high")
@@ -19,8 +21,11 @@ metadata.set_index("cell_id", inplace=True)
 print("Metadata set!")
 adata.obs = metadata
 
+adata.layers["counts"] = adata.X.copy()
+sc.pp.normalize_total(adata)
 
 scvi.model.SCVI.setup_anndata(adata, layer="counts", batch_key=["sample", "study"])
+
 print("Generated model load")
 
 model = scvi.model.SCVI(adata, n_layers=2, n_latent=30, gene_likelihood="nb")
