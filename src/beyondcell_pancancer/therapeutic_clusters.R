@@ -7,15 +7,18 @@ options(future.globals.maxSize = 1e9)
 options(Seurat.object.assay.version = 'v5')
 
 ## Load full beyondcell mat
-mat <- open_matrix_dir(dir = "results/beyondcell_bp/full_mat_beyondcell/")
+mat <- open_matrix_dir(dir = "results/beyondcell_bp/full_mat_beyondcell")
 ## Load full database
 meta.data_full_clinical <- read_tsv(
-    file = "results/annotation/beyondcell_metadata_with_clinical.tsv"
+    file = "results/beyondcell_bp/beyondcell_metadata_with_clinical.tsv"
     )
 
 meta.data_full_clinical <- meta.data_full_clinical %>%
     as.data.frame()
 
+colnames(mat) <- paste0("c", c(1:ncol(mat)))
+
+meta.data_full_clinical$new_cell_id <-  paste0("c", c(1:nrow(meta.data_full_clinical)))
 rownames(meta.data_full_clinical) <- meta.data_full_clinical$new_cell_id
 
 seu <- Seurat::CreateSeuratObject(
@@ -24,6 +27,11 @@ seu <- Seurat::CreateSeuratObject(
     project = "beyondcell_pancancer",
     meta.data = meta.data_full_clinical
 )
+
+## subset bc to remove bhupinder pal samples that are predicted tumours
+seu <- subset(seu,
+              subset = (tumor_type == "BRCA" & tumor_subtype != "predicted_tumour" | tumor_type != "BRCA")
+              )
 
 seu[["RNA"]]$data <- mat
 
