@@ -28,6 +28,7 @@ sc.pp.log1p(adata)
 adata.obs["sample_study"] = adata.obs["sample"].astype(str) + adata.obs["study"].astype(str)
 adata.obs["data_pmid"] = adata.obs["data_pmid"].astype(str)
 
+adata.raw = adata
 sc.pp.highly_variable_genes(
     adata,
  #   flavor="seurat_v3",
@@ -37,7 +38,7 @@ sc.pp.highly_variable_genes(
     subset=True
  #   span=0.5
     )
-
+adata.write("tcca_annotated.h5ad")
 
 scvi.model.SCVI.setup_anndata(adata, layer="counts", batch_key=["sample", "study"])
 
