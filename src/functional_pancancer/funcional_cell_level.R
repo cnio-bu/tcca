@@ -36,14 +36,10 @@ readGMT <- function(x) {
 }
 
 
-seu <- readRDS("results/lvl1/seu_lvl1_merged.Rds")
-mat <- BPCells::open_matrix_dir("results/lvl1/pancancer_merged_mat")
+seu <- readRDS("results/tcca/tcca_seurat_raw.rds")
+mat <- BPCells::open_matrix_dir(dir = "results/tcca/raw_matrix_tcca")
 
-seu <- CreateSeuratObject(
-    counts = mat,
-    meta.data = seu@meta.data
-)
-
+seu@assays$RNA$counts <- mat
 seu <- NormalizeData(seu)
 
 ## make sure to filter out non malignant brca
