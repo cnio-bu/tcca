@@ -56,3 +56,16 @@ colnames(merged_set) <- c("sample", "n.cells_seu", "n.cells_bc")
 merged_set[is.na(merged_set$n.cells_bc), "n.cells_bc"] <- 0
 
 merged_set$set_diff <- merged_set$n.cells_seu - merged_set$n.cells_bc
+
+## test new mat tcca
+bc <- BPCells::open_matrix_dir(dir = "results/beyondcell_bp/tcca/full_mat_beyondcell")
+meta.data <- data.table::fread("results/beyondcell_bp/tcca/beyondcell_metadata_with_clinical.tsv") %>%
+    as.data.frame()
+
+colnames(bc) <- paste0("c", c(1:ncol(bc)))
+rownames(meta.data) <- paste0("c", c(1:nrow(meta.data)))
+
+seu <- CreateSeuratObject(counts = bc, meta.data = meta.data)
+
+## subset bc to remove bhupinder pal samples
+seu <- subset(seu, subset = (tumor_type == "BRCA" & tumor_subtype != "predicted_tumour" | tumor_type != "BRCA"))
