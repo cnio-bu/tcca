@@ -40,7 +40,7 @@ sc.pp.highly_variable_genes(
     )
 adata.write("tcca_annotated.h5ad")
 
-scvi.model.SCVI.setup_anndata(adata, layer="counts", batch_key=["sample", "study"])
+scvi.model.SCVI.setup_anndata(adata, layer="counts", batch_key="sample_study")
 
 print("Generated model load")
 
@@ -50,6 +50,12 @@ print("Done! saving raw model")
 model.save("./raw_scvi_model", overwrite=True)
 
 print("Generate SCANVI model")
+## TODO: make sure no "NaN" in main cell type. Set to
+## "unknown" if needed
+not_na_levels = adata.obs["cell_type_main"]
+not_na_levels[not_na_levels.isnull()] = "unknown"
+adata.obs["cell_type_main"] = not_na_levels
+
 scanvi_model = scvi.model.SCANVI.from_scvi_model(
     model,
     adata=adata,
