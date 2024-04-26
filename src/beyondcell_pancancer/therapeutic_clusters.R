@@ -104,8 +104,8 @@ seu <- Seurat::SketchData(
 ## export  sketches
 sketched_mat <- seu[["sketch_50k"]]$data
 sketched_mat_5k <- seu[["sketch_5k"]]$data
-write_matrix_dir(mat = sketched_mat, dir = "results/beyondcell_bp/sketch_mat_beyondcell")
-write_matrix_dir(mat = sketched_mat_5k, dir = "results/beyondcell_bp/sketch_mat_beyondcell_5k")
+write_matrix_dir(mat = sketched_mat, dir = "results/beyondcell_bp/sketch_mat_beyondcell", overwrite = TRUE)
+write_matrix_dir(mat = sketched_mat_5k, dir = "results/beyondcell_bp/sketch_mat_beyondcell_5k", overwrite = TRUE)
 
 ## Calculate module scores for all samples for metacoms 1/2
 DefaultAssay(seu) <- "RNA"
