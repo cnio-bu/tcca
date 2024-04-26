@@ -5,7 +5,7 @@ library(tidyverse)
 
 ## Set options
 options(future.globals.maxSize = 1e9)
-options(Seurat.object.assay.version = 'v5')
+options(Seurat.object.assay.version = "v5")
 
 readGMT <- function(x) {
     # --- Checks ---
