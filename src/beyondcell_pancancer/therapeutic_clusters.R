@@ -30,7 +30,7 @@ seu <- Seurat::CreateSeuratObject(
 
 ## subset bc to remove bhupinder pal samples that are predicted tumours
 seu <- subset(seu,
-              subset = (tumor_type == "BRCA" & tumor_subtype != "predicted_tumour" | tumor_type != "BRCA")
+              subset = study != "brca_bhupinder_pal" | tumor_subtype != "predicted_tumour"
               )
 
 seu[["RNA"]]$data <- mat
