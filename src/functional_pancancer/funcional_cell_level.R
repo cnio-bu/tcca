@@ -40,14 +40,22 @@ seu <- readRDS("results/tcca/tcca_seurat_raw.rds")
 mat <- BPCells::open_matrix_dir(dir = "results/tcca/raw_matrix_tcca")
 
 seu@assays$RNA$counts <- mat
-seu <- NormalizeData(seu)
+
+## filter non malignant cells
+seu <- subset(seu, subset = malignancy == TRUE)
 
 ## make sure to filter out non malignant brca
 seu <- subset(
     seu,
     subset = (tumor_type == "BRCA" & tumor_subtype != "predicted_tumour" | tumor_type != "BRCA")
-    )
+)
 
+## remove T10 sample, missmatches with bc indexes and we need them to match
+seu <- subset(seu, subset = sample != "T10")
+seu$new_cell_id <- paste0("c", 1:ncol(seu))
+
+seu <- NormalizeData(seu)
+    
 ## module ES
 c3hallmarks <- readGMT(x = "reference/c4.3ca.v2023.2.Hs.symbols.gmt")
     
