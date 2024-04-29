@@ -30,10 +30,15 @@ bc <- AddModuleScore(
     ctrl = 20
 )
 
+# 
+# ## Somehow there are ~10 NA rows maybe after binding
+# meta.data <- bc@meta.data %>%
+#     filter(!is.na(sample)) %>%
+#     mutate(
+#         sample_study = paste0(sample, study, sep = "_")
+#     )
 
-## Somehow there are ~10 NA rows maybe after binding
 meta.data <- bc@meta.data %>%
-    filter(!is.na(sample)) %>%
     mutate(
         sample_study = paste0(sample, study, sep = "_")
     )
