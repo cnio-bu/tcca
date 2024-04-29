@@ -33,6 +33,15 @@ seu <- subset(seu,
               subset = study != "brca_bhupinder_pal" | tumor_subtype != "predicted_tumour"
               )
 
+## subset to remove T10 sample, as it has FEWER cells with bcscore than expr.
+seu <- subset(seu, subset = sample != "T10")
+
+## redo the index
+seu$new_cell_id <- paste0("c", c(1:ncol(seu)))
+
+## redo colnames
+colnames(seu) <- seu$new_cell_id
+
 seu[["RNA"]]$data <- mat
 
 ## Use the full dataset as variable feat. We are talking 581. Let PCA summarise.
