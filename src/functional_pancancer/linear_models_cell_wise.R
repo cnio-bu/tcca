@@ -1,5 +1,9 @@
 library(limma)
+library(Seurat)
 library(tidyverse)
+
+options(Seurat.object.assay.version = 'v5')
+
 
 ## Load metaprogram data
 mp_mat <- readRDS("results/functional/metaprograms_sc_mat.rds")
@@ -83,9 +87,6 @@ res2 <- res2 %>%
 
 
 ## try wilcox test
-library(Seurat)
-options(Seurat.object.assay.version = 'v5')
-
 rownames(mp_meta_malignants) <- mp_meta_malignants$new_cell_id
 rownames(mp_mat) <- mp_meta_malignants$new_cell_id
 
