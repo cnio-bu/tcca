@@ -22,21 +22,16 @@ cell_level_metacoms <- data.table::fread(
     "results/modules/annotated/malignant_cells_best_metacoms_all_cohort.tsv"
 )
 
-## Remove sample with less bc cells than func/expr cells
-mp_meta_malignants <- mp_meta_malignants %>%
-    filter(sample != "T10")
-
-mp_mat <- mp_mat[mp_meta_malignants$original_rownames, ]
-
 cell_level_metacoms <- cell_level_metacoms %>%
     filter(
-        sample != "T10",
         treated == FALSE,
         sample_type == "p"
         )
 
 ## match cell names
 print(paste0("Missmatched cells:", nrow(mp_mat) - nrow(cell_level_metacoms)))
+
+diff_names <- setdiff(mp_meta_malignants$new_cell_id, cell_level_metacoms$new_cell_id)
 
 ## pretify names
 cell_level_metacoms$metacommunity <- as.factor(cell_level_metacoms$metacommunity)
@@ -89,9 +84,14 @@ res2 <- res2 %>%
 
 ## try wilcox test
 library(Seurat)
+options(Seurat.object.assay.version = 'v5')
 
-rownames(mp_meta_malignants) <- mp_meta_malignants$original_rownames
-    
+rownames(mp_meta_malignants) <- mp_meta_malignants$new_cell_id
+rownames(mp_mat) <- mp_meta_malignants$new_cell_id
+
+cell_level_metacoms <- as.data.frame(cell_level_metacoms)
+rownames(cell_level_metacoms) <- cell_level_metacoms$new_cell_id
+
 seu <- CreateSeuratObject(
     counts = t(mp_mat),
     meta.data = cell_level_metacoms
@@ -108,6 +108,7 @@ res <- FindAllMarkers(
     logfc.threshold = 0.1,
     return.thresh = 0.05
 )
+
 table(res$gene)
 
 ## keep top 3
@@ -142,6 +143,9 @@ res_top$gene <- real_names[res_top$gene]
 
 ## Perform DGE
 seu <- readRDS("results/tcca/tcca_seurat_raw.rds")
+mat <- BPCells::open_matrix_dir(dir = "results/tcca/raw_matrix_tcca")
+
+seu@assays$RNA$counts <- mat
 
 ## keep malignant cells only
 seu <- subset(seu, subset = malignancy == TRUE)
@@ -151,11 +155,71 @@ seu <- subset(
     seu,
     subset = study != "brca_bhupinder_pal" | tumor_subtype != "predicted_tumour"
 )
-## subset primary untreated
-seu <- subset(seu, subset =  treated == "f" & sample_type == "p")
 
 ## remove sample w/o metacoms
 seu <- subset(seu, subset = sample != "T10")
 
+## Generate cell indexes
+seu$new_cell_id <- paste0("c", 1:ncol(seu))
+    
+## subset primary untreated
+seu <- subset(seu, subset =  treated == "f" & sample_type == "p")
+
+## test match
+c1 <- seu@meta.data[seu@meta.data$new_cell_id == "c1", ]
+c1_meta <- cell_level_metacoms[cell_level_metacoms$new_cell_id == "c1", ]
+
+c350 <- seu@meta.data[seu@meta.data$new_cell_id == "c25000", ]
+c350_meta <- cell_level_metacoms[cell_level_metacoms$new_cell_id == "c25000", ]
+
 ## match n.cells
 print(paste0("Missmatched cells:", ncol(seu) - nrow(cell_level_metacoms)))
+
+cells.diff <- setdiff(seu$new_cell_id, cell_level_metacoms$new_cell_id)
+print(paste0("Differring cell sets:", length(cells.diff)))
+
+## Add meta.data
+colnames(cell_level_metacoms)
+
+colnames(seu) <- seu$new_cell_id
+
+seu <- AddMetaData(
+    object = seu,
+    metadata = cell_level_metacoms[, "metacommunity"],
+    col.name = "metacommunity"
+    )
+
+Idents(seu) <- seu$metacommunity
+seu <- NormalizeData(seu)
+
+## Find DGE genes
+metacom_dge_genes <- FindMarkers(
+    object = seu,
+    assay = "RNA",
+    slot = "data",
+    random.seed = 1,
+    ident.1 = "Metacommunity 6",
+    ident.2 =  "Metacommunity 1"
+)
+
+
+## Cell level analyses crashes, resort to pseudobulk
+seu$sample_study <- paste0(seu$sample, "_", seu$study)
+
+bulk <- AggregateExpression(
+    object = seu,
+    return.seurat = T,
+    slot = "counts",
+    assays = "RNA",
+    group.by = c("metacommunity", "sample_study")
+    )
+
+bulk <- NormalizeData(bulk)
+
+res.markers <- FindAllMarkers(
+    object = bulk,
+    test.use = "wilcox",
+    slot = "counts"
+)
+
+saveRDS(object = bulk, file = "results/functional/pseudo_bulk_metacom_seurat.rds")
