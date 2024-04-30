@@ -2,10 +2,10 @@ import scanpy as sc
 import pandas as pd
 import scvi
 import torch
-import pympde 
-import leiden
+import pymde 
 
 scvi.settings.seed = 120394
+torch.set_float32_matmul_precision("high")
 
 ## load sc data
 adata = sc.read_h5ad("tcca_annotated.h5ad")
@@ -26,11 +26,11 @@ sc.pl.embedding(
 )
 
 ## FULL clustering (TME + malignants)
-sc.pp.neighbors(adata, use_rep=SCANVI_LATENT_KEY)
-sc.tl.leiden(adata)
+#sc.pp.neighbors(adata, use_rep=SCANVI_LATENT_KEY)
+#sc.tl.leiden(adata)
 
 ## write back model
-adata.write("tcca_annotated.h5ad")
+#adata.write("tcca_annotated.h5ad")
 
 ## Subset malignant cells but keep latent representation for reclustering
 
