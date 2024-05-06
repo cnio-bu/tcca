@@ -13,7 +13,7 @@ sketched_mat <- scale(x = sketched_mat, center = TRUE, scale = TRUE)
 
 ## therapeutic clusters
 tcs <- data.table::fread(
-    "results/annotation/beyondcell_with_therapeutic_clusters.tsv"
+    "results/annotation/tcs.tsv"
 ) %>%
     filter(
         new_cell_id %in% colnames(sketched_mat)
@@ -251,8 +251,15 @@ top_annotation <- ComplexHeatmap::HeatmapAnnotation(
 ## testo baito
 mt_cols <- read_tsv("reference/final_moas - Collapsed.tsv")
 mt_cols <- mt_cols %>%
-    filter(studies != "CTRP") %>%
     pull(IDs)
+
+png(
+    file = "results/figures/sketched_beyondcell_with_metacommuntiies.png",
+    res = 300,
+    width = 14, 
+    height = 18,
+    units = "in"
+)
 
 test <- ComplexHeatmap::Heatmap(
     mat = t(sketched_mat[metacoms_mt1$signature,]),
@@ -282,3 +289,5 @@ test <- ComplexHeatmap::Heatmap(
     heatmap_width = unit(8, "in"),
     heatmap_height = unit(14, "in")
 )
+draw(test)
+dev.off()
