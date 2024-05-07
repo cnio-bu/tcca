@@ -47,6 +47,9 @@ get_bcscores <- function(sc){
 
 ## Perform operations over list
 seu <- readRDS(file = full_seurat_list)
+
+## Filter study with too few cells for cell cycle binning
+seu = seu[sapply(seu, ncol) >= 100]
 seu <- lapply(X = seu, FUN = annotate_cell_cycle)
 
 malignants <- lapply(X = seu, FUN = filter_malignants)
