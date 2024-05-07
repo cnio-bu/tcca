@@ -26,8 +26,8 @@ sc.pl.embedding(
 )
 
 ## FULL clustering (TME + malignants)
-#sc.pp.neighbors(adata, use_rep=SCANVI_LATENT_KEY)
-#sc.tl.leiden(adata)
+sc.pp.neighbors(adata, use_rep=SCANVI_LATENT_KEY)
+sc.tl.leiden(adata, flavor="igraph", n_iterations=2, directed=False)
 
 ## write back model
 #adata.write("tcca_annotated.h5ad")
