@@ -20,5 +20,5 @@ resources:
     walltime: 120
   default_deps:
     threads: 1
-    mem_mb: 144000
+    mem_mb: 80000
     walltime: 120

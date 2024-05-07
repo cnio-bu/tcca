@@ -176,9 +176,50 @@ rule modules:
         f"{results}/modules/aml_sander_lambo"
 
 
+rule beyondcell_hq:
+    input:
+        f"{results}/beyondcell_hq/brmets_hugo_gonzalez.rds",
+        f"{results}/beyondcell_hq/pancancer_dalia_barkley.rds",
+        f"{results}/beyondcell_hq/breast_sunny_wu.rds",
+        f"{results}/beyondcell_hq/pancancer_sunny_wu.rds",
+        f"{results}/beyondcell_hq/luad_kim_nayoung.rds",
+        f"{results}/beyondcell_hq/urothelial_chen.rds",
+        f"{results}/beyondcell_hq/adrenalnb_rui_chong.rds",
+        f"{results}/beyondcell_hq/luad_philip_bisschof.rds",
+        f"{results}/beyondcell_hq/pancancer_junbin_qian.rds",
+        f"{results}/beyondcell_hq/aml_audrey_lasry.rds",
+        f"{results}/beyondcell_hq/cll_ramon_massoni.rds",
+        f"{results}/beyondcell_hq/gbm_nourhan_abdelfattah.rds",
+        f"{results}/beyondcell_hq/synovial_jerby_arnon.rds",
+        f"{results}/beyondcell_hq/pdac_junya_peng.rds",
+        f"{results}/beyondcell_hq/cc_xiaosong_lu.rds",
+        f"{results}/beyondcell_hq/rcell_kevin_bi.rds",
+        f"{results}/beyondcell_hq/rcell_r_li.rds",
+        f"{results}/beyondcell_hq/pleural_rui_dong.rds",
+        f"{results}/beyondcell_hq/bone_yun_liu.rds",
+        f"{results}/beyondcell_hq/mmieloma_stephan_tirier.rds",
+        f"{results}/beyondcell_hq/all_maxime_caron.rds",
+        f"{results}/beyondcell_hq/bcc_catherine_dyao.rds",
+        f"{results}/beyondcell_hq/uvm_michael_durante.rds",
+        f"{results}/beyondcell_hq/esca_xiannian_zhang.rds",
+        f"{results}/beyondcell_hq/brca_bhupinder_pal.rds",
+        f"{results}/beyondcell_hq/prad_sujun_chen.rds",
+        f"{results}/beyondcell_hq/chol_min_zhang.rds",
+        f"{results}/beyondcell_hq/skcm_chao_zhang.rds",
+        f"{results}/beyondcell_hq/brmets_jana_biermann.rds",
+        f"{results}/beyondcell_hq/cell_lines_gabriella_kinker.rds",
+        f"{results}/beyondcell_hq/bmets_youmna_kfoury.rds",
+        f"{results}/beyondcell_hq/nsclc_stefan_salcher.rds",
+        f"{results}/beyondcell_hq/eac_thomas_carroll.rds",
+        f"{results}/beyondcell_hq/oc_ec_matthew_regner.rds",
+        f"{results}/beyondcell_hq/pdac_shu_zhang.rds",
+        f"{results}/beyondcell_hq/aml_sander_lambo.rds"
+
+
 include: "rules/preprocessing.smk"
 include: "rules/scevan.smk"
 include: "rules/beyondcell.smk"
+include: "rules/beyondcell_hq.smk"
 include: "rules/functional.smk"
 include: "rules/dependencies.smk"
 include: "rules/modules.smk"
