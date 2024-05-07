@@ -56,7 +56,7 @@ ith_primaries_naive$tumor_type <- fct_reorder(ith_primaries_naive$tumor_type, it
 genomic_ith <- read_tsv("results/cna/genomic_ith.tsv")
 
 ## add n.cells by sample
-tcs <- read_tsv("results/annotation/beyondcell_with_therapeutic_clusters.tsv") %>%
+tcs <- read_tsv("results/annotation/tcs.tsv") %>%
     mutate(
         sample_study = paste0(study, "__", sample)
     ) %>%
@@ -326,6 +326,10 @@ genomic_clona_ith_long <- genomic_therapeutic_ith %>%
         names_to = "diversity",
         values_to = "val"
         )
+
+
+genomic_clona_ith_long[genomic_clona_ith_long$diversity == "avg.clones", "val"] <- 
+    log10(genomic_clona_ith_long[genomic_clona_ith_long$diversity == "avg.clones", "val"])
 
 metacom_clone_ith_single <- ggplot(
     data = genomic_clona_ith_long,
