@@ -45,6 +45,7 @@ get_bcscores <- function(sc){
 }
 ## Perform operations over list
 seu <- readRDS(file = full_seurat_list)
+seu <- seu[!(names(seu) %in% c("UMM065", "UMM059"))]
 seu <- lapply(X = seu, FUN = annotate_cell_cycle)
 
 malignants <- lapply(X = seu, FUN = filter_malignants)
