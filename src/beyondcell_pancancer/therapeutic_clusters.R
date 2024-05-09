@@ -7,10 +7,10 @@ options(future.globals.maxSize = 1e9)
 options(Seurat.object.assay.version = 'v5')
 
 ## Load full beyondcell mat
-mat <- open_matrix_dir(dir = "results/beyondcell_bp/full_mat_beyondcell")
+mat <- open_matrix_dir(dir = "results/beyondcell_bp_hq/full_mat_beyondcell")
 ## Load full database
 meta.data_full_clinical <- read_tsv(
-    file = "results/beyondcell_bp/beyondcell_metadata_with_clinical.tsv"
+    file = "results/annotation/beyondcell_hq_metadata_with_clinical.tsv"
     )
 
 meta.data_full_clinical <- meta.data_full_clinical %>%
@@ -42,7 +42,7 @@ seu$new_cell_id <- paste0("c", c(1:ncol(seu)))
 ## redo colnames
 colnames(seu) <- seu$new_cell_id
 
-seu[["RNA"]]$data <- mat
+seu[["RNA"]]$data <- seu[["RNA"]]$counts
 
 ## Use the full dataset as variable feat. We are talking 581. Let PCA summarise.
 seu <- FindVariableFeatures(seu, selection.method = "vst")
@@ -65,21 +65,21 @@ DefaultAssay(seu) <- "sketch_50k"
 seu <- FindVariableFeatures(
     object = seu,
     selection.method = "disp",
-    nfeatures = 300
+    nfeatures = 90
     )
 
 seu <- ScaleData(seu, do.scale = TRUE, do.center = TRUE, scale.max = 20)
-seu <- RunPCA(seu, npcs = 100, reduction.name = "pca")
+seu <- RunPCA(seu, npcs = 15, reduction.name = "pca")
 
 seu <- FindNeighbors(
     object = seu,
-    dims = 1:50,
+    dims = 1:15,
     reduction = "pca"
     )
 
 seu <- FindClusters(
     seu,
-    resolution = 0.2,
+    resolution = 0.1,
     method = "igraph",
     algorithm = 2,
     random.seed = 120394,
@@ -87,7 +87,7 @@ seu <- FindClusters(
     cluster.name = "therapeutic_clusters_sketched_0.2"
     )
 
-seu <- RunUMAP(seu, dims = 1:50, return.model = T, umap.method = "uwot")
+seu <- RunUMAP(seu, dims = 1:15, return.model = T, umap.method = "uwot")
 
 seu <- Seurat::ProjectData(
     object = seu,
@@ -156,7 +156,7 @@ seu <- AddModuleScore(
 )
 
 ## export object
-saveRDS(object = seu, file = "results/beyondcell_bp/beyondcell_pancancer.Rds")
+saveRDS(object = seu, file = "results/beyondcell_bp_hq/beyondcell_pancancer.Rds")
 
 
 ## plot UMAP
