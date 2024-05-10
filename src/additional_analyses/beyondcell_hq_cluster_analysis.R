@@ -127,29 +127,100 @@ ggsave(
     width = 7
 )
 
+## Perform beyondcell scaling
+mat2 <- BPCells::open_matrix_dir(dir = "results/beyondcell_bp/sketch_mat_beyondcell")
+mat2 <- as.matrix(mat2)
 
-## Partition cluster optimization
-library(dbscan)
-library(NbClust)
+mat2 <- t(apply(mat2, 1, scales::rescale, to = c(0, 1)))
+mat2 <- round(mat2, digits = 2)
 
-hdb <- hdbscan(
-    x = t(mat),
-    minPts = 100,
-    verbose = TRUE,
-    gen_hdbscan_tree = TRUE,
-    gen_simplified_tree = TRUE
-    )
+top_rv <- matrixStats::rowVars(mat2)
+top_rv <- sort(top_rv, decreasing = TRUE)
+
+top10_drugs <- head(top_rv, n = 10)
+
+top10_dt <- as.data.frame(t(mat2[names(top10_drugs), ]))
+top10_dt_long <- top10_dt %>%
+    pivot_longer(names_to = "drug", values_to = "enrichment", cols = everything())
 
 
-png(
-    filename = "results/tcca/clustering_expr/simplified_hdb_scan.png",
-    width = 7,
+dist_top_drugs_scaled_2 <- ggplot(data = top10_dt_long, aes(x = enrichment)) +
+    scale_x_continuous(name = "BCS", n.breaks = 10) +
+    scale_y_continuous(name = "Density", n.breaks = 10) +
+    geom_rug(alpha = 0.2) +
+    geom_histogram(bins = 50) +
+    ggtitle("BCS distribution of most variable drugs in the 50k. sketch with BC scaler") +
+    theme_bw() +
+    theme(
+        text = element_text(family = "Arial")
+    ) +
+    facet_wrap(~drug, nrow = 5, ncol = 2)
+
+
+ggsave(
+    filename = "results/tcca/clustering_expr/top_10_variable_drugs_bc_scaler.png",
+    plot = dist_top_drugs_scaled_2, 
+    dpi = 300,
     height = 7,
-    units = "in",
-    res = 100
+    width = 14
+)
+
+
+## redo PCA
+pra <- prcomp(x = t(mat2), center = FALSE, scale. = FALSE)
+rotation_pca <- pra$x
+
+pca_plot <- ggplot(data = as.data.frame(rotation_pca), aes(x = PC1, y = PC2)) +
+    geom_point(alpha = 0.2) +
+    scale_x_continuous(name = "PC1", n.breaks = 10) +
+    scale_y_continuous(name = "PC2", n.breaks = 10) +
+    ggtitle("PCA of the scaled BCS for 90 drugs and 50.000 cells using BC scaler") +
+    theme_bw() +
+    theme(text = element_text(family =  "Arial"))
+
+pca_plot_23 <- ggplot(data = as.data.frame(rotation_pca), aes(x = PC2, y = PC3)) +
+    geom_point(alpha = 0.2) +
+    scale_x_continuous(name = "PC2", n.breaks = 10) +
+    scale_y_continuous(name = "PC3", n.breaks = 10) +
+    ggtitle("PCA of the scaled BCS for 90 drugs and 50.000 cells using BC scaler") +
+    theme_bw() +
+    theme(text = element_text(family =  "Arial"))
+
+
+ggsave(
+    filename = "results/tcca/clustering_expr/pca_of_90drugs_scaledbc.png",
+    plot = pca_plot,
+    dpi = 100,
+    height = 7,
+    width = 7
+)
+
+ggsave(
+    filename = "results/tcca/clustering_expr/pca_of_90drugs_2_3_scaledbc.png",
+    plot = pca_plot_23,
+    dpi = 100,
+    height = 7,
+    width = 7
+)
+
+######## CORRELATION ANALYSIS ##########
+mat <- BPCells::open_matrix_dir(dir = "results/beyondcell_bp/sketch_mat_beyondcell")
+mat <- as.matrix(mat)
+
+## make a zscore of the full mat to ease the PCA. Each drug value is scaled over cells
+mat <- scale(x = t(mat), center = TRUE, scale = TRUE)
+mat <- t(mat)
+
+## make a distance matrix of drugs
+cor.mat <- cor(x = t(mat), method = "pearson")
+
+library(ComplexHeatmap)
+heat <- ComplexHeatmap::Heatmap(
+    cor.mat,
+    cluster_rows = TRUE,
+    cluster_columns = TRUE,
+    cluster_row_slices = TRUE,
+    cluster_column_slices = TRUE,
+    column_split = 10,
+    row_split = 10
     )
-
-plot(hdb)
-dev.off()
-
-plot(hdb$hc, main="HDBSCAN* Hierarchy")
