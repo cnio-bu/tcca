@@ -67,27 +67,123 @@ seu <- FindVariableFeatures(
     selection.method = "disp",
     nfeatures = 90
     )
+seu <- ScaleData(seu, do.scale = TRUE, do.center = TRUE)
 
-seu <- ScaleData(seu, do.scale = TRUE, do.center = TRUE, scale.max = 20)
-seu <- RunPCA(seu, npcs = 15, reduction.name = "pca")
+seu <- RunPCA(seu, reduction.name = "pca", npcs = 90)
+
+## QC
+vimdizload <- VizDimLoadings(seu, dims = 1:2, reduction = "pca")
+
+ggsave(
+    filename = "results/tcca/clustering_expr/vim_loadings_pca.png",
+    plot = vimdizload,
+    height = 9,
+    width = 16,
+    dpi = 100
+    )
+
+seu_pca <- DimPlot(seu, reduction = "pca")
+
+ggsave(
+    filename = "results/tcca/clustering_expr/seu_pca_sketched_50.png",
+    plot = seu_pca,
+    height = 9,
+    width = 16,
+    dpi = 100
+)
+
+heats <- DimHeatmap(
+    seu,
+    dims = 1:33, 
+    cells = 500,
+    balanced = TRUE,
+    slot = "scale.data",
+    ncol = 3,
+    nfeatures = 10,
+    fast = FALSE,
+    combine = TRUE
+    )
+
+ggsave(
+    filename = "results/tcca/clustering_expr/loadings_lose_heats_33.png",
+    heats,
+    width = 29,
+    height = 16,
+    dpi = 300
+    )
+
+heats <- DimHeatmap(
+    seu,
+    dims = 1:10, 
+    cells = 500,
+    balanced = TRUE,
+    slot = "scale.data",
+    ncol = 2,
+    nfeatures = 10,
+    fast = FALSE,
+    combine = TRUE
+)
+
+ggsave(
+    filename = "results/tcca/clustering_expr/loadings_lose_heats_10.png",
+    heats,
+    width = 16,
+    height = 9,
+    dpi = 300
+)
+
+elbow <- ElbowPlot(seu, ndims = 90)
+ggsave(
+    filename = "results/tcca/clustering_expr/elbow_plot_seu.png",
+    elbow,
+    width = 16,
+    height = 9,
+    dpi = 100
+)
+
 
 seu <- FindNeighbors(
     object = seu,
-    dims = 1:15,
+    dims = 1:30,
     reduction = "pca"
     )
 
 seu <- FindClusters(
     seu,
-    resolution = 0.1,
-    method = "igraph",
-    algorithm = 2,
+    resolution = 0.2,
+    #method = "igraph",
+    #algorithm = 2,
     random.seed = 120394,
     group.singletons = TRUE,
     cluster.name = "therapeutic_clusters_sketched_0.2"
     )
 
-seu <- RunUMAP(seu, dims = 1:15, return.model = T, umap.method = "uwot")
+seu <- RunUMAP(
+    seu,
+    dims = 1:30,
+    return.model = T,
+    umap.method = "uwot",
+    #n.neighbors = 50,
+    #metric = "correlation",
+    #local.connectivity = 4
+    )
+
+# find markers for every cluster compared to all remaining cells, report only the positive
+# ones
+bc.markers <- FindAllMarkers(seu, only.pos = TRUE)
+bc.markers %>%
+    group_by(cluster) %>%
+    dplyr::filter(avg_log2FC > 1)
+
+bc.markers %>%
+    group_by(cluster) %>%
+    dplyr::filter(avg_log2FC > 1) %>%
+    slice_head(n = 10) %>%
+    ungroup() -> top10
+
+DoHeatmap(seu, features = top10$gene) + NoLegend()
+
+
 
 seu <- Seurat::ProjectData(
     object = seu,
@@ -167,3 +263,27 @@ tcs_umap <- DimPlot(
     )
 
 saveRDS(object = tcs_umap, file = "results/beyondcell_bp/tcs_raw.rds")
+
+
+
+## test
+scaled.matrix <- t(apply(mat, 1, scales::rescale, to = c(0, 1)))
+seu@assays$sketch_50k$scale.data <- scaled.matrix
+
+seu <- RunPCA(object = seu, npcs = 90)
+
+heats <- DimHeatmap(
+    seu,
+    dims = 1:10, 
+    cells = 500,
+    balanced = TRUE,
+    slot = "scale.data",
+    ncol = 2,
+    nfeatures = 10,
+    fast = FALSE,
+    combine = TRUE
+)
+
+seu <- FindNeighbors(seu)
+seu <- FindClusters(seu)
+seu <- RunUMAP(seu, dims = 1:10, umap.method = "uwot", n.components = 2)
