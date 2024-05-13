@@ -301,3 +301,53 @@ raw_uwot_annot <- raw_uwot %>%
 uwot_scaled <- ggplot(data = raw_uwot_annot, aes(x = `UMAP 1`, y = `UMAP 2`, color = bc_clusters_res.0.2)) +
     geom_point() +
     theme_minimal()
+
+ggsave(plot = uwot_scaled, filename = "results/single_sample/uwot_bcscores_zscaled.png", dpi = 300)
+
+
+pra_annot <- pra$x
+pra_annot <- as.data.frame(pra_annot)
+pra_annot$cell <- rownames(pra_annot)
+
+pra_annot <- pra_annot[, c("cell", "PC1", "PC2", "PC3")]
+
+pra_annot <- pra_annot %>%
+    left_join(bc_clusts[, c("cell", "bc_clusters_res.0.2")], by = "cell")
+
+pra_annot_scaled <- ggplot(data = pra_annot, aes(x = PC1, y = PC2, color = bc_clusters_res.0.2)) +
+    geom_point() +
+    theme_minimal()
+
+pra_annot_scaled_23 <- ggplot(data = pra_annot, aes(x = PC2, y = PC3, color = bc_clusters_res.0.2)) +
+    geom_point() +
+    theme_minimal()
+
+ggsave(plot = pra_annot_scaled, filename = "results/single_sample/clustering_expr/pca_of90drugs_scaledbc_with_tcs.png")
+ggsave(plot = pra_annot_scaled_23, filename = "results/single_sample/clustering_expr/pca_of90drugs_scaledbc_with_tcs_23.png")
+
+
+pra <- prcomp(x = t(mat2), center = FALSE, scale. = FALSE)
+rotation_pca <- pra$x
+
+
+rotation_pca <- as.data.frame(rotation_pca)
+rotation_pca$cell <- rownames(rotation_pca)
+
+rotation_pca <- rotation_pca[, c("cell", "PC1", "PC2", "PC3")]
+
+rotation_pca <- rotation_pca %>%
+    left_join(bc_clusts[, c("cell", "bc_clusters_res.0.2")], by = "cell")
+
+pra_annot_scaled <- ggplot(data = rotation_pca, aes(x = PC1, y = PC2, color = bc_clusters_res.0.2)) +
+    geom_point() +
+    theme_minimal()
+
+pra_annot_scaled_23 <- ggplot(data = rotation_pca, aes(x = PC2, y = PC3, color = bc_clusters_res.0.2)) +
+    geom_point() +
+    theme_minimal()
+
+
+ggsave(plot = pra_annot_scaled, filename = "results/single_sample/clustering_expr/pca_of90drugs_zscore_with_tcs.png")
+ggsave(plot = pra_annot_scaled_23, filename = "results/single_sample/clustering_expr/pca_of90drugs_zscore_with_tcs_23.png")
+
+
