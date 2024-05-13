@@ -1,4 +1,4 @@
-rule mod_brmets_hugo_gonzalez:
+rule mod2_brmets_hugo_gonzalez:
     input:
         bc_list=rules.bc2_brmets_hugo_gonzalez.output.bc_list,
         moas_table= "../../reference/final_moas - Collapsed.tsv",
@@ -14,7 +14,7 @@ rule mod_brmets_hugo_gonzalez:
         "../scripts/therapeutic_module_extraction.R"
 
 
-rule mod_pancancer_dalia_barkley:
+rule mod2_pancancer_dalia_barkley:
     input:
         bc_list=rules.bc2_pancancer_dalia_barkley.output.bc_list,
         moas_table= "../../reference/final_moas - Collapsed.tsv",
@@ -30,7 +30,7 @@ rule mod_pancancer_dalia_barkley:
         "../scripts/therapeutic_module_extraction.R"
 
 
-rule mod_breast_sunny_wu:
+rule mod2_breast_sunny_wu:
     input:
         bc_list=rules.bc2_breast_sunny_wu.output.bc_list,
         moas_table= "../../reference/final_moas - Collapsed.tsv",
@@ -46,7 +46,7 @@ rule mod_breast_sunny_wu:
         "../scripts/therapeutic_module_extraction.R"
 
 
-rule mod_pancancer_sunny_wu:
+rule mod2_pancancer_sunny_wu:
     input:
         bc_list=rules.bc2_pancancer_sunny_wu.output.bc_list,
         moas_table= "../../reference/final_moas - Collapsed.tsv",
@@ -62,7 +62,7 @@ rule mod_pancancer_sunny_wu:
         "../scripts/therapeutic_module_extraction.R"
 
 
-rule mod_luad_kim_nayoung:
+rule mod2_luad_kim_nayoung:
     input:
         bc_list=rules.bc2_luad_kim_nayoung.output.bc_list,
         moas_table= "../../reference/final_moas - Collapsed.tsv",
@@ -78,7 +78,7 @@ rule mod_luad_kim_nayoung:
         "../scripts/therapeutic_module_extraction.R"
 
 
-rule mod_urothelial_chen:
+rule mod2_urothelial_chen:
     input:
         bc_list=rules.bc2_urothelial_chen.output.bc_list,
         moas_table= "../../reference/final_moas - Collapsed.tsv",
@@ -94,7 +94,7 @@ rule mod_urothelial_chen:
         "../scripts/therapeutic_module_extraction.R"
 
 
-rule mod_adrenalnb_rui_chong:
+rule mod2_adrenalnb_rui_chong:
     input:
         bc_list=rules.bc2_adrenalnb_rui_chong.output.bc_list,
         moas_table= "../../reference/final_moas - Collapsed.tsv",
@@ -110,7 +110,7 @@ rule mod_adrenalnb_rui_chong:
         "../scripts/therapeutic_module_extraction.R"
 
 
-rule mod_luad_philip_bisschof:
+rule mod2_luad_philip_bisschof:
     input:
         bc_list=rules.bc2_luad_philip_bisschof.output.bc_list,
         moas_table= "../../reference/final_moas - Collapsed.tsv",
@@ -126,7 +126,7 @@ rule mod_luad_philip_bisschof:
         "../scripts/therapeutic_module_extraction.R"
 
 
-rule mod_pdac_junya_peng:
+rule mod2_pdac_junya_peng:
     input:
         bc_list=rules.bc2_pdac_junya_peng.output.bc_list,
         moas_table= "../../reference/final_moas - Collapsed.tsv",
@@ -142,7 +142,7 @@ rule mod_pdac_junya_peng:
         "../scripts/therapeutic_module_extraction.R"
 
 
-rule mod_synovial_jerby_arnon:
+rule mod2_synovial_jerby_arnon:
     input:
         bc_list=rules.bc2_synovial_jerby_arnon.output.bc_list,
         moas_table= "../../reference/final_moas - Collapsed.tsv",
@@ -158,7 +158,7 @@ rule mod_synovial_jerby_arnon:
         "../scripts/therapeutic_module_extraction.R"
 
 
-rule mod_rcell_kevin_bi:
+rule mod2_rcell_kevin_bi:
     input:
         bc_list=rules.bc2_rcell_kevin_bi.output.bc_list,
         moas_table= "../../reference/final_moas - Collapsed.tsv",
@@ -174,7 +174,7 @@ rule mod_rcell_kevin_bi:
         "../scripts/therapeutic_module_extraction.R"
 
 
-rule mod_pancancer_junbin_qian:
+rule mod2_pancancer_junbin_qian:
     input:
         bc_list=rules.bc2_pancancer_junbin_qian.output.bc_list,
         moas_table= "../../reference/final_moas - Collapsed.tsv",
@@ -190,7 +190,7 @@ rule mod_pancancer_junbin_qian:
         "../scripts/therapeutic_module_extraction.R"
 
 
-rule mod_rcell_r_li:
+rule mod2_rcell_r_li:
     input:
         bc_list=rules.bc2_rcell_r_li.output.bc_list,
         moas_table= "../../reference/final_moas - Collapsed.tsv",
@@ -206,7 +206,7 @@ rule mod_rcell_r_li:
         "../scripts/therapeutic_module_extraction.R"
 
 
-rule mod_cll_ramon_massoni:
+rule mod2_cll_ramon_massoni:
     input:
         bc_list=rules.bc2_cll_ramon_massoni.output.bc_list,
         moas_table= "../../reference/final_moas - Collapsed.tsv",
@@ -222,7 +222,7 @@ rule mod_cll_ramon_massoni:
         "../scripts/therapeutic_module_extraction.R"
 
 
-rule mod_aml_audrey_lasry:
+rule mod2_aml_audrey_lasry:
     input:
         bc_list=rules.bc2_aml_audrey_lasry.output.bc_list,
         moas_table= "../../reference/final_moas - Collapsed.tsv",
@@ -238,7 +238,7 @@ rule mod_aml_audrey_lasry:
         "../scripts/therapeutic_module_extraction.R"
 
 
-rule mod_gbm_nourhan_abdelfattah:
+rule mod2_gbm_nourhan_abdelfattah:
     input:
         bc_list=rules.bc2_gbm_nourhan_abdelfattah.output.bc_list,
         moas_table= "../../reference/final_moas - Collapsed.tsv",
@@ -254,7 +254,7 @@ rule mod_gbm_nourhan_abdelfattah:
         "../scripts/therapeutic_module_extraction.R"
 
 
-rule mod_cc_xiaosong_lu:
+rule mod2_cc_xiaosong_lu:
     input:
         bc_list=rules.bc2_cc_xiaosong_lu.output.bc_list,
         moas_table= "../../reference/final_moas - Collapsed.tsv",
@@ -270,7 +270,7 @@ rule mod_cc_xiaosong_lu:
         "../scripts/therapeutic_module_extraction.R"
 
 
-rule mod_crc_florian_uhlitz:
+rule mod2_crc_florian_uhlitz:
     input:
         bc_list=rules.bc2_crc_florian_uhlitz.output.bc_list,
         moas_table= "../../reference/final_moas - Collapsed.tsv",
@@ -286,7 +286,7 @@ rule mod_crc_florian_uhlitz:
         "../scripts/therapeutic_module_extraction.R"
 
 
-rule mod_pleural_rui_dong:
+rule mod2_pleural_rui_dong:
     input:
         bc_list=rules.bc2_pleural_rui_dong.output.bc_list,
         moas_table= "../../reference/final_moas - Collapsed.tsv",
@@ -302,7 +302,7 @@ rule mod_pleural_rui_dong:
         "../scripts/therapeutic_module_extraction.R"
 
 
-rule mod_bone_yun_liu:
+rule mod2_bone_yun_liu:
     input:
         bc_list=rules.bc2_bone_yun_liu.output.bc_list,
         moas_table= "../../reference/final_moas - Collapsed.tsv",
@@ -318,7 +318,7 @@ rule mod_bone_yun_liu:
         "../scripts/therapeutic_module_extraction.R"
 
 
-rule mod_mmieloma_stephan_tirier:
+rule mod2_mmieloma_stephan_tirier:
     input:
         bc_list=rules.bc2_mmieloma_stephan_tirier.output.bc_list,
         moas_table= "../../reference/final_moas - Collapsed.tsv",
@@ -334,7 +334,7 @@ rule mod_mmieloma_stephan_tirier:
         "../scripts/therapeutic_module_extraction.R"
 
 
-rule mod_all_maxime_caron:
+rule mod2_all_maxime_caron:
     input:
         bc_list=rules.bc2_all_maxime_caron.output.bc_list,
         moas_table= "../../reference/final_moas - Collapsed.tsv",
@@ -350,7 +350,7 @@ rule mod_all_maxime_caron:
         "../scripts/therapeutic_module_extraction.R"
 
 
-rule mod_bcc_catherine_dyao:
+rule mod2_bcc_catherine_dyao:
     input:
         bc_list=rules.bc2_bcc_catherine_dyao.output.bc_list,
         moas_table= "../../reference/final_moas - Collapsed.tsv",
@@ -366,7 +366,7 @@ rule mod_bcc_catherine_dyao:
         "../scripts/therapeutic_module_extraction.R"
 
 
-rule mod_uvm_michael_durante:
+rule mod2_uvm_michael_durante:
     input:
         bc_list=rules.bc2_uvm_michael_durante.output.bc_list,
         moas_table= "../../reference/final_moas - Collapsed.tsv",
@@ -382,7 +382,7 @@ rule mod_uvm_michael_durante:
         "../scripts/therapeutic_module_extraction.R"
 
 
-rule mod_esca_xiannian_zhang:
+rule mod2_esca_xiannian_zhang:
     input:
         bc_list=rules.bc2_esca_xiannian_zhang.output.bc_list,
         moas_table= "../../reference/final_moas - Collapsed.tsv",
@@ -398,7 +398,7 @@ rule mod_esca_xiannian_zhang:
         "../scripts/therapeutic_module_extraction.R"
 
 
-rule mod_brca_bhupinder_pal:
+rule mod2_brca_bhupinder_pal:
     input:
         bc_list=rules.bc2_brca_bhupinder_pal.output.bc_list,
         moas_table= "../../reference/final_moas - Collapsed.tsv",
@@ -414,7 +414,7 @@ rule mod_brca_bhupinder_pal:
         "../scripts/therapeutic_module_extraction.R"
 
 
-rule mod_prad_sujun_chen:
+rule mod2_prad_sujun_chen:
     input:
         bc_list=rules.bc2_prad_sujun_chen.output.bc_list,
         moas_table= "../../reference/final_moas - Collapsed.tsv",
@@ -430,7 +430,7 @@ rule mod_prad_sujun_chen:
         "../scripts/therapeutic_module_extraction.R"
 
 
-rule mod_chol_min_zhang:
+rule mod2_chol_min_zhang:
     input:
         bc_list=rules.bc2_chol_min_zhang.output.bc_list,
         moas_table= "../../reference/final_moas - Collapsed.tsv",
@@ -445,7 +445,7 @@ rule mod_chol_min_zhang:
     script:
         "../scripts/therapeutic_module_extraction.R"
 
-rule mod_skcm_chao_zhang:
+rule mod2_skcm_chao_zhang:
     input:
         bc_list=rules.bc2_skcm_chao_zhang.output.bc_list,
         moas_table= "../../reference/final_moas - Collapsed.tsv",
@@ -460,7 +460,7 @@ rule mod_skcm_chao_zhang:
     script:
         "../scripts/therapeutic_module_extraction.R"
 
-rule mod_brmets_jana_biermann:
+rule mod2_brmets_jana_biermann:
     input:
         bc_list=rules.bc2_brmets_jana_biermann.output.bc_list,
         moas_table= "../../reference/final_moas - Collapsed.tsv",
@@ -475,7 +475,7 @@ rule mod_brmets_jana_biermann:
     script:
         "../scripts/therapeutic_module_extraction.R"
 
-rule mod_cell_lines_gabriella_kinker:
+rule mod2_cell_lines_gabriella_kinker:
     input:
         bc_list=rules.bc2_cell_lines_gabriella_kinker.output.bc_list,
         moas_table= "../../reference/final_moas - Collapsed.tsv",
@@ -490,7 +490,7 @@ rule mod_cell_lines_gabriella_kinker:
     script:
         "../scripts/therapeutic_module_extraction.R"
 
-rule mod_bmets_youmna_kfoury:
+rule mod2_bmets_youmna_kfoury:
     input:
         bc_list=rules.bc2_bmets_youmna_kfoury.output.bc_list,
         moas_table= "../../reference/final_moas - Collapsed.tsv",
@@ -506,7 +506,7 @@ rule mod_bmets_youmna_kfoury:
         "../scripts/therapeutic_module_extraction.R"
 
         
-rule mod_nsclc_stefan_salcher:
+rule mod2_nsclc_stefan_salcher:
     input:
         bc_list=rules.bc2_nsclc_stefan_salcher.output.bc_list,
         moas_table= "../../reference/final_moas - Collapsed.tsv",
@@ -521,7 +521,7 @@ rule mod_nsclc_stefan_salcher:
     script:
         "../scripts/therapeutic_module_extraction.R"
 
-rule mod_eac_thomas_carroll:
+rule mod2_eac_thomas_carroll:
     input:
         bc_list=rules.bc2_eac_thomas_carroll.output.bc_list,
         moas_table= "../../reference/final_moas - Collapsed.tsv",
@@ -536,7 +536,7 @@ rule mod_eac_thomas_carroll:
     script:
       "../scripts/therapeutic_module_extraction.R"
 
-rule mod_oc_ec_matthew_regner:
+rule mod2_oc_ec_matthew_regner:
     input:
         bc_list=rules.bc2_oc_ec_matthew_regner.output.bc_list,
         moas_table= "../../reference/final_moas - Collapsed.tsv",
@@ -551,7 +551,7 @@ rule mod_oc_ec_matthew_regner:
     script:
       "../scripts/therapeutic_module_extraction.R"
 
-rule mod_pdac_shu_zhang:
+rule mod2_pdac_shu_zhang:
     input:
         bc_list=rules.bc2_pdac_shu_zhang.output.bc_list,
         moas_table= "../../reference/final_moas - Collapsed.tsv",
@@ -566,7 +566,7 @@ rule mod_pdac_shu_zhang:
     script:
         "../scripts/therapeutic_module_extraction.R"
 
-rule mod_aml_sander_lambo:
+rule mod2_aml_sander_lambo:
     input:
         bc_list=rules.bc2_aml_sander_lambo.output.bc_list,
         moas_table= "../../reference/final_moas - Collapsed.tsv",
