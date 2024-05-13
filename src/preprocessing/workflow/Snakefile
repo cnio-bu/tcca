@@ -215,6 +215,46 @@ rule beyondcell_hq:
         f"{results}/beyondcell_hq/pdac_shu_zhang.rds",
         f"{results}/beyondcell_hq/aml_sander_lambo.rds"
 
+rule modules_hq:
+    input:
+        f"{results}/modules_hq/brmets_hugo_gonzalez",
+        f"{results}/modules_hq/pancancer_dalia_barkley",
+        f"{results}/modules_hq/breast_sunny_wu",
+        f"{results}/modules_hq/pancancer_sunny_wu",
+        f"{results}/modules_hq/luad_kim_nayoung",
+        f"{results}/modules_hq/urothelial_chen",
+        f"{results}/modules_hq/adrenalnb_rui_chong",
+        f"{results}/modules_hq/luad_philip_bisschof",
+        f"{results}/modules_hq/pancancer_junbin_qian",
+        f"{results}/modules_hq/aml_audrey_lasry",
+        f"{results}/modules_hq/cll_ramon_massoni",
+        f"{results}/modules_hq/gbm_nourhan_abdelfattah",
+        f"{results}/modules_hq/synovial_jerby_arnon",
+        f"{results}/modules_hq/pdac_junya_peng",
+        f"{results}/modules_hq/cc_xiaosong_lu",
+        f"{results}/modules_hq/rcell_kevin_bi",
+        f"{results}/modules_hq/rcell_r_li",
+        f"{results}/modules_hq/pleural_rui_dong",
+        f"{results}/modules_hq/bone_yun_liu",
+        f"{results}/modules_hq/mmieloma_stephan_tirier",
+        f"{results}/modules_hq/all_maxime_caron",
+        f"{results}/modules_hq/crc_florian_uhlitz",
+        f"{results}/modules_hq/bcc_catherine_dyao",
+        f"{results}/modules_hq/uvm_michael_durante",
+        f"{results}/modules_hq/esca_xiannian_zhang",
+        f"{results}/modules_hq/brca_bhupinder_pal",
+        f"{results}/modules_hq/prad_sujun_chen",
+        f"{results}/modules_hq/chol_min_zhang",
+        f"{results}/modules_hq/skcm_chao_zhang",
+        f"{results}/modules_hq/brmets_jana_biermann",
+        f"{results}/modules_hq/cell_lines_gabriella_kinker",
+        f"{results}/modules_hq/bmets_youmna_kfoury",
+        f"{results}/modules_hq/nsclc_stefan_salcher",
+        f"{results}/modules_hq/eac_thomas_carroll",
+        f"{results}/modules_hq/oc_ec_matthew_regner",
+        f"{results}/modules_hq/pdac_shu_zhang",
+        f"{results}/modules_hq/aml_sander_lambo"
+
 
 include: "rules/preprocessing.smk"
 include: "rules/scevan.smk"
@@ -223,3 +263,4 @@ include: "rules/beyondcell_hq.smk"
 include: "rules/functional.smk"
 include: "rules/dependencies.smk"
 include: "rules/modules.smk"
+include: "rules/modules_hq.smk"
