@@ -238,7 +238,6 @@ rule modules_hq:
         f"{results}/modules_hq/bone_yun_liu",
         f"{results}/modules_hq/mmieloma_stephan_tirier",
         f"{results}/modules_hq/all_maxime_caron",
-        f"{results}/modules_hq/crc_florian_uhlitz",
         f"{results}/modules_hq/bcc_catherine_dyao",
         f"{results}/modules_hq/uvm_michael_durante",
         f"{results}/modules_hq/esca_xiannian_zhang",
