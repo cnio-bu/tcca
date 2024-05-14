@@ -55,14 +55,19 @@ for(sample in all_samples){
             all_cells[[i]] <- cell_contributions
         }
     }
-
-    bicluster_table <- enframe(all_biclusters) %>%
-        unnest_longer(col = "value") %>%
-        rename(
-            "bicluster" = name,
-            "cluster_contribution" = value,
-            "signature" = value_id
-        )
+    
+    ## empty biclusters
+    if(length(all_biclusters) == 0){
+        next
+    }else{
+        bicluster_table <- enframe(all_biclusters) %>%
+            unnest_longer(col = "value") %>%
+            rename(
+                "bicluster" = name,
+                "cluster_contribution" = value,
+                "signature" = value_id
+            )
+    }
 
     ## Try to remove drugs whose sign is opposite from the bicluster consensus
     bicluster_table <- bicluster_table %>%
@@ -99,10 +104,10 @@ for(sample in all_samples){
     
     save_table <- paste0(where_to_save, "/", sample_name, "_clusters.tsv")
     ## save file
-    write.table(
-        x = cell_table,
-        file = save_table,
-        sep="\t",
-        row.names = FALSE
-        )
+     write.table(
+         x = cell_table,
+         file = save_table,
+         sep="\t",
+         row.names = FALSE
+         )
 }
