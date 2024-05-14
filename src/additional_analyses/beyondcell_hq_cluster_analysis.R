@@ -215,6 +215,7 @@ mat <- t(mat)
 cor.mat <- cor(x = t(mat), method = "pearson")
 
 library(ComplexHeatmap)
+png("results/tcca/clustering_expr/bc_signatures_hq.png", width = 14, height = 14, res = 100, units = "in")
 heat <- ComplexHeatmap::Heatmap(
     cor.mat,
     cluster_rows = TRUE,
@@ -224,3 +225,5 @@ heat <- ComplexHeatmap::Heatmap(
     column_split = 10,
     row_split = 10
     )
+draw(heat)
+dev.off()
