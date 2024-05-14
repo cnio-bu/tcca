@@ -16,10 +16,10 @@ for(sample in all_samples){
     ## C optimized code, let it run in single thread
     res <- fabia::fabias(
         X = normalized_bc,
-        p = 13, ## Hidden factors = biclusters. Use default params
+        p = 5, ## Hidden factors = biclusters.
         cyc = 500, ## iterations, keep it at 500
         spz = 0.5, ## minimum sparseness, Laplace.
-        non_negative = 0, ## Allow negative factors a.k.a. negative vectors
+        non_negative = 1, ## Allow negative factors a.k.a. negative vectors
         random = 1.0, ## allow random initialization of loadings,
         center = 2, ## median centering
         lap = 1, ## minimal value of the variational param
@@ -39,7 +39,7 @@ for(sample in all_samples){
     
     all_biclusters <- list()
     all_cells <- list()
-    for(i in c(1:13)){
+    for(i in c(1:5)){
         this_biclust <- biclusters$bic[i, ]
         ## check length of the bicluster rowwise (aka drugs)
         if(length(this_biclust$bixn) <= 5) {
