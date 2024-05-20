@@ -64,7 +64,10 @@ extract_communities <- function(group, n_samples){
         select(sample_bicluster, tumor_type) %>%
         distinct(.keep_all = FALSE) %>%
         as.data.frame()
-        
+    
+    ## deduplicate
+    module_edges[duplicated(module_edges$sample_bicluster), "sample_bicluster"] <- "T19-1_1"
+    
     combinations <- combn(module_edges$sample_bicluster, m = 2, simplify = TRUE)
     combinations <- as.data.frame(t(combinations))
         
@@ -147,43 +150,43 @@ extract_communities <- function(group, n_samples){
         graph = (g),
         weights = relations_filtered$weight
     )
-        # g = simplify(g)
+    g = simplify(g)
     plot(g, vertex.size = 4, vertex.label=NA)
+    #     
+    # png(
+    #     filename = paste0(
+    #         "results/modules/annotated_hq/",
+    #         group, "_",
+    #         cancer,
+    #         "_graph.png"
+    #     ),
+    #     height = 7,
+    #     width = 7,
+    #     units = "in",
+    #     res = 100
+    # )
+    #     
+    #     plot(g, vertex.size = 4, vertex.label=NA)
+    #     dev.off()
         
-    png(
-        filename = paste0(
-            "results/modules/annotated_hq/",
-            group, "_",
-            cancer,
-            "_graph.png"
-        ),
-        height = 7,
-        width = 7,
-        units = "in",
-        res = 100
-    )
         
-        plot(g, vertex.size = 4, vertex.label=NA)
-        dev.off()
-        
-        
-        comms <- data.frame(edge = fc$names, community = fc$membership) %>%
-            group_by(community) %>%
-            mutate(
-                n.members = n()
-            ) %>%
-            filter(
-                n.members >= 5
-            ) %>%
-            left_join(
-                y = modules_mt_by_cancer,
-                by = c("edge" = "sample_bicluster")
-            ) %>%
-            left_join(
-                y = moas[, c("IDs", "collapsed.MoAs")],
-                by = c("signature" = "IDs")
-            ) %>%
-            select(
+    comms <- data.frame(edge = fc$names, community = fc$membership) %>%
+        group_by(community) %>%
+        mutate(
+            n.members = n()
+        ) %>%
+        filter(
+            n.members >= 5
+        ) %>%
+        left_join(
+            y = modules_mt_by_cancer,
+            by = c("edge" = "sample_bicluster")
+        ) %>%
+        left_join(
+            y = moas[, c("IDs", "collapsed.MoAs")],
+            by = c("signature" = "IDs")
+        ) %>%
+        select(
                 edge,
                 community,
                 sample,
@@ -195,30 +198,28 @@ extract_communities <- function(group, n_samples){
                 collapsed.MoAs
             )
         
-        write.table(
-            x = relations_filtered,
-            file = paste0("results/modules/annotated_hq/", group, "_", cancer, "_relationships.tsv"),
-            sep = "\t",
-            row.names = FALSE
-        )
+         write.table(
+             x = relations_filtered,
+             file = paste0("results/modules/annotated_hq/", group, "_", "pancancer", "_relationships.tsv"),
+             sep = "\t",
+             row.names = FALSE
+         )
+         
+         write.table(
+             x = module_edges,
+             file = paste0("results/modules/annotated_hq/", group, "_", "pancancer", "_edges.tsv"),
+             sep = "\t",
+             row.names = FALSE
+         )
+         
+         write.table(
+             x = comms,
+             file = paste0("results/modules/annotated_hq/", group, "_", "pancancer", "_communities.tsv"),
+             sep = "\t",
+             row.names = FALSE
+         )
         
-        write.table(
-            x = module_edges,
-            file = paste0("results/modules/annotated_hq/", group, "_", cancer, "_edges.tsv"),
-            sep = "\t",
-            row.names = FALSE
-        )
-        
-        write.table(
-            x = comms,
-            file = paste0("results/modules/annotated_hq/", group, "_", cancer, "_communities.tsv"),
-            sep = "\t",
-            row.names = FALSE
-        )
-        
-    }
-    
-    
 }
+    
 
 extract_communities(group = "patient_primary_untreated", n_samples = 5)
