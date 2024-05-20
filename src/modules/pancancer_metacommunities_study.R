@@ -43,4 +43,15 @@ tm_drugs_moa <- tm_drugs %>%
 
 pancancer_therapeutic_modules$moa <- tm_drugs_moa[pancancer_therapeutic_modules$signature]
 
-write.table(x = pancancer_therapeutic_modules, file = "results/modules/annotated_hq/pancancer_communities_annotated_moa.tsv")
+write.table(
+    x = pancancer_therapeutic_modules,
+    file = "results/modules/annotated_hq/pancancer_communities_annotated_moa.tsv"
+    )
+
+pancancer_drug_composition <- pancancer_therapeutic_modules %>%
+    group_by(community, signature) %>%
+    mutate(
+        n.appearances = n()
+    ) %>%
+    filter(n.appearances >= 5) %>%
+    select(community, signature, moa, n.appearances)
