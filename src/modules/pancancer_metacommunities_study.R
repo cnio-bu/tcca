@@ -55,3 +55,35 @@ pancancer_drug_composition <- pancancer_therapeutic_modules %>%
     ) %>%
     filter(n.appearances >= 5) %>%
     select(community, signature, moa, n.appearances)
+
+
+## metacom specificity
+pancancer_drug_comp_by_community <- as.data.frame(table(
+    pancancer_drug_composition$signature,
+    pancancer_drug_composition$community
+    )
+)
+colnames(pancancer_drug_comp_by_community) <- c("drug", "community", "count")
+
+pancancer_drug_comp_by_community <- pancancer_drug_comp_by_community %>%
+    pivot_wider(
+    id_cols = drug,
+    names_from = community,
+    values_from = count
+)
+
+colnames(pancancer_drug_comp_by_community) <- c("drug", "TM1", "TM2", "TM3")
+
+pancancer_drug_comp_by_community <- pancancer_drug_comp_by_community %>%
+    rowwise() %>%
+    mutate(
+        total_appearances = TM1 + TM2 + TM3
+    )
+
+pancancer_drug_comp_by_community$moa <- tm_drugs_moa[as.character(pancancer_drug_comp_by_community$drug)]
+
+write.table(
+    x = pancancer_drug_comp_by_community,
+    file = "results/modules/annotated_hq/pancancer_drug_composition_by_module.tsv",
+    sep = "\t"
+    )
