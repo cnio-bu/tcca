@@ -1,5 +1,4 @@
 # Pan-cancer analysis of beyondcell drug signatures
-![clone_army](https://lumiere-a.akamaihd.net/v1/images/kamino-2-retina_5f3f6f1e.jpeg?region=0%2C0%2C1200%2C510)
 This repo hold the code of the aforementioned project. For collaborators: start
 here to setup your dev. environment.
 
