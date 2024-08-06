@@ -1,6 +1,6 @@
 # Pan-cancer analysis of beyondcell drug signatures
 This repo hold the code of the aforementioned project. For collaborators: start
-here to setup your dev. environment.
+here to setup your dev. environment..
 
 # Setup the environment for code and data sharing
 
