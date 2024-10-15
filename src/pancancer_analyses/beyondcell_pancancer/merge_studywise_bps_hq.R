@@ -3,13 +3,13 @@ library(tidyverse)
 library(Seurat)
 
 all_mats <- list.dirs(
-    path = "results/beyondcell_bp_hq/",
+    path = "/storage/scratch01/shared/projects/bc-meta/beyondcell_hq",
     full.names = TRUE
     )
 
 
 # yay!
-cbind.fill<-function(...){
+cbind.fill <-function(...){
     nm <- list(...) 
     nm<-lapply(nm, as.matrix)
     n <- max(sapply(nm, nrow)) 
@@ -17,7 +17,7 @@ cbind.fill<-function(...){
         rbind(x, matrix(, n-nrow(x), ncol(x))))) 
 }
 
-all_mats <- all_mats[2:36]
+all_mats <- all_mats[2:length(all_mats)]
 
 mats <- map(
     all_mats,
@@ -34,17 +34,17 @@ full_mat <- full_mat[1:90, ]
 
 write_matrix_dir(
     mat = full_mat,
-    dir = "results/beyondcell_bp_hq/full_mat_beyondcell"
+    dir = "/storage/scratch01/users/mgonzalezb/bc-meta/beyondcell_hq/full_mat_beyondcell"
     )
 
 rm(full_mat, mats)
 gc()
 
-mat <- open_matrix_dir(dir = "results/beyondcell_bp_hq/full_mat_beyondcell/")
+mat <- open_matrix_dir(dir = "/storage/scratch01/users/mgonzalezb/bc-meta/beyondcell_hq/full_mat_beyondcell")
 
 ## load metadata
 all.meta <- list.files(
-    "results/beyondcell_bp_hq/",
+    "/storage/scratch01/shared/projects/bc-meta/beyondcell_hq",
     pattern = "*.tsv",
     full.names = TRUE
     )
@@ -53,7 +53,7 @@ all.meta <- list.files(
 meta.data <- all.meta %>%
     map(read.table, row.names = 1, header = TRUE) 
 
-meta.data[[26]]$patient <- meta.data[[26]]$orig.ident
+meta.data[[27]]$patient <- meta.data[[27]]$orig.ident
 
 for(i in c(1:length(all.meta))){
     print(i)
@@ -95,7 +95,7 @@ meta.data_full <-  meta.data  %>%
 
 ## get clinical data
 clinical <- data.table::fread(
-    "results/annotation/clinical_metadata_v4_clean.tsv"
+    "/storage/scratch01/shared/projects/bc-meta/single_cell/seurat/v5/clinical_metadata_v4_clean.tsv"
     )
 
 ## Add clinical metadata
@@ -126,11 +126,11 @@ mat2 <- mat[, meta.data_full_clinical$new_cell_id]
 
 write_matrix_dir(
     mat = mat2,
-    dir = "results/beyondcell_bp_hq/full_mat_beyondcell",
+    dir = "/storage/scratch01/users/mgonzalezb/bc-meta/beyondcell_hq/full_mat_beyondcell",
     overwrite = TRUE
     )
 
 write_tsv(
     x = meta.data_full_clinical,
-    file = "results/annotation/beyondcell_hq_metadata_with_clinical.tsv"
+    file = "/storage/scratch01/users/mgonzalezb/bc-meta/beyondcell_hq/beyondcell_metadata_with_clinical.tsv"
     )
