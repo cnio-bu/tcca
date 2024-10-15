@@ -1,6 +1,6 @@
 ## TCCA COLOR PALETTES
 
-# Tumor type x15 (14 + Other)
+# Tumor site x18 (17 + Other)
 tumor_sites_colors <- c("Bone marrow" = "#FFE072",
                         "Brain" = "#CA9A8C",
                         "Adrenal gland" = "#FF9A4A",
@@ -15,6 +15,9 @@ tumor_sites_colors <- c("Bone marrow" = "#FFE072",
                         "Pancreas" = "#B47EB3",
                         "Ovary" = "#9C0D38",
                         "Prostate" = "#005D95",
+                        "Colon" = "#BD081A",
+                        "Kidney"  = "#918050",
+                        "Bladder" = "#694E85",
                         "Other" = "#BBB9B7")
 
 # Treated/Untreated 
@@ -81,7 +84,9 @@ MoAs_colors <- c("DNA related agent" = "#6cca8e", #This is the Pitiscale with so
                  "NAMPT inhibitor" = "#ca9a8c",
                  "NFkB signaling inhibitor" = "#ff4430",
                  "ATP related agent" = "#e06d23",
+                 "MET inhibitor" = "#b1ede8",
                  "Other" = "#BBB9B7")
+
 
 ## Therapeutic module colors
 module_colors <- c(
