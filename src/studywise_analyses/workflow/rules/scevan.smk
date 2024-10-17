@@ -8,7 +8,7 @@ rule cna_crc_florian_uhlitz:
     threads: 5
     resources:
         mem_mb=300000,
-        walltime=240,
+        runtime=240,
     conda:
         "scevan"
     script:
@@ -24,7 +24,7 @@ rule cna_oc_ec_matthew_regner:
     threads: 5
     resources:
         mem_mb=300000,
-        walltime=240,
+        runtime=240,
     conda:
         "scevan"
     script:
@@ -40,7 +40,7 @@ rule cna_nsclc_stefan_salcher:
     threads: 5
     resources:
         mem_mb=300000,
-        walltime=240,
+        runtime=240,
     conda:
         "scevan"
     script:
@@ -56,7 +56,7 @@ rule cna_esca_xiannian_zhang:
     threads: 5
     resources:
         mem_mb=300000,
-        walltime=240,
+        runtime=240,
     conda:
         "scevan"
     script:
@@ -72,7 +72,7 @@ rule cna_uvm_michael_durante:
     threads: 5
     resources:
         mem_mb=300000,
-        walltime=240,
+        runtime=240,
     conda:
         "scevan"
     script:
@@ -88,7 +88,7 @@ rule cna_bmets_youmna_kfoury:
     threads: 5
     resources:
         mem_mb=300000,
-        walltime=240,
+        runtime=240,
     conda:
         "scevan"
     script:
@@ -104,7 +104,7 @@ rule cna_eac_thomas_carroll:
     threads: 5
     resources:
         mem_mb=300000,
-        walltime=240,
+        runtime=240,
     conda:
         "scevan"
     script:
@@ -120,7 +120,7 @@ rule cna_cc_xiaosong_lu:
     threads: 5
     resources:
         mem_mb=300000,
-        walltime=240,
+        runtime=240,
     conda:
         "scevan"
     script:
@@ -136,7 +136,7 @@ rule cna_gbm_nourhan_abdelfattah:
     threads: 5
     resources:
         mem_mb=300000,
-        walltime=240,
+        runtime=240,
     conda:
         "scevan"
     script:
@@ -152,7 +152,7 @@ rule cna_skcm_chao_zhang:
     threads: 5
     resources:
         mem_mb=300000,
-        walltime=240,
+        runtime=240,
     conda:
         "scevan"
     script:
@@ -168,7 +168,7 @@ rule cna_brca_bhupinder_pal:
     threads: 5
     resources:
         mem_mb=300000,
-        walltime=240,
+        runtime=240,
     conda:
         "scevan"
     script:
@@ -184,7 +184,7 @@ rule cna_cell_lines_gabriella_kinker:
     threads: 5
     resources:
         mem_mb=300000,
-        walltime=240,
+        runtime=240,
     conda:
         "scevan"
     script:
@@ -200,7 +200,7 @@ rule cna_prad_sujun_chen:
     threads: 5
     resources:
         mem_mb=300000,
-        walltime=240,
+        runtime=240,
     conda:
         "scevan"
     script:
@@ -216,7 +216,7 @@ rule cna_pdac_junya_peng:
     threads: 5
     resources:
         mem_mb=300000,
-        walltime=240,
+        runtime=240,
     conda:
         "scevan"
     script:
@@ -232,7 +232,7 @@ rule cna_chol_min_zhang:
     threads: 5
     resources:
         mem_mb=300000,
-        walltime=240,
+        runtime=240,
     conda:
         "scevan"
     script:
@@ -248,7 +248,7 @@ rule cna_mmieloma_stephan_tirier:
     threads: 5
     resources:
         mem_mb=300000,
-        walltime=240,
+        runtime=240,
     conda:
         "scevan"
     script:
@@ -264,7 +264,7 @@ rule cna_rcell_kevin_bi:
     threads: 5
     resources:
         mem_mb=300000,
-        walltime=240,
+        runtime=240,
     conda:
         "scevan"
     script:
@@ -280,7 +280,7 @@ rule cna_pancancer_junbin_qian:
     threads: 5
     resources:
         mem_mb=300000,
-        walltime=240,
+        runtime=240,
     conda:
         "scevan"
     script:
@@ -296,7 +296,7 @@ rule cna_breast_sunny_wu:
     threads: 5
     resources:
         mem_mb=300000,
-        walltime=240,
+        runtime=240,
     conda:
         "scevan"
     script:
@@ -312,7 +312,7 @@ rule cna_aml_audrey_lasry:
     threads: 5
     resources:
         mem_mb=300000,
-        walltime=240,
+        runtime=240,
     conda:
         "scevan"
     script:
@@ -328,7 +328,7 @@ rule cna_bcc_catherine_dyao:
     threads: 5
     resources:
         mem_mb=300000,
-        walltime=240,
+        runtime=240,
     conda:
         "scevan"
     script:
@@ -344,7 +344,7 @@ rule cna_pancancer_dalia_barkley:
     threads: 5
     resources:
         mem_mb=300000,
-        walltime=240,
+        runtime=240,
     conda:
         "scevan"
     script:
@@ -360,7 +360,7 @@ rule cna_brmets_hugo_gonzalez:
     threads: 5
     resources:
         mem_mb=300000,
-        walltime=240,
+        runtime=240,
     conda:
         "scevan"
     script:
@@ -376,7 +376,7 @@ rule cna_pancancer_sunny_wu:
     threads: 5
     resources:
         mem_mb=300000,
-        walltime=240,
+        runtime=240,
     conda:
         "scevan"
     script:
@@ -392,7 +392,7 @@ rule cna_pleural_rui_dong:
     threads: 5
     resources:
         mem_mb=300000,
-        walltime=240,
+        runtime=240,
     conda:
         "scevan"
     script:
@@ -408,7 +408,7 @@ rule cna_brmets_jana_biermann:
     threads: 5
     resources:
         mem_mb=300000,
-        walltime=240,
+        runtime=240,
     conda:
         "scevan"
     script:
@@ -424,7 +424,7 @@ rule cna_rcell_r_li:
     threads: 5
     resources:
         mem_mb=300000,
-        walltime=240,
+        runtime=240,
     conda:
         "scevan"
     script:
@@ -440,7 +440,7 @@ rule cna_synovial_jerby_arnon:
     threads: 5
     resources:
         mem_mb=300000,
-        walltime=240,
+        runtime=240,
     conda:
         "scevan"
     script:
@@ -456,7 +456,7 @@ rule cna_all_maxime_caron:
     threads: 5
     resources:
         mem_mb=300000,
-        walltime=240,
+        runtime=240,
     conda:
         "scevan"
     script:
@@ -472,7 +472,7 @@ rule cna_adrenalnb_rui_chong:
     threads: 5
     resources:
         mem_mb=300000,
-        walltime=240,
+        runtime=240,
     conda:
         "scevan"
     script:
@@ -488,7 +488,7 @@ rule cna_luad_kim_nayoung:
     threads: 5
     resources:
         mem_mb=300000,
-        walltime=240,
+        runtime=240,
     conda:
         "scevan"
     script:
@@ -504,7 +504,7 @@ rule cna_urothelial_chen:
     threads: 5
     resources:
         mem_mb=300000,
-        walltime=240,
+        runtime=240,
     conda:
         "scevan"
     script:
@@ -520,7 +520,7 @@ rule cna_luad_philip_bisschof:
     threads: 5
     resources:
         mem_mb=300000,
-        walltime=240,
+        runtime=240,
     conda:
         "scevan"
     script:
@@ -536,7 +536,7 @@ rule cna_bone_yun_liu:
     threads: 5
     resources:
         mem_mb=300000,
-        walltime=240,
+        runtime=240,
     conda:
         "scevan"
     script:
@@ -552,7 +552,7 @@ rule cna_cll_ramon_massoni:
     threads: 5
     resources:
         mem_mb=300000,
-        walltime=240,
+        runtime=240,
     conda:
         "scevan"
     script:
@@ -568,7 +568,7 @@ rule cna_pdac_shu_zhang:
     threads: 5
     resources:
         mem_mb=300000,
-        walltime=240,
+        runtime=240,
     conda:
         "scevan"
     script:

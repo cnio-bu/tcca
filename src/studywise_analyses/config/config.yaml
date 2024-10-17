@@ -13,12 +13,12 @@ resources:
   defaults:
     threads: 1
     mem_mb: 64000
-    walltime: 30
+    runtime: 30
   default_bc:
     threads: 1
     mem_mb: 64000
-    walltime: 120
+    runtime: 120
   default_deps:
     threads: 1
     mem_mb: 80000
-    walltime: 120
+    runtime: 120

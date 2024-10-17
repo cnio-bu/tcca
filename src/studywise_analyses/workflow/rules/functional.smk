@@ -7,7 +7,7 @@ rule fc_brmets_hugo_gonzalez:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        runtime=get_resource("default_bc", "runtime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -23,7 +23,7 @@ rule fc_pancancer_dalia_barkley:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        runtime=get_resource("default_bc", "runtime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -39,7 +39,7 @@ rule fc_breast_sunny_wu:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        runtime=get_resource("default_bc", "runtime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -55,7 +55,7 @@ rule fc_pancancer_sunny_wu:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        runtime=get_resource("default_bc", "runtime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -71,7 +71,7 @@ rule fc_luad_kim_nayoung:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        runtime=get_resource("default_bc", "runtime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -87,7 +87,7 @@ rule fc_urothelial_chen:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        runtime=get_resource("default_bc", "runtime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -103,7 +103,7 @@ rule fc_adrenalnb_rui_chong:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        runtime=get_resource("default_bc", "runtime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -119,7 +119,7 @@ rule fc_luad_philip_bisschof:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        runtime=get_resource("default_bc", "runtime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -135,7 +135,7 @@ rule fc_pdac_junya_peng:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        runtime=get_resource("default_bc", "runtime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -151,7 +151,7 @@ rule fc_synovial_jerby_arnon:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        runtime=get_resource("default_bc", "runtime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -167,7 +167,7 @@ rule fc_rcell_kevin_bi:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        runtime=get_resource("default_bc", "runtime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -183,7 +183,7 @@ rule fc_pancancer_junbin_qian:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        runtime=get_resource("default_bc", "runtime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -199,7 +199,7 @@ rule fc_rcell_r_li:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        runtime=get_resource("default_bc", "runtime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -215,7 +215,7 @@ rule fc_cll_ramon_massoni:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        runtime=get_resource("default_bc", "runtime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -231,7 +231,7 @@ rule fc_aml_audrey_lasry:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        runtime=get_resource("default_bc", "runtime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -247,7 +247,7 @@ rule fc_gbm_nourhan_abdelfattah:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        runtime=get_resource("default_bc", "runtime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -263,7 +263,7 @@ rule fc_cc_xiaosong_lu:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        runtime=get_resource("default_bc", "runtime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -279,7 +279,7 @@ rule fc_pleural_rui_dong:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        runtime=get_resource("default_bc", "runtime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -295,7 +295,7 @@ rule fc_bone_yun_liu:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        runtime=get_resource("default_bc", "runtime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -311,7 +311,7 @@ rule fc_mmieloma_stephan_tirier:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        runtime=get_resource("default_bc", "runtime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -327,7 +327,7 @@ rule fc_all_maxime_caron:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        runtime=get_resource("default_bc", "runtime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -342,7 +342,7 @@ rule fc_florian_uhlitz:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        runtime=get_resource("default_bc", "runtime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -358,7 +358,7 @@ rule fc_bcc_catherine_dyao:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        runtime=get_resource("default_bc", "runtime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -374,7 +374,7 @@ rule fc_uvm_michael_durante:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        runtime=get_resource("default_bc", "runtime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -390,7 +390,7 @@ rule fc_esca_xiannian_zhang:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        runtime=get_resource("default_bc", "runtime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -406,7 +406,7 @@ rule fc_crc_florian_uhlitz:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        runtime=get_resource("default_bc", "runtime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -422,7 +422,7 @@ rule fc_brca_bhupinder_pal:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        runtime=get_resource("default_bc", "runtime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -438,7 +438,7 @@ rule fc_prad_sujun_chen:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        runtime=get_resource("default_bc", "runtime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -454,7 +454,7 @@ rule fc_chol_min_zhang:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        runtime=get_resource("default_bc", "runtime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -469,7 +469,7 @@ rule fc_skcm_chao_zhang:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        runtime=get_resource("default_bc", "runtime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -484,7 +484,7 @@ rule fc_brmets_jana_biermann:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=get_resource("default_bc", "walltime"),
+        runtime=get_resource("default_bc", "runtime"),
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -499,7 +499,7 @@ rule fc_cell_lines_gabriella_kinker:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=180
+        runtime=180
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -514,7 +514,7 @@ rule fc_bmets_youmna_kfoury:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=180
+        runtime=180
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -529,7 +529,7 @@ rule fc_nsclc_stefan_salcher:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=180
+        runtime=180
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -544,7 +544,7 @@ rule fc_eac_thomas_carroll:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=180
+        runtime=180
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -559,7 +559,7 @@ rule fc_oc_ec_matthew_regner:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=180
+        runtime=180
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -574,7 +574,7 @@ rule fc_pdac_shu_zhang:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=180
+        runtime=180
     conda:
         "../envs/beyondcell.yaml"
     script:
@@ -589,7 +589,7 @@ rule fc_aml_sander_lambo:
     threads: get_resource("default_bc", "threads")
     resources:
         mem_mb=get_resource("default_bc", "mem_mb"),
-        walltime=180
+        runtime=180
     conda:
         "../envs/beyondcell.yaml"
     script:

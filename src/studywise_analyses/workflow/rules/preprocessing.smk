@@ -9,7 +9,7 @@ rule sc_brmets_hugo_gonzalez_seurat:
     threads: get_resource("defaults", "threads")
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
-        walltime=get_resource("defaults", "walltime"),
+        runtime=get_resource("defaults", "runtime"),
     conda:
         "../envs/seurat.yaml"
     script:
@@ -24,7 +24,7 @@ rule sc_pancancer_dalia_barkley_seurat:
     threads: get_resource("defaults", "threads")
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
-        walltime=get_resource("defaults", "walltime"),
+        runtime=get_resource("defaults", "runtime"),
     conda:
         "../envs/seurat.yaml"
     script:
@@ -42,7 +42,7 @@ rule sc_breast_sunny_wu_seurat:
     threads: get_resource("defaults", "threads")
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
-        walltime=get_resource("defaults", "walltime"),
+        runtime=get_resource("defaults", "runtime"),
     params:
         data_dir=f"{raw_data}/breast_sunny_wu",
     conda:
@@ -62,7 +62,7 @@ rule sc_pancancer_sunny_wu_seurat:
     threads: get_resource("defaults", "threads")
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
-        walltime=get_resource("defaults", "walltime"),
+        runtime=get_resource("defaults", "runtime"),
     params:
         data_dir=f"{raw_data}/pancancer_sunny_wu",
     conda:
@@ -80,7 +80,7 @@ rule sc_luad_kim_nayoung_seurat:
     threads: get_resource("defaults", "threads")
     resources:
         mem_mb=144000,
-        walltime=get_resource("defaults", "walltime"),
+        runtime=get_resource("defaults", "runtime"),
     conda:
         "../envs/seurat.yaml"
     script:
@@ -98,7 +98,7 @@ rule sc_adrenalnb_rui_chong_seurat:
     threads: get_resource("defaults", "threads")
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
-        walltime=get_resource("defaults", "walltime"),
+        runtime=get_resource("defaults", "runtime"),
     conda:
         "../envs/seurat.yaml"
     script:
@@ -114,7 +114,7 @@ rule sc_luad_philip_bisschof_seurat:
     threads: get_resource("defaults", "threads")
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
-        walltime=get_resource("defaults", "walltime"),
+        runtime=get_resource("defaults", "runtime"),
     params:
         data_dir=f"{raw_data}/luad_philip_bisschof",
     conda:
@@ -132,7 +132,7 @@ rule sc_pdac_junya_peng_seurat:
     threads: get_resource("defaults", "threads")
     resources:
         mem_mb=144000,
-        walltime=get_resource("defaults", "walltime"),
+        runtime=get_resource("defaults", "runtime"),
     conda:
         "../envs/seurat.yaml"
     script:
@@ -147,7 +147,7 @@ rule sc_synovial_jerby_arnon_seurat:
     threads: get_resource("defaults", "threads")
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
-        walltime=get_resource("defaults", "walltime"),
+        runtime=get_resource("defaults", "runtime"),
     conda:
         "../envs/seurat.yaml"
     script:
@@ -162,7 +162,7 @@ rule sc_rcell_kevin_bi_seurat:
     threads: get_resource("defaults", "threads")
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
-        walltime=get_resource("defaults", "walltime"),
+        runtime=get_resource("defaults", "runtime"),
     params:
         data_dir=f"{raw_data}/rcell_kevin_bi",
     conda:
@@ -177,7 +177,7 @@ rule sc_pancancer_junbin_qian_seurat:
     threads: get_resource("defaults", "threads")
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
-        walltime=get_resource("defaults", "walltime"),
+        runtime=get_resource("defaults", "runtime"),
     params:
         data_dir=f"{raw_data}/pancancer_junbin_qian",
     conda:
@@ -195,7 +195,7 @@ rule sc_rcell_r_li_seurat:
     threads: get_resource("defaults", "threads")
     resources:
         mem_mb=144000,
-        walltime=60,
+        runtime=60,
     conda:
         "../envs/seurat.yaml"
     script:
@@ -210,7 +210,7 @@ rule sc_cll_ramon_massoni_seurat:
     threads: get_resource("defaults", "threads")
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
-        walltime=get_resource("defaults", "walltime"),
+        runtime=get_resource("defaults", "runtime"),
     conda:
         "../envs/seurat.yaml"
     script:
@@ -229,7 +229,7 @@ rule sc_aml_audrey_lasry_seurat:
     threads: get_resource("defaults", "threads")
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
-        walltime=get_resource("defaults", "walltime"),
+        runtime=get_resource("defaults", "runtime"),
     conda:
         "../envs/seurat.yaml"
     script:
@@ -246,7 +246,7 @@ rule sc_gbm_nourhan_abdelfattah_seurat:
     threads: get_resource("defaults", "threads")
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
-        walltime=get_resource("defaults", "walltime"),
+        runtime=get_resource("defaults", "runtime"),
     conda:
         "../envs/seurat.yaml"
     script:
@@ -263,7 +263,7 @@ rule sc_cc_xiaosong_lu_seurat:
     threads: get_resource("defaults", "threads")
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
-        walltime=get_resource("defaults", "walltime"),
+        runtime=get_resource("defaults", "runtime"),
     conda:
         "../envs/seurat.yaml"
     script:
@@ -280,7 +280,7 @@ rule sc_pleural_rui_dong_seurat:
     threads: get_resource("defaults", "threads")
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
-        walltime=get_resource("defaults", "walltime"),
+        runtime=get_resource("defaults", "runtime"),
     conda:
         "../envs/seurat.yaml"
     script:
@@ -298,7 +298,7 @@ rule sc_bone_yun_liu_seurat:
     threads: get_resource("defaults", "threads")
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
-        walltime=get_resource("defaults", "walltime"),
+        runtime=get_resource("defaults", "runtime"),
     conda:
         "../envs/seurat.yaml"
     script:
@@ -315,7 +315,7 @@ rule sc_mmieloma_stephan_tirier_seurat:
     threads: get_resource("defaults", "threads")
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
-        walltime=get_resource("defaults", "walltime"),
+        runtime=get_resource("defaults", "runtime"),
     conda:
         "../envs/seurat.yaml"
     script:
@@ -330,7 +330,7 @@ rule sc_urothelial_chen_seurat:
     threads: get_resource("defaults", "threads")
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
-        walltime=get_resource("defaults", "walltime"),
+        runtime=get_resource("defaults", "runtime"),
     conda:
         "../envs/seurat.yaml"
     script:
@@ -348,7 +348,7 @@ rule sc_all_maxime_caron_seurat:
     threads: get_resource("defaults", "threads")
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
-        walltime=get_resource("defaults", "walltime"),
+        runtime=get_resource("defaults", "runtime"),
     conda:
         "../envs/seurat.yaml"
     script:
@@ -365,7 +365,7 @@ rule sc_crc_florian_uhlitz_seurat:
     threads: get_resource("defaults", "threads")
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
-        walltime=get_resource("defaults", "walltime"),
+        runtime=get_resource("defaults", "runtime"),
     conda:
         "../envs/seurat.yaml"
     script:
@@ -382,7 +382,7 @@ rule sc_bcc_catherine_dyao_seurat:
     threads: get_resource("defaults", "threads")
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
-        walltime=get_resource("defaults", "walltime"),
+        runtime=get_resource("defaults", "runtime"),
     conda:
         "../envs/seurat.yaml"
     script:
@@ -397,7 +397,7 @@ rule sc_uvm_michael_durante_seurat:
     threads: get_resource("defaults", "threads")
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
-        walltime=get_resource("defaults", "walltime"),
+        runtime=get_resource("defaults", "runtime"),
     params:
         data_dir = f"{raw_data}/uvm_michael_durante/GSM4147091"
     conda:
@@ -416,7 +416,7 @@ rule sc_esca_xiannian_zhang_seurat:
     threads: get_resource("defaults", "threads")
     resources:
         mem_mb=84000,
-        walltime=120,
+        runtime=120,
     conda:
         "../envs/seurat.yaml"
     script:
@@ -433,7 +433,7 @@ rule sc_brca_bhupinder_pal_seurat:
     threads: get_resource("defaults", "threads")
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
-        walltime=120,
+        runtime=120,
     conda:
         "../envs/seurat.yaml"
     script:
@@ -450,7 +450,7 @@ rule sc_thyroid_weilin_pu_seurat:
     threads: 10
     resources:
         mem_mb=300000,
-        walltime=240,
+        runtime=240,
     conda:
         "scevan"
     script:
@@ -466,7 +466,7 @@ rule sc_prad_sujun_chen_seurat:
     threads: get_resource("defaults", "threads")
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
-        walltime=get_resource("defaults", "walltime"),
+        runtime=get_resource("defaults", "runtime"),
     conda:
         "../envs/seurat.yaml"
     script:
@@ -485,7 +485,7 @@ rule sc_skcm_chao_zhang_seurat:
     threads: 10
     resources:
         mem_mb=300000,
-        walltime=240,
+        runtime=240,
     conda:
         "scevan"
     script:
@@ -501,7 +501,7 @@ rule sc_chol_min_zhang_seurat:
     threads: get_resource("defaults", "threads"),
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
-        walltime=get_resource("defaults", "walltime"),
+        runtime=get_resource("defaults", "runtime"),
     conda:
         "../envs/seurat.yaml"
     script:
@@ -517,7 +517,7 @@ rule sc_brmets_jana_biermann_seurat:
     threads: get_resource("defaults", "threads"),
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
-        walltime=get_resource("defaults", "walltime"),
+        runtime=get_resource("defaults", "runtime"),
     conda:
         "../envs/seurat.yaml"
     script:
@@ -531,7 +531,7 @@ rule sc_cell_lines_gabriella_kinker_seurat:
     threads: get_resource("defaults", "threads"),
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
-        walltime=get_resource("defaults", "walltime"),
+        runtime=get_resource("defaults", "runtime"),
     conda:
         "../envs/seurat.yaml"
     script:
@@ -547,7 +547,7 @@ rule sc_bmets_youmna_kfoury_seurat:
     threads: get_resource("defaults", "threads"),
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
-        walltime=get_resource("defaults", "walltime"),
+        runtime=get_resource("defaults", "runtime"),
     conda:
         "../envs/seurat.yaml"
     script:
@@ -562,7 +562,7 @@ rule sc_nsclc_stefan_salcher_seurat:
     threads: get_resource("defaults", "threads"),
     resources:
         mem_mb=180000,
-        walltime=120,
+        runtime=120,
     conda:
         "../envs/seurat.yaml"
     script:
@@ -576,7 +576,7 @@ rule sc_eac_thomas_carroll_seurat:
     threads: get_resource("defaults", "threads"),
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
-        walltime=get_resource("defaults", "walltime"),
+        runtime=get_resource("defaults", "runtime"),
     conda:
       "../envs/seurat.yaml"
     script:
@@ -592,7 +592,7 @@ rule sc_oc_ec_matthew_regner_seurat:
     threads: get_resource("defaults", "threads"),
     resources:
         mem_mb=get_resource("defaults", "mem_mb"),
-        walltime=get_resource("defaults", "walltime"),
+        runtime=get_resource("defaults", "runtime"),
     conda:
       "../envs/seurat.yaml"
     script:
@@ -610,7 +610,7 @@ rule sc_pdac_shu_zhang_seurat:
     threads: 5
     resources:
         mem_mb=300000,
-        walltime=240,
+        runtime=240,
     conda:
         "scevan"
     script:
@@ -626,7 +626,7 @@ rule sc_aml_sander_lambo_seurat:
     threads: 1
     resources:
         mem_mb=120000,
-        walltime=100,
+        runtime=100,
     conda:
       "../envs/seurat.yaml"
     script:
