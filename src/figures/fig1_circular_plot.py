@@ -20,24 +20,20 @@ cancer_type = {
     "Neuroblastic Tumors": ["GNB", "NB"],
     "Blood Cancer": ["ALL", "LAML", "CLL", "MM"],
     "Skin Cancer": ["BCC", "SKCM", "SKSC", "SKAM"],
-    "Bone/Soft Tissue Cancer": ["SARC", "MESO"],
+    "Sarcoma": ["SARC"],
     "Breast Cancer": ["BRCA"],
     "Lung Cancer": ["SCLC", "NSCLC", "LUAD", "LUSC", "LCLC", "PLEU"],
     "Ovarian Cancer": ["OV"],
     "Colon/Colorectal Cancer": ["COAD", "READ"],
     "Endometrial/Uterine Cancer": ["CESC", "UCEC", "UCS"],
-    "Thyroid Cancer": ["THCA"],
-    "Liver Cancer": ["LIHC"],
+    "Liver/Biliary Cancer": ["LIHC", "CHOL"],
     "Bladder Cancer": ["BLCA"],
     "Head and Neck Cancer": ["HNSC"],
-    "Gastric Cancer": ["STAD"],
     "Prostate Cancer": ["PRAD"],
     "Kidney Cancer": ["KRCC", "KTCC", "KIRC"],
     "Esophageal Cancer": ["ESCA", "ESCC"],
     "Pancreatic Cancer": ["PAAD"],
-    "Bile Duct Cancer": ["CHOL"],
-    "Gastrointestinal Stromal Tumor": ["GIST"],
-    "Eye Cancer": ["UVM"],
+    "Other": ["MISC", "UVM", "THCA", "STAD", "GIST"],
 }
 
 
@@ -102,7 +98,7 @@ circlize_data = (
 # circlize_data['total_count'] = circlize_data['patient_count'] + circlize_data['cell_line_count']
 
 # Sort by total_count in descending order
-circlize_data = circlize_data.sort_values(by="patient_count", ascending=False)
+circlize_data = circlize_data.sort_values(by="sample_count", ascending=False)
 
 # Save the table
 circlize_data.to_csv("input_circlize.tsv", sep="\t", index=False, header=True)
@@ -116,12 +112,14 @@ sectors = circlize_data.index.tolist()
 sectors = dict(zip(sectors, [1] * len(sectors)))
 circos = Circos(sectors, space=2, start=0, end=180)
 
+
+
 for sector in circos.sectors:
     # Plot cell lines and patient number per cancer type.
     track1 = sector.add_track((80, 100), r_pad_ratio=0.1)
     track1.stacked_bar(
         circlize_data.loc[[sector.name], ["patient_count", "cell_line_count"]],
-        width=0.8,
+        width=0.6,
         cmap={"patient_count": "#427394", "cell_line_count": "#F78C1F"},
         vmax=max(circlize_data["sample_count"]),
         show_label=False,
@@ -139,7 +137,7 @@ for sector in circos.sectors:
         circlize_data.loc[
             [sector.name], ["primary_count", "metastasis_count", "unknown_count"]
         ],
-        width=0.8,
+        width=0.6,
         cmap={
             "primary_count": "#F0BFD0",
             "metastasis_count": "#C10044",
@@ -161,7 +159,7 @@ for sector in circos.sectors:
         circlize_data.loc[
             [sector.name], ["untreated_count", "treated_count", "unknown_treat_count"]
         ],
-        width=0.8,
+        width=0.6,
         cmap={
             "untreated_count": "#D18B6E",
             "treated_count": "#6ED1BC",
@@ -181,7 +179,7 @@ for sector in circos.sectors:
     track4 = sector.add_track((20, 39), r_pad_ratio=0.1)
     x = np.arange(sector.start, sector.end) + 0.5
     y = [circlize_data.loc[sector.name, "cell_count"]]
-    track4.bar(x, y, color="#3faa6d", width=0.8, vmax=max(circlize_data["cell_count"]))
+    track4.bar(x, y, color="#3faa6d", width=0.6, vmax=max(circlize_data["cell_count"]))
     track4.axis()
     y_ticks = np.linspace(0, 350000, 8, dtype=int)
     y_labels = list(map(str, y_ticks))
@@ -191,3 +189,4 @@ fig = circos.plotfig()
 plt.savefig("cohort_circular.pdf", format="pdf", bbox_inches="tight")
 
 plt.show()
+
