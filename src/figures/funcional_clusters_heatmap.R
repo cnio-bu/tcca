@@ -3,10 +3,12 @@ library(ComplexHeatmap)
 library(Seurat)
 library(tidyverse)
 
-## Source TCCA palette
-source(file = "src/figures/TCCA_palette.R")
+setwd("/storage/scratch01/users/mgonzalezb/bc-meta/functional_old/")
 
-sketched_5k <- open_matrix_dir(dir = "results/functional/sketch_mat_functional_5k/")
+## Source TCCA palette
+source(file = "/storage/scratch01/users/mgonzalezb/bc-meta/TCCA_palette.R")
+
+sketched_5k <- open_matrix_dir(dir = "results/sketch_mat_functional_5k/")
 
 sketched_mat <- as.matrix(sketched_5k)
 sketched_mat <- scale(x = sketched_mat, center = TRUE, scale = TRUE)
@@ -31,7 +33,7 @@ translat_human_sites <- c(
 
 ## functional annotation
 fcs <- data.table::fread(
-    "results/annotation/beyondcell_with_therapeutic_clusters.tsv"
+    "results/functional_metadata_with_clinical.tsv"
 ) %>%
     filter(
         new_cell_id %in% colnames(sketched_mat)
@@ -62,8 +64,9 @@ cells_annot_df <- clinical_features %>%
         is_blood,
         sample_type,
         summarised_tumor_site,
-        treated,
-        therapeutic_clusters_0.2) %>%
+        treated
+        #therapeutic_clusters_0.2
+        ) %>%
     as.data.frame()
 
 cells_annot_df$summarised_tumor_site <-  translat_human_sites[cells_annot_df$summarised_tumor_site]
@@ -77,8 +80,8 @@ colnames(cells_annot_df) <- c(
     "Solid/Liquid",
     "Tumor type",
     "Origin",
-    "Treatment",
-    "Therapeutic Cluster"
+    "Treatment"
+    # "Therapeutic Cluster"
 )
 
 pals = list(
@@ -87,23 +90,24 @@ pals = list(
     "Solid/Liquid" = sl_colors,
     "Tumor type" = pm_colors,
     "Origin" = tumor_sites_colors,
-    "Treatment" = treatment_colors,
-    "Therapeutic Cluster" = tcs_colors
+    "Treatment" = treatment_colors
+    # "Therapeutic Cluster" = tcs_colors
 )
 
-right_annotation <- ComplexHeatmap::HeatmapAnnotation(
+top_annotation <- ComplexHeatmap::HeatmapAnnotation(
     df =  cells_annot_df,
-    which = "row",
+    which = "column",
     col = pals,
-    annotation_name_side = "top",
+    annotation_name_side = "left",
     annotation_name_rot = 45
 )
 
 top_rv <- matrixStats::rowVars(sketched_mat)
-top_rv <- top_rv[top_rv >= 0.58] ## median
+top_median <- median(top_rv)
+top_rv <- top_rv[top_rv >= top_median] ## median
 
 png(
-    file = "results/figures/sketched_functional_with_tcs.png",
+    file = "results/sketched_functional_with_tcs.png",
     res = 300,
     width = 14, 
     height = 18,
@@ -112,13 +116,13 @@ png(
 
 
 heat <- ComplexHeatmap::Heatmap(
-    mat = t(sketched_mat[names(top_rv), ]),
-    right_annotation = right_annotation,
-    #top_annotation = top_annotation,
-    cluster_rows = FALSE,
-    row_order = rownames(cells_annot_df[order(cells_annot_df$`Therapeutic Cluster`), ]),
+    mat = sketched_mat[names(top_rv), ],
+    #right_annotation = right_annotation,
+    top_annotation = top_annotation,
+    cluster_rows = TRUE,
+    #row_order = rownames(cells_annot_df[order(cells_annot_df$`Therapeutic Cluster`), ]),
     cluster_row_slices = TRUE,
-    row_split = cells_annot_df$`Therapeutic Cluster`,
+    # row_split = cells_annot_df$`Therapeutic Cluster`,
     row_title = NULL,
     cluster_columns = TRUE,
     cluster_column_slices = TRUE,

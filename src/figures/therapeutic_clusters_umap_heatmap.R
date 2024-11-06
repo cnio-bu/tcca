@@ -2,19 +2,33 @@ library(BPCells)
 library(ComplexHeatmap)
 library(tidyverse)
 
-## Source TCCA palette
-source(file = "src/figures/TCCA_palette.R")
+setwd("/storage/scratch01/users/mgonzalezb/bc-meta/beyondcell/")
 
-sketched_mat <- open_matrix_dir(dir = "results/beyondcell_bp/sketch_mat_beyondcell")
-sketched_5k <- open_matrix_dir(dir = "results/beyondcell_bp/sketch_mat_beyondcell_5k/")
+## Source TCCA palette
+source(file = "../TCCA_palette.R")
+
+sketched_mat <- open_matrix_dir(dir = "results/sketch_mat_beyondcell")
+sketched_5k <- open_matrix_dir(dir = "results/sketch_mat_beyondcell_5k/")
 
 sketched_mat <- as.matrix(sketched_5k)
 sketched_mat <- scale(x = sketched_mat, center = TRUE, scale = TRUE)
 
 ## therapeutic clusters
 tcs <- data.table::fread(
-    "results/annotation/tcs.tsv"
+    "results/tcs.tsv"
 ) %>%
+    filter(
+        new_cell_id %in% colnames(sketched_mat)
+    )
+
+## extract sex inferred
+seu <- readRDS("/storage/scratch01/shared/projects/bc-meta/single_cell/seurat/v5/lvl2/seu_lvl2_sex_infered.rds")
+seu <- subset(seu, subset = malignancy == TRUE)
+colnames(seu) <- paste0("c", c(1:ncol(seu)))
+
+tcs$sex <- seu@meta.data[tcs$new_cell_id, "sex"]
+
+tcs <- tcs %>%
     filter(
         new_cell_id %in% colnames(sketched_mat)
     )
@@ -27,6 +41,7 @@ translat_human_sites <- c(
     "breast" = "Breast",
     "skin" = "Skin",
     "esophagus" = "Esophagus",
+    "oesophagus" = "Esophagus",
     "liver" = "Liver",
     "lung" = "Lung",
     "lymph_node" = "Lymph node",
@@ -34,7 +49,10 @@ translat_human_sites <- c(
     "ovary" = "Ovary",
     "pancreas" = "Pancreas",
     "prostate" = "Prostate",
-    "soft_tissue" = "Soft tissue"
+    "soft_tissue" = "Soft tissue",
+    "bladder" = "Bladder",
+    "colon" = "Colon",
+    "kidney" = "Kidney"
 )
 
 clinical_features <- tcs %>%
@@ -48,9 +66,8 @@ clinical_features <- tcs %>%
         treated = ifelse(treated, "Treated", "Untreated"),
         sex = ifelse(sex == "f", "Female", "Male"),
         sample_type = ifelse(sample_type == "m", "Metastasis", "Primary"),
-        therapeutic_clusters_0.2 = as_factor(therapeutic_clusters_0.2)
+        therapeutic_clusters_k.300.res.0.5 = as_factor(therapeutic_clusters_k.300.res.0.5)
     )
-
 
 
 cells_annot_df <- clinical_features %>%
@@ -62,7 +79,7 @@ cells_annot_df <- clinical_features %>%
         sample_type,
         summarised_tumor_site,
         treated,
-        therapeutic_clusters_0.2) %>%
+        therapeutic_clusters_k.300.res.0.5) %>%
     as.data.frame()
 
 cells_annot_df$summarised_tumor_site <-  translat_human_sites[cells_annot_df$summarised_tumor_site]
@@ -90,11 +107,11 @@ pals = list(
     "Therapeutic Cluster" = tcs_colors
 )
 
-right_annotation <- ComplexHeatmap::HeatmapAnnotation(
+top_annotation <- ComplexHeatmap::HeatmapAnnotation(
     df =  cells_annot_df,
-    which = "row",
+    which = "column",
     col = pals,
-    annotation_name_side = "top",
+    annotation_name_side = "left",
     annotation_name_rot = 45
 )
 
@@ -102,7 +119,7 @@ top_rv <- matrixStats::rowVars(sketched_mat)
 top_rv <- top_rv[top_rv >= 2]
 
 ## get drug names
-drugs <- data.table::fread("reference/final_moas - Collapsed.tsv") %>%
+drugs <- data.table::fread("../reference/final_moas - Collapsed.tsv") %>%
     select(IDs, preferred.drug.names, collapsed.MoAs) %>%
     mutate(
         collapsed.MoAs = case_when(
@@ -128,9 +145,9 @@ moa_pals <- list(
 )
 
 
-top_annotation <- ComplexHeatmap::HeatmapAnnotation(
+right_annotation <- ComplexHeatmap::HeatmapAnnotation(
     df = MoAs,
-    which = "column",
+    which = "row",
     col = moa_pals,
     show_annotation_name = FALSE
 )
@@ -138,37 +155,37 @@ top_annotation <- ComplexHeatmap::HeatmapAnnotation(
 png(
     file = "results/figures/sketched_beyondcell_with_tcs.png",
     res = 300,
-    width = 14, 
-    height = 18,
+    width = 18, 
+    height = 14,
     units = "in"
 )
 
 
 test <- ComplexHeatmap::Heatmap(
-    mat = t(sketched_mat[names(top_rv),]),
+    mat = sketched_mat[names(top_rv),],
     #mat = t(sketched_mat),
     right_annotation = right_annotation,
     top_annotation = top_annotation,
-    cluster_rows = FALSE,
-    row_order = rownames(cells_annot_df[order(cells_annot_df$`Therapeutic Cluster`), ]),
+    cluster_rows = TRUE,
     cluster_row_slices = TRUE,
-    row_split = cells_annot_df$`Therapeutic Cluster`,
+    row_split = 5,
     row_title = NULL,
+    column_order = rownames(cells_annot_df[order(cells_annot_df$`Therapeutic Cluster`), ]),
     cluster_columns = TRUE,
     cluster_column_slices = TRUE,
     show_column_dend = FALSE,
-    column_split = 4, 
+    column_split =  cells_annot_df$`Therapeutic Cluster`, 
     clustering_distance_columns = "pearson",
     clustering_distance_rows = "pearson",
-    show_column_names = TRUE,
-    column_labels = drugs[names(top_rv), "preferred.drug.names"],
-    show_row_names = FALSE,
+    show_column_names = FALSE,
+    row_labels = drugs[names(top_rv), "preferred.drug.names"],
+    show_row_names = TRUE,
     column_names_rot = 45,
-    column_names_gp = grid::gpar(fontsize = 8),
+    row_names_gp = grid::gpar(fontsize = 8),
     column_names_side = "top",
     column_title = NULL,
-    heatmap_width = unit(8, "in"),
-    heatmap_height = unit(14, "in")
+    heatmap_width = unit(14, "in"),
+    heatmap_height = unit(8, "in")
 )
 
 draw(test)
@@ -176,7 +193,7 @@ dev.off()
 
 
 ## Generate UMAP plot from raw UMAP
-tcs_umap <- readRDS("results/beyondcell_bp/tcs_raw.rds")
+tcs_umap <- readRDS("results/tcs_umap.rds")
 
 tcs_umap_clean <- tcs_umap +
     ggtitle("") +
@@ -199,7 +216,7 @@ tcs_umap_clean$layers[[1]]$aes_params$alpha <- 0.7
 
 ggsave(
     plot = tcs_umap_clean,
-    filename = "results/figures/therapeutic_clusters_umap.png",
+    filename = "results/figures/therapeutic_clusters_umap_k20_res0.1.png",
     dpi = 300,
     height = 7,
     width = 7
