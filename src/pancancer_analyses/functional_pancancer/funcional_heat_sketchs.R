@@ -8,6 +8,7 @@ options(Seurat.object.assay.version = 'v5')
 
 ## Load full beyondcell mat
 mat <- open_matrix_dir(dir = "results/functional/full_mat_functional/")
+
 ## Load full database
 meta.data_full_clinical <- read_tsv(
     file = "results/annotation/functional_metadata_with_clinical.tsv"
@@ -101,4 +102,4 @@ write_matrix_dir(mat = sketched_mat, dir = "results/functional/sketch_mat_functi
 write_matrix_dir(mat = sketched_mat_5k, dir = "results/functional/sketch_mat_functional_5k")
 
 ## export object
-saveRDS(object = seu, file = "results/functional/beyondcell_pancancer.Rds")
+saveRDS(object = seu, file = "results/functional/functional_pancancer.Rds")
