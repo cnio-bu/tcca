@@ -171,7 +171,7 @@ test <- ComplexHeatmap::Heatmap(
     row_split = 5,
     row_title = NULL,
     column_order = rownames(cells_annot_df[order(cells_annot_df$`Therapeutic Cluster`), ]),
-    cluster_columns = TRUE,
+    cluster_columns = FALSE,
     cluster_column_slices = TRUE,
     show_column_dend = FALSE,
     column_split =  cells_annot_df$`Therapeutic Cluster`, 
