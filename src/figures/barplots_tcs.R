@@ -4,7 +4,7 @@ library(Seurat)
 library(clustree)
 
 ## Set options
-options(future.globals.maxSize = 20 * 1024^3)
+options(future.globals.maxSize = 20 * 1024 ^ 3)
 options(Seurat.object.assay.version = 'v5')
 
 setwd("/storage/scratch01/users/mgonzalezb/bc-meta/beyondcell/")
@@ -15,9 +15,14 @@ source(file = "/home/mgonzalezb/bc-meta/TCCA_palette.R")
 # Load Seurat object with therapeutic cluster annotations
 bc <- readRDS("results/beyondcell_pancancer_final_res.Rds")
 
-seu <- readRDS("/storage/scratch01/shared/projects/bc-meta/single_cell/seurat/v5/lvl2/seu_lvl2_sex_infered.rds")
-metadata <- read.table("/storage/scratch01/shared/projects/bc-meta/single_cell/seurat/tcca/tcca_annotation_raw.tsv", 
-sep = "\t", header = TRUE)
+seu <- readRDS(
+  "/storage/scratch01/shared/projects/bc-meta/single_cell/seurat/v5/lvl2/seu_lvl2_sex_infered.rds"
+)
+metadata <- read.table(
+  "/storage/scratch01/shared/projects/bc-meta/single_cell/seurat/tcca/tcca_annotation_raw.tsv",
+  sep = "\t",
+  header = TRUE
+)
 seu@meta.data <- cbind(seu@meta.data, metadata[, c(29:33)])
 
 seu <- subset(seu, subset = malignancy == TRUE)
@@ -28,97 +33,155 @@ bc$tme_archetype <- seu@meta.data[bc$new_cell_id, "tme_archetype"]
 
 ## human readable origins
 translat_human_sites <- c(
-    "bone_marrow" = "Bone marrow",
-    "brain" = "Brain",
-    "adrenal_gland" = "Adrenal gland",
-    "breast" = "Breast",
-    "skin" = "Skin",
-    "esophagus" = "Esophagus",
-    "oesophagus" = "Esophagus",
-    "liver" = "Liver",
-    "lung" = "Lung",
-    "lymph_node" = "Lymph node",
-    "other" = "Other",
-    "ovary" = "Ovary",
-    "pancreas" = "Pancreas",
-    "prostate" = "Prostate",
-    "soft_tissue" = "Soft tissue",
-    "bladder" = "Bladder",
-    "colon" = "Colon",
-    "kidney" = "Kidney"
+  "bone_marrow" = "Bone marrow",
+  "brain" = "Brain",
+  "adrenal_gland" = "Adrenal gland",
+  "breast" = "Breast",
+  "skin" = "Skin",
+  "esophagus" = "Esophagus",
+  "oesophagus" = "Esophagus",
+  "liver" = "Liver",
+  "lung" = "Lung",
+  "lymph_node" = "Lymph node",
+  "other" = "Other",
+  "ovary" = "Ovary",
+  "pancreas" = "Pancreas",
+  "prostate" = "Prostate",
+  "soft_tissue" = "Soft tissue",
+  "bladder" = "Bladder",
+  "colon" = "Colon",
+  "kidney" = "Kidney"
 )
 
 clinical_features <- bc@meta.data %>%
-    mutate(
-        summarised_tumor_site = case_when(
-            refined_tumor_site %in% names(translat_human_sites) ~ refined_tumor_site,
-            TRUE ~ "Other"
-        ),
-        adult_pediatric = ifelse(age >= 16, "Adult", "Pediatric"),
-        is_blood = ifelse(tumor_type %in% c("ALL", "CLL", "LAML","MM"), "Liquid", "Solid"),
-        treated = ifelse(treated, "Treated", "Untreated"),
-        sex = ifelse(sex == "f", "Female", "Male"),
-        sample_type = ifelse(sample_type == "m", "Metastasis", "Primary"),
-        therapeutic_clusters_k300_res0.5 = factor(therapeutic_clusters_k.300.res.0.5, levels = sort(unique(therapeutic_clusters_k.300.res.0.5)))
-    )
+  mutate(
+    summarised_tumor_site = case_when(
+      refined_tumor_site %in% names(translat_human_sites) ~ refined_tumor_site,
+      TRUE ~ "Other"
+    ),
+    adult_pediatric = ifelse(age >= 16, "Adult", "Pediatric"),
+    is_blood = ifelse(tumor_type %in% c("ALL", "CLL", "LAML", "MM"), "Liquid", "Solid"),
+    treated = ifelse(treated, "Treated", "Untreated"),
+    sex = ifelse(sex == "f", "Female", "Male"),
+    sample_type = ifelse(sample_type == "m", "Metastasis", "Primary"),
+    therapeutic_clusters_k300_res0.5 = factor(therapeutic_clusters_k.300.res.0.5, levels = sort(
+      unique(therapeutic_clusters_k.300.res.0.5)
+    ))
+  )
 clinical_features$summarised_tumor_site <-  translat_human_sites[clinical_features$summarised_tumor_site]
 
 # Sex barplot
-sex_barplot <- ggplot(clinical_features, aes(x = therapeutic_clusters_k300_res0.5, fill = sex)) +
-geom_bar(position = "fill") +
-scale_fill_manual(values = sex_colors) + 
-theme_bw()
+sex_barplot <- ggplot(clinical_features,
+                      aes(x = therapeutic_clusters_k300_res0.5, fill = sex)) +
+  geom_bar(position = "fill") +
+  scale_fill_manual(values = sex_colors) +
+  theme_bw()
 
-ggsave("results/figures/sex_barplot_tc.png", sex_barplot, width = 8, height = 8, dpi = 500)
+ggsave(
+  "results/figures/sex_barplot_tc.png",
+  sex_barplot,
+  width = 8,
+  height = 8,
+  dpi = 500
+)
 
 # Age group tumor barplot
-age_barplot <- ggplot(clinical_features, aes(x = therapeutic_clusters_k300_res0.5, fill = adult_pediatric)) +
-geom_bar(position = "fill") +
-scale_fill_manual(values = age_colors) + 
-theme_bw()
+age_barplot <- ggplot(clinical_features,
+                      aes(x = therapeutic_clusters_k300_res0.5, fill = adult_pediatric)) +
+  geom_bar(position = "fill") +
+  scale_fill_manual(values = age_colors) +
+  theme_bw()
 
-ggsave("results/figures/age_barplot_tc.png", age_barplot, width = 8, height = 8, dpi = 500)
+ggsave(
+  "results/figures/age_barplot_tc.png",
+  age_barplot,
+  width = 8,
+  height = 8,
+  dpi = 500
+)
 
 # Liquid/solid tumor barplot
-sl_barplot <- ggplot(clinical_features, aes(x = therapeutic_clusters_k300_res0.5, fill = is_blood)) +
-geom_bar(position = "fill") +
-scale_fill_manual(values = sl_colors) + 
-theme_bw()
+sl_barplot <- ggplot(clinical_features,
+                     aes(x = therapeutic_clusters_k300_res0.5, fill = is_blood)) +
+  geom_bar(position = "fill") +
+  scale_fill_manual(values = sl_colors) +
+  theme_bw()
 
-ggsave("results/figures/sl_barplot_tc.png", sl_barplot, width = 8, height = 8, dpi = 500)
+ggsave(
+  "results/figures/sl_barplot_tc.png",
+  sl_barplot,
+  width = 8,
+  height = 8,
+  dpi = 500
+)
 
 # Sample type barplot
-pm_barplot <- ggplot(clinical_features, aes(x = therapeutic_clusters_k300_res0.5, fill = sample_type)) +
-geom_bar(position = "fill") +
-scale_fill_manual(values = pm_colors) + 
-theme_bw()
+pm_barplot <- ggplot(clinical_features,
+                     aes(x = therapeutic_clusters_k300_res0.5, fill = sample_type)) +
+  geom_bar(position = "fill") +
+  scale_fill_manual(values = pm_colors) +
+  theme_bw()
 
-ggsave("results/figures/pm_barplot_tc.png", pm_barplot, width = 8, height = 8, dpi = 500)
+ggsave(
+  "results/figures/pm_barplot_tc.png",
+  pm_barplot,
+  width = 8,
+  height = 8,
+  dpi = 500
+)
 
 # Tumor site barplot
-site_barplot <- ggplot(clinical_features, aes(x = therapeutic_clusters_k300_res0.5, fill = summarised_tumor_site)) +
-geom_bar(position = "fill") +
-scale_fill_manual(values = tumor_sites_colors) + 
-theme_bw()
+site_barplot <- ggplot(
+  clinical_features,
+  aes(x = therapeutic_clusters_k300_res0.5, fill = summarised_tumor_site)
+) +
+  geom_bar(position = "fill") +
+  scale_fill_manual(values = tumor_sites_colors) +
+  theme_bw()
 
-ggsave("results/figures/site_barplot_tc.png", site_barplot, width = 8, height = 8, dpi = 500)
+ggsave(
+  "results/figures/site_barplot_tc.png",
+  site_barplot,
+  width = 8,
+  height = 8,
+  dpi = 500
+)
 
 # Treated condition barplot
-treated_barplot <- ggplot(clinical_features, aes(x = therapeutic_clusters_k300_res0.5, fill = treated)) +
-geom_bar(position = "fill") +
-scale_fill_manual(values = treatment_colors) + 
-theme_bw()
+treated_barplot <- ggplot(clinical_features,
+                          aes(x = therapeutic_clusters_k300_res0.5, fill = treated)) +
+  geom_bar(position = "fill") +
+  scale_fill_manual(values = treatment_colors) +
+  theme_bw()
 
-ggsave("results/figures/treatment_barplot_tc.png", treated_barplot, width = 8, height = 8, dpi = 500)
+ggsave(
+  "results/figures/treatment_barplot_tc.png",
+  treated_barplot,
+  width = 8,
+  height = 8,
+  dpi = 500
+)
 
 # Treated condition barplot
-clinical_features$ccl_patient <- ifelse(is.na(clinical_features$patient) | clinical_features$patient != "ccl", "Patient", "Cell line")
-ccl_p_barplot <- ggplot(clinical_features, aes(x = therapeutic_clusters_k300_res0.5, fill = ccl_patient)) +
-geom_bar(position = "fill") +
-scale_fill_manual(values = ccl_p_colors) + 
-theme_bw()
+clinical_features$ccl_patient <- ifelse(
+  is.na(clinical_features$patient) |
+    clinical_features$patient != "ccl",
+  "Patient",
+  "Cell line"
+)
+ccl_p_barplot <- ggplot(clinical_features,
+                        aes(x = therapeutic_clusters_k300_res0.5, fill = ccl_patient)) +
+  geom_bar(position = "fill") +
+  scale_fill_manual(values = ccl_p_colors) +
+  theme_bw()
 
-ggsave("results/figures/ccl_p_barplot_barplot_tc.png", ccl_p_barplot, width = 8, height = 8, dpi = 500)
+ggsave(
+  "results/figures/ccl_p_barplot_barplot_tc.png",
+  ccl_p_barplot,
+  width = 8,
+  height = 8,
+  dpi = 500
+)
 
 # Cancer type
 cancer_type <- list(
@@ -141,37 +204,45 @@ cancer_type <- list(
   "Pancreatic Cancer" = c("PAAD"),
   "Thyroid Cancer" = c("THCA"),
   "Gastric Cancer" = c("STAD"),
-  "Miscellaneous Cancer" = c("MISC"))
+  "Miscellaneous Cancer" = c("MISC")
+)
 
 cancer_type <- enframe(cancer_type, name = "broad_cancer_type", value = "tumor_type") %>%
   unnest()
 
-clinical_features <-  clinical_features %>% 
-left_join(cancer_type, by = "tumor_type")
+clinical_features <-  clinical_features %>%
+  left_join(cancer_type, by = "tumor_type")
 
 
 # Broad Cancer Type barplot
-cancertype_barplot <- ggplot(clinical_features, aes(x = therapeutic_clusters_k300_res0.5, fill = broad_cancer_type)) +
-geom_bar(position = "fill") +
-scale_fill_manual(values = cancer_type_colors) + 
-guides(fill = guide_legend(ncol = 1)) +
-theme_bw()
+cancertype_barplot <- ggplot(
+  clinical_features,
+  aes(x = therapeutic_clusters_k300_res0.5, fill = broad_cancer_type)
+) +
+  geom_bar(position = "fill") +
+  scale_fill_manual(values = cancer_type_colors) +
+  guides(fill = guide_legend(ncol = 1)) +
+  theme_bw()
 
-ggsave("results/figures/cancertype_barplot_tc.png", cancertype_barplot, width = 8, height = 8, dpi = 500)
+ggsave(
+  "results/figures/cancertype_barplot_tc.png",
+  cancertype_barplot,
+  width = 8,
+  height = 8,
+  dpi = 500
+)
 
 # Study barplot
-study_barplot <- ggplot(clinical_features, aes(x = therapeutic_clusters_k300_res0.5, fill = study)) +
-geom_bar(position = "fill") +
-scale_fill_manual(values = study_colors) + 
-theme_bw()
+study_barplot <- ggplot(clinical_features,
+                        aes(x = therapeutic_clusters_k300_res0.5, fill = study)) +
+  geom_bar(position = "fill") +
+  scale_fill_manual(values = study_colors) +
+  theme_bw()
 
-ggsave("results/figures/study_barplot_tc.png", study_barplot, width = 12, height = 8, dpi = 500)
-
-
-# TME barplot
-tme_barplot <- ggplot(clinical_features, aes(x = therapeutic_clusters_k300_res0.5, fill = tme_archetype)) +
-geom_bar(position = "fill") +
-scale_fill_manual(values = tme_colors) + 
-theme_bw()
-
-ggsave("results/figures/tme_barplot_tc.png", tme_barplot, width = 12, height = 8, dpi = 500)
+ggsave(
+  "results/figures/study_barplot_tc.png",
+  study_barplot,
+  width = 8,
+  height = 8,
+  dpi = 500
+)
