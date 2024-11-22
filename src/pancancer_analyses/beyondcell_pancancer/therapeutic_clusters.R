@@ -8,7 +8,7 @@ library(clustree)
 options(future.globals.maxSize = 20 * 1024^3)
 options(Seurat.object.assay.version = 'v5')
 
-setwd("/storage/scratch01/users/mgonzalezb/bc-meta/beyondcell_immuno")
+setwd("/storage/scratch01/users/mgonzalezb/bc-meta/beyondcell")
 
 # #Load full beyondcell mat
 mat <- open_matrix_dir(dir = "./full_mat_beyondcell")
@@ -295,14 +295,15 @@ write_matrix_dir(mat = sketched_mat, dir = "results/sketch_mat_beyondcell", over
 write_matrix_dir(mat = sketched_mat_5k, dir = "results/sketch_mat_beyondcell_5k", overwrite = TRUE)
 
 
+DefaultAssay(seu) <- "RNA"
 ## plot UMAP
 tcs_umap <- DimPlot(
     object = seu,
-    group.by = "therapeutic_clusters_k.20.res.0.1",
+    group.by = "therapeutic_clusters_k.300.res.0.5",
     reduction = "umap"
     )
 
-saveRDS(object = tcs_umap, file = "results/tcs_umap.rds")
+saveRDS(object = tcs_umap, file = "results/tcs_umap_all_cells.rds")
 
 
 # Check for the number of zeros for each cell
