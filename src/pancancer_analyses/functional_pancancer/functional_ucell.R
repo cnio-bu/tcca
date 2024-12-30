@@ -165,3 +165,87 @@ ggsave(
   width = 17,
   height = 10
 )
+
+
+# Compute UCell scores for meta-programs obtained by NMF
+setwd("/home/lmgonzalezb/Documents/bc-meta/functional_mps/")
+mp_list <- readRDS("mp_list_allsamples.rds")
+print(mp_list)
+mp_ucell <- AddModuleScore_UCell(malignant, features = mp_list)
+
+# Save seurat object with UCell scores in metadata
+saveRDS(mp_ucell, "seurat_mps_ucell.rds")
+
+# Plot UCell scores 
+mp_ucell <- readRDS("seurat_mps_ucell.rds")
+mp_ucell$Therapeutic_clusters <- bc@meta.data$therapeutic_clusters_k.300.res.0.5
+scores_ucell <- mp_ucell@meta.data[, grepl("UCell", colnames(mp_ucell@meta.data))]
+colnames(scores_ucell) <- gsub("P_", "P", colnames(scores_ucell))
+mps <- c("MP1", "MP8", "MP14", "MP3", "MP13", "MP2", "MP9", "MP4", "MP10", "MP12", 
+         "MP5", "MP6",  "MP7")
+select_mps <- match(paste0(mps, "_UCell"), colnames(scores_ucell))
+scores_ucell <- as.matrix(scores_ucell[, select_mps])
+scores_ucell <- as.data.frame(scale(x = scores_ucell, center = TRUE, scale = TRUE))
+metadata <- cbind(mp_ucell@meta.data[, "Therapeutic_clusters", drop = FALSE], scores_ucell)
+long_metadata <- metadata %>%
+  pivot_longer(cols = ends_with("UCell"),
+               names_to = "GeneSet",
+               values_to = "UCell_score") %>%
+  as.data.frame() %>%
+  mutate(GeneSet = factor(GeneSet, levels = rev(paste0(mps, "_UCell"))))
+
+# Group by Cluster and GeneSet, then calculate mean scores
+cluster_means <- long_metadata %>%
+  group_by(Therapeutic_clusters, GeneSet) %>%
+  summarize(MeanScore = mean(UCell_score, na.rm = TRUE),
+            .groups = "drop")
+
+# Create bubble plot
+bubble_plot <- ggplot(cluster_means, aes(x = Therapeutic_clusters, y = GeneSet)) +
+  geom_point(aes(color = MeanScore), size = 5) + # Map size and color to scores
+  scale_color_gradient2(
+    low = "blue",
+    mid = "white",
+    high = "red",
+    midpoint = 0,
+    oob = scales::squish,
+    limits = c(-0.5, 0.5)
+  ) + # Gradient
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(
+      angle = 0,
+      hjust = 1,
+      size = 15,
+      color = "black"
+    ),
+    axis.text.y = element_text(size = 15, color = "black"),
+    plot.margin = unit(c(1, 1, 1, 3), "cm"),
+    legend.text = element_text(size = 12),
+    legend.title = element_text(size = 15, face = "bold"),
+    axis.title.x = element_text(size = 15, face = "bold"),
+    axis.title.y = element_text(
+      size = 15,
+      face = "bold",
+      margin = margin(
+        t = 0,
+        r = 20,
+        b = 0,
+        l = 0
+      )
+    ),
+    plot.title = element_text(face = "bold", size = 15)
+  ) +
+  labs(
+    title = "Mean Ucell scores per TC",
+    x = "TC",
+    y = "Meta-programs",
+    color = "UCell score"
+  )
+
+ggsave(
+  bubble_plot,
+  file = "bubble_mean_ucell.pdf",
+  width = 8,
+  height = 8
+)

@@ -8,7 +8,7 @@ library(clustree)
 options(future.globals.maxSize = 20 * 1024^3)
 options(Seurat.object.assay.version = 'v5')
 
-setwd("/storage/scratch01/users/mgonzalezb/bc-meta/beyondcell")
+setwd("/storage/scratch01/shared/projects/bc-meta/beyondcell/")
 
 # #Load full beyondcell mat
 mat <- open_matrix_dir(dir = "./full_mat_beyondcell")
@@ -26,8 +26,6 @@ colnames(mat) <- paste0("c", c(1:ncol(mat)))
 meta.data_full_clinical$new_cell_id <-  paste0("c", c(1:nrow(meta.data_full_clinical)))
 rownames(meta.data_full_clinical) <- meta.data_full_clinical$new_cell_id
 
-mat <- mat[1:589, ]
-
 seu <- Seurat::CreateSeuratObject(
     counts = mat,
     assay = "RNA",
@@ -36,9 +34,9 @@ seu <- Seurat::CreateSeuratObject(
 )
 
 # subset bc to remove bhupinder pal samples that are predicted tumours (not in lvl2 nor lvl1)
-seu <- subset(seu,
-              subset = study != "brca_bhupinder_pal" | tumor_subtype != "predicted_tumour"
-)
+# seu <- subset(seu,
+#               subset = study != "brca_bhupinder_pal" | tumor_subtype != "predicted_tumour"
+# )
 
 # redo the index
 seu$new_cell_id <- paste0("c", c(1:ncol(seu)))
@@ -286,7 +284,7 @@ seu <- Seurat::SketchData(
     sketched.assay = "sketch_5k"
     )
 
-saveRDS(object = seu, file = "results/beyondcell_pancancer_final.Rds")
+saveRDS(object = seu, file = "results/beyondcell_pancancer.rds")
 
 ## export  sketches
 sketched_mat <- seu[["sketch_50k"]]$data
@@ -304,67 +302,3 @@ tcs_umap <- DimPlot(
     )
 
 saveRDS(object = tcs_umap, file = "results/tcs_umap_all_cells.rds")
-
-
-# Check for the number of zeros for each cell
-# mat <- as.matrix(seu[["RNA"]]$counts)
-# seu@meta.data$zero_count <-  colSums(mat == 0)
-
-# DefaultAssay(seu) <- "RNA"
-# tcs_zero <- FeaturePlot(
-#     object = seu,
-#     features = "zero_count",
-#     reduction = "full.umap"
-#     ) +
-#     ggtitle("") +
-#     scale_shape_manual() +
-#     xlab("UMAP1") +
-#     ylab("UMAP2") +
-#     theme(
-#         axis.text.x = element_blank(),
-#         axis.ticks.x = element_blank(),
-#         axis.text.y = element_blank(),
-#         axis.ticks.y = element_blank()
-#     )
-
-# tcs_zero$layers[[1]]$aes_params$size <- 0.1
-# tcs_zero$layers[[1]]$aes_params$alpha <- 0.7
-
-# ggsave(
-#     plot = tcs_zero,
-#     filename = "results/figures/tcs_zero_umap_full.png",
-#     dpi = 300,
-#     height = 7,
-#     width = 7
-#     )
-
-# seu@meta.data$zero_count_true <- seu@meta.data$zero_count > 10
-
-# zero_barplot <- ggplot(seu@meta.data, aes(x = therapeutic_clusters_k.200_res.0.4, fill = zero_count_true)) +
-# geom_bar(position = "fill") +
-# guides(fill = guide_legend(ncol = 1)) +
-# theme_bw()
-
-# ggsave("results/figures/zero10_barplot_tc.png", zero_barplot, width = 8, height = 8, dpi = 500)
-
-## test
-# scaled.matrix <- t(apply(mat, 1, scales::rescale, to = c(0, 1)))
-# seu@assays$sketch_50k$scale.data <- scaled.matrix
-
-# seu <- RunPCA(object = seu, npcs = 90)
-
-# heats <- DimHeatmap(
-#     seu,
-#     dims = 1:10, 
-#     cells = 500,
-#     balanced = TRUE,
-#     slot = "scale.data",
-#     ncol = 2,
-#     nfeatures = 10,
-#     fast = FALSE,
-#     combine = TRUE
-# )
-
-# seu <- FindNeighbors(seu)
-# seu <- FindClusters(seu)
-# seu <- RunUMAP(seu, dims = 1:10, umap.method = "uwot", n.components = 2)

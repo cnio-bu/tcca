@@ -2,8 +2,10 @@ library(BPCells)
 library(tidyverse)
 library(Seurat)
 
+setwd("/storage/scratch01/shared/projects/bc-meta/beyondcell/")
+
 all_mats <- list.dirs(
-    path = "/storage/scratch01/shared/projects/bc-meta/beyondcell",
+    path = "studywise_bpcells",
     full.names = TRUE
     )
 
@@ -14,10 +16,10 @@ cbind.fill <- function(...){
     nm <- lapply(nm, as.matrix)
     n <- max(sapply(nm, nrow)) 
     do.call(cbind, lapply(nm, function (x) 
-        rbind(x, matrix(, n-nrow(x), ncol(x))))) 
+        rbind(x, matrix(, n-nrow(x), ncol(x)))))
 }
 
-all_mats <- all_mats[c(2:19, 21:length(all_mats))]
+all_mats <- all_mats[2:length(all_mats)]
 
 mats <- map(
     all_mats,
@@ -30,29 +32,27 @@ full_mat <- as(full_mat, "sparseMatrix")
 
 write_matrix_dir(
     mat = full_mat,
-    dir = "/storage/scratch01/shared/projects/bc-meta/beyondcell/full_mat_beyondcell"
+    dir = "./full_mat_beyondcell"
     )
 
 rm(full_mat, mats)
 gc()
 
-mat <- open_matrix_dir(dir = "/storage/scratch01/shared/projects/bc-meta/beyondcell/full_mat_beyondcell")
+mat <- open_matrix_dir(dir = "full_mat_beyondcell")
 
 ## load metadata
 all.meta <- list.files(
-    "/storage/scratch01/shared/projects/bc-meta/beyondcell",
+    "studywise_bpcells",
     pattern = "*.tsv",
     full.names = TRUE
     )
 
-all.meta <- all.meta[c(1:5, 7:38)]
 meta.data <- all.meta %>%
     map(read.table, row.names = 1, header = TRUE)
 
-meta.data[[28]]$patient <- meta.data[[28]]$orig.ident
+meta.data[[27]]$patient <- meta.data[[27]]$orig.ident
 
 for(i in c(1:length(all.meta))){
-    print(i)
     this_study <- all.meta[[i]]
     meta.data[[i]]$study <- this_study
 }
@@ -91,7 +91,7 @@ meta.data_full <-  meta.data  %>%
 
 ## get clinical data
 clinical <- data.table::fread(
-    "/storage/scratch01/shared/projects/bc-meta/single_cell/seurat/v5/clinical_metadata_v4_clean.tsv"
+    "../single_cell/seurat/v5/clinical_metadata_v4_clean.tsv"
     )
 
 ## Add clinical metadata
@@ -122,11 +122,11 @@ mat2 <- mat[, meta.data_full_clinical$new_cell_id]
 
 write_matrix_dir(
     mat = mat2,
-    dir = "/storage/scratch01/users/mgonzalezb/bc-meta/beyondcell/full_mat_beyondcell",
+    dir = "full_mat_beyondcell",
     overwrite = TRUE
     )
 
 write_tsv(
     x = meta.data_full_clinical,
-    file = "/storage/scratch01/users/mgonzalezb/bc-meta/beyondcell/beyondcell_metadata_with_clinical.tsv"
+    file = "beyondcell_metadata_with_clinical.tsv"
     )
