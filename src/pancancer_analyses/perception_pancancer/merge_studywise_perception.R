@@ -92,7 +92,7 @@ meta.data_full <-  meta.data  %>%
 
 ## get clinical data
 clinical <- data.table::fread(
-    "/storage/scratch01/shared/projects/bc-meta/single_cell/seurat/v5/clinical_metadata_v4_clean.tsv"
+    "./single_cell/seurat/v5/clinical_metadata_v4_clean.tsv"
     )
 
 ## Add clinical metadata

@@ -249,3 +249,12 @@ ggsave(
   width = 8,
   height = 8
 )
+
+# Compute UCell scores for meta-programs obtained by NMF
+setwd("/storage/scratch01/users/mgonzalezb/bc-meta/functional_nmf")
+mp_list <- readRDS("./gavish/all_samples/mp_list_allsamples.rds")
+print(mp_list)
+mp_ucell <- AddModuleScore_UCell(malignant, features = mp_list)
+
+# Save seurat object with UCell scores in metadata
+saveRDS(mp_ucell, "seurat_mps_ucell.rds")
