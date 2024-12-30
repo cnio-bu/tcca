@@ -6,8 +6,8 @@ library(ggsankey)
 setwd("/home/lmgonzalezb/Documents/bc-meta/")
 
 # Load cohort metadata
-tcca.metadata <- read.table("tcca_annotation_raw.tsv", header = TRUE)
-sex <- read.table("tcca_metadata.tsv", header = TRUE)
+tcca.metadata <- read.table("cohort_statistics/tcca_annotation_raw.tsv", header = TRUE)
+sex <- read.table("cohort_statistics/tcca_metadata_sex_inferred.tsv", header = TRUE)
 tcca.metadata$sex <- sex$sex
 
 cohort_features <- tcca.metadata %>%
@@ -189,7 +189,7 @@ sankey_data <- cohort_features %>%
 
 
 # Add colors for each category
-source("TCCA_palette.R")
+source("fork/bc-meta/src/figures/TCCA_palette.R")
 
 sankey_data <- sankey_data %>%
   mutate(
@@ -277,7 +277,7 @@ sankey <- ggplot(
 
 ggsave(
   sankey,
-  file = "sankey_cohort.png",
+  file = "sankey_cohort.pdf",
   dpi = 500,
   width = 12,
   height = 8

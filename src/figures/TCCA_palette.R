@@ -51,17 +51,23 @@ tcs_colors <- c("5" = "#A3A500",
                 "1" = "#00B0F6",
                 "0" = "#E76BF3")
 
-# Expression clusters x10
-ecs_colors <- c("10" ="#A7D676",
-                "9" = "#43978D",
-                "8" = "#90E2ED",
-                "7" = "#369CBB",
-                "6" = "#406792",
-                "5" = "#B46F9C",
-                "4" = "#D05B61",
-                "3" = "#FE7B47",
-                "2" = "#FFA72C",
-                "1" = "#FFBD71")
+# MPs clusters x10
+mps_colors <-  c("MP1"  = "#FFBD71",
+                 "MP2"  = "#FFA72C",
+                 "MP3"  = "#FE7B47",
+                 "MP4"  = "#D05B61",
+                 "MP5" = "#FFB0EA",
+                 "MP6"  = "#B46F9C",
+                 "MP7" = "#A52390",
+                 "MP8" = "#6567BD",
+                 "MP9"  = "#406792",
+                 "MP10"  = "#369CBB",
+                 "MP11"  = "#90E2ED",
+                 "MP12"  = "#43978D",
+                 "MP13" = "#A7D676",
+                 "MP14" = "#D2E295",
+                 "MP15" = "#DBDF00",
+                 "MP16" = "#FFE364")
 
 #MoAs
 MoAs_colors <- c("DNA related agent" = "#6cca8e", #This is the Pitiscale with some changes
@@ -113,7 +119,7 @@ tme_colors <- c(
 ## Broad Cancer type colors.
 broad_cancer_type_colors <- c("Blood Cancer" = "#A3181B",
                               "Brain Cancer" = "#B2509E",
-                              "Neuroblastic Tumors" = "#FA8528",
+                              "Neuroblastic Tumors" = "#F06616",
                               "Breast Cancer" = "#db447a",
                               "Skin Cancer" =  "#5E2D2C",
                               "Lung Cancer" = "#158A88",

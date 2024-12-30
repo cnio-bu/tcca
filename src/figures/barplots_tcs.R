@@ -7,19 +7,19 @@ library(clustree)
 options(future.globals.maxSize = 20 * 1024 ^ 3)
 options(Seurat.object.assay.version = 'v5')
 
-setwd("/storage/scratch01/users/mgonzalezb/bc-meta/beyondcell/")
+setwd("/storage/scratch01/shared/projects/bc-meta/")
 
 # Load color palette
 source(file = "/home/mgonzalezb/bc-meta/TCCA_palette.R")
 
 # Load Seurat object with therapeutic cluster annotations
-bc <- readRDS("results/beyondcell_pancancer_final_res.Rds")
+bc <- readRDS("beyondcell/beyondcell_pancancer.Rds")
 
 seu <- readRDS(
-  "/storage/scratch01/shared/projects/bc-meta/single_cell/seurat/v5/lvl2/seu_lvl2_sex_infered.rds"
+  "./single_cell/seurat/v5/lvl2/seu_lvl2_sex_infered.rds"
 )
 metadata <- read.table(
-  "/storage/scratch01/shared/projects/bc-meta/single_cell/seurat/tcca/tcca_annotation_raw.tsv",
+  "./single_cell/seurat/tcca/tcca_annotation_raw.tsv",
   sep = "\t",
   header = TRUE
 )
@@ -246,3 +246,18 @@ ggsave(
   height = 8,
   dpi = 500
 )
+
+# Plot TCs distirbution among patients
+for (study in unique(clinical_features$study)){
+  df <- clinical_features[clinical_features$study == study, ]
+  patient_barplot <- ggplot(df, aes(x = patient, fill = therapeutic_clusters_k300_res0.5)) +
+  geom_bar(position = "fill") +
+  facet_wrap(~ study, scales = "free_y") +
+  coord_flip() +
+  scale_fill_manual(values = tcs_colors) + 
+  guides(fill = guide_legend(title = "Therapeutic Cluster"))
+  theme_bw()
+
+  ggsave(paste0("results/figures/tcs_study/", study, "_barplot_tc.png"), 
+  patient_barplot, width = 8, height = 8, dpi = 500)
+}
