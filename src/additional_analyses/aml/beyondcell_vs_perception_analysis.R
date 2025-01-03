@@ -72,7 +72,7 @@ DimPlot(seu, reduction = "umap.harmony", group.by = "patient") + NoLegend()
 clustree <- clustree(seu@meta.data[, grep("RNA_snn_res.", colnames(seu@meta.data))], 
                      prefix = "RNA_snn_res.")
 ggsave("plots/clustree_integration.png", plot = clustree, dpi = 300, height = 7, width = 7)
-umap_patient <- DimPlot(seu, reduction = "umap.harmony", group.by = "patient")
+umap_patient <- DimPlot(seu, reduction = "umap.harmony", group.by = "patient") + NoLegend()
 ggsave(
   "plots/umap_patient_integrated.png",
   umap_patient,
