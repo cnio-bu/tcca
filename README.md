@@ -2,6 +2,11 @@
 This repo hold the code of the aforementioned project. For collaborators: start
 here to setup your dev. environment.
 
+### The Therapeutic Cancer Cell Atlas (TCCA)
+<img src="./.img/sankey_cohort.png" width="850" />
+
+*Figure 1: Number of samples across different clinical features*
+
 # Setup the environment for code and data sharing
 
 ## Get the code
