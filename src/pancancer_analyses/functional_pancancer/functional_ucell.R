@@ -168,13 +168,12 @@ ggsave(
 
 
 # Compute UCell scores for meta-programs obtained by NMF
-setwd("/home/lmgonzalezb/Documents/bc-meta/functional_mps/")
-mp_list <- readRDS("mp_list_allsamples.rds")
+mp_list <- readRDS("functional_nmf/metaprograms/mp_list.rds")
 print(mp_list)
 mp_ucell <- AddModuleScore_UCell(malignant, features = mp_list)
 
 # Save seurat object with UCell scores in metadata
-saveRDS(mp_ucell, "seurat_mps_ucell.rds")
+saveRDS(mp_ucell, "functional_nmf/seurat_mps_ucell.rds")
 
 # Plot UCell scores 
 mp_ucell <- readRDS("seurat_mps_ucell.rds")
@@ -182,7 +181,7 @@ mp_ucell$Therapeutic_clusters <- bc@meta.data$therapeutic_clusters_k.300.res.0.5
 scores_ucell <- mp_ucell@meta.data[, grepl("UCell", colnames(mp_ucell@meta.data))]
 colnames(scores_ucell) <- gsub("P_", "P", colnames(scores_ucell))
 mps <- c("MP1", "MP8", "MP14", "MP3", "MP13", "MP2", "MP9", "MP4", "MP10", "MP12", 
-         "MP5", "MP6",  "MP7")
+         "MP5", "MP6",  "MP7", "MP11")
 select_mps <- match(paste0(mps, "_UCell"), colnames(scores_ucell))
 scores_ucell <- as.matrix(scores_ucell[, select_mps])
 scores_ucell <- as.data.frame(scale(x = scores_ucell, center = TRUE, scale = TRUE))
@@ -250,11 +249,4 @@ ggsave(
   height = 8
 )
 
-# Compute UCell scores for meta-programs obtained by NMF
-setwd("/storage/scratch01/users/mgonzalezb/bc-meta/functional_nmf")
-mp_list <- readRDS("./gavish/all_samples/mp_list_allsamples.rds")
-print(mp_list)
-mp_ucell <- AddModuleScore_UCell(malignant, features = mp_list)
 
-# Save seurat object with UCell scores in metadata
-saveRDS(mp_ucell, "seurat_mps_ucell.rds")
