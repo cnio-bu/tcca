@@ -1,11 +1,11 @@
 #!/bin/bash
 
 ## Set directorires
-rscript_dir="scevan_metadata.R"
-data_dir="/storage/scratch01/shared/projects/bc-meta/single_cell/seurat/raw/"
+rscript_dir="2_scevan_metadata.R"
+data_dir="/storage/scratch01/shared/projects/bc-meta/single_cell/seurat/v5/lvl2/"
 
 ## Get list of files' full paths
-files=($(find "${data_dir}" -type f -exec basename {} \;))
+files=($(find "${data_dir}" -mindepth 1 -type d -exec basename {} \;))
 
 ## Loop through files
 for file in "${files[@]}"; do

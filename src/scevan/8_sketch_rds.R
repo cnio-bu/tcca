@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 
-#sbatch -c 20 --job-name=sketch -o log_sketch.txt -e error_sketch.txt --mem=200G -t 1140 --wrap "Rscript /home/lserranor/bc-meta_old_and_with_scevan/src/preprocessing/workflow/scripts/SCEVAN/sketch_rds.R"
+#sbatch -c 20 --job-name=sketch -o log_sketch.txt -e error_sketch.txt --mem=200G -t 1140 --wrap "Rscript /home/lserranor/bc-meta_old_and_with_scevan/src/preprocessing/workflow/scripts/SCEVAN/8_sketch_rds.R"
 
 library(BPCells)
 library(Matrix)

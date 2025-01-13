@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ## Set directorires
-rscript_dir="scevan_cellxgene.R"
+rscript_dir="4_scevan_cellxgene.R"
 data_dir="/storage/scratch01/shared/projects/bc-meta/single_cell/cna/"
 
 ## Get list of directories' full paths
@@ -14,6 +14,6 @@ for dir in "${dirs[@]}"; do
 
     #Run command
     echo "Running for ${dir}..."
-    sbatch -c 10 -o log.txt -e error.txt --mem=300G -t1440 --wrap "$r_command"
+    sbatch -c 10 -o log.txt -e error.txt --mem=200G -t180 --wrap "$r_command"
 
 done

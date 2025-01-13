@@ -8,4 +8,4 @@ RUNNING AND PREPROCESSING SCEVAN FOR BC META
 5. filter_cellxgene_tables: filter genes CNV tables to lvl 3
 6. tsv_to_bpcells: transform CNV tables to BPCells matrixes
 7. final_cellxgene_v5_cnafill: generate 1-layer Seurat v5 object from BPCells matrixes
- 
+8. sketch_rds: generate an sketch from the Seurat v5 object

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ## Set directorires
-rscript_dir="filter_cellxgene_tables.R"
+rscript_dir="5_filter_cellxgene_tables.R"
 data_dir="/storage/scratch01/shared/projects/bc-meta/single_cell/cna_metadata/cnv_cells_genes"
 
 ## Get list of files' full paths

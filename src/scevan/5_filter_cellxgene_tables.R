@@ -8,7 +8,7 @@ filename_complete <- as.character(args[1])
 parts <- unlist(strsplit(filename_complete, "/"))
 filename <- tools::file_path_sans_ext(parts[length(parts)])
 
-##FILTER CELL X GENE TABLES TO GO FROM LVL 1 TO LVL 3
+##FILTER CELL X GENE TABLES TO GO FROM LVL 2 TO LVL 3
 
 ## Get input
 clonality_table <- read.table("/storage/scratch01/shared/projects/bc-meta/single_cell/cna_metadata/full_clonality_table_lvl3.tsv", sep = "\t", header = T)
