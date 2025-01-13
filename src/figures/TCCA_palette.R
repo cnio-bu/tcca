@@ -1,21 +1,27 @@
 ## TCCA COLOR PALETTES
 
 # Tumor type x15 (14 + Other)
-tumor_sites_colors <- c("Bone marrow" = "#FFE072",
-                        "Brain" = "#CA9A8C",
+tumor_sites_colors <- c("Bone marrow" = "#FB6467",
+                        "Brain" = "#D3C3E0",
                         "Adrenal gland" = "#FF9A4A",
                         "Breast" = "#FF8FAB",
-                        "Skin" = "#5E2D2C",
+                        "Skin" = "#CA9A8C",
                         "Lung" = "#A2F0EF",
-                        "Soft tissue" = "#FB6467",
-                        "Esophagus" = "#5780FE", 
+                        "Soft tissue" = "#FFE072",
+                        "Esophagus" = "#77C9ED", 
                         "Bladder" = "#58B368",
                         "Lymph node" = "#B6F884",
                         "Liver" = "#309975",
                         "Pancreas" = "#B47EB3",
-                        "Ovary" = "#9C0D38",
-                        "Prostate" = "#005D95",
-                        "Other" = "#BBB9B7")
+                        "Ovary" = "#EC8EED",
+                        "Prostate" = "#5e91ab",
+                        "Colon" = "#BD081A",
+                        "Kidney"  = "#DBC586",
+                        "Other" = "#6b6363")
+
+# Patient/cell line
+patient_ccl_colors <- c("Patient" = "#427394", 
+                        "Cell line" = "#F78C1F")
 
 # Treated/Untreated 
 treatment_colors <- c("Treated" = "#6ED1BC",
@@ -38,23 +44,30 @@ pm_colors <- c("Metastasis" = "#C10044",
                "Primary" = "#F0BFD0")
 
 # Therapeutic clusters x5
-tcs_colors <- c("4"= "#F8766D",
+tcs_colors <- c("5" = "#A3A500", 
+                "4"= "#F8766D",
                 "3" = "#FFD64C",
                 "2" = "#00BF7D",
                 "1" = "#00B0F6",
                 "0" = "#E76BF3")
 
-# Expression clusters x10
-ecs_colors <- c("10" ="#A7D676",
-                "9" = "#43978D",
-                "8" = "#90E2ED",
-                "7" = "#369CBB",
-                "6" = "#406792",
-                "5" = "#B46F9C",
-                "4" = "#D05B61",
-                "3" = "#FE7B47",
-                "2" = "#FFA72C",
-                "1" = "#FFBD71")
+# MPs clusters x10
+mps_colors <-  c("MP1"  = "#FFBD71",
+                 "MP2"  = "#FFA72C",
+                 "MP3"  = "#FE7B47",
+                 "MP4"  = "#D05B61",
+                 "MP5" = "#FFB0EA",
+                 "MP6"  = "#B46F9C",
+                 "MP7" = "#A52390",
+                 "MP8" = "#6567BD",
+                 "MP9"  = "#406792",
+                 "MP10"  = "#369CBB",
+                 "MP11"  = "#90E2ED",
+                 "MP12"  = "#43978D",
+                 "MP13" = "#A7D676",
+                 "MP14" = "#D2E295",
+                 "MP15" = "#DBDF00",
+                 "MP16" = "#FFE364")
 
 #MoAs
 MoAs_colors <- c("DNA related agent" = "#6cca8e", #This is the Pitiscale with some changes
@@ -81,14 +94,45 @@ MoAs_colors <- c("DNA related agent" = "#6cca8e", #This is the Pitiscale with so
                  "NAMPT inhibitor" = "#ca9a8c",
                  "NFkB signaling inhibitor" = "#ff4430",
                  "ATP related agent" = "#e06d23",
+                 "MET inhibitor" = "#b1ede8",
+                 "BCR-ABL inhibitor" = "#8932a8",
+                 "Protein synthesis inhibitor" = "#3267a8",
                  "Other" = "#BBB9B7")
 
-## Therapeutic module colors
-module_colors <- c(
-    "TM1" = "#b6d7a8",
-    "TM2" = "#fce5cd",
-    "TM3" = "#c9daf8",
-    "TM4" = "#d9d2e9",
-    "TM5" = "#ead1dc",
-    "TM6" = "#dd7e6b"
+## TME colors
+tme_colors <- c(
+    "Immune_stromal_cDC1_bias" = "#b6d7a8",
+    "Immune_stromal_CAFlike_cDC1_cDC2_bias" = "#fce5cd",
+    "Immune_rich_cDC1_bias" = "#c9daf8",
+    "Immune_desert_cDC1_bias" = "#cdb4db",
+    "Tcell_centric_Mo_cDC1_cDC2_bias" = "#ead1dc",
+    "Immune_stromal_CAFlike" = "#fcf6bd",
+    "Immune_desert_Endo_Mo_cDC2_bias" = "#dd7e6b",
+    "Myeloid_centric" = "#d4a373",
+    "Immune_stromal_Endolike_Treg_cDC1_cDC2_bias" = "#ffafcc",
+    "Myeloid_centric_Mp_bias" = "#98f5e1",
+    "Immune_rich_Treg_bias" = "#f08080",
+    "Myeloid_centric_Mo_cDC1_cDC2_bias" = "#a2d2ff",
+    "none" = "#BBB9B7"
     )
+
+## Broad Cancer type colors.
+broad_cancer_type_colors <- c("Blood Cancer" = "#A3181B",
+                              "Brain Cancer" = "#B2509E",
+                              "Neuroblastic Tumors" = "#F06616",
+                              "Breast Cancer" = "#db447a",
+                              "Skin Cancer" =  "#5E2D2C",
+                              "Lung Cancer" = "#158A88",
+                              "Sarcoma/Soft Tissue Cancer" = "#e8d52c",
+                              "Esophageal Cancer" = "#007EB5",
+                              "Bladder Cancer" = "#367040",
+                              "Liver/Biliary Cancer" = "#03543C",
+                              "Pancreatic Cancer" = "#694E85",
+                              "Ovarian Cancer" = "#E834EB",
+                              "Prostate Cancer" = "#005D95",
+                              "Colon/Colorectal Cancer" = "#a7495a",
+                              "Endometrial/Uterine Cancer" = "#FAD2D9",
+                              "Head and Neck Cancer" = "#97D1A9",
+                              "Kidney Cancer" = "#918050",
+                              "Other" = "#6b6363"
+)

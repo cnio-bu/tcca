@@ -2,31 +2,46 @@ library(BPCells)
 library(ComplexHeatmap)
 library(tidyverse)
 
-## Source TCCA palette
-source(file = "src/figures/TCCA_palette.R")
+setwd("/storage/scratch01/shared/projects/bc-meta/")
 
-sketched_mat <- open_matrix_dir(dir = "results/beyondcell_bp/sketch_mat_beyondcell")
-sketched_5k <- open_matrix_dir(dir = "results/beyondcell_bp/sketch_mat_beyondcell_5k/")
+## Source TCCA palette
+source(file = "~/figures/TCCA_palette.R")
+
+sketched_mat <- open_matrix_dir(dir = "beyodncell/results/sketch_mat_beyondcell")
+sketched_5k <- open_matrix_dir(dir = "beyodncell/results/sketch_mat_beyondcell_5k/")
 
 sketched_mat <- as.matrix(sketched_5k)
 sketched_mat <- scale(x = sketched_mat, center = TRUE, scale = TRUE)
 
 ## therapeutic clusters
 tcs <- data.table::fread(
-    "results/annotation/tcs.tsv"
+    "results/tcs.tsv"
 ) %>%
     filter(
         new_cell_id %in% colnames(sketched_mat)
     )
 
+## extract sex inferred
+seu <- readRDS("./single_cell/seurat/v5/lvl2/seu_lvl2_sex_inferred.rds")
+seu <- subset(seu, subset = malignancy == TRUE)
+colnames(seu) <- paste0("c", c(1:ncol(seu)))
+
+tcs$sex <- seu@meta.data[tcs$new_cell_id, "sex"]
+
+tcs <- tcs %>%
+    filter(
+        new_cell_id %in% colnames(sketched_mat)
+    )
+
 ## human readable origins
-translat_human_sites <- c(
+translat_human_sites2 <- c(
     "bone_marrow" = "Bone marrow",
     "brain" = "Brain",
     "adrenal_gland" = "Adrenal gland",
     "breast" = "Breast",
     "skin" = "Skin",
     "esophagus" = "Esophagus",
+    "oesophagus" = "Esophagus",
     "liver" = "Liver",
     "lung" = "Lung",
     "lymph_node" = "Lymph node",
@@ -34,7 +49,10 @@ translat_human_sites <- c(
     "ovary" = "Ovary",
     "pancreas" = "Pancreas",
     "prostate" = "Prostate",
-    "soft_tissue" = "Soft tissue"
+    "soft_tissue" = "Soft tissue",
+    "bladder" = "Bladder",
+    "colon" = "Colon",
+    "kidney" = "Kidney"
 )
 
 clinical_features <- tcs %>%
@@ -48,9 +66,8 @@ clinical_features <- tcs %>%
         treated = ifelse(treated, "Treated", "Untreated"),
         sex = ifelse(sex == "f", "Female", "Male"),
         sample_type = ifelse(sample_type == "m", "Metastasis", "Primary"),
-        therapeutic_clusters_0.2 = as_factor(therapeutic_clusters_0.2)
+        therapeutic_clusters_k.300.res.0.5 = as_factor(therapeutic_clusters_k.300.res.0.5)
     )
-
 
 
 cells_annot_df <- clinical_features %>%
@@ -62,7 +79,7 @@ cells_annot_df <- clinical_features %>%
         sample_type,
         summarised_tumor_site,
         treated,
-        therapeutic_clusters_0.2) %>%
+        therapeutic_clusters_k.300.res.0.5) %>%
     as.data.frame()
 
 cells_annot_df$summarised_tumor_site <-  translat_human_sites[cells_annot_df$summarised_tumor_site]
@@ -90,19 +107,20 @@ pals = list(
     "Therapeutic Cluster" = tcs_colors
 )
 
-right_annotation <- ComplexHeatmap::HeatmapAnnotation(
+top_annotation <- ComplexHeatmap::HeatmapAnnotation(
     df =  cells_annot_df,
-    which = "row",
+    which = "column",
     col = pals,
-    annotation_name_side = "top",
-    annotation_name_rot = 45
+    annotation_name_side = "left",
+    annotation_name_rot = 0,
+    show_legend = c("Sample site" = FALSE)
 )
 
 top_rv <- matrixStats::rowVars(sketched_mat)
 top_rv <- top_rv[top_rv >= 2]
 
 ## get drug names
-drugs <- data.table::fread("reference/final_moas - Collapsed.tsv") %>%
+drugs <- data.table::fread("~/reference/final_moas - Collapsed.tsv") %>%
     select(IDs, preferred.drug.names, collapsed.MoAs) %>%
     mutate(
         collapsed.MoAs = case_when(
@@ -128,55 +146,69 @@ moa_pals <- list(
 )
 
 
-top_annotation <- ComplexHeatmap::HeatmapAnnotation(
+right_annotation <- ComplexHeatmap::HeatmapAnnotation(
     df = MoAs,
-    which = "column",
+    which = "row",
     col = moa_pals,
     show_annotation_name = FALSE
 )
 
 png(
-    file = "results/figures/sketched_beyondcell_with_tcs.png",
+    file = "results/sketched_beyondcell_with_tcs.png",
     res = 300,
-    width = 14, 
-    height = 18,
+    width = 19, 
+    height = 14,
     units = "in"
 )
 
+# Customize legends for tumor site
+tumor_site_legend <- Legend(
+  at = names(pals$`Sample site`),
+  legend_gp = gpar(fill = pals$`Sample site`),
+  ncol = 2,  # Split Group legend into 2 columns
+  gap = unit(10, "mm"),
+  title = "Sample site"
+)
 
 test <- ComplexHeatmap::Heatmap(
-    mat = t(sketched_mat[names(top_rv),]),
+    mat = sketched_mat[names(top_rv),],
     #mat = t(sketched_mat),
     right_annotation = right_annotation,
     top_annotation = top_annotation,
-    cluster_rows = FALSE,
-    row_order = rownames(cells_annot_df[order(cells_annot_df$`Therapeutic Cluster`), ]),
+    cluster_rows = TRUE,
     cluster_row_slices = TRUE,
-    row_split = cells_annot_df$`Therapeutic Cluster`,
+    row_split = 5,
     row_title = NULL,
-    cluster_columns = TRUE,
+    column_order = rownames(cells_annot_df[order(cells_annot_df$`Therapeutic Cluster`), ]),
+    cluster_columns = FALSE,
     cluster_column_slices = TRUE,
     show_column_dend = FALSE,
-    column_split = 4, 
+    column_split =  cells_annot_df$`Therapeutic Cluster`, 
     clustering_distance_columns = "pearson",
     clustering_distance_rows = "pearson",
-    show_column_names = TRUE,
-    column_labels = drugs[names(top_rv), "preferred.drug.names"],
-    show_row_names = FALSE,
+    show_column_names = FALSE,
+    row_labels = drugs[names(top_rv), "preferred.drug.names"],
+    show_row_names = TRUE,
     column_names_rot = 45,
-    column_names_gp = grid::gpar(fontsize = 8),
+    row_names_gp = grid::gpar(fontsize = 8),
     column_names_side = "top",
     column_title = NULL,
-    heatmap_width = unit(8, "in"),
-    heatmap_height = unit(14, "in")
+    heatmap_legend_param = list(title = "BCS score"),
+    heatmap_width = unit(14, "in"),
+    heatmap_height = unit(8, "in")
 )
-
+ht_opt("ANNOTATION_LEGEND_PADDING" = unit(1, "cm"), 
+       "HEATMAP_LEGEND_PADDING" = unit(1, "cm"), 
+       "legend_gap" = unit(1, "cm"))
+draw(heat, 
+     annotation_legend_side = "top",  
+     annotation_legend_list = list(tumor_site_legend))
 draw(test)
 dev.off()
 
 
 ## Generate UMAP plot from raw UMAP
-tcs_umap <- readRDS("results/beyondcell_bp/tcs_raw.rds")
+tcs_umap <- readRDS("results/tcs_umap.rds")
 
 tcs_umap_clean <- tcs_umap +
     ggtitle("") +
@@ -194,100 +226,13 @@ tcs_umap_clean <- tcs_umap +
         axis.ticks.y = element_blank()
     )
 
-tcs_umap_clean$layers[[1]]$aes_params$size <- 0.1
-tcs_umap_clean$layers[[1]]$aes_params$alpha <- 0.7
+tcs_umap_clean$layers[[1]]$aes_params$size <- 0.2
+tcs_umap_clean$layers[[1]]$aes_params$alpha <- 0.9
 
 ggsave(
     plot = tcs_umap_clean,
-    filename = "results/figures/therapeutic_clusters_umap.png",
-    dpi = 300,
+    filename = "results/umap_tcs.png",
+    dpi = 500,
     height = 7,
     width = 7
     )
-
-
-## get metacommunities names
-metacoms_mt1 <- read.table(
-    "results/modules/annotated/metagroup_patients_untreated_consensus_drugs.tsv"
-    ) %>%
-    group_by(meta_community) %>%
-    filter(signature %in% mt_cols) %>%
-    arrange(desc(n.appearances)) %>%
-    slice_head(n = 10) %>%
-    select(meta_community, signature)
-
-
-## get drug names
-drugs <- data.table::fread("reference/final_moas - Collapsed.tsv") %>%
-    select(IDs, preferred.drug.names, collapsed.MoAs) %>%
-    mutate(
-        collapsed.MoAs = case_when(
-            collapsed.MoAs %in% names(MoAs_colors) ~ collapsed.MoAs,
-            TRUE ~ "Other"
-        )
-    ) %>%
-    distinct() %>%
-    as.data.frame()
-
-drugs <- drugs[drugs$IDs %in% metacoms_mt1$signature, ]
-rownames(drugs) <- drugs$IDs
-
-MoAs <- drugs[metacoms_mt1$signature, c("IDs", "collapsed.MoAs")]
-MoAs <- as.data.frame(MoAs$collapsed.MoAs)
-colnames(MoAs) <- "Mechanism of action"
-
-moa_pals <- list(
-    "Mechanism of action" = MoAs_colors
-)
-
-top_annotation <- ComplexHeatmap::HeatmapAnnotation(
-    "Mechanism of action" = MoAs$`Mechanism of action`,
-    "Metacommunity" = as.factor(metacoms_mt1$meta_community),
-    which = "column",
-    col = moa_pals,
-    show_annotation_name = FALSE
-)
-
-## testo baito
-mt_cols <- read_tsv("reference/final_moas - Collapsed.tsv")
-mt_cols <- mt_cols %>%
-    pull(IDs)
-
-png(
-    file = "results/figures/sketched_beyondcell_with_metacommuntiies.png",
-    res = 300,
-    width = 14, 
-    height = 18,
-    units = "in"
-)
-
-test <- ComplexHeatmap::Heatmap(
-    mat = t(sketched_mat[metacoms_mt1$signature,]),
-    #col = circlize::colorRamp2(c(-4, 0, 4), c("blue", "white", "red")),
-    name = "Normalized Beyondcell score",
-    right_annotation = right_annotation,
-    top_annotation = top_annotation,
-    cluster_rows = FALSE,
-    row_order = rownames(cells_annot_df[order(cells_annot_df$`Therapeutic Cluster`), ]),
-    cluster_row_slices = TRUE,
-    row_split = cells_annot_df$`Therapeutic Cluster`,
-    row_title = NULL,
-    cluster_columns = FALSE,
-    cluster_column_slices = TRUE,
-    column_order = metacoms_mt1[order(metacoms_mt1$meta_community), ]$signature,
-    show_column_dend = FALSE,
-    column_split = metacoms_mt1$meta_community, 
-    clustering_distance_columns = "pearson",
-    clustering_distance_rows = "pearson",
-    show_column_names = TRUE,
-    column_labels = drugs[metacoms_mt1$signature, "preferred.drug.names"],
-    show_row_names = FALSE,
-    column_names_rot = 45,
-    column_names_gp = grid::gpar(fontsize = 6),
-    column_names_side = "top",
-    column_title = NULL,
-    heatmap_width = unit(8, "in"),
-    heatmap_height = unit(14, "in")
-)
-draw(test)
-dev.off()

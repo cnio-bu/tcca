@@ -1,0 +1,575 @@
+rule cna_crc_florian_uhlitz:
+    input:
+        seurat_list=rules.sc_crc_florian_uhlitz_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/crc_florian_uhlitz_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/crc_florian_uhlitz"
+    threads: 5
+    resources:
+        mem_mb=300000,
+        runtime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/crc_florian_uhlitz_scevan.R"
+
+rule cna_oc_ec_matthew_regner:
+    input:
+        seurat_list=rules.sc_oc_ec_matthew_regner_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/oc_ec_matthew_regner_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/oc_ec_matthew_regner"
+    threads: 5
+    resources:
+        mem_mb=300000,
+        runtime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/oc_ec_matthew_regner_scevan.R"
+
+rule cna_nsclc_stefan_salcher:
+    input:
+        seurat_list=rules.sc_nsclc_stefan_salcher_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/nsclc_stefan_salcher_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/nsclc_stefan_salcher"
+    threads: 5
+    resources:
+        mem_mb=300000,
+        runtime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/nsclc_stefan_salcher_scevan.R"
+
+rule cna_esca_xiannian_zhang:
+    input:
+        seurat_list=rules.sc_esca_xiannian_zhang_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/esca_xiannian_zhang_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/esca_xiannian_zhang"
+    threads: 5
+    resources:
+        mem_mb=300000,
+        runtime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/esca_xiannian_zhang_scevan.R"
+
+rule cna_uvm_michael_durante:
+    input:
+        seurat_list=rules.sc_uvm_michael_durante_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/uvm_michael_durante_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/uvm_michael_durante"
+    threads: 5
+    resources:
+        mem_mb=300000,
+        runtime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/uvm_michael_durante_scevan.R"
+
+rule cna_bmets_youmna_kfoury:
+    input:
+        seurat_list=rules.sc_bmets_youmna_kfoury_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/bmets_youmna_kfoury_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/bmets_youmna_kfoury"
+    threads: 5
+    resources:
+        mem_mb=300000,
+        runtime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/bmets_youmna_kfoury_scevan.R"
+
+rule cna_eac_thomas_carroll:
+    input:
+        seurat_list=rules.sc_eac_thomas_carroll_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/eac_thomas_carroll_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/eac_thomas_carroll"
+    threads: 5
+    resources:
+        mem_mb=300000,
+        runtime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/eac_thomas_carroll_scevan.R"
+
+rule cna_cc_xiaosong_lu:
+    input:
+        seurat_list=rules.sc_cc_xiaosong_lu_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/cc_xiaosong_lu_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/cc_xiaosong_lu"
+    threads: 5
+    resources:
+        mem_mb=300000,
+        runtime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/cc_xiaosong_lu_scevan.R"
+
+rule cna_gbm_nourhan_abdelfattah:
+    input:
+        seurat_list=rules.sc_gbm_nourhan_abdelfattah_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/gbm_nourhan_abdelfattah_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/gbm_nourhan_abdelfattah"
+    threads: 5
+    resources:
+        mem_mb=300000,
+        runtime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/gbm_nourhan_abdelfattah_scevan.R"
+
+rule cna_skcm_chao_zhang:
+    input:
+        seurat_list=rules.sc_skcm_chao_zhang_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/skcm_chao_zhang_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/skcm_chao_zhang"
+    threads: 5
+    resources:
+        mem_mb=300000,
+        runtime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/skcm_chao_zhang_scevan.R"
+
+rule cna_brca_bhupinder_pal:
+    input:
+        seurat_list=rules.sc_brca_bhupinder_pal_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/brca_bhupinder_pal_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/brca_bhupinder_pal"
+    threads: 5
+    resources:
+        mem_mb=300000,
+        runtime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/brca_bhupinder_pal_scevan.R"
+
+rule cna_cell_lines_gabriella_kinker:
+    input:
+        seurat_list=rules.sc_cell_lines_gabriella_kinker_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/cell_lines_gabriella_kinker_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/cell_lines_gabriella_kinker"
+    threads: 5
+    resources:
+        mem_mb=300000,
+        runtime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/cell_lines_gabriella_kinker_scevan.R"
+
+rule cna_prad_sujun_chen:
+    input:
+        seurat_list=rules.sc_prad_sujun_chen_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/prad_sujun_chen_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/prad_sujun_chen"
+    threads: 5
+    resources:
+        mem_mb=300000,
+        runtime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/prad_sujun_chen_scevan.R"
+
+rule cna_pdac_junya_peng:
+    input:
+        seurat_list=rules.sc_pdac_junya_peng_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/pdac_junya_peng_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/pdac_junya_peng"
+    threads: 5
+    resources:
+        mem_mb=300000,
+        runtime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/pdac_junya_peng_scevan.R"
+
+rule cna_chol_min_zhang:
+    input:
+        seurat_list=rules.sc_chol_min_zhang_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/chol_min_zhang_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/chol_min_zhang"
+    threads: 5
+    resources:
+        mem_mb=300000,
+        runtime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/chol_min_zhang_scevan.R"
+
+rule cna_mmieloma_stephan_tirier:
+    input:
+        seurat_list=rules.sc_mmieloma_stephan_tirier_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/mmieloma_stephan_tirier_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/mmieloma_stephan_tirier"
+    threads: 5
+    resources:
+        mem_mb=300000,
+        runtime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/mmieloma_stephan_tirier_scevan.R"
+
+rule cna_rcell_kevin_bi:
+    input:
+        seurat_list=rules.sc_rcell_kevin_bi_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/rcell_kevin_bi_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/rcell_kevin_bi"
+    threads: 5
+    resources:
+        mem_mb=300000,
+        runtime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/rcell_kevin_bi_scevan.R"
+
+rule cna_pancancer_junbin_qian:
+    input:
+        seurat_list=rules.sc_pancancer_junbin_qian_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/pancancer_junbin_qian_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/pancancer_junbin_qian"
+    threads: 5
+    resources:
+        mem_mb=300000,
+        runtime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/pancancer_junbin_qian_scevan.R"
+
+rule cna_breast_sunny_wu:
+    input:
+        seurat_list=rules.sc_breast_sunny_wu_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/breast_sunny_wu_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/breast_sunny_wu"
+    threads: 5
+    resources:
+        mem_mb=300000,
+        runtime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/breast_sunny_wu_scevan.R"
+
+rule cna_aml_audrey_lasry:
+    input:
+        seurat_list=rules.sc_aml_audrey_lasry_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/aml_audrey_lasry_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/aml_audrey_lasry"
+    threads: 5
+    resources:
+        mem_mb=300000,
+        runtime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/aml_audrey_lasry_scevan.R"
+
+rule cna_bcc_catherine_dyao:
+    input:
+        seurat_list=rules.sc_bcc_catherine_dyao_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/bcc_catherine_dyao_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/bcc_catherine_dyao"
+    threads: 5
+    resources:
+        mem_mb=300000,
+        runtime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/bcc_catherine_dyao_scevan.R"
+
+rule cna_pancancer_dalia_barkley:
+    input:
+        seurat_list=rules.sc_pancancer_dalia_barkley_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/pancancer_dalia_barkley_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/pancancer_dalia_barkley"
+    threads: 5
+    resources:
+        mem_mb=300000,
+        runtime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/pancancer_dalia_barkley_scevan.R"
+
+rule cna_brmets_hugo_gonzalez:
+    input:
+        seurat_list=rules.sc_brmets_hugo_gonzalez_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/brmets_hugo_gonzalez_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/brmets_hugo_gonzalez"
+    threads: 5
+    resources:
+        mem_mb=300000,
+        runtime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/brmets_hugo_gonzalez_scevan.R"
+
+rule cna_pancancer_sunny_wu:
+    input:
+        seurat_list=rules.sc_pancancer_sunny_wu_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/pancancer_sunny_wu_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/pancancer_sunny_wu"
+    threads: 5
+    resources:
+        mem_mb=300000,
+        runtime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/pancancer_sunny_wu_scevan.R"
+
+rule cna_pleural_rui_dong:
+    input:
+        seurat_list=rules.sc_pleural_rui_dong_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/pleural_rui_dong_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/pleural_rui_dong"
+    threads: 5
+    resources:
+        mem_mb=300000,
+        runtime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/pleural_rui_dong_scevan.R"
+
+rule cna_brmets_jana_biermann:
+    input:
+        seurat_list=rules.sc_brmets_jana_biermann_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/brmets_jana_biermann_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/brmets_jana_biermann"
+    threads: 5
+    resources:
+        mem_mb=300000,
+        runtime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/brmets_jana_biermann_scevan.R"
+
+rule cna_rcell_r_li:
+    input:
+        seurat_list=rules.sc_rcell_r_li_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/rcell_r_li_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/rcell_r_li"
+    threads: 5
+    resources:
+        mem_mb=300000,
+        runtime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/rcell_r_li_scevan.R"
+
+rule cna_synovial_jerby_arnon:
+    input:
+        seurat_list=rules.sc_synovial_jerby_arnon_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/synovial_jerby_arnon_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/synovial_jerby_arnon"
+    threads: 5
+    resources:
+        mem_mb=300000,
+        runtime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/synovial_jerby_arnon_scevan.R"
+
+rule cna_all_maxime_caron:
+    input:
+        seurat_list=rules.sc_all_maxime_caron_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/all_maxime_caron_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/all_maxime_caron"
+    threads: 5
+    resources:
+        mem_mb=300000,
+        runtime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/all_maxime_caron_scevan.R"
+
+rule cna_adrenalnb_rui_chong:
+    input:
+        seurat_list=rules.sc_adrenalnb_rui_chong_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/adrenalnb_rui_chong_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/adrenalnb_rui_chong"
+    threads: 5
+    resources:
+        mem_mb=300000,
+        runtime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/adrenalnb_rui_chong_scevan.R"
+
+rule cna_luad_kim_nayoung:
+    input:
+        seurat_list=rules.sc_luad_kim_nayoung_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/luad_kim_nayoung_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/luad_kim_nayoung"
+    threads: 5
+    resources:
+        mem_mb=300000,
+        runtime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/luad_kim_nayoung_scevan.R"
+
+rule cna_urothelial_chen:
+    input:
+        seurat_list=rules.sc_urothelial_chen_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/urothelial_chen_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/urothelial_chen"
+    threads: 5
+    resources:
+        mem_mb=300000,
+        runtime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/urothelial_chen_scevan.R"
+
+rule cna_luad_philip_bisschof:
+    input:
+        seurat_list=rules.sc_luad_philip_bisschof_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/luad_philip_bisschof_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/luad_philip_bisschof"
+    threads: 5
+    resources:
+        mem_mb=300000,
+        runtime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/luad_philip_bisschof_scevan.R"
+
+rule cna_bone_yun_liu:
+    input:
+        seurat_list=rules.sc_bone_yun_liu_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/bone_yun_liu_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/bone_yun_liu"
+    threads: 5
+    resources:
+        mem_mb=300000,
+        runtime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/bone_yun_liu_scevan.R"
+
+rule cna_cll_ramon_massoni:
+    input:
+        seurat_list=rules.sc_cll_ramon_massoni_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/cll_ramon_massoni_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/cll_ramon_massoni"
+    threads: 5
+    resources:
+        mem_mb=300000,
+        runtime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/cll_ramon_massoni_scevan.R"
+
+rule cna_pdac_shu_zhang:
+    input:
+        seurat_list=rules.sc_pdac_shu_zhang_seurat.output.seurat_list,
+    output:
+        annotated_list=f"{results}/seurat/annotated/pdac_shu_zhang_annotated.rds",
+    params:
+        cna_res=f"{results}/cna/pdac_shu_zhang"
+    threads: 5
+    resources:
+        mem_mb=300000,
+        runtime=240,
+    conda:
+        "scevan"
+    script:
+        "../scripts/pdac_shu_zhang_scevan.R"

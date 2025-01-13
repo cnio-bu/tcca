@@ -1,0 +1,12 @@
+---
+name: ucell
+channels:
+  - conda-forge
+  - bu_cnio
+  - bioconda
+dependencies:
+  - r-base=4.4.1
+  - r-seurat=5.0.1
+  - r-remotes
+  - hdf5
+  - bioconductor-ucell=2.10.1

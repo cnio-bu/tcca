@@ -1,0 +1,24 @@
+---
+results_directory: ""
+raw_data_directory: ""
+log_directory: ""
+
+max_mito_percent: 20
+max_ribo_percent: 40
+min_rna_features: 1000
+max_rna_features: 7000
+min_count_rna: 500
+
+resources:
+  defaults:
+    threads: 1
+    mem_mb: 64000
+    runtime: 30
+  default_bc:
+    threads: 1
+    mem_mb: 64000
+    runtime: 120
+  default_deps:
+    threads: 1
+    mem_mb: 80000
+    runtime: 120

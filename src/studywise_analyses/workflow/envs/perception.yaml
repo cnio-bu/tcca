@@ -1,0 +1,17 @@
+---
+name: perception
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - r-seurat=5.0.1
+  - r-tidyverse=1.3.2
+  - r-hdf5r
+  - r-remotes
+  - r-glmnet
+  - r-carot
+  # - python
+  # - pip
+  # - pip:
+  #   - bpcells
