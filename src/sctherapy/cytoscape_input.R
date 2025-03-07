@@ -17,12 +17,13 @@ drug_subclone <- data %>%
   select(Subclone, Drug_Name) %>%
   distinct()
 
+subclones <- unique(data$Subclone)
 # Create a list with drug predictions per subclone
 subclones_drug_list <- lapply(subclones, function(subclone) {
   drugs <- drug_subclone$Drug_Name[drug_subclone$Subclone == subclone]
   return(drugs)
 })
-subclones <- unique(data$Subclone)
+
 names(subclones_drug_list) <- subclones
 
 
@@ -37,3 +38,17 @@ edge_table <- pairs %>%
                                      subclones_drug_list[[Target]]))
 
 write.table(edge_table, "network_edges.tsv", row.names = FALSE)
+
+
+# Compute similarity matrix
+similarity_matrix <- matrix(0, nrow = length(subclones), ncol = length(subclones),
+                            dimnames = list(subclones, subclones))
+
+# Compute pairwise Jaccard similarity
+for (i in seq_along(subclones)) {
+  for (j in seq_along(subclones)) {
+    similarity_matrix[i, j] <- jaccard_similarity(subclones_drug_list[[subclones[i]]], 
+                                                  subclones_drug_list[[subclones[j]]])
+  }
+}
+
