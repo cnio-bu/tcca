@@ -16,3 +16,16 @@ write.table(bc_gbm@meta.data,
             file = "single_cell/scellbow/beyondcell/gbm_metadata_target.tsv",
             row.names = TRUE,
             sep = "\t")
+
+# Subset expression data
+seu <- readRDS("single_cell/seurat/v5/lvl2/seu_lvl2_sex_inferred.rds")
+malignant <- subset(seu, subset = malignancy == TRUE)
+colnames(malignant) <- paste0("c", c(1:ncol(malignant)))
+write_matrix_anndata_hdf5(mat = malignant[["RNA"]]$counts.gbm_nourhan_abdelfattah,
+                          path = "single_cell/scellbow/expression/gbm_expr_target.h5ad")
+
+# Save the metadata for those cells
+write.table(malignant@meta.data[malignant$study == "gbm_nourhan_abdelfattah", ],
+            file = "single_cell/scellbow/expression/gbm_metadata_target.tsv",
+            row.names = TRUE,
+            sep = "\t")

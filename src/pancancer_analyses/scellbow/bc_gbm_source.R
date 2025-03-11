@@ -101,6 +101,7 @@ DimPlot(gbm_subset, reduction = "umap", group.by = "cell_type")
 # Subset only malignant cells
 gbm_malignant <- subset(gbm_subset, subset = cell_type == "Neoplastic_cell")
 
+saveRDS(gbm_malignant, "gbm_malignant.rds")
 
 ## Beyondcell
 library(beyondcell)
