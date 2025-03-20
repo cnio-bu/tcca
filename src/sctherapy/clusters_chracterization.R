@@ -2,6 +2,7 @@ library(dplyr)
 library(tidyverse)
 library(ggplot2)
 library(ggh4x)
+library(ComplexUpset)
 
 setwd("Documents/bc-meta/sctherapy/")
 source("../bc-meta_repo/bc-meta/src/figures/TCCA_palette.R")
@@ -214,6 +215,7 @@ stacked_barplot(sample_annot,
 #drugInfo <- load("../drugInfo.RData")
 data <- read.table("full_table_drug_prediction.tsv")
 cluster <- readRDS("speclustering_reordered.rds")
+cluster_counts <- table(cluster)
 cluster <- data.frame(Subclone = names(cluster), cluster = cluster)
 
 data <- data %>% 
@@ -243,8 +245,6 @@ bubble_data <- all_combinations %>%
   replace_na(list(subclone_counts = 0))  # Replace NA with 0 for missing counts
 
 #  Run the Chi-Squared/Fisher test for each drug
-cluster_counts <- table(cluster_assignment)
-
 independence_test <- function(freq_table, clusters, cluster_counts, pairwise = FALSE) {
   results <- data.frame(matrix(ncol = 4, nrow = 0))  # Store results
   colnames(results) <- c("Cluster1", "Cluster2", "Drug", "p_value")
@@ -403,7 +403,10 @@ ggsave("bubble_plot_scTherapy.png", bubble, height = 10, width = 33, dpi = 300)
 # Add MoAs to the drugs
 MoAs <- read.table("../bc-meta_repo/bc-meta/reference/final_moas - Collapsed.tsv", 
                    header = TRUE,
-                   sep = "\t")
+                   sep = "\t") %>%
+  select(preferred.drug.names, collapsed.MoAs) %>%
+  distinct()
+
 MoAs_sctherapy <- data %>%
   select(Drug_Name, MoA) %>%
   distinct() %>%
@@ -413,8 +416,8 @@ MoAs_sctherapy <- data %>%
 bubble_data <- bubble_data %>%
   mutate(Drug_Name = toupper(Drug_Name)) %>%
   left_join(select(MoAs, preferred.drug.names, collapsed.MoAs),
-            by = c("Drug_Name" = "preferred.drug.names"), relationship = "many-to-many")
-
+            by = c("Drug_Name" = "preferred.drug.names"))
+            
 drug_na <- unique(bubble_data$Drug_Name[is.na(bubble_data$collapsed.MoAs)])
 
 bubble_data <- bubble_data %>%
@@ -523,3 +526,43 @@ for (moa in unique_moas) {
   print(paste("Saved:", filename))  # Print message for confirmation
 }
 
+
+
+# Select drugs significantly associated with clusters (FDR <= 0.05 and >= 10% of subclones)
+significant_drugs <- bubble_data %>%
+  filter(FDR_Adjusted_P_value <= 0.05 & subclones_proportion >= 10)
+
+# Prepare data for an UpSet plot
+drugs_upset <- significant_drugs %>%
+  select(cluster, Drug_Name, collapsed.MoAs) %>%
+  mutate(Presence = 1) %>%
+  distinct(Drug_Name, collapsed.MoAs, cluster, .keep_all = TRUE) %>%
+  pivot_wider(names_from = cluster, values_from = Presence, values_fill = list(Presence = 0))
+
+clusters <- colnames(drugs_upset)[3: ncol(drugs_upset)]
+drugs_upset[clusters] <- drugs_upset[clusters] == 1
+t(head(drugs_upset[clusters], 3))
+
+
+set_size(8, 3)
+source("/home/lmgonzalezb/Documents/bc-meta/bc-meta_repo/bc-meta/src/figures/TCCA_palette.R")
+upset(drugs_upset, 
+      clusters, 
+      mode = "inclusive_intersection", 
+      name = "clusters", 
+      base_annotations=list(
+        'Intersection size' = intersection_size(
+          counts=FALSE,
+          mapping = aes(fill = collapsed.MoAs)
+        )
+      ),
+      width_ratio = 0.1)
+
+drugs_upset$collapsed.MoAs <- ifelse(
+  drugs_upset$collapsed.MoAs == "BRAF inhibitor;VEGFR inhibitor", "Kinase inhibitor",
+  ifelse(drugs_upset$collapsed.MoAs == "BCR-ABL inhibitor;SRC inhibitor", "BCR-ABL inhibitor", 
+         ifelse(drugs_upset$collapsed.MoAs == "VEGFR inhibitor;MET inhibitor", "Multi-kinase inhibitor",
+                drugs_upset$collapsed.MoAs)
+))
+
+unique(drugs_upset$collapsed.MoAs) %in% names(MoAs_colors)
