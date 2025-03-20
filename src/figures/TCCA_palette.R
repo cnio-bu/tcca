@@ -97,6 +97,9 @@ MoAs_colors <- c("DNA related agent" = "#6cca8e", #This is the Pitiscale with so
                  "MET inhibitor" = "#b1ede8",
                  "BCR-ABL inhibitor" = "#8932a8",
                  "Protein synthesis inhibitor" = "#3267a8",
+                 "CDK_inhibitor_cell_cycle_inhibitor_MCL1_inhibitor" = "#086AFC",
+                 "SRC inhibitor" = "#FFFE89",
+                 
                  "Other" = "#BBB9B7")
 
 ## TME colors
