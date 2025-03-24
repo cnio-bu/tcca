@@ -103,6 +103,7 @@ vln.plot1
 
 ggsave("plots/vlnplot_Ascore.png", plot = vln.plot1, width = 10, height = 5)
 
+# Plot distribution of A score groups across clusters
 bc@meta.data$A_scaled_cat <- factor(bc@meta.data$A_scaled_cat, levels = c("H", "L", "IH", "IL"))
 barplot <- ggplot(bc@meta.data, aes(x = bc_clusters_res.0.1, fill = A_scaled_cat)) +
   geom_bar(position = "fill") +
@@ -129,4 +130,47 @@ drugs <- bcSignatures(bc, UMAP = "beyondcell",
 for (i in 1:length(drugs)){
   ggsave(paste0("plots/drug", i, ".png"), plot = drugs[[i]], width = 7, height = 6, dpi = 500)
 }
+
+
+
+## Compute Beyondcell scores for TMZ sensitivity signatures
+# Generate geneset object with a custom GMT file. 
+tmz_signatures <- GenerateGenesets(x = "TMZ_signature/TMZ_signatures.gmt")
+bc_tmz <- bcScore(expr.matrix, tmz_signatures, expr.thres = 0.1)
+
+bc_tmz@normalized[is.na(bc_tmz@normalized)] <- 0
+bc_tmz <- bcRecompute(bc_tmz, slot = "normalized")
+bc_tmz <- bcRegressOut(bc_tmz, vars.to.regress = c("nFeature_RNA"))
+
+bc@meta.data <- merge(bc@meta.data, t(as.data.frame(bc_tmz@scaled)), by = 0, all = TRUE)
+rownames(bc@meta.data) <- bc@meta.data$Row.names
+bc@meta.data$Row.names <- NULL
+
+# Visualize the the drug sNULL# Visualize the the drug sensitivity 
+tmz_plots <- list()
+for (drug in rownames(bc_tmz@normalized)){
+  sp <-  bc_tmz@switch.point[[drug]]
+  plot <- bcClusters(bc, 
+                      UMAP = "beyondcell",
+                      idents = drug,
+                      factor.col = FALSE,
+                      pt.size = 1.5) +
+    scale_colour_gradientn(colors = c("#1D61F2", "#83A8F7", "#F7F7F7", "#FF9CBB", "#DA0078"), 
+                           values = c(0,  sp, 1), 
+                           na.value = "grey50",
+                           guide = "colourbar",
+                           breaks = c(0, sp, 1)) +
+    labs(title = drug, color = "BCS", x = "UMAP1", y = "UMAP2") +
+    theme(plot.title = element_text(hjust = 0.5, face = "bold"),
+          legend.position = "right", 
+          legend.title = element_text(margin = margin(b = 10)))
+  tmz_plots[[drug]] <- plot
+}
+
+for (drug in names(tmz_plots)){
+  ggsave(paste0("plots/drug", drug, ".png"), 
+         plot = tmz_plots[[drug]], width = 7, height = 6, dpi = 500)
+}
+
+write.table(t(bc_tmz@normalized), "bcscore_tmzsigs.tsv", sep = "\t")
 
