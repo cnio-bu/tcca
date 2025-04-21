@@ -103,6 +103,7 @@ all_genes <- unique(all_genes)
 
 # Compute cbind.filled matrix
 full_mat <- cbind.fill(subclone_means.list, all_genes)
+full_mat <- as.matrix(full_mat)
 
 # Save
 setwd("/storage/scratch01/shared/projects/bc-meta/single_cell/cna_metadata/")
