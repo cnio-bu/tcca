@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ## Set directorires
-rscript_dir="6_tsv_to_bpcells.R"
+rscript_dir="6_tsv_to_bpcells_lvl3.R"
 data_dir="/storage/scratch01/shared/projects/bc-meta/single_cell/cna_metadata/cnv_cells_genes_lvl3"
 
 ## Get list of files' full paths

@@ -36,7 +36,7 @@ cbind.fill<-function(mat.list, genes){
 }
 
 ## Open all bpcells mats
-file.dir <- "/storage/scratch01/shared/projects/bc-meta/single_cell/cna_metadata/cnv_cells_genes_lvl3_bpcells/"
+file.dir <- "/storage/scratch01/shared/projects/bc-meta/single_cell/cna_metadata/cnv_cells_genes_lvl2_bpcells/"
 files.set <- list.dirs(file.dir, full.names = FALSE, recursive = FALSE)
 
 # Loop through h5ad files and output BPCells matrices on-disk
@@ -52,7 +52,7 @@ for (i in 1:length(files.set)) {
 names(data.list) <- files.set
 
 #Generate base metadata table
-clonality_table <- read.table("/storage/scratch01/shared/projects/bc-meta/single_cell/cna_metadata/full_clonality_table_lvl3.tsv", sep = "\t", header = T)
+clonality_table <- read.table("/storage/scratch01/shared/projects/bc-meta/single_cell/cna_metadata/full_clonality_table_lvl2.tsv", sep = "\t", header = T)
 clonality_table <- clonality_table %>%
   mutate(barcode_study_sample = paste(scevan_barcode, study, sample, sep  = "__"),
          study_sample = paste(study, sample, sep  = "__"))
@@ -63,6 +63,7 @@ clinical_metadata <- clinical_metadata %>%
 
 full_metadata_table <- merge(clonality_table, clinical_metadata, by = "study_sample")
 full_metadata_table <- full_metadata_table %>% 
+  distinct(barcode_study_sample, .keep_all = TRUE) %>% ## This removes 8 cells (not sure why they are duplicated but screw it)
   column_to_rownames(var = "barcode_study_sample") %>%
   subset(select = -c(study_sample, sample.y, study.y)) %>%
   rename(
@@ -108,4 +109,4 @@ full_mat <- as.matrix(full_mat)
 # Save
 setwd("/storage/scratch01/shared/projects/bc-meta/single_cell/cna_metadata/")
 
-saveRDS(object = full_mat, file = "full_clone_gene_copynumber.rds")
+saveRDS(object = full_mat, file = "full_clone_gene_copynumber_lvl2.rds")
