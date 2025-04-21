@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 
-#sbatch -c 20 --job-name=Sv5 -o log.txt -e error.txt --mem=500G -t 1140 --wrap "Rscript /home/lserranor/bc-meta_old_and_with_scevan/src/preprocessing/workflow/scripts/SCEVAN/7_final_cellxgene_v5_cnafill.R"
+#sbatch -c 20 --job-name=Sv5 -o log.txt -e error.txt --mem=500G -t 1140 --wrap "Rscript 7_final_cellxgene_v5_cnafill.R"
 
 library(BPCells)
 library(Matrix)
