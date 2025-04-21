@@ -11,8 +11,6 @@ library(dplyr)
 library(tibble)
 library(Seurat)
 library(SeuratObject)
-library(SeuratDisk)
-library(Azimuth)
 
 #Function cbind.fill
 cbind.fill<-function(mat.list, genes){
