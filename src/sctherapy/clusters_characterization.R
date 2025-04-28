@@ -4,12 +4,10 @@ library(ggplot2)
 library(ggh4x)
 library(ComplexUpset)
 
-setwd("Documents/bc-meta/sctherapy/")
+setwd("/home/lmgonzalezb/Documents/bc-meta/sctherapy/")
 source("../bc-meta_repo/bc-meta/src/figures/TCCA_palette.R")
 
 subclone_annot <- read.table("annotations_subclones.tsv")
-subclone_annot$cluster <- as.factor(subclone_annot$cluster)
-
 
 ######################## CLINICAL CHARACTERIZATION #############################
 
@@ -172,6 +170,7 @@ stacked_barplot(subclone_annot,
                 colors = study_colors,
                 dir = "figures")
 
+
 # Compute the distribution of TME archetypes across cancer types over the total 
 # number of samples
 tcca_annot <- read.table("../cohort_statistics/tcca_annotation_raw.tsv", 
@@ -215,6 +214,7 @@ stacked_barplot(sample_annot,
 #drugInfo <- load("../drugInfo.RData")
 data <- read.table("full_table_drug_prediction.tsv")
 cluster <- readRDS("speclustering_reordered.rds")
+head(as.data.frame(cluster))
 cluster_counts <- table(cluster)
 cluster <- data.frame(Subclone = names(cluster), cluster = cluster)
 
@@ -530,7 +530,7 @@ for (moa in unique_moas) {
 
 # Select drugs significantly associated with clusters (FDR <= 0.05 and >= 10% of subclones)
 significant_drugs <- bubble_data %>%
-  filter(FDR_Adjusted_P_value <= 0.05 & subclones_proportion >= 10)
+  filter(FDR_Adjusted_P_value <= 0.05 & subclones_proportion >= 50)
 
 # Prepare data for an UpSet plot
 drugs_upset <- significant_drugs %>%
@@ -544,25 +544,43 @@ drugs_upset[clusters] <- drugs_upset[clusters] == 1
 t(head(drugs_upset[clusters], 3))
 
 
-set_size(8, 3)
 source("/home/lmgonzalezb/Documents/bc-meta/bc-meta_repo/bc-meta/src/figures/TCCA_palette.R")
-upset(drugs_upset, 
-      clusters, 
-      mode = "inclusive_intersection", 
-      name = "clusters", 
-      base_annotations=list(
-        'Intersection size' = intersection_size(
-          counts=FALSE,
-          mapping = aes(fill = collapsed.MoAs)
-        )
-      ),
-      width_ratio = 0.1)
-
-drugs_upset$collapsed.MoAs <- ifelse(
-  drugs_upset$collapsed.MoAs == "BRAF inhibitor;VEGFR inhibitor", "Kinase inhibitor",
-  ifelse(drugs_upset$collapsed.MoAs == "BCR-ABL inhibitor;SRC inhibitor", "BCR-ABL inhibitor", 
-         ifelse(drugs_upset$collapsed.MoAs == "VEGFR inhibitor;MET inhibitor", "Multi-kinase inhibitor",
-                drugs_upset$collapsed.MoAs)
-))
+drugs_upset$collapsed.MoAs <- case_when(
+  drugs_upset$collapsed.MoAs == "BRAF inhibitor;VEGFR inhibitor" ~ "Kinase inhibitor",
+  drugs_upset$collapsed.MoAs == "BCR-ABL inhibitor;SRC inhibitor" ~ "BCR-ABL inhibitor",
+  drugs_upset$collapsed.MoAs == "VEGFR inhibitor;MET inhibitor" ~ "Kinase inhibitor",
+  drugs_upset$collapsed.MoAs == "CDK_inhibitor_cell_cycle_inhibitor_MCL1_inhibitor" ~ "Cell cycle arrest",
+  TRUE ~ drugs_upset$collapsed.MoAs  # Keeps other values unchanged
+)
 
 unique(drugs_upset$collapsed.MoAs) %in% names(MoAs_colors)
+
+
+upset <- upset(drugs_upset, 
+               rev(as.character(c(1:10))),
+               mode = "exclusive_intersection", 
+               name = "clusters", 
+               base_annotations = list(
+                 'Intersection size' = intersection_size(
+                   mode = "exclusive_intersection",
+                   counts=FALSE,
+                   mapping = aes(fill = collapsed.MoAs)
+                 ) +
+                   scale_fill_manual(values = MoAs_colors)
+               ),
+               width_ratio = 0.1,
+               max_size = 1000,
+               guides='keep',
+               sort_sets=FALSE
+               )
+ggsave("upset_plot_exclusive50.png", upset, width = 20, height = 10)
+
+top_drugs <- bubble_data %>%
+  filter(FDR_Adjusted_P_value <= 0.05 & subclones_proportion >= 50) %>%
+  group_by(cluster) %>%
+  arrange(desc(subclones_proportion), FDR_Adjusted_P_value, .by_group = TRUE)
+
+sum(table(top_drugs$cluster, top_drugs$collapsed.MoAs)["10",] >= 2)
+top_drugs[top_drugs$cluster == 3
+          & top_drugs$collapsed.MoAs == "SRC inhibitor", "Drug_Name"]  
+
