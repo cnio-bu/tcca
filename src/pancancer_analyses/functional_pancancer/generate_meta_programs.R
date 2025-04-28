@@ -338,7 +338,7 @@ cluster_annotation$study_sample <- gsub(
   rownames(cluster_annotation)
 )
 clinical <- data.table::fread(
-  "../clinical_metadata_v4_clean.tsv"
+  "../../clinical_metadata_v4_clean.tsv"
 )
 clinical$study_sample <- paste0(clinical$study, "__", clinical$sample)
 
@@ -364,7 +364,7 @@ translat_human_sites <- c(
 )
 
 # Add inferred sex
-seu <- readRDS("../seu_lvl2_sex_inferred.rds")
+seu <- readRDS("../../seu_lvl2_sex_inferred.rds")
 sex_inferred <- seu@meta.data %>%
   mutate(study_sample = paste0(study, "__", sample)) %>%
   select(sex, study_sample) %>%
@@ -452,9 +452,22 @@ tumor_site_legend <- Legend(
   title = "Sample site"
 )
 
+# Create the color ramp
+custom_magma <- c(colorRampPalette(c("white", rev(magma(323, begin = 0.15))[1]))(20), rev(magma(323, begin = 0.18)))
+n_total <- length(custom_magma)
+n_white <- 20
+n_magma <- n_total - n_white
+breaks <- c(
+  seq(0, 4, length.out = n_white), 
+  seq(4.0001, 25, length.out = n_magma)
+  )
+
+custom_col <- colorRamp2(breaks, custom_magma)
+
+custom_col <- colorRamp2(seq(0, 25, length.out = length(custom_magma)), custom_magma)
 heat <- ComplexHeatmap::Heatmap(
   mat = nmf_intersect_sort,
-  col = colorRamp2(c(2, 25), hcl_palette = "Inferno", reverse = TRUE),
+  col = custom_col,
   top_annotation = top_annotation,
   cluster_rows = FALSE,
   cluster_row_slices = TRUE,
@@ -479,6 +492,7 @@ heat <- ComplexHeatmap::Heatmap(
   row_title_side = "left",
   column_title_side = "bottom",
   heatmap_legend_param = list(
+    at = c(0, 5, 10, 15, 20, 25),
     title = "Similarity\n(Jaccard index)",
     title_gp = gpar(fontsize = 12, fontface = "bold"),
     labels_gp = gpar(fontsize = 12),
@@ -488,7 +502,7 @@ heat <- ComplexHeatmap::Heatmap(
   heatmap_height = unit(10, "in")
 )
 png(
-  file = "../figures/functional/all_samples_nmf/heatmap_mps.png",
+  file = "./metaprograms/heatmap_mps.png",
   res = 500,
   width = 16,
   height = 14,
