@@ -92,8 +92,7 @@ cluster_assignment <- factor(cluster_assignment, levels = as.character(1:10))
 names(cluster_assignment) <- names_subclones
 saveRDS(cluster_assignment, "speclustering_reordered.rds")
 
-# Plot heatmap of similarity matrix
-
+### Plot heatmap of similarity matrix
 ## Create top annotations for samples.
 clinical <- data.table::fread("../clinical_metadata_v4_clean.tsv")
 clinical$study_sample <- paste0(clinical$study, "_", clinical$sample)
@@ -179,6 +178,55 @@ subclone_annot_df$summarised_tumor_site <-  translat_human_sites[subclone_annot_
 
 write.table(subclone_annot_df, "annotations_subclones.tsv")
 
+# # Add study and cancer type to the table of subclones
+subclones_names <- rownames(subclone_annot_df)
+subclone_annot_df$study_sample <- paste0(sub("\\.[0-9]+$","", rownames(subclone_annot_df)))
+clinical <- data.table::fread("../clinical_metadata_v4_clean.tsv")
+clinical$study_sample <- paste0(clinical$study, ".", clinical$sample)
+
+clinical <- clinical %>%
+  select(study_sample, study, tumor_type) %>%
+  distinct()
+
+subclone_annot_df <- subclone_annot_df %>%
+  left_join(clinical, by = "study_sample")
+
+rownames(subclone_annot_df) <- subclones_names
+  
+# Add broad cancer types
+cancer_type <- list(
+  "Brain Cancer" = c("GBM", "MB", "OGD"),
+  "Neuroblastic Tumors" = c("GNB", "NB"),
+  "Blood Cancer" = c("ALL", "LAML", "CLL", "MM"),
+  "Skin Cancer" = c("BCC", "SKCM", "SKSC", "SKAM", "UVM"),
+  "Sarcoma/Soft Tissue Cancer" = c("SARC", "GIST", "MESO"),
+  "Breast Cancer" = c("BRCA"),
+  "Lung Cancer" = c("SCLC", "NSCLC", "LUAD", "LUSC", "LCLC", "PLEU"),
+  "Ovarian Cancer" = c("OV"),
+  "Colon/Colorectal Cancer" = c("COAD", "READ"),
+  "Endometrial/Uterine Cancer" = c("CESC", "UCEC", "UCS"),
+  "Liver/Biliary Cancer" = c("LIHC", "CHOL"),
+  "Bladder Cancer" = c("BLCA"),
+  "Head and Neck Cancer" = c("HNSC"),
+  "Prostate Cancer" = c("PRAD"),
+  "Kidney Cancer" = c("KRCC", "KTCC", "KIRC", "KIRCH"),
+  "Esophageal Cancer" = c("ESCA", "ESCC"),
+  "Pancreatic Cancer" = c("PAAD"),
+  "Thyroid Cancer" = c("THCA"),
+  "Gastric Cancer" = c("STAD"),
+  "Miscellaneous Cancer" = c("MISC")
+)
+
+cancer_type <- enframe(cancer_type, name = "broad_cancer_type", value = "tumor_type") %>%
+  unnest()
+
+subclone_annot_df <-  subclone_annot_df %>%
+  left_join(cancer_type, by = "tumor_type")  %>%
+  select(-study_sample, -tumor_type)
+  
+subclone_annot_df <- subclone_annot_df[, c(1:7, 9, 10, 8)]
+rownames(subclone_annot_df) <- subclones_names
+  
 colnames(subclone_annot_df) <- c(
     "Chromosomal sex",
     "Age group",
@@ -187,6 +235,8 @@ colnames(subclone_annot_df) <- c(
     "Sample site",
     "Treatment",
     "TME archetype",
+    "Study",
+    "Cancer type",
     "Cluster"
 )
 
@@ -198,17 +248,10 @@ pals <- list(
     "Sample site" = tumor_sites_colors,
     "Treatment" = treatment_colors,
     "TME archetype" = tme_colors,
-    "Cluster" = mps_colors
+    "Study" = study_colors, 
+    "Cancer type" = broad_cancer_type_colors,
+    "Cluster" = sctherapy_colors
 )
-
-top_annotation <- ComplexHeatmap::HeatmapAnnotation(
-    df =  subclone_annot_df,
-    which = "column",
-    col = pals,
-    annotation_name_side = "left",
-    annotation_name_rot = 0,
-    show_legend = FALSE
-    )
 
 
 
@@ -266,6 +309,22 @@ tme_legend <- Legend(
   title = "TME archetype"
 )
 
+study_legend <- Legend(
+  at = names(pals$`Study`),
+  legend_gp = gpar(fill = pals$`Study`),
+  ncol = 3,  # Split Group legend into 2 columns
+  gap = unit(10, "mm"),
+  title = "Study"
+)
+
+cancertype_legend <- Legend(
+  at = names(pals$`Cancer type`),
+  legend_gp = gpar(fill = pals$`Cancer type`),
+  ncol = 2,  # Split Group legend into 2 columns
+  gap = unit(10, "mm"),
+  title = "Cancer type"
+)
+
 cluster_legend <- Legend(
   at = names(pals$`Cluster`),
   legend_gp = gpar(fill = pals$`Cluster`),
@@ -275,7 +334,22 @@ cluster_legend <- Legend(
 )
 similarity_matrix <- round(similarity_matrix, 3)
 
+# Order by sample site, sample type, treatment, tme_archetype, cancer type
+subclone_annot_df <- subclone_annot_df %>%
+  arrange(`Sample site`, `Sample type`, Treatment, `TME archetype`, `Cancer type`)
+ordered_names <- rownames(subclone_annot_df)
+
+top_annotation <- ComplexHeatmap::HeatmapAnnotation(
+  df =  subclone_annot_df,
+  which = "column",
+  col = pals,
+  annotation_name_side = "left",
+  annotation_name_rot = 0,
+  show_legend = FALSE
+)
+
 # Plot the heatmap
+similarity_matrix <- similarity_matrix[ordered_names, ordered_names]
 jaccard_dist <- as.dist(1-similarity_matrix)
 heat <- ComplexHeatmap::Heatmap(
     similarity_matrix,
@@ -283,8 +357,8 @@ heat <- ComplexHeatmap::Heatmap(
     top_annotation = top_annotation,
     cluster_rows = FALSE,
     cluster_columns = FALSE,
-    row_order = rownames(subclone_annot_df[order(subclone_annot_df$Cluster),]),
-    column_order = rownames(subclone_annot_df[order(subclone_annot_df$Cluster),]),
+    row_order = ordered_names,
+    column_order = ordered_names,
     cluster_row_slices = FALSE,
     cluster_column_slices = FALSE,
     row_split = subclone_annot_df$Cluster,
@@ -316,11 +390,11 @@ heat <- ComplexHeatmap::Heatmap(
 )
 
 png(
-  file = "figures/heatmap_jaccard_spectralclust10_reordered.png",
-  res = 500,
+  file = "figures/heatmap_jaccard_spectralclust10_reordered2.png",
   width = 16,
-  height = 14,
-  units = "in"
+  height = 15,
+  units = "in",
+  res = 500
 )
 
 ht_opt(
@@ -334,13 +408,19 @@ pd <- packLegend(sex_legend,
                  solid_liquid_legend, 
                  sample_type_legend, 
                  treatment_legend, 
+                 cancertype_legend,
                  max_height = unit(8, "cm"), 
                  column_gap = unit(1, "cm"))
 draw(heat, 
      annotation_legend_side = "top", 
      heatmap_legend_side = "right", 
-     annotation_legend_list = list(pd, tumor_site_legend, tme_legend, cluster_legend))
+     annotation_legend_list = list(pd, 
+                                   tumor_site_legend, 
+                                   tme_legend, 
+                                   cancertype_legend, 
+                                   cluster_legend))
 dev.off()
+
 
 # Extract orders and dendograms
 row_order <- row_order(heat)
