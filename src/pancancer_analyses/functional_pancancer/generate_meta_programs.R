@@ -464,7 +464,6 @@ breaks <- c(
 
 custom_col <- colorRamp2(breaks, custom_magma)
 
-custom_col <- colorRamp2(seq(0, 25, length.out = length(custom_magma)), custom_magma)
 heat <- ComplexHeatmap::Heatmap(
   mat = nmf_intersect_sort,
   col = custom_col,
