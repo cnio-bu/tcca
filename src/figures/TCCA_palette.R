@@ -25,7 +25,8 @@ patient_ccl_colors <- c("Patient" = "#427394",
 
 # Treated/Untreated 
 treatment_colors <- c("Treated" = "#6ED1BC",
-                      "Untreated" = "#D18B6E")
+                      "Untreated" = "#D18B6E",
+                      "Unknown" = "#BBB9B7")
 
 # Adult/Pediatric 
 age_colors <- c("Adult" = "#7689DE",
