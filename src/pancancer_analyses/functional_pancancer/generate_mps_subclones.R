@@ -42,9 +42,9 @@ source("~/bc-meta/functional_pancancer/robust_nmf_programs.R")
 setwd("/storage/scratch01/shared/projects/bc-meta/functional_nmf/subclone_wise")
 
 nmf_programs <- c()
-for (study in list.files("./nmf_study", pattern = "allsubclones.rds")){
-    study_subclone_programs <- readRDS(paste0("./nmf_study/", study))
-    nmf_programs <- c(nmf_programs, study_subclone_programs)
+for (study in list.files("./nmf_study_prefilter")){
+  study_subclone_programs <- readRDS(paste0("./nmf_study_prefilter/", study))
+  nmf_programs <- c(nmf_programs, study_subclone_programs)
 }
 
 # Select programs from k = 4..10,15, 20, 25, 30
@@ -54,7 +54,7 @@ for (study in list.files("./nmf_study", pattern = "allsubclones.rds")){
 #-------------------------------------------------------------------------------
 # Adapt RcppML::nmf output to define MPs
 # ------------------------------------------------------------------------------
-nmf_programs <- lapply(nmf_programs, function(sample_k) sample_k$w)
+nmf_programs <- lapply(nmf_programs, function(subclone_k) subclone_k$w)
 sample_names <- gsub("\\.\\d+\\.k\\d+$", "", names(nmf_programs))
 sample_split <- split(seq_along(nmf_programs), sample_names)
 
@@ -63,24 +63,37 @@ sample_split <- split(seq_along(nmf_programs), sample_names)
 sample_nmf <- lapply(names(sample_split), function(sample) {
   sample_programs <- nmf_programs[sample_split[[sample]]]
   #names(sample_programs) <- paste0(sample, "_", "k", c(2:9))
+  all_genes <- Reduce(union, lapply(sample_programs, function(df) rownames(df)))
   sample_programs <- lapply(names(sample_programs), function(n) {
-    colnames(sample_programs[[n]]) <- paste(n,
-                                            seq(1, ncol(sample_programs[[n]])),
-                                            sep = ".")
-    return(sample_programs[[n]])
+    subclone_k <- sample_programs[[n]]
+    colnames(subclone_k) <- paste(n,
+                                  seq(1, ncol(subclone_k)),
+                                  sep = "."
+    )
+    genes_out <- setdiff(all_genes, rownames(subclone_k))
+    new_df <- as.data.frame(matrix(
+      0,
+      nrow = length(genes_out),
+      ncol = ncol(subclone_k)
+    ))
+    rownames(new_df) <- genes_out
+    colnames(new_df) <- colnames(subclone_k)
+    subclone_k <- rbind(subclone_k, new_df)
+    
+    return(subclone_k)
   })
   sample_programs <- Reduce(f = cbind, x = sample_programs)
   return(sample_programs)
 })
 
 names(sample_nmf) <- names(sample_split)
-
+saveRDS(sample_nmf, "metaprograms_cpm/sample_nmf.rds")
 #-------------------------------------------------------------------------------
 # Select robust NMF programs using code from Gabriela Kinker et al, 2020
 # ------------------------------------------------------------------------------
 
 ## Parameters
-intra_min_parameter <- 25
+intra_min_parameter <- 35
 intra_max_parameter <- 10
 inter_min_parameter <- 10
 
@@ -129,14 +142,14 @@ print(paste(
   format(Sys.time(), "%a %b %d %X %Y")
 ))
 
-saveRDS(nmf_programs, "metaprograms100/nmf_programs_mat.rds")
-saveRDS(nmf_intersect_hc, "metaprograms100/nmf_intersect_hc.rds")
-saveRDS(nmf_intersect, "metaprograms100/nmf_intersect.rds")
+saveRDS(nmf_programs, "metaprograms_cpm/nmf_programs_mat.rds")
+saveRDS(nmf_intersect_hc, "metaprograms_cpm/nmf_intersect_hc.rds")
+saveRDS(nmf_intersect, "metaprograms_cpm/nmf_intersect.rds")
 
 
-nmf_programs <- readRDS("metaprograms100/nmf_programs_mat.rds")
-nmf_intersect_hc <- readRDS("metaprograms100/nmf_intersect_hc.rds")
-nmf_intersect <- readRDS("metaprograms100/nmf_intersect.rds")
+nmf_programs <- readRDS("metaprograms_cpm/nmf_programs_mat.rds")
+nmf_intersect_hc <- readRDS("metaprograms_cpm/nmf_intersect_hc.rds")
+nmf_intersect <- readRDS("metaprograms_cpm/nmf_intersect.rds")
 
 
 # ------------------------------------------------------------------------------
@@ -200,13 +213,13 @@ while (sorted_intersection[1] > min_group_size) {
     )
     # Genes with overlap equal to the 50th gene
     genes_at_border <- genes_mp_temp[which(genes_mp_temp == genes_mp_temp[50])]
-
+    
     if (length(genes_at_border) > 1) {
       # Sort last genes in genes_at_border according to maximal NMF gene scores
       # Run across all NMF programs in curr_cluster and extract NMF scores for
       # each gene
       genes_curr_nmf_score <- c()
-
+      
       for (i in curr_cluster) {
         curr_sample <- gsub("\\.\\d\\.k\\d\\.\\d", "", i)
         matched_indices <- match(names(genes_at_border),
@@ -217,12 +230,12 @@ while (sorted_intersection[1] > min_group_size) {
         names(q) <- rownames(sample_nmf[[curr_sample]])[matched_genes]
         genes_curr_nmf_score <- c(genes_curr_nmf_score, q)
       }
-
+      
       genes_curr_nmf_score_sort <- sort(genes_curr_nmf_score, decreasing = TRUE)
       genes_curr_nmf_score_sort <- genes_curr_nmf_score_sort[unique(
         names(genes_curr_nmf_score_sort)
       )]
-
+      
       genes_mp_temp <- c(
         names(genes_mp_temp[which(genes_mp_temp > genes_mp_temp[50])]),
         names(genes_curr_nmf_score_sort)
@@ -235,7 +248,7 @@ while (sorted_intersection[1] > min_group_size) {
       nmf_programs[, names(intersection_with_genes_mp)[1]]
     )
     genes_mp  <- genes_mp_temp[1:50]
-
+    
     # Remove selected NMF
     nmf_programs <- nmf_programs[, -match(names(intersection_with_genes_mp)[1],
                                           colnames(nmf_programs))]
@@ -247,7 +260,7 @@ while (sorted_intersection[1] > min_group_size) {
   cluster_list[[paste0("MP", k)]] <- curr_cluster
   mp_list[[paste0("MP", k)]] <- genes_mp
   k <- k + 1
-
+  
   # Remove current chosen cluster
   nmf_intersect <- nmf_intersect[
     -match(curr_cluster, rownames(nmf_intersect)),
@@ -258,18 +271,16 @@ while (sorted_intersection[1] > min_group_size) {
   sorted_intersection <- sort(apply(nmf_intersect, 2, function(x) {
     (length(which(x >= min_intersect_initial)) - 1)
   }), decreasing = TRUE)
-
+  
   curr_cluster <- c()
   print(dim(nmf_intersect)[2])
 }
 print(paste("MPs computed!", format(Sys.time(), "%a %b %d %X %Y")))
-saveRDS(cluster_list, "metaprograms251010/cluster_list.rds")
-saveRDS(mp_list, "metaprograms251010/mp_list.rds")
+saveRDS(cluster_list, "metaprograms_cpm/cluster_list.rds")
+saveRDS(mp_list, "metaprograms_cpm/mp_list.rds")
 
-# cluster_list <- readRDS("metaprograms401015/cluster_list.rds")
-# mp_list <- readRDS("metaprograms401015/mp_list.rds")
-
-
+cluster_list <- readRDS("metaprograms_cpm/cluster_list.rds")
+mp_list <- readRDS("metaprograms_cpm/mp_list.rds")
 # ------------------------------------------------------------------------------
 # Heatmap of Jaccard similaity scores for NMF programs clustered into MPs
 # ------------------------------------------------------------------------------
@@ -298,10 +309,6 @@ for (j in seq_along(cluster_list)) {
 }
 
 nmf_intersect_sort <- nmf_intersect_original[inds_sorted, inds_sorted]
-rownames(nmf_intersect_sort) <- 1: ncol(nmf_intersect_sort)
-colnames(nmf_intersect_sort) <- 1: ncol(nmf_intersect_sort)
-labels <- ifelse(1:ncol(nmf_intersect_sort) %in% seq(0, 4250, by = 250), 
-                 rownames(nmf_intersect_sort), "")
 
 # Transform cluster list into a vector
 mp_members <- unlist(lapply(seq_along(cluster_list), function(i) {
@@ -321,7 +328,7 @@ cluster_annotation$study_sample <- gsub(
   rownames(cluster_annotation)
 )
 clinical <- data.table::fread(
-  "../../clinical_metadata_v4_clean.tsv"
+  "../../../clinical_metadata_v4_clean.tsv"
 )
 clinical$study_sample <- paste0(clinical$study, "__", clinical$sample)
 
@@ -347,7 +354,7 @@ translat_human_sites <- c(
 )
 
 # Add inferred sex
-seu <- readRDS("../../seu_lvl2_sex_inferred.rds")
+seu <- readRDS("../../../seu_lvl2_sex_inferred.rds")
 sex_inferred <- seu@meta.data %>%
   mutate(study_sample = paste0(study, "__", sample)) %>%
   select(sex, study_sample) %>%
@@ -374,8 +381,7 @@ cluster_annotation <- cluster_annotation %>%
     sex = ifelse(sex.y == "f", "Female", "Male"),
     sample_type = ifelse(sample_type == "m", "Metastasis", "Primary"),
     mp_cluster = factor(mp_members, levels = names(cluster_list))
-  ) %>%
-  column_to_rownames(var = "rowname")
+  )
   
 
 cluster_annotation$summarised_tumor_site <- translat_human_sites[
@@ -383,13 +389,14 @@ cluster_annotation$summarised_tumor_site <- translat_human_sites[
 ]
 
 # Add therapeutic clusters from scTherapy
-sctherapy_clust <- readRDS("../../sctherapy/clustering_df.rds")
+sctherapy_clust <- readRDS("../../../sctherapy/clustering_df.rds")
 cluster_annotation <- cluster_annotation %>%
   left_join(sctherapy_clust, by = "subclone")
 
 # Select columns for heatmap annotation
 cluster_annotation <- cluster_annotation %>%
   select(
+    rowname,
     sex,
     adult_pediatric,
     is_blood,
@@ -399,9 +406,9 @@ cluster_annotation <- cluster_annotation %>%
     study,
     cluster,
     mp_cluster
-  )
+  ) %>%
+  column_to_rownames(var = "rowname")
 
-rownames(cluster_annotation) <- 1: nrow(cluster_annotation)
 colnames(cluster_annotation) <- c(
   "Sex",
   "Age group",
@@ -426,7 +433,13 @@ pals <- list(
   "scTherapy clusters" = sctherapy_colors
 )
 
-
+cluster_annotation <- cluster_annotation %>%
+  arrange(`Meta-program`, `scTherapy clusters`)
+nmf_intersect_sort <- nmf_intersect_original[rownames(cluster_annotation), rownames(cluster_annotation)]
+rownames(nmf_intersect_sort) <- 1: ncol(nmf_intersect_sort)
+colnames(nmf_intersect_sort) <- 1: ncol(nmf_intersect_sort)
+labels <- ifelse(1:ncol(nmf_intersect_sort) %in% seq(0, 1200, by = 100), 
+                 rownames(nmf_intersect_sort), "")
 top_annotation <- ComplexHeatmap::HeatmapAnnotation(
   df = cluster_annotation[names(pals)],
   which = "column",
@@ -458,10 +471,21 @@ study_legend <- Legend(
   title = "Study"
 )
 
-custom_magma <- c(colorRampPalette(c("white", rev(magma(323, begin = 0.15))[1]))(10), rev(magma(323, begin = 0.18)))
+# Create the color ramp
+custom_magma <- c(colorRampPalette(c("white", rev(magma(323, begin = 0.15))[1]))(20), rev(magma(323, begin = 0.18)))
+n_total <- length(custom_magma)
+n_white <- 20
+n_magma <- n_total - n_white
+breaks <- c(
+  seq(0, 4, length.out = n_white), 
+  seq(4.0001, 20, length.out = n_magma)
+)
+custom_col <- colorRamp2(breaks, custom_magma)
+
+
 heat <- ComplexHeatmap::Heatmap(
   mat = nmf_intersect_sort,
-  col = custom_magma,
+  col = custom_col,
   # right_annotation = right_annotation,
   top_annotation = top_annotation,
   cluster_rows = FALSE,
@@ -485,6 +509,7 @@ heat <- ComplexHeatmap::Heatmap(
   row_title_side = "left",
   column_title_side = "bottom",
   heatmap_legend_param = list(
+    at = c(0, 5, 10, 15, 20),
     title = "Similarity\n(Jaccard index)",
     title_gp = gpar(fontsize = 14, fontface = "bold"),
     labels_gp = gpar(fontsize = 14),
@@ -495,7 +520,7 @@ heat <- ComplexHeatmap::Heatmap(
   use_raster = FALSE
 )
 png(
-  file = "heatmap_mps_25.png",
+  file = "heatmap_mps.png",
   width = 14,
   height = 14,
   units = "in",
@@ -518,7 +543,7 @@ library(openxlsx)
 mp_list <- mp_list[mps]
 nmf_programs <- readRDS("metaprograms/nmf_programs_mat.rds")
 universe <- unique(unlist(lapply(sample_nmf, function(x) rownames(x))))
-msig_df <- msigdbr::msigdbr(species = "Homo sapiens", category = "C5")
+msig_df <- msigdbr::msigdbr(species = "Homo sapiens", category = "C8")
 msig_list <- split(x = msig_df$gene_symbol, f = msig_df$gs_name)
 
 func_annot <- lapply(mp_list, function(metaprogram) {
@@ -543,10 +568,10 @@ for (i in seq_along(func_annot)) {
 }
 
 # Save the workbook to a file
-saveWorkbook(wb, file = "fgsea_go_ora.xlsx", overwrite = TRUE)
+saveWorkbook(wb, file = "fgsea_c8_ora.xlsx", overwrite = TRUE)
 
 # Check MPs from Kinker et al, Gavish et al., and Barkey et al and other functional gene sets
-gmt_df <- read.gmt("../../bc-meta_repo/bc-meta/reference/combined_gsets_functional.gmt")
+gmt_df <- read.gmt("../../../bc-meta_repo/bc-meta/reference/combined_gsets_functional.gmt")
 gmt_list <- split(x = gmt_df$gene, f = gmt_df$term)
 func_annot <- lapply(mp_list, function(program) {
   fgRes <- fgsea::fora(
