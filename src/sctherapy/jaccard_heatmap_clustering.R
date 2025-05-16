@@ -92,6 +92,105 @@ cluster_assignment <- factor(cluster_assignment, levels = as.character(1:10))
 names(cluster_assignment) <- names_subclones
 saveRDS(cluster_assignment, "speclustering_reordered.rds")
 
+
+
+
+
+### Compute therapeutic heterogeneity
+# Boxplot of Jaccard indexes per cluster
+cluster_list <- split(names(cluster_assignment), cluster_assignment)
+sample_heterogeneity <- sapply(names(cluster_assignment), function(s) {
+  cl <- cluster_assignment[s]
+  cluster_samples <- names(cluster_assignment[cluster_assignment == cl])
+  cluster_samples <- setdiff(cluster_samples, s)  # exclude self
+  sample_distance <- mean(1 - similarity_matrix[s, cluster_samples])  # mean distance
+  return(sample_distance)
+})
+
+# Add cluster info
+heterogeneity_df <- data.frame(
+  sample = names(sample_heterogeneity),
+  cluster = cluster_assignment[names(sample_heterogeneity)],
+  heterogeneity = sample_heterogeneity
+)
+
+boxplot <- ggplot(heterogeneity_df, aes(x = factor(cluster), y = heterogeneity, fill = factor(cluster))) +
+  geom_boxplot(outlier.size = 0.5) +
+  scale_fill_manual(values = sctherapy_colors) +
+  labs(
+    title = "Therapeutic Heterogeneity",
+    y = "Mean distance to samples in same cluster",
+    x = "Cluster"
+  ) +
+  theme_bw(base_size = 9) +
+  theme(
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        axis.text = element_text(size = 12, color = "black"),
+        axis.title = element_text(size = 12, face = "bold"),
+        legend.position = "none"
+    )
+
+ggsave("therapeutic_heterogeneity_sample.png", plot = boxplot, width = 5, height = 4, dpi = 300)
+
+# Save as pdf too
+pdf("therapeutic_heterogeneity_sample.pdf",
+    width = 5,
+    height = 4
+)
+boxplot
+dev.off()
+
+
+# Compute a mean Jaccard index per cluster
+jaccard_dist <- as.dist(1-similarity_matrix)
+heterogeneity_by_cluster <- lapply(unique(cluster_assignment), function(cl) {
+  samples_in_cl <- names(cluster_assignment[cluster_assignment == cl])
+  
+  # Subset distance matrix
+  cl_dists <- as.matrix(jaccard_dist)[samples_in_cl, samples_in_cl]
+  
+  # Get upper triangle values without diagonal
+  dists <- cl_dists[upper.tri(cl_dists)]
+  
+  data.frame(
+    cluster = cl,
+    mean_dist = mean(dists),
+    median_dist = median(dists),
+    sd_dist = sd(dists),
+    n_samples = length(samples_in_cl)
+  )
+}) %>% bind_rows()
+
+# Plot mean distance per cluster
+barplot <- ggplot(heterogeneity_by_cluster, aes(x = factor(cluster), y = mean_dist, fill = factor(cluster))) +
+  geom_bar(stat = "identity") +
+  scale_fill_manual(values = sctherapy_colors) +
+  labs(title = "Therapeutic Heterogeneity per Cluster",
+       y = "Mean intra-cluster Jaccard distance",
+       x = "Cluster") +
+  theme_bw(base_size = 9) +
+  theme(
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        axis.text = element_text(size = 12, color = "black"),
+        axis.title = element_text(size = 12, face = "bold"),
+        legend.position = "none"
+    )
+ggsave("therapeutic_heterogeneity_mean.png", plot = barplot, width = 5, height = 5, dpi = 300)
+
+# Save as pdf too
+pdf("therapeutic_heterogeneity_mean.pdf",
+    width = 5,
+    height = 4
+)
+barplot
+dev.off()
+
+
+
+
+
+
+
 ### Plot heatmap of similarity matrix
 ## Create top annotations for samples.
 clinical <- data.table::fread("../clinical_metadata_v4_clean.tsv")
@@ -160,6 +259,31 @@ clinical_subclones <- clinical_subclones %>%
         sex = ifelse(sex == "f", "Female", "Male"),
         sample_type = ifelse(sample_type == "m", "Metastasis", "Primary"),
         cluster = cluster_assignment)
+
+# Plot specific tumor type per cluster
+barplot_tumortype <- ggplot(clinical_subclones,
+                  aes(x = cluster, fill = tumor_type)) +
+  geom_bar(position = "fill") +
+  scale_fill_manual(values = tumor_type_colors) +
+  labs(x = "Specific tumor type", y = "Sample fraction", fill = "Tumor type") +
+  ggtitle("Specific tumor type across clusters") +
+  theme_bw() +
+  theme(plot.title = element_text(size = 15, hjust = 0.5, face = "bold"),
+        axis.title.x = element_text(size = 14, margin = margin(t = 6)),
+        axis.title.y = element_text(size = 14, margin = margin(r = 6)),
+        axis.text.x = element_text(size = 12, color = "black", angle = 45, hjust = 1),
+        axis.text.y = element_text(size = 12, color = "black"),
+        legend.title = element_text(size = 14, face = "bold"),
+        legend.text = element_text(size = 12))
+
+
+ggsave(
+ "figures/specific_tumor_type.png",
+  barplot_tumortype,
+  width = 14,
+  height = 8,
+  dpi = 500
+)
 
 
 subclone_annot_df <- clinical_subclones %>%
