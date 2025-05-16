@@ -1,99 +1,65 @@
-library(remotes)
-#remotes::install_github("carmonalab/GeneNMF") #from Github
-library(GeneNMF)
+#!/usr/bin/env Rscript
+args <- commandArgs(trailingOnly = TRUE)
+study_name <- args[1]
+
+
 library(Seurat)
 library(BPCells)
-library(ggplot2)
-library(UCell)
-library(patchwork)
+library(dplyr)
+library(tidyverse)
 library(Matrix)
 library(RcppML)
-library(viridis)
 
 setwd("/storage/scratch01/shared/projects/bc-meta/")
 
-# Load Seurat object
-seu.lvl2 <- readRDS("single_cell/seurat/v5/lvl2/seu_lvl2_sex_inferred.rds")
+# Load Seurat object with malignant cells
+seu <- readRDS("single_cell/seurat/v5/lvl1/seu_lvl1.rds")
+seu$study_sample <- paste0(seu$study, ".", seu$sample)
 
-# Select malignant cells
-malignant <- subset(seu.lvl2, subset = malignancy == TRUE)
-colnames(malignant) <- paste0("c", 1:ncol(malignant))
+# Subset study
+seu_study <- subset(seu, subset = study == study_name)
+seu_sample.list <- SplitObject(seu_study, split.by = "study_sample")
 
-# Subset malignant cells with computed Beyondcell Scores
-# bc <- readRDS("beyondcell/results/beyondcell_pancancer_final.Rds")
-# malignant <- subset(seu.lvl2, cells = colnames(bc))
+# Run NMF per sample in the study
+get_nmf_programs <- function(seu_sample, rank, seed = 123) {
+    counts <- GetAssayData(seu_sample, assay = "RNA", slot = "counts")
+    counts <- as.matrix(counts)
+    CP100K_log <- log2(t(t(counts) / colSums(counts)) * 100000 + 1)
+    print(dim(CP100K_log))
+    CP100K_log <- CP100K_log[apply(
+        CP100K_log, 1,
+        function(x) length(which(x > 3.5)) > ncol(CP100K_log) * 0.02
+    ), ]
+    print(dim(CP100K_log))
+    CP100K_log <- CP100K_log - rowMeans(CP100K_log)
+    CP100K_log[CP100K_log < 0] <- 0
+    nmf_sample <- lapply(rank, function(k) {
+        nmf <- RcppML::nmf(CP100K_log, k = k, verbose = FALSE, seed = seed)
+        print(k)
+        rownames(nmf$h) <- paste0("program", 1:nrow(nmf$h))
+        colnames(nmf$h) <- colnames(CP100K_log)
+        rownames(nmf$w) <- rownames(CP100K_log)
+        colnames(nmf$w) <- paste0("program", 1:ncol(nmf$w))
+        return(nmf)
+    })
+    print("NMF computed for a sample")
+    names(nmf_sample) <- paste0("k", rank)
+    return(nmf_sample)
+}
 
-# Normalize data from each sample to run NMF later
-malignant <- Seurat::NormalizeData(malignant,
-                                   normalization.method = "LogNormalize",
-                                   scale.factor = 10000)
-malignant <- Seurat::FindVariableFeatures(malignant, selection.method = "vst", nfeatures = 7000)              
-malignant$study_sample <- paste0(malignant$study, "__", malignant$sample) 
+nmf_programs <- lapply(seu_sample.list, function(sample) {
+    nmf_sample <- get_nmf_programs(sample, rank = 4:9)
+    return(nmf_sample)
+})
 
-# Create a list of Seurat objects (one for each sample)
-malignant <- JoinLayers(malignant)
-print("Layers joined")
-malignant <- SplitObject(malignant, split.by = "study_sample")
-print("Object splitted into samples")
+nmf_programs <- unlist(nmf_programs, recursive = FALSE)
+print(paste("NMF computed for each sample in study", study_name))
 
-setwd("/storage/scratch01/users/mgonzalezb/bc-meta/functional_nmf")
-saveRDS(malignant, "malignant_split_allsamples.rds")
-
-
-# Compute NMF for each sample
-geneNMF.programs <- GeneNMF::multiNMF(malignant, assay = "RNA", slot = "data", k = 4:9, nfeatures = 7000)
-print("NMF computed for each sample")
-
-saveRDS(geneNMF.programs, "geneNMFprograms_allsamples.rds")
-
-
-
-# geneNMF.programs <- readRDS("/storage/scratch01/users/mgonzalezb/bc-meta/functional_nmf/geneNMFprograms.rds")
-
-# geneNMF.metaprograms <- getMetaPrograms(geneNMF.programs,
-#                                         nMP = 7,
-#                                         weight.explained = 0.7,
-#                                         max.genes = 100)
-
-# saveRDS(geneNMF.metaprograms, "/storage/scratch01/users/mgonzalezb/bc-meta/functional_nmf/geneNMFmetaprograms.rds")
-
-# geneNMF.metaprograms <- readRDS("/storage/scratch01/users/mgonzalezb/bc-meta/functional_nmf/geneNMFmetaprograms_jaccard.rds")
-
-# setwd("/storage/scratch01/users/mgonzalezb/bc-meta/functional_nmf/")
-# ph <- plotMetaPrograms(geneNMF.metaprograms)
-# ggsave("plots/plot_mps_10_jccard.png", plot = ph, dpi = 300, height = 10, width = 10)
-
-
-# # Compute NMF for each sample
-# nmf_programs <- lapply(malignant, function(sample) {
-#     # sample <- ScaleData(sample, do.scale = FALSE, do.center = TRUE)
-#     # print("Sample data scaled!")
-#     mat <- sample[["RNA"]]$data[VariableFeatures(sample), ]
-#     # print("Sample data subsetted!")
-#     # mat <- as.matrix(mat)
-#     # mat[mat < 0] <- 0
-#     # print("Negative values removed!")
-#     # mat <- as(mat, "sparseMatrix")
-#     mat <- as(mat, "dgCMatrix")
-#     nmf_sample <- mclapply(c(4:30), function(k) {
-#         nmf <- RcppML::nmf(mat, k = k, verbose = FALSE, seed = 123)
-#         print(k)
-#         rownames(nmf$h) <- paste0("program", 1:nrow(nmf$h))
-#         colnames(nmf$h) <- colnames(mat)
-#         rownames(nmf$w) <- rownames(mat)
-#         colnames(nmf$w) <- paste0("program", 1:ncol(nmf$w))
-#         return(nmf)
-#     }, mc.cores = 9)
-#     print("NMF computed for a sample")
-#     names(nmf_sample) <- paste0("k", 4:30)
-#     return(nmf_sample)
-# })
-
-# nmf_programs <- unlist(nmf_programs, recursive = FALSE)
-# print("NMF computed for each sample")
-
-# print(object.size(nmf_programs), units = "auto")
-# saveRDS(
-#     nmf_programs,
-#     "/storage/scratch01/users/mgonzalezb/bc-meta/functional_nmf/geneNMFprograms_allsamples_4-30.rds"
-# )
+saveRDS(
+    nmf_programs,
+    paste0(
+        "functional_nmf/sample_wise/nmf_study/",
+        study_name,
+        "_nmfprograms_samplewise.rds"
+    )
+)
