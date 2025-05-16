@@ -261,3 +261,33 @@ for (study in unique(clinical_features$study)){
   ggsave(paste0("results/figures/tcs_study/", study, "_barplot_tc.png"), 
   patient_barplot, width = 8, height = 8, dpi = 500)
 }
+
+
+# Number of samples per specific cancer type
+clinical <- read.table("clinical_metadata_v4_clean.tsv", header = TRUE, sep = "\t")
+
+counts_cancer <- clinical %>%
+  count(tumor_type)
+
+barplot_counts_sample <- ggplot(counts_cancer, aes(x = reorder(tumor_type, n), y = n)) +
+      geom_bar(stat = "identity", fill = "steelblue") +
+      coord_flip() +
+      labs(x = "Tumor Type", y = "Number of Samples") +
+      theme_minimal()
+
+ggsave("cohort_statistics/figures/samples_per_cancer.png", plot = barplot_counts_sample, width = 4, height = 6)
+
+
+# Number of cells per spectific cancer type
+counts_malignants <- metadata %>%
+  filter(malignancy == TRUE) %>%
+  count(tumor_type)
+
+barplot_counts_cell <- ggplot(counts_malignants, aes(x = reorder(tumor_type, n), y = n)) +
+      geom_bar(stat = "identity", fill = "steelblue") +
+      coord_flip() +
+      labs(x = "Tumor Type", y = "Number of malignant cells") +
+      theme_minimal()
+
+ggsave("cohort_statistics/figures/cells_per_cancer.png", plot = barplot_counts_cell, width = 4, height = 6)
+
