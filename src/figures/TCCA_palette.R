@@ -196,7 +196,7 @@ tumor_type_colors <- c(
                     LAML = "#754C29",
                     ALL  = "#FF6600",
                     CLL  = "#BD5D09",
-                    MM   = "#800020",
+                    MM   = "#BF4362",
                     SKCM = "#BBD642",
                     SKSC = "#FF6666",
                     BCC  = "#D62727",
