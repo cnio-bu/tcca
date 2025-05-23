@@ -105,6 +105,13 @@ metadata <- metadata %>%
     left_join(cancer_types, by = "tumor_type") %>%
     relocate(refined_tumor_type, .after = "tumor_type")
 
+# Add therapeutic cluster to metadata
+sctherapy_cluster <- readRDS("../../sctherapy/results/clustering_df.rds")
+colnames(sctherapy_cluster)[2] <- "scTherapy_cluster"
+metadata <- metadata %>%
+    left_join(sctherapy_cluster, by = c("scevan_subclone" = "subclone")) %>%
+    relocate(scTherapy_cluster, .after = "scevan_subclone")
+
 clinical <- clinical %>%
     left_join(cancer_types, by = "tumor_type") %>%
     relocate(refined_tumor_type, .after = "tumor_type")
