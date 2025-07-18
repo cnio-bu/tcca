@@ -6,7 +6,7 @@ library(ggsankey)
 setwd("/home/lmgonzalezb/Documents/bc-meta/")
 
 # Load cohort metadata
-tcca.metadata <- read.table("cohort_statistics/tcca_annotation_raw.tsv", header = TRUE)
+tcca.metadata <- read.table("cohort_statistics/tcca_metadata.tsv", header = TRUE)
 sex <- read.table("cohort_statistics/tcca_metadata_sex_inferred.tsv", header = TRUE)
 tcca.metadata$sex <- sex$sex
 
@@ -18,7 +18,7 @@ cohort_features <- tcca.metadata %>%
     sample,
     study,
     sample_origin,
-    tumor_type,
+    refined_tumor_type,
     sample_type,
     refined_tumor_site,
     treated,
@@ -52,13 +52,13 @@ translat_human_sites <- c(
 
 # Add cancer type
 cancer_type <- list(
-  "Brain Cancer" = c("GBM", "MB", "OGD"),
-  "Neuroblastic Tumors" = c("GNB", "NB"),
+  "Brain Cancer" = c("GBM", "LGG"),
+  "Neuroblastic Tumors" = c("NB"),
   "Blood Cancer" = c("ALL", "LAML", "CLL", "MM"),
-  "Skin Cancer" = c("BCC", "SKCM", "SKSC", "SKAM", "UVM"),
-  "Sarcoma/Soft Tissue Cancer" = c("SARC", "GIST", "MESO"),
+  "Skin Cancer" = c("BCC", "SKCM", "SKSC", "UVM"),
+  "Sarcoma/Soft Tissue Cancer" = c("SARC", "MESO"),
   "Breast Cancer" = c("BRCA"),
-  "Lung Cancer" = c("SCLC", "NSCLC", "LUAD", "LUSC", "LCLC", "PLEU"),
+  "Lung Cancer" = c("SCLC", "LUAD", "LUSC", "LCLC"),
   "Ovarian Cancer" = c("OV"),
   "Colon/Colorectal Cancer" = c("COAD", "READ"),
   "Endometrial/Uterine Cancer" = c("CESC", "UCEC", "UCS"),
@@ -66,18 +66,19 @@ cancer_type <- list(
   "Bladder Cancer" = c("BLCA"),
   "Head and Neck Cancer" = c("HNSC"),
   "Prostate Cancer" = c("PRAD"),
-  "Kidney Cancer" = c("KRCC", "KTCC", "KIRC", "KIRCH"),
-  "Esophageal Cancer" = c("ESCA", "ESCC"),
+  "Kidney Cancer" = c("KIRC"),
+  "Esophageal Cancer" = c("ESCA"),
   "Pancreatic Cancer" = c("PAAD"),
-  "Other" = c("THCA", "STAD", "MISC")
+  "Gastric Cancer" = c("STAD"),
+  "Thyroid Cancer" = c("THCA")
 )
 
 
-cancer_type <- enframe(cancer_type, name = "broad_cancer_type", value = "tumor_type") %>%
+cancer_type <- enframe(cancer_type, name = "broad_cancer_type", value = "refined_tumor_type") %>%
   unnest()
 
 cohort_features <- cohort_features %>%
-  left_join(cancer_type, by = "tumor_type") %>%
+  left_join(cancer_type, by = "refined_tumor_type") %>%
   column_to_rownames(var = "study_sample") %>%
   mutate(across(where(is.character), ~ na_if(., ""))) %>%
   mutate(
@@ -86,7 +87,7 @@ cohort_features <- cohort_features %>%
       TRUE ~ "other"
     ),
     adult_pediatric = ifelse(age >= 16, "Adult", "Pediatric"),
-    is_blood = ifelse(tumor_type %in% c("ALL", "CLL", "LAML", "MM"), "Liquid", "Solid"),
+    is_blood = ifelse(refined_tumor_type %in% c("ALL", "CLL", "LAML", "MM"), "Liquid", "Solid"),
     treated = ifelse(treated == "t", "Treated", "Untreated"),
     sex = ifelse(sex == "f", "Female", "Male"),
     sample_type = ifelse(sample_type == "m", "Metastasis", "Primary")
@@ -172,8 +173,7 @@ ordered_levels <- c(
 
 # Move "Unknown" label to the below part of the plot
 ordered_node <- unique(ordered_levels)
-ordered_next.node <- c("Other",
-                       setdiff(ordered_node, cohort_features$broad_cancer_type))
+ordered_next.node <- c(setdiff(ordered_node, cohort_features$broad_cancer_type))
 
 # Transform the sample features dataframe into long format
 sankey_data <- cohort_features %>%
@@ -189,7 +189,7 @@ sankey_data <- cohort_features %>%
 
 
 # Add colors for each category
-source("fork/bc-meta/src/figures/TCCA_palette.R")
+source("bc-meta_repo/bc-meta/src/figures/TCCA_palette.R")
 
 sankey_data <- sankey_data %>%
   mutate(
@@ -277,8 +277,9 @@ sankey <- ggplot(
 
 ggsave(
   sankey,
-  file = "sankey_cohort.pdf",
+  file = "sankey_cohort_new.pdf",
   dpi = 500,
   width = 12,
   height = 8
 )
+
