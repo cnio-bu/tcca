@@ -80,7 +80,7 @@ dev.off()
 
 
 # Check spectral clustering
-spectral_result <- specc(similarity_matrix, centers = 19)
+spectral_result <- specc(similarity_matrix, centers = 10)
 cluster_assignment <- as.factor(spectral_result)
 cluster_assignment <- saveRDS(cluster_assignment, "speclustering.rds")
 names_subclones <- names(cluster_assignment)
@@ -203,12 +203,12 @@ new_sex <- seu@meta.data %>%
     select(study_sample, sex) %>%
     distinct()
 
-# Include TME subtypes
-tcca_annot <- read.table("/home/lmgonzalezb/Documents/bc-meta/cohort_statistics/tcca_annotation_raw.tsv",
-                         header = TRUE)
-tme <- tcca_annot %>%
+# Include TME subtypes and refined tumor type
+tcca_annot <- read.table("/home/lmgonzalezb/Documents/bc-meta/cohort_statistics/tcca_metadata.tsv",
+                         header = TRUE, sep = "\t")
+tumor_tme <- tcca_annot %>%
   mutate(study_sample = paste0(study, "_", sample)) %>%
-  select(study_sample, tme_archetype) %>%
+  select(study_sample, refined_tumor_type, tme_archetype) %>%
   distinct()
 
 data$study_sample <- paste0(sub("\\..*", "", data$Subclone), "_", data$Sample)
@@ -223,7 +223,7 @@ clinical_subclones <- subclones %>%
     left_join(clinical, by = "study_sample") %>% 
     select(-sex) %>%
     left_join(new_sex, by = "study_sample") %>%
-    left_join(tme, by = "study_sample")
+    left_join(tumor_tme, by = "study_sample")
 rownames(clinical_subclones) <- rownames(subclones)
 
 translat_human_sites <- c(
@@ -255,35 +255,10 @@ clinical_subclones <- clinical_subclones %>%
         ),
         adult_pediatric = ifelse(age >= 16, "Adult", "Pediatric"),
         is_blood = ifelse(tumor_type %in% c("ALL", "CLL", "LAML","MM"), "Liquid", "Solid"),
-        treated = ifelse(treated == "t", "Treated", "Untreated"),
+        treated = ifelse(treated != "", ifelse(treated == "t", "Treated", "Untreated"), NA),
         sex = ifelse(sex == "f", "Female", "Male"),
         sample_type = ifelse(sample_type == "m", "Metastasis", "Primary"),
         cluster = cluster_assignment)
-
-# Plot specific tumor type per cluster
-barplot_tumortype <- ggplot(clinical_subclones,
-                  aes(x = cluster, fill = tumor_type)) +
-  geom_bar(position = "fill") +
-  scale_fill_manual(values = tumor_type_colors) +
-  labs(x = "Specific tumor type", y = "Sample fraction", fill = "Tumor type") +
-  ggtitle("Specific tumor type across clusters") +
-  theme_bw() +
-  theme(plot.title = element_text(size = 15, hjust = 0.5, face = "bold"),
-        axis.title.x = element_text(size = 14, margin = margin(t = 6)),
-        axis.title.y = element_text(size = 14, margin = margin(r = 6)),
-        axis.text.x = element_text(size = 12, color = "black", angle = 45, hjust = 1),
-        axis.text.y = element_text(size = 12, color = "black"),
-        legend.title = element_text(size = 14, face = "bold"),
-        legend.text = element_text(size = 12))
-
-
-ggsave(
- "figures/specific_tumor_type.png",
-  barplot_tumortype,
-  width = 14,
-  height = 8,
-  dpi = 500
-)
 
 
 subclone_annot_df <- clinical_subclones %>%
@@ -294,6 +269,7 @@ subclone_annot_df <- clinical_subclones %>%
         sample_type,
         summarised_tumor_site,
         treated,
+        refined_tumor_type,
         tme_archetype,
         cluster) %>%
     as.data.frame()
@@ -302,55 +278,6 @@ subclone_annot_df$summarised_tumor_site <-  translat_human_sites[subclone_annot_
 
 write.table(subclone_annot_df, "annotations_subclones.tsv")
 
-# # Add study and cancer type to the table of subclones
-subclones_names <- rownames(subclone_annot_df)
-subclone_annot_df$study_sample <- paste0(sub("\\.[0-9]+$","", rownames(subclone_annot_df)))
-clinical <- data.table::fread("../clinical_metadata_v4_clean.tsv")
-clinical$study_sample <- paste0(clinical$study, ".", clinical$sample)
-
-clinical <- clinical %>%
-  select(study_sample, study, tumor_type) %>%
-  distinct()
-
-subclone_annot_df <- subclone_annot_df %>%
-  left_join(clinical, by = "study_sample")
-
-rownames(subclone_annot_df) <- subclones_names
-  
-# Add broad cancer types
-cancer_type <- list(
-  "Brain Cancer" = c("GBM", "MB", "OGD"),
-  "Neuroblastic Tumors" = c("GNB", "NB"),
-  "Blood Cancer" = c("ALL", "LAML", "CLL", "MM"),
-  "Skin Cancer" = c("BCC", "SKCM", "SKSC", "SKAM", "UVM"),
-  "Sarcoma/Soft Tissue Cancer" = c("SARC", "GIST", "MESO"),
-  "Breast Cancer" = c("BRCA"),
-  "Lung Cancer" = c("SCLC", "NSCLC", "LUAD", "LUSC", "LCLC", "PLEU"),
-  "Ovarian Cancer" = c("OV"),
-  "Colon/Colorectal Cancer" = c("COAD", "READ"),
-  "Endometrial/Uterine Cancer" = c("CESC", "UCEC", "UCS"),
-  "Liver/Biliary Cancer" = c("LIHC", "CHOL"),
-  "Bladder Cancer" = c("BLCA"),
-  "Head and Neck Cancer" = c("HNSC"),
-  "Prostate Cancer" = c("PRAD"),
-  "Kidney Cancer" = c("KRCC", "KTCC", "KIRC", "KIRCH"),
-  "Esophageal Cancer" = c("ESCA", "ESCC"),
-  "Pancreatic Cancer" = c("PAAD"),
-  "Thyroid Cancer" = c("THCA"),
-  "Gastric Cancer" = c("STAD"),
-  "Miscellaneous Cancer" = c("MISC")
-)
-
-cancer_type <- enframe(cancer_type, name = "broad_cancer_type", value = "tumor_type") %>%
-  unnest()
-
-subclone_annot_df <-  subclone_annot_df %>%
-  left_join(cancer_type, by = "tumor_type")  %>%
-  select(-study_sample, -tumor_type)
-  
-subclone_annot_df <- subclone_annot_df[, c(1:7, 9, 10, 8)]
-rownames(subclone_annot_df) <- subclones_names
-  
 colnames(subclone_annot_df) <- c(
     "Chromosomal sex",
     "Age group",
@@ -358,9 +285,8 @@ colnames(subclone_annot_df) <- c(
     "Sample type",
     "Sample site",
     "Treatment",
-    "TME archetype",
-    "Study",
     "Cancer type",
+    "TME archetype",
     "Cluster"
 )
 
@@ -371,9 +297,8 @@ pals <- list(
     "Sample type" = pm_colors,
     "Sample site" = tumor_sites_colors,
     "Treatment" = treatment_colors,
+    "Cancer type" = tumor_type_colors,
     "TME archetype" = tme_colors,
-    "Study" = study_colors, 
-    "Cancer type" = broad_cancer_type_colors,
     "Cluster" = sctherapy_colors
 )
 
@@ -385,28 +310,36 @@ sex_legend <- Legend(
   legend_gp = gpar(fill = pals$`Chromosomal sex`),
   ncol = 1,  # Split Group legend into 2 columns
   gap = unit(10, "mm"),
-  title = "Chromosomal sex"
+  title = "Chromosomal sex",
+  title_gp = gpar(fontsize = 12, fontface = "bold"),  # Title font
+  labels_gp = gpar(fontsize = 12) 
 )
 age_legend <- Legend(
     at = names(pals$`Age group`),
     legend_gp = gpar(fill = pals$`Age group`),
     ncol = 1,  # Split Group legend into 2 columns
     gap = unit(10, "mm"),
-    title = "Age group"
+    title = "Age group",
+    title_gp = gpar(fontsize = 12, fontface = "bold"),  # Title font
+    labels_gp = gpar(fontsize = 12)
   )
 solid_liquid_legend <- Legend(
   at = names(pals$`Solid/Liquid`),
   legend_gp = gpar(fill = pals$`Solid/Liquid`),
   ncol = 1,  # Split Group legend into 2 columns
   gap = unit(10, "mm"),
-  title = "Solid/Liquid"
+  title = "Solid/Liquid",
+  title_gp = gpar(fontsize = 12, fontface = "bold"),  # Title font
+  labels_gp = gpar(fontsize = 12)
 )
 sample_type_legend <- Legend(
   at = names(pals$`Sample type`),
   legend_gp = gpar(fill = pals$`Sample type`),
   ncol = 1,  # Split Group legend into 2 columns
   gap = unit(10, "mm"),
-  title = "Sample type"
+  title = "Sample type",
+  title_gp = gpar(fontsize = 12, fontface = "bold"),  # Title font
+  labels_gp = gpar(fontsize = 12)
 )
 
 treatment_legend <- Legend(
@@ -414,7 +347,9 @@ treatment_legend <- Legend(
   legend_gp = gpar(fill = pals$`Treatment`),
   ncol = 1,  # Split Group legend into 2 columns
   gap = unit(10, "mm"),
-  title = "Treatment"
+  title = "Treatment",
+  title_gp = gpar(fontsize = 12, fontface = "bold"),  # Title font
+  labels_gp = gpar(fontsize = 12)
 )
 
 tumor_site_legend <- Legend(
@@ -422,45 +357,46 @@ tumor_site_legend <- Legend(
   legend_gp = gpar(fill = pals$`Sample site`),
   ncol = 2,  # Split Group legend into 2 columns
   gap = unit(10, "mm"),
-  title = "Sample site"
-)
-
-tme_legend <- Legend(
-  at = names(pals$`TME archetype`),
-  legend_gp = gpar(fill = pals$`TME archetype`),
-  ncol = 1,  # Split Group legend into 2 columns
-  gap = unit(10, "mm"),
-  title = "TME archetype"
-)
-
-study_legend <- Legend(
-  at = names(pals$`Study`),
-  legend_gp = gpar(fill = pals$`Study`),
-  ncol = 3,  # Split Group legend into 2 columns
-  gap = unit(10, "mm"),
-  title = "Study"
+  title = "Sample site",
+  title_gp = gpar(fontsize = 12, fontface = "bold"),  # Title font
+  labels_gp = gpar(fontsize = 12)
 )
 
 cancertype_legend <- Legend(
   at = names(pals$`Cancer type`),
   legend_gp = gpar(fill = pals$`Cancer type`),
+  ncol = 4,  # Split Group legend into 2 columns
+  gap = unit(10, "mm"),
+  title = "Cancer type",
+  title_gp = gpar(fontsize = 12, fontface = "bold"),  # Title font
+  labels_gp = gpar(fontsize = 12)
+)
+
+tme_legend <- Legend(
+  at = names(pals$`TME archetype`),
+  legend_gp = gpar(fill = pals$`TME archetype`),
   ncol = 2,  # Split Group legend into 2 columns
   gap = unit(10, "mm"),
-  title = "Cancer type"
+  title = "TME archetype",
+  title_gp = gpar(fontsize = 12, fontface = "bold"),  # Title font
+  labels_gp = gpar(fontsize = 12)
 )
+
 
 cluster_legend <- Legend(
   at = names(pals$`Cluster`),
   legend_gp = gpar(fill = pals$`Cluster`),
   ncol = 1,  # Split Group legend into 2 columns
   gap = unit(10, "mm"),
-  title = "Cluster"
+  title = "Cluster",
+  title_gp = gpar(fontsize = 12, fontface = "bold"),  # Title font
+  labels_gp = gpar(fontsize = 12)
 )
 similarity_matrix <- round(similarity_matrix, 3)
 
 # Order by sample site, sample type, treatment, tme_archetype, cancer type
 subclone_annot_df <- subclone_annot_df %>%
-  arrange(`Sample site`, `Sample type`, Treatment, `TME archetype`, `Cancer type`)
+  arrange(`Sample site`, `Sample type`, Treatment, `Cancer type`, `TME archetype`)
 ordered_names <- rownames(subclone_annot_df)
 
 top_annotation <- ComplexHeatmap::HeatmapAnnotation(
@@ -469,6 +405,7 @@ top_annotation <- ComplexHeatmap::HeatmapAnnotation(
   col = pals,
   annotation_name_side = "left",
   annotation_name_rot = 0,
+  annotation_name_gp = gpar(fontsize = 12, fontface = "bold"),
   show_legend = FALSE
 )
 
@@ -497,28 +434,30 @@ heat <- ComplexHeatmap::Heatmap(
     column_dend_side = "bottom",
     name = "Jaccard Index",
     row_title = "Subclones",
+    row_title_gp = gpar(fontsize = 12, fontface = "bold"),
     row_title_side = "left",
     column_title = "Subclones",
+    column_title_gp = gpar(fontsize = 12, fontface = "bold"),
     column_title_side = "bottom",
     show_column_names = FALSE,
     show_row_names = FALSE,
-    row_names_gp = grid::gpar(fontsize = 8),
     row_names_side = "right",
     heatmap_legend_param = list(
         title = "Similarity\n(Jaccard index)",
         title_gp = gpar(fontsize = 12, fontface = "bold"),
         labels_gp = gpar(fontsize = 12),
-        title_gap = unit(10, "mm")),
-    heatmap_width = unit(10, "in"),
-    heatmap_height = unit(10, "in")
+        title_gap = unit(10, "mm"),
+        direction = "horizontal"),
+    heatmap_width = unit(8, "in"),
+    heatmap_height = unit(8, "in")
 )
 
 png(
-  file = "figures/heatmap_jaccard_spectralclust10_reordered2.png",
-  width = 16,
-  height = 15,
+  file = "figures/heatmap_sctherapey_clusters_final.png",
+  width = 14,
+  height = 14,
   units = "in",
-  res = 500
+  res = 300
 )
 
 ht_opt(
@@ -533,15 +472,14 @@ pd <- packLegend(sex_legend,
                  sample_type_legend, 
                  treatment_legend, 
                  cancertype_legend,
+                 tme_legend,
                  max_height = unit(8, "cm"), 
                  column_gap = unit(1, "cm"))
 draw(heat, 
      annotation_legend_side = "top", 
-     heatmap_legend_side = "right", 
+     heatmap_legend_side = "bottom", 
      annotation_legend_list = list(pd, 
-                                   tumor_site_legend, 
-                                   tme_legend, 
-                                   cancertype_legend, 
+                                   tumor_site_legend,
                                    cluster_legend))
 dev.off()
 
@@ -759,7 +697,7 @@ top_annotation <- ComplexHeatmap::HeatmapAnnotation(
   annotation_name_side = "left",
   annotation_name_rot = 0,
   show_annotation_name = TRUE,
-  annotation_name_gp = gpar(fontsize = 14),
+  annotation_name_gp = gpar(fontsize = 12),
   show_legend = c(
     "Sample site" = FALSE
   )
