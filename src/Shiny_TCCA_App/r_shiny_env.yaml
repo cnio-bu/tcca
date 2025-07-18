@@ -3,7 +3,7 @@ channels:
   - conda-forge
   - bioconda
 dependencies:
-  - r-base
+  - r-base==4.4
   - r-gridExtra
   - r-shiny
   - r-shinydashboard
@@ -11,11 +11,13 @@ dependencies:
   - r-dplyr
   - r-seurat
   - r-seuratobject
-  - r-seuratdisk
   - r-ggplot2
   - r-hdf5r
   - pandoc  # Requerido por shiny a veces
   - r-devtools  # Útil para instalaciones desde GitHub, opcional
+  - r-reticulate==1.42.0
+  - python
+
 
 
 # To create the conda environment, run the following command in your terminal:-----------------------------------------------------------

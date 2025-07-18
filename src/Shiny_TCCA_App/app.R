@@ -1,8 +1,9 @@
 # 1) Paths to the ShinyCell subapp and main app:
-shinycell_subapp_path <- "/Users/isanzp/Documents/CNIO/Shiny/Shiny_TCCA_App/shinyAppH5ad"
-main_app_path <- "/Users/isanzp/Documents/CNIO/Shiny/Shiny_TCCA_App"
+path <- "/home/lmgonzalezb/Documents/bc-meta/bc-meta_repo/bc-meta/src"
+shinycell_subapp_path <- paste0(path, "/Shiny_TCCA_App/shinyAppH5ad")
+main_app_path <- paste0(path,"Shiny_TCCA_App")
 
-
+print("Step1: Setting up ShinyCell subapp and main app...")
 
 # 2) Rebuild ShinyCell app if it doesn't exist
 if (!dir.exists(shinycell_subapp_path) ||
@@ -11,6 +12,8 @@ if (!dir.exists(shinycell_subapp_path) ||
   source("build_shinycell.R")
 }
 
+
+print("Step2: ShinyCell created!")
 
 # 3) Launch ShinyCell subapp in the background:
 message("→ Launching ShinyCell sub-app on port 19002…")

@@ -41,8 +41,9 @@ subclone_tsv     <- read.delim("www/subclone_level_annotated.tsv")
 
 # .h5ad file for representation path:
 h5ad_raw_path    <- "www/tcca_raw_mat.h5ad"
-shinycell_subapp_path <- "/Users/isanzp/Documents/CNIO/Shiny/Shiny_TCCA_App/shinyAppH5ad"
-main_app_path <- "/Users/isanzp/Documents/CNIO/Shiny/Shiny_TCCA_App"
+path <- "/home/lmgonzalezb/Documents/bc-meta/bc-meta_repo/bc-meta/src"
+shinycell_subapp_path <- paste0(path, "Shiny_TCCA_App/shinyAppH5ad")
+main_app_path <- paste0(path, "Shiny_TCCA_App")
 
 
 
