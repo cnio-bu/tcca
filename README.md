@@ -13,10 +13,9 @@ and modular scripts for functional, therapeutic, and tumor microenvironment anal
     <picture>
     <source media="(prefers-color-scheme: dark)" srcset="./.img/general_workflow_dark.png">
     <source media="(prefers-color-scheme: light)" srcset="./.img/general_workflow.png">
-    <img alt="Fallback image description" src="./.img/general_workflow.png", >
+    <img alt="Fallback image description" src="./.img/general_workflow.png", width = 50%>
     </picture>
 </p>
-
 
 
 ## Requirements
