@@ -1,33 +1,27 @@
-# Pan-cancer analysis of beyondcell drug signatures
-This repo hold the code of the aforementioned project. For collaborators: start
-here to setup your dev. environment.
+# The Therapeutic Cancer Cell Atlas (TCCA)
 
-### The Therapeutic Cancer Cell Atlas (TCCA)
-<img src="./.img/sankey_cohort.png" width="850" />
+## Overview
+This repository contains all code and workflows used to preprocess, analyze, 
+and visualize the **Therapeutic Cancer Cell Atlas (TCCA)** — an integrated 
+single-cell atlas with therapeutic predictions built from publicly available datasets.  
+It includes a Snakemake-based pipeline for preprocessing GEO single-cell expression data, 
+and modular scripts for functional, therapeutic, and tumor microenvironment analyses.
 
-*Figure 1: Number of samples across different clinical features*
 
-# Setup the environment for code and data sharing
+## Features
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./.img/general_workflow_dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="./.img/general_workflow.png">
+  <img alt="Fallback image description" src="./.img/general_workflow.png">
+</picture>
 
-## Get the code
 
-You'll need to keep a local copy of the  preprocessing/analysis codebase: 
-1. Install git.
-1. Ask @SGMartin for the appropiate collaborator rights.
-1. Fork the repository.
 
-The default branch is called **main**. Any changes you wish to incorporate to the main
-repo should be done by making a pull request from your fork. Remember to periodically
-sync your fork with the main repo.
 
-## Get the data
-All of the data is currently hosted in our cluster as a shared project space at:
+## Requirements
 
-```
-/storage/scratch01/shared/projects/bc-meta
-```
 
-You will have to ask either SGMartin/dcerdan to add you to the project's group
-so that you may access the files.
-## Useful tips
-1. We are (loosely) following these guidelines for  coding conventions: [tidy guidelines](https://style.tidyverse.org/).
+
+
+
+
