@@ -9,12 +9,13 @@ and modular scripts for functional, therapeutic, and tumor microenvironment anal
 
 
 ## Features
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./.img/general_workflow_dark.png">
-  <source media="(prefers-color-scheme: light)" srcset="./.img/general_workflow.png">
-  <img alt="Fallback image description" src="./.img/general_workflow.png">
-</picture>
-
+<p align="center">
+    <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./.img/general_workflow_dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="./.img/general_workflow.png">
+    <img alt="Fallback image description" src="./.img/general_workflow.png", >
+    </picture>
+</p>
 
 
 
