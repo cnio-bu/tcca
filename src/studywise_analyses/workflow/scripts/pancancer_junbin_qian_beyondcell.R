@@ -35,7 +35,11 @@ gs <- beyondcell::GetCollection(SSc, n.genes = 250, include.pathways = FALSE)
 
 get_bcscores <- function(sc){
     bc <- bcScore(sc = sc, gs = gs, expr.thres = 0.1)
-   
+    bc_immuno <- bcScore(sc = sc, gs = immunotherapy, expr.thres = 0.1)
+
+    # Merge both bc objects
+    bc <- bcMerge(bc, bc_immuno)
+    
     # Do not allow NaNs
     bc@normalized[is.na(bc@normalized)] <- 0
     bc <- bcRecompute(bc, slot = "normalized")

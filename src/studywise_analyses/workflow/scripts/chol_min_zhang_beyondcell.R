@@ -33,11 +33,18 @@ filter_malignants <- function(sc) {
 
 ## Calculate bcscores sample wise, for each sample, for malignant pops. only
 gs <- beyondcell::GetCollection(SSc, n.genes = 250, include.pathways = FALSE)
+
 get_bcscores <- function(sc){
     mat <- as.matrix(GetAssayData(sc, slot = "data"))
     meta <- sc@meta.data
     bc <- bcScore(sc = mat, gs = gs, expr.thres = 0.1)
+    bc_immuno <- bcScore(sc = mat, gs = immunotherapy, expr.thres = 0.1)
     bc@meta.data <- meta
+    bc_immuno@meta.data <- meta
+
+    # Merge both bc objects
+    bc <- bcMerge(bc, bc_immuno)
+    
     # Do not allow NaNs
     bc@normalized[is.na(bc@normalized)] <- 0
     bc <- bcRecompute(bc, slot = "normalized")
