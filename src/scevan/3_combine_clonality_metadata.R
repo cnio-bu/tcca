@@ -24,8 +24,8 @@ rownames(full_table) <- NULL
 ## Save lvl 2 full table
 write.table(full_table, "/storage/scratch01/shared/projects/bc-meta/single_cell/cna_metadata/full_clonality_table_lvl2.tsv", sep = "\t")
 
-##Filter table to contain only malignant cells (from lvl 2 to lvl 3)
-full_table_3 <- full_table %>%
+##Filter table to contain only malignant cells (from lvl 2 to lvl 1)
+full_table_1 <- full_table %>%
   filter(malignancy == TRUE)
 
-write.table(full_table_3, "/storage/scratch01/shared/projects/bc-meta/single_cell/cna_metadata/full_clonality_table_lvl3.tsv", sep = "\t")
+write.table(full_table_1, "/storage/scratch01/shared/projects/bc-meta/single_cell/cna_metadata/full_clonality_table_lvl1.tsv", sep = "\t")
