@@ -23,7 +23,7 @@ cellxgene_table <- cellxgene_table %>%
 
 #Filter table and save
 cellxgene_table <- cellxgene_table %>%
-  filter(barcode__study__sample %in% clonality_table$barcode__study__sample) #Samples in lvl3
+  filter(barcode__study__sample %in% clonality_table$barcode__study__sample) #Samples in lvl1
 cellxgene_table <- subset(cellxgene_table, select = -barcode__study__sample) 
 
-write.table(cellxgene_table, paste0("/storage/scratch01/shared/projects/bc-meta/single_cell/cna_metadata/cnv_cells_genes_lvl3/", filename, ".tsv"), sep = "\t", row.names = FALSE)
+write.table(cellxgene_table, paste0("/storage/scratch01/shared/projects/bc-meta/single_cell/cna_metadata/cnv_cells_genes_lvl1/", filename, ".tsv"), sep = "\t", row.names = FALSE)

@@ -30,10 +30,10 @@ cbind.fill<-function(mat.list, genes){
 
         write_matrix_dir(
             mat = m,
-            dir = paste0("/storage/scratch01/shared/projects/bc-meta/single_cell/cna_metadata/cnv_cells_genes_lvl3_bpcells_merged/", name),
+            dir = paste0("/storage/scratch01/shared/projects/bc-meta/single_cell/cna_metadata/cnv_cells_genes_lvl1_bpcells_merged/", name),
             overwrite = TRUE)
         
-        m <- open_matrix_dir(dir = paste0("/storage/scratch01/shared/projects/bc-meta/single_cell/cna_metadata/cnv_cells_genes_lvl3_bpcells_merged/", name))
+        m <- open_matrix_dir(dir = paste0("/storage/scratch01/shared/projects/bc-meta/single_cell/cna_metadata/cnv_cells_genes_lvl1_bpcells_merged/", name))
 
         return(m)
     }
@@ -44,7 +44,7 @@ cbind.fill<-function(mat.list, genes){
 }
 
 ## Open all bpcells mats
-file.dir <- "/storage/scratch01/shared/projects/bc-meta/single_cell/cna_metadata/cnv_cells_genes_lvl3_bpcells/"
+file.dir <- "/storage/scratch01/shared/projects/bc-meta/single_cell/cna_metadata/cnv_cells_genes_lvl1_bpcells/"
 files.set <- list.dirs(file.dir, full.names = FALSE, recursive = FALSE)
 
 # Loop through h5ad files and output BPCells matrices on-disk
@@ -75,11 +75,11 @@ full_mat <- cbind.fill(data.list, all_genes)
 # Write the matrix to a directory
 write_matrix_dir(
   mat = full_mat,
-  dir = "/storage/scratch01/shared/projects/bc-meta/single_cell/cna_metadata/cnv_cells_genes_lvl3_fullbpcellsmatrix",
+  dir = "/storage/scratch01/shared/projects/bc-meta/single_cell/cna_metadata/cnv_cells_genes_lvl1_fullbpcellsmatrix",
   overwrite = TRUE)
 
 #Generate base metadata table
-clonality_table <- read.table("/storage/scratch01/shared/projects/bc-meta/single_cell/cna_metadata/full_clonality_table_lvl3.tsv", sep = "\t", header = T)
+clonality_table <- read.table("/storage/scratch01/shared/projects/bc-meta/single_cell/cna_metadata/full_clonality_table_lvl1.tsv", sep = "\t", header = T)
 clonality_table <- clonality_table %>%
   mutate(barcode_study_sample = paste(scevan_barcode, study, sample, sep  = "__"),
          study_sample = paste(study, sample, sep  = "__"))
