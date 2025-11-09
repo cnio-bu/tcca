@@ -50,7 +50,7 @@ After preprocessing, Seurat v4 objects from each study are converted to optimize
 - `generate_all_levels_seurat.R`: builds merged Seurat v5 objects across all studies at three filtering levels (lvl3: all cells; lvl2: clinically annotated samples with ≥100 malignant cells; lvl1: malignant-only subset from lvl2).
 > These scripts are run after the main Snakemake pipeline.
 
-### 4. Basic single-cell analysis with Scanpy
+### 4. Basic single-cell analysis with Scanpy
 The following scripts (`src/scanpy`) are run in Python using Scanpy based on the Seurat v5 level 2 (lvl2) dataset exported as an .h5ad file.
 - `envs/` directory provides environment specifications for running integration workflows and benchmarking analyses.
 - `dimred_before_int.py`: normalization, HVG detection, PCA, and initial clustering before integration.
@@ -68,12 +68,12 @@ After computing Beyondcell scores in the snakemake pipeline, several scripts in 
 - `get_sp_bc.R`: extract the switch point, a metric summarizing the balance between sensitive and resistant cell populations per drug and sample, allowing easier drug response comparison across samples.
 > All scripts are run outside the Snakemake pipeline and rely on Beyondcell outputs generated per study.
 
-### 4. Inference of CNVs with SCEVAN
+### 6. Inference of CNVs with SCEVAN
 After completing the Snakemake pipeline, several standalone R scripts are used to process and integrate SCEVAN copy number alterations (CNVs) inference into interpretable, analysis-ready formats.
 > These scripts are executed outside the Snakemake pipeline (`src/scevan/`)
 > Many of them are designed for parallel computing on an HPC environment and are submitted as independent jobs using SLURM (sbatch), as indicated in the script headers.
 
-#### 3.1. Running SCEVAN and preprocessing results
+#### 6.1. Running SCEVAN and preprocessing results
 - `1_scevan_all_samples.R`: run SCEVAN for all studies.
 - `2_scevan_metadata.R`: extract clonality metrics per study.
 - `3_combine_clonality_metadata.R`: merge all clonality outputs into a single summary table.
@@ -82,7 +82,7 @@ After completing the Snakemake pipeline, several standalone R scripts are used t
 - `6_tsv_to_bpcells_lvl*.R`: convert CNV matrices into on-disk BPCells objects for efficient storage and access.
 - `7_final_cellxgene_v5_cnafill.R`: combine all BPCells matrices into a single, genome-wide CNV Seurat v5 object including clinical and clonality metadata.
 - `8_sketch_rds.R`: generate downsampled Seurat “sketch” datasets (50k and 5k cells) for efficient visualization and exploratory analysis.
-#### 3.2. Generating Interpretable CNV Matrices
+#### 6.2. Generating Interpretable CNV Matrices
 These scripts summarize the raw SCEVAN output into biologically meaningful genomic units.
 - `9_interpretable_matrix/1_regionxclone.R`: build a complete region × clone matrix across all samples.
 - `9_interpretable_matrix/2_genomicranges.R`: create mapping files to associate SCEVAN regions with either custom genomic bins or cytogenetic bands.
@@ -90,7 +90,7 @@ These scripts summarize the raw SCEVAN output into biologically meaningful genom
 - `9_interpretable_matrix/3_cytobands.R`: aggregate CNV values into standard cytobands for more interpretable genome-level visualization.
 
 
-### 4. Single-cell annotation and TME classification
+### 7. Single-cell annotation and TME classification
 This directory (`src/cell_annotation_tme`) contains the R notebook detailing the harmonization of cell type annotations. We first standardized all cell names into a unified nomenclature, integrating author-provided labels with results from automated tools (Azimuth and SingleR) used on un-annotated studies. Finally, we calculated sample-specific proportions of immune and stromal populations to define 12 distinct Tumor Microenvironment (TME) archetypes through clustering.
 
 
