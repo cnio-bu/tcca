@@ -44,9 +44,31 @@ For more details, see the [Beyondcell repository](https://github.com/cnio-bu/bey
 #### 2.3. Functional enrichment
 To compute functional enrichment of malignant cells across different gene expression signatures, the pipeline includes functional enrichment rules for each study. These rules take as input the malignant-cell objects and a reference gene set file (e.g., `reference/combined_gsets_functional.gmt`), and calculate enrichment scores for each cell using the Beyondcell Score (BCS) through the script `general_functional_enrichment.R`.
 
-### 3. From Seurat
+### 3. Seurat object conversion and structuring
+After preprocessing, Seurat v4 objects from each study are converted to optimized Seurat v5 formats using BPCells for efficient storage and analysis with scripts in `src/seurat`.
+- `export_all_raw_to_v5.R`: converts Seurat v4 objects per study into Seurat v5, retains only protein-coding genes, and saves study-level Seurat v5 objects backed by BPCells matrices.
+- `generate_all_levels_seurat.R`: builds merged Seurat v5 objects across all studies at three filtering levels (lvl3: all cells; lvl2: clinically annotated samples with ≥100 malignant cells; lvl1: malignant-only subset from lvl2).
+> These scripts are run after the main Snakemake pipeline.
 
-### 3. Inference of CNVs with SCEVAN
+### 4. Basic single-cell analysis with Scanpy
+The following scripts (`src/scanpy`) are run in Python using Scanpy based on the Seurat v5 level 2 (lvl2) dataset exported as an .h5ad file.
+- `envs/` directory provides environment specifications for running integration workflows and benchmarking analyses.
+- `dimred_before_int.py`: normalization, HVG detection, PCA, and initial clustering before integration.
+- `integration.py`: applies multiple state-of-the-art integration methods (e.g., scVI, SCANVI, Scanorama) o generate batch-corrected embeddings for integrated visualization across studies.
+- `benchmark_integration.py`: evaluates integration performance using standard metrics to compare batch correction and biological conservation across the three integration methods.,
+- `cluster.py`: visualizes integrated embeddings, performs clustering (all cells and malignant subset), and validates cell type annotation using known marker genes.
+
+### 5. Beyondcell results analysis
+After computing Beyondcell scores in the snakemake pipeline, several scripts in ``src/beyondcell integrate and analyze drug-response profiles across studies:
+- `export_bcimmuno_to_BP.R`: converts individual Beyondcell results into Seurat v5 objects with BPCells matrices (cells × drugs).
+- `merge_studywise_bps_immuno.R`: aligns and merges all Beyondcell matrices into a unified dataset with consistent drug identifiers and metadata.
+- `therapuetic_clusters.R`: performs basic analysis on the global Beyondcell matrix, including dimensionality reduction, clustering of cells using Seurat v5 and generates sketch datasets.
+- `optimal_clustering.R`: evaluates clustering parameters (k, resolution) using internal validation metrics (Davies–Bouldin, Silhouette, Purity).
+- `therapeutic_clusters_umap_heatmap.R`: visualizes final therapeutic clusters, drug activity patterns, and their distribution across cancer types.
+- `get_sp_bc.R`: extract the switch point, a metric summarizing the balance between sensitive and resistant cell populations per drug and sample, allowing easier drug response comparison across samples.
+> All scripts are run outside the Snakemake pipeline and rely on Beyondcell outputs generated per study.
+
+### 4. Inference of CNVs with SCEVAN
 After completing the Snakemake pipeline, several standalone R scripts are used to process and integrate SCEVAN copy number alterations (CNVs) inference into interpretable, analysis-ready formats.
 > These scripts are executed outside the Snakemake pipeline (`src/scevan/`)
 > Many of them are designed for parallel computing on an HPC environment and are submitted as independent jobs using SLURM (sbatch), as indicated in the script headers.

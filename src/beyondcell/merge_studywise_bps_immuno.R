@@ -2,20 +2,13 @@ library(BPCells)
 library(tidyverse)
 library(Seurat)
 
+setwd("/storage/scratch01/shared/projects/bc-meta/beyondcell_immuno/")
+
 all_mats <- list.dirs(
-    path = "/storage/scratch01/shared/projects/bc-meta/beyondcell_hq",
+    path = "studywise_bpcells",
     full.names = TRUE
     )
 
-
-# yay!
-cbind.fill <-function(...){
-    nm <- list(...) 
-    nm<-lapply(nm, as.matrix)
-    n <- max(sapply(nm, nrow)) 
-    do.call(cbind, lapply(nm, function (x) 
-        rbind(x, matrix(, n-nrow(x), ncol(x))))) 
-}
 
 all_mats <- all_mats[2:length(all_mats)]
 
@@ -24,39 +17,56 @@ mats <- map(
     open_matrix_dir
 )
 
-full_mat <- do.call(cbind.fill, mats)
+# All drug set
+all_drugs <- unique(unlist(lapply(mats, rownames)))
+
+# Align all matrices so they have the same set of drugs, filling in missing drugs 
+# with 0 in studies where they are absent
+align_sparse <- function(mat_dir, all_drugs) {
+    mat <- as(mat_dir, "dgCMatrix") # extract dgCMatrix
+    row_idx <- match(rownames(mat), all_drugs)
+
+    Matrix::sparseMatrix(
+        i = rep(row_idx, times = ncol(mat)),
+        j = rep(1:ncol(mat), each = nrow(mat)),
+        x = as.numeric(mat),
+        dims = c(length(all_drugs), ncol(mat)),
+        dimnames = list(all_drugs, colnames(mat))
+    )
+}
+
+# Align all matrices
+mats_aligned <- lapply(mats, align_sparse, all_drugs = all_drugs)
+
+# Combine into a single matrix
+full_mat <- do.call(cbind, mats_aligned)
 full_mat[is.na(full_mat)] <- 0
 full_mat <- as(full_mat, "sparseMatrix")
 
-## get rid of rows without names. BC failed with those bc. gsets were not
-## bidirectional
-full_mat <- full_mat[1:90, ]
-
 write_matrix_dir(
     mat = full_mat,
-    dir = "/storage/scratch01/users/mgonzalezb/bc-meta/beyondcell_hq/full_mat_beyondcell"
+    dir = "./full_mat_beyondcell",
+    overwrite = TRUE
     )
 
 rm(full_mat, mats)
 gc()
 
-mat <- open_matrix_dir(dir = "/storage/scratch01/users/mgonzalezb/bc-meta/beyondcell_hq/full_mat_beyondcell")
+mat <- open_matrix_dir(dir = "full_mat_beyondcell")
 
 ## load metadata
 all.meta <- list.files(
-    "/storage/scratch01/shared/projects/bc-meta/beyondcell_hq",
+    "studywise_bpcells",
     pattern = "*.tsv",
     full.names = TRUE
     )
 
-
 meta.data <- all.meta %>%
-    map(read.table, row.names = 1, header = TRUE) 
+    map(read.table, row.names = 1, header = TRUE)
 
 meta.data[[27]]$patient <- meta.data[[27]]$orig.ident
 
 for(i in c(1:length(all.meta))){
-    print(i)
     this_study <- all.meta[[i]]
     meta.data[[i]]$study <- this_study
 }
@@ -95,7 +105,7 @@ meta.data_full <-  meta.data  %>%
 
 ## get clinical data
 clinical <- data.table::fread(
-    "/storage/scratch01/shared/projects/bc-meta/single_cell/seurat/v5/clinical_metadata_v4_clean.tsv"
+    "../single_cell/seurat/v5/clinical_metadata_v4_clean_new.tsv"
     )
 
 ## Add clinical metadata
@@ -126,11 +136,11 @@ mat2 <- mat[, meta.data_full_clinical$new_cell_id]
 
 write_matrix_dir(
     mat = mat2,
-    dir = "/storage/scratch01/users/mgonzalezb/bc-meta/beyondcell_hq/full_mat_beyondcell",
+    dir = "full_mat_beyondcell",
     overwrite = TRUE
     )
 
 write_tsv(
     x = meta.data_full_clinical,
-    file = "/storage/scratch01/users/mgonzalezb/bc-meta/beyondcell_hq/beyondcell_metadata_with_clinical.tsv"
+    file = "beyondcell_metadata_with_clinical.tsv"
     )
