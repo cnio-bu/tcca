@@ -656,8 +656,6 @@ saveRDS(drug_list, "drug_list.rds")
 
 
 # Plot heatmap with the new clustering
-# Reorder MPs to group related ones together and remove MP11, linked only to
-# brain metastases of melanoma (with skin pigmentation enrichment)
 mp_names <- names(which(unlist(lapply(cluster_list, length)) >= 10))
 cluster_list <- cluster_list[mp_names]
 
