@@ -137,7 +137,7 @@ The `src/sctherapy` folder contains the workflow for predicting subclone-level d
 
 <br>
 
-### 9. Functional Analysis in the TCCA Cohort
+### 9. Functional analysis in the TCCA Cohort
 This section describes the workflow for computing functional pathway enrichment in malignant cells from the TCCA cohort using complementary approaches: **GSVA, UCell, Beyondcell, PROGENy, NMF, and Hotspot**. The workflow is organized into four main stages:
 
 
@@ -165,3 +165,11 @@ Equivalent enrichment matrices are also generated using Beyondcell scores (inste
 - `tcca_decoupler.py`: infers pathway activity scores using PROGENy gene signatures and decoupler’s multivariate linear model (MLM), producing per-cell activity matrices for downstream analysis.
 - `hotspot_tcca.py`: identifies gene co-expression modules in malignant cells using the Hotspot algorithm. It computes local and global autocorrelations based on scANVI embeddings, clusters genes into modules, and outputs module definitions and per-cell activity scores.
 - `annotate_hotspot.R`: performs functional enrichment of Hotspot-derived modules using MSigDB and custom gene sets via FGSEA overrepresentation analysis (ORA) to identify overrepresented pathways.
+
+<br>
+
+### Intra-tumoral heterogeneity (ITH) analysis
+The folder `/src/heterogeneity/`contains scripts to quantify, compare, and visualize different dimensions of intra-tumor heterogeneity (ITH) across samples and cancer types.
+- `ith_score_subclone&sample.R`: quantifies ITH at both subclone and sample levels by computing transcriptomic, genomic, and therapeutic heterogeneity scores.
+- `cor_genomic_vs_therapeutic_ith.R`: integrates genomic and therapeutic ITH metrics per sample, and explores their correlation across cancer types.
+- `cor_genomic_ith_vs_sp.R`: computes correlation between genomic ITH and drug switch points (SP) per sample, both pan-cancer and by cancer type (primary and metastatic).
