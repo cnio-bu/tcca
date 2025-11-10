@@ -14,7 +14,7 @@ cbind.fill <- function(...){
 }
 
 all.studies <- list.files(
-    path = "/storage/scratch01/shared/projects/bc-meta/single_cell/functional_new",
+    path = "/storage/scratch01/shared/projects/bc-meta/single_cell/functional",
     pattern = "*.rds",
     full.names = TRUE
     )
@@ -48,12 +48,12 @@ for(study in all.studies){
 
     write_matrix_dir(
         mat = full_mat,
-        dir = paste0("/storage/scratch01/shared/projects/bc-meta/functional_new/", study_name),
+        dir = paste0("/storage/scratch01/shared/projects/bc-meta/functional/", study_name),
         overwrite=TRUE
         )
     
     write.table(x = full_meta, file = paste0(
-        "/storage/scratch01/shared/projects/bc-meta/functional_new/",
+        "/storage/scratch01/shared/projects/bc-meta/functional/",
         study_name,
         ".tsv"
         ),

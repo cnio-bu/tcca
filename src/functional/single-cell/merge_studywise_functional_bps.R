@@ -2,10 +2,11 @@ library(BPCells)
 library(tidyverse)
 
 all_mats <- list.dirs(
-    path = "results/functional/",
+    path = "/storage/scratch01/users/mgonzalezb/bc-meta/functional/v5",
     full.names = TRUE
     )
 
+setwd("/storage/scratch01/users/mgonzalezb/bc-meta/functional")
 
 # yay!
 cbind.fill<-function(...){
@@ -29,21 +30,20 @@ full_mat <- as(full_mat, "sparseMatrix")
 
 write_matrix_dir(
     mat = full_mat,
-    dir = "results/functional/full_mat_functional"
+    dir = "results/full_mat_functional_old"
     )
 
 rm(full_mat, mats)
 gc()
 
-mat <- open_matrix_dir(dir = "results/functional/full_mat_functional/")
+mat <- open_matrix_dir(dir = "results/full_mat_functional")
 
 ## load metadata
 all.meta <- list.files(
-    "results/functional/",
+    "/storage/scratch01/users/mgonzalezb/bc-meta/functional/v5",
     pattern = "*.tsv",
     full.names = TRUE
     )
-
 
 meta.data <- all.meta %>%
     map(read.table, row.names = 1, header = TRUE) 
@@ -51,7 +51,6 @@ meta.data <- all.meta %>%
 meta.data[[27]]$patient <- meta.data[[27]]$orig.ident
 
 for(i in c(1:length(all.meta))){
-    print(i)
     this_study <- all.meta[[i]]
     meta.data[[i]]$study <- this_study
 }
@@ -90,7 +89,7 @@ meta.data_full <-  meta.data  %>%
 
 ## get clinical data
 clinical <- data.table::fread(
-    "results/annotation/clinical_metadata_v4_clean.tsv"
+    "/storage/scratch01/shared/projects/bc-meta/single_cell/seurat/v5/clinical_metadata_v4_clean.tsv"
     )
 
 ## Add clinical metadata
@@ -121,11 +120,11 @@ mat2 <- mat[, meta.data_full_clinical$new_cell_id]
 
 write_matrix_dir(
     mat = mat2,
-    dir = "results/functional/full_mat_functional",
+    dir = "results/full_mat_functional",
     overwrite = TRUE
     )
 
 write_tsv(
     x = meta.data_full_clinical,
-    file = "results/annotation/functional_metadata_with_clinical.tsv"
+    file = "results/functional_metadata_with_clinical.tsv"
     )

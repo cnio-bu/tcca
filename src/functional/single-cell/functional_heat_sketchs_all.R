@@ -59,4 +59,4 @@ write_matrix_dir(mat = sketched_mat, dir = "results_ucell/sketch_mat_functional"
 write_matrix_dir(mat = sketched_mat_5k, dir = "results_ucell/sketch_mat_functional_5k")
 
 ## export object
-saveRDS(object = seu, file = "results_ucell/ucell_pancancer.Rds")
+saveRDS(object = seu, file = "results_ucell/functional_pancancer.Rds")

@@ -110,29 +110,58 @@ These scripts summarize the raw SCEVAN output into biologically meaningful genom
 The `src/sctherapy` folder contains the workflow for predicting subclone-level drug responses using scTherapy; characterizing therapeutic clusters (TCs); deriving transcriptomic signatures; and correlating these signatures with patient survival.
 
 **1. Subclone-level predictions**  
-- `sctherapy_fullcohort.R`: Predicts drug responses for malignant subclones (only from samples containing normal or TME cells).
+- `sctherapy_fullcohort.R`: predicts drug responses for malignant subclones (only from samples containing normal or TME cells).
 
 **2. Visualization**  
-- `heatmap_subclones.R`: Heatmap of predicted drug responses per subclone.  
-- `jaccard_heatmap_clustering.R`: Spectral clustering of subclones based on Jaccard similarity.  
+- `heatmap_subclones.R`: heatmap of predicted drug responses per subclone.  
+- `jaccard_heatmap_clustering.R`: spectral clustering of subclones based on Jaccard similarity.  
 - `plot_clustering_umap.R`: UMAP embedding of subclones colored by TC.
 
 **3. Cluster characterization**  
-- `cluster_characterization.R` and `clinical_chisq.R`: Generate stacked barplots of TCs across clinical variables (sex, age, tumor type, TME composition, study).  
+- `cluster_characterization.R` and `clinical_chisq.R`: generate stacked barplots of TCs across clinical variables (sex, age, tumor type, TME composition, study).  
 - Statistical tests (Chi-squared or Fisher’s exact) to identify drugs significantly associated with TCs.  
 - Bubble and UpSet plots showing drugs grouped by mechanism of action.  
 - **Significant drugs for each therapeutic cluster (TC):** FDR ≤ 0.05 and affecting ≥50% of subclones within the TC.
+- `plot_bc_immuno.R`: visualizes Beyondcell-predicted immunotherapy sensitivity for malignant cells from scTherapy-defined subclones and summarizes mean scores per therapeutic cluster (TC).
+- `generate_drug_table.R`: generates a summary table of predicted drugs, their mechanisms of action (MoAs), TC assignments, and associated clinical variables at the subclone level.
 
 **4. TC transcriptomic signatures**  
-- `marker_sctherapy_clusters.R`: Subset malignant cells from the Seurat level 2 expression object with scTherapy predictions; normalize and identify highly variable and differentially expressed (DE) genes per TC.  
+- `marker_sctherapy_clusters.R`: subset malignant cells from the Seurat level 2 expression object with scTherapy predictions; normalize and identify highly variable and differentially expressed (DE) genes per TC.  
 - Dotplots of top genes; export therapeutic cluster-specific signatures in GMT format.
 
 **5. Survival analysis (TCGA)**  
-- `survival_marker_genes.R`: Compute ssGSEA scores for TC signatures.  
+- `survival_marker_genes.R`: sompute ssGSEA scores for TC signatures.  
 - Fit Cox proportional hazards models adjusted for cancer type, sex, age, and tumor stage/grade.  
 - Analyses for progression-free interval (PFI) and overall survival (OS); outputs include tables and forest plots.
-
+- `envs/` directory provides environment specifications for running ssGSEA and survival analysis.
 
 <br>
 
-## 9. Functional analysis in TCCA cohort
+### 9. Functional Analysis in the TCCA Cohort
+This section describes the workflow for computing functional pathway enrichment in malignant cells from the TCCA cohort using complementary approaches: **GSVA, UCell, Beyondcell, PROGENy, NMF, and Hotspot**. The workflow is organized into four main stages:
+
+
+**1. Pseudobulk generation and GSVA enrichment (`pseudobulk/`)**
+- `bulk_from_expr.R`: aggregates malignant cell expression per sample to create a pseudobulk expression matrix.
+- `bulk_functional.R`: computes gene set enrichment using GSVA with predefined gene sets (from MSigDB and published cancer transcriptional programs) and performs biclustering of pathways and samples to reveal functional patterns.
+- `calculate_overlaps.R`: calculates pairwise Jaccard indices between gene sets to quantify redundancy and flag overlapping sets for potential filtering.
+- 
+**2. Single-cell functional enrichment (UCell and Beyondcell) (`single-cell/`)**
+- `functional_cell_level.R`: computes cell-level functional enrichment using AddModuleScore with metaprograms from Gavish et al., Nature 2023.
+- `functional_ucell.R`: computes UCell-based functional enrichment per cell using signatures from MSigDB and cancer-related transcriptional programs (/reference/combined_gsets_functional.gmt).
+Equivalent enrichment matrices are also generated using Beyondcell scores (instead of UCell) via Snakemake:
+- `export_bcfunctional_to_BP.R`: converts Seurat v4 objects into Seurat v5 with BPCell matrices.
+- `merge_studywise_functional_bps.R`: merges Beyondcell matrices from all studies into a single functional matrix across all malignant cells.
+- `functional_heat_sketchs_all.R` and `functional_heat_sketchs_sctherapy.R`: generate sketches of 5,000 cells from the UCell enrichment matrix (including all malignant cell population or subsetting cells from scTherapy-defined subclones) to create ComplexHeatmap visualizations of functional activity with `functional_heatmap.R`.
+  
+**3. NMF-based metaprogram discovery (`nmf/`)**
+- `compute_nmf.R`: runs sample-wise NMF decomposition on malignant cells to infer recurrent transcriptional programs. Executed in parallel across studies using SLURM (`run_nmf_study&subclone.sh`).
+- `generate_mps_sample.R`and `robust_nmf_sample.R`: aggregate and cluster NMF-derived metaprograms across samples using a robust custom approach adapted from Gavish et al., Nature 2023 and Kinker et al., Nat Genet 2020.
+- `mps_ucell.R`: calculates UCell enrichment for metaprograms at single cell level, generates heatmaps for 5k-cell sketches, and summarizes metaprogram activity with dot and violin plots (including CIN70 signature analysis) per therapeutic cluster.
+- `assign_to_mps.py`: adds UCell scores of cancer-state metaprograms to malignant cells, assigns each cell to its dominant metaprogram, and visualizes metaprogram activity on scANVI-MDE UMAPs.
+- `integration_from_mps.py`: adds UCell scores of cancer-state metaprograms to malignant cells and generates UMAP embeddings based on these signatures to integrate cells across samples and studies.
+  
+**4. Alternative pathway inference methods (`other_functional_infer/`)**
+- `tcca_decoupler.py`: infers pathway activity scores using PROGENy gene signatures and decoupler’s multivariate linear model (MLM), producing per-cell activity matrices for downstream analysis.
+- `hotspot_tcca.py`: identifies gene co-expression modules in malignant cells using the Hotspot algorithm. It computes local and global autocorrelations based on scANVI embeddings, clusters genes into modules, and outputs module definitions and per-cell activity scores.
+- `annotate_hotspot.R`: performs functional enrichment of Hotspot-derived modules using MSigDB and custom gene sets via FGSEA overrepresentation analysis (ORA) to identify overrepresented pathways.
