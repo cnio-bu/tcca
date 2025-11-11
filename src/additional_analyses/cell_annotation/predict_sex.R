@@ -9,10 +9,8 @@
 
 
 library(Seurat)
-library(BPCells)
-library(speckle)
+library(BPCells)∫
 library(cellXY)
-library(CellBench)
 library(org.Hs.eg.db)
 library(dplyr)
 

@@ -73,7 +73,7 @@ subclones_pct <- subclones_brca_long %>%
   mutate(pct = count / sum(count)) %>%
   ungroup()
 
-# Graficar barras agrupadas con proporciones
+# Plot bars with percentages
 ggplot(subclones_pct, aes(x = Category, y = pct, fill = scTherapy.Cluster)) +
   geom_col(position = position_dodge(width = 0.8), width = 0.7) +
   facet_grid(~ Variable, scales = "free_x", space = "free_x") +

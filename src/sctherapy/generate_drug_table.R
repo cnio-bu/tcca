@@ -222,3 +222,17 @@ write.table(
   sep = "\t",
   row.names = FALSE
 )
+
+subclone_final <- subclone %>%
+  left_join(select(mps, c("scevan_subclone", "top_MP_clean")), by = c("Subclone.Name" = "scevan_subclone"))
+
+subclone_final <- subclone_final %>% 
+  mutate(
+    Functional_metaprogram_family = str_extract(Functional_metaprogram, "(?<=_)[^.]+"),
+    Functional_metaprogram_family = case_when(
+    str_detect(Functional_metaprogram, "LineageSpecific.Hemato") ~ "LineageSpecific.Hemato",
+    str_detect(Functional_metaprogram, "LineageSpecific.Neural") ~ "LineageSpecific.Neural",
+    str_detect(Functional_metaprogram, "Secretory|Melanocyte") ~ "LineageSpecific.Other",
+    TRUE ~ Functional_metaprogram_family
+  )
+  )
