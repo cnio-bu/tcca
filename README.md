@@ -149,7 +149,7 @@ This section describes the workflow for computing functional pathway enrichment 
   
 **2. Single-cell functional enrichment (UCell and Beyondcell) (`single-cell/`)**
 - `functional_cell_level.R`: computes cell-level functional enrichment using AddModuleScore with metaprograms from Gavish et al., Nature 2023.
-- `functional_ucell.R`: computes UCell-based functional enrichment per cell using signatures from MSigDB and cancer-related transcriptional programs (/reference/combined_gsets_functional.gmt).
+- `functional_ucell.R`: computes UCell-based functional enrichment per cell using signatures from MSigDB and cancer-related transcriptional programs (`/reference/combined_gsets_functional.gmt`).
 Equivalent enrichment matrices are also generated using Beyondcell scores (instead of UCell) via Snakemake:
 - `export_bcfunctional_to_BP.R`: converts Seurat v4 objects into Seurat v5 with BPCell matrices.
 - `merge_studywise_functional_bps.R`: merges Beyondcell matrices from all studies into a single functional matrix across all malignant cells.
@@ -175,27 +175,31 @@ The folder `/src/heterogeneity/`contains scripts to quantify, compare, and visua
 - `cor_genomic_vs_therapeutic_ith.R`: integrates genomic and therapeutic ITH metrics per sample, and explores their correlation across cancer types.
 - `cor_genomic_ith_vs_sp.R`: computes correlation between genomic ITH and drug switch points (SP) per sample, both pan-cancer and by cancer type (primary and metastatic).
 
+<br>
+
 ### 11. Additional analyses
-**Additional cell annotations (`cell_annotation/`)**
+This section contains supplementary scripts for extended analyses beyond the main workflow. It includes: enhanced cell and clinical annotations, correlation analyses linking scTherapy predictions, Beyondcell scores, and functional modules, as well as focused use cases for TC4 and TC10 subclones to explore CNV patterns, gene signatures, and drug sensitivity.
+
+**1. Additional cell annotations (`cell_annotation/`)**
 - `reharmonize_tcca_metadata.R`: harmonizes level-2 TCCA metadata by integrating subclone membership, scTherapy therapeutic cluster assignments, and a refined cancer-type classification (46 → 34 types).
 - `predict_sex.R`: infers missing sex annotations from single-cell expression profiles with `cellXY` R package and updates the Seurat metadata accordingly.
 
-**Clinical database (`clinical_annotation/`)**
+**2. Clinical database (`clinical_annotation/`)**
 - `annotate_cancer_cell_lines.R`: adds standardized metadata to profiled cancer cell lines (sex, age, disease, lineage, collection site).
 - `filter_raw_clinical_data.R`: cleans and standardizes sample raw clinical metadata by removing duplicates/misassignments and harmonizing tumor types and sites.
 
-**Correlations with Beyondcell??**
+**3. Correlations with Beyondcell??**
 - `compare_sctherapy_vs_beyondcell.R`: correlates Beyondcell scores with scTherapy predictions (converted to numeric values) at the subclone level. 
 - `cor_bc_vs_mps.R`: computes Pearson correlations between 43 functional MPs and 589 Beyondcell drugs.
 
-**Use case of TC4 (`tc4_usecase/`)**
+**4. Use case of TC4 (`tc4_usecase/`)**
 - `check_cnv_overlap_tc4.R`: identifies recurrent CNV co-amplifications across chr3q cytobands in TC4 subclones.
 - `get_tc4_peak_gmt.R`: retrieves gene sets located in cytobands recurrently amplified in TC4 subclones (mainly chr3q peaks) and intersects them with top TC4 marker genes.
 - `gdsc_tc4.R`: correlates TC4 CNV-derived gene signatures with GDSC2 drug sensitivity profiles to identify compounds associated with TC4 amplifications.
 - `go_enrichment.R`: performs GO enrichment analysis on genes within CNV regions recurrently amplified in TC4 subclones to identify biological processes associated with these genomic alterations.
 - `cor_bc_vs_tc4sigs.R`: correlates enrichment of TC4 amplification gene sets with Beyondcell drug sensitivity scores in TC4 cells.
 
-**Use case of TC10 (`tc10_usecase/`)**
+**5. Use case of TC10 (`tc10_usecase/`)**
 - `gdsc_tc10.R`: correlates TC10 gene signature enrichment with GDSC drug sensitivity across cell lines and tumor types.
 - `brca_clinical.R`: visualizes BRCA subclone distributions across age groups, sample type, TME archetypes, and tumor subtypes (bars colored by TC).
 - `brca_bc_plots.R`: plots Beyondcell drug sensitivity scores for TC10-predicted drugs in BRCA patient cells. 
