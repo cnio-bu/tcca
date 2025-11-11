@@ -211,7 +211,7 @@ This section contains supplementary scripts for extended analyses beyond the mai
 
 ### 12. Figures
 This section includes scripts used to generate the main and supplementary figures of the study, covering clinical summaries, TME archetype visualizations, and clonality analyses. Other figures are produced directly within the corresponding analysis scripts.
--`TCCA_palette.R`: defines color palettes for clinical variables, therapeutic clusters, and MPS groups.
+- `TCCA_palette.R`: defines color palettes for clinical variables, therapeutic clusters, and MPS groups.
 - `fig1_sankey_cohort.R`: sankey plot showing sample distribution across key clinical variables.
 - `tab1_summary_clinical_table.R`: generates a summary table of clinical features per cancer type.
 - `fig1F_2B_S13_summary_plots.R`: summarizes single-cell and scTherapy data, including malignant vs. TME proportions, TME archetype distributions, top drugs and MoAs per TC, and TC composition.
