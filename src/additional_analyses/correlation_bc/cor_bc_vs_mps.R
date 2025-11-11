@@ -9,7 +9,11 @@ source(file = "~/bc-meta/figures/TCCA_palette.R")
 setwd("/storage/scratch01/shared/projects/bc-meta/")
 mat_bc <- open_matrix_dir(dir = "./beyondcell_immuno/full_mat_beyondcell")
 
-mat_mps <- read.table("functional_nmf/sample_wise/mps_ucell_scores.tsv", header = TRUE)
+mat_mps <- read.table(
+  "functional_nmf/sample_wise/mps_ucell_scores.tsv", 
+  header = TRUE
+)
+
 # Transform to sparse matrix
 mat_bc <- as(mat_bc, "sparseMatrix")
 mat_mps <- as(mat_mps, "sparseMatrix")

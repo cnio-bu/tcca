@@ -58,6 +58,8 @@ After preprocessing, Seurat v4 objects from each study are converted to optimize
 This directory `src/cell_annotation_tme` contains the R notebook detailing the harmonization of cell type annotations. It covers the standardization of cell names, integration of author-provided labels with automated annotations (Azimuth and SingleR), calculation of sample-specific immune and stromal proportions, and the definition of 12 Tumor Microenvironment (TME) archetypes through clustering.
 **Scripts**
 - `add_author_annotation.R`: adds missing or mismatched author-provided cell type labels to preprocessed Seurat objects, ensuring correct mapping of cell names and updating metadata.
+- `rename_tme_archetype.R`: rename TME archetypes
+  
 <br>
 
 ### 5. Basic single-cell analysis with Scanpy
@@ -153,7 +155,7 @@ This section describes the workflow for computing functional pathway enrichment 
 Equivalent enrichment matrices are also generated using Beyondcell scores (instead of UCell) via Snakemake:
 - `export_bcfunctional_to_BP.R`: converts Seurat v4 objects into Seurat v5 with BPCell matrices.
 - `merge_studywise_functional_bps.R`: merges Beyondcell matrices from all studies into a single functional matrix across all malignant cells.
-- `functional_heat_sketchs_all.R` and `functional_heat_sketchs_sctherapy.R`: generate sketches of 5,000 cells from the UCell enrichment matrix (including all malignant cell population or subsetting cells from scTherapy-defined subclones) to create ComplexHeatmap visualizations of functional activity with `functional_heatmap.R`.
+- `functional_heat_sketchs_all.R` and `functional_heat_sketchs_sctherapy.R`: generate sketches of 5,000 cells from the UCell enrichment matrix (including all malignant cell population or subsetting cells from scTherapy-defined subclones) to create ComplexHeatmap visualizations of functional activity with `functional_clusters_heatmap.R` and `functional_heatmap.R`.
   
 **3. NMF-based metaprogram discovery (`nmf/`)**
 - `compute_nmf.R`: runs sample-wise NMF decomposition on malignant cells to infer recurrent transcriptional programs. Executed in parallel across studies using SLURM (`run_nmf_study&subclone.sh`).
@@ -203,3 +205,16 @@ This section contains supplementary scripts for extended analyses beyond the mai
 - `gdsc_tc10.R`: correlates TC10 gene signature enrichment with GDSC drug sensitivity across cell lines and tumor types.
 - `brca_clinical.R`: visualizes BRCA subclone distributions across age groups, sample type, TME archetypes, and tumor subtypes (bars colored by TC).
 - `brca_bc_plots.R`: plots Beyondcell drug sensitivity scores for TC10-predicted drugs in BRCA patient cells. 
+
+<br>
+
+
+### 12. Figures
+This section includes scripts used to generate the main and supplementary figures of the study, covering clinical summaries, TME archetype visualizations, and clonality analyses. Other figures are produced directly within the corresponding analysis scripts.
+-`TCCA_palette.R`: defines color palettes for clinical variables, therapeutic clusters, and MPS groups.
+- `fig1_sankey_cohort.R`: sankey plot showing sample distribution across key clinical variables.
+- `tab1_summary_clinical_table.R`: generates a summary table of clinical features per cancer type.
+- `fig1F_2B_S13_summary_plots.R`: summarizes single-cell and scTherapy data, including malignant vs. TME proportions, TME archetype distributions, top drugs and MoAs per TC, and TC composition.
+- `fig1E_circular_tme.R`: circular plot displaying sample percentages by TME group and archetype.
+- `sankey_three_layers.R`: three-layer Sankey plot linking subclones, TME archetypes, tumor types, and functional metaprograms.
+- `figS5_S6_clonality_plots.R`: computes and visualizes clonality (subclones per 1,000 cells) across cancer types and clinical variables.
