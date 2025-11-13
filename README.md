@@ -14,6 +14,18 @@ This is a simplified diagram of the workflow steps:
 </p>
 
 ## Requirements
+- Snakemake (>=7.0)
+- Conda or Mamba (for environment management)
+- For GPU-accelerated basecalling: CUDA-compatible GPU
+
+## Setup the environment for code and data sharing
+1. Clone this repository:
+```bash
+git clone https://github.com/cnio-bu/tcca.git
+cd tcca
+```
+2. Download the preprocessed TCCA dataset, which contains 1,089,024 malignant cells and 750,218 non-malignant cells from 36 studies, along with metadata:
+https://tcca.bioinfo.cnio.es/session/8609a42b7abfbebe6b39778186468dd4/download/download-dl_h5ad?w=
 
 ## Workflow steps
 ### 1. GEO data preparation
