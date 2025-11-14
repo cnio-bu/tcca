@@ -1,7 +1,8 @@
-library(brcarat)
+library(Seurat)
 library(BPCells)
 library(dplyr)
 library(tidyverse)
+library(clustree)
 setwd("/storage/scratch01/shared/projects/bc-meta/beyondcell_immuno/brca_usecase")
 
 # Load expression matrix of cells from BRCA patients
@@ -19,10 +20,10 @@ metadata_brca <- metadata %>%
   filter(refined_tumor_type == "BRCA" & patient != "ccl")
 rownames(metadata_brca) <- metadata_brca$cell
 
-# Create brcarat object
-brca <- CreatebrcaratObject(counts = expr.mat, meta.data = metadata_brca)
+# Create Seurat object
+brca <- CreateSeuratObject(counts = expr.mat, meta.data = metadata_brca)
 
-# Perform brcarat analysis.
+# Perform Seurat analysis.
 brca <- NormalizeData(brca)
 
 brca <- FindVariableFeatures(brca)
@@ -81,4 +82,10 @@ brca <- RunUMAP(
   reduction.name = "umap.harmony"
 )
 saveRDS(brca, "seu_brca_harmony.rds")
-∫
+
+# To then use beyondcell for subclone level expression data, we need to transform
+# the object to Seurat version 4
+seurat_v4 <- JoinLayers(brca)
+
+# Guardar
+saveRDS(seurat_v4, "seu_brca_harmony_v4.rds")
