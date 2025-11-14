@@ -216,6 +216,7 @@ This section contains supplementary scripts for extended analyses beyond the mai
 **5. Use case of TC10 (`tc10_usecase/`)**
 - `gdsc_tc10.R`: correlates TC10 gene signature enrichment with GDSC drug sensitivity across cell lines and tumor types.
 - `brca_clinical.R`: visualizes BRCA subclone distributions across age groups, sample type, TME archetypes, and tumor subtypes (bars colored by TC).
+- `brca_expr_clusters.R`: performs integration and clustering analysis of BRCA patient single-cell expression data using Seurat.
 - `brca_bc_plots.R`: plots Beyondcell drug sensitivity scores for TC10-predicted drugs in BRCA patient cells. 
 
 <br>
