@@ -92,6 +92,7 @@ After computing Beyondcell scores in the snakemake pipeline, several scripts in 
 - `optimal_clustering.R`: evaluates clustering parameters (k, resolution) using internal validation metrics (Davies–Bouldin, Silhouette, Purity).
 - `therapeutic_clusters_umap_heatmap.R`: visualizes final therapeutic clusters, drug activity patterns, and their distribution across cancer types.
 - `get_sp_bc.R`: extract the switch point, a metric summarizing the balance between sensitive and resistant cell populations per drug and sample, allowing easier drug response comparison across samples.
+- `bcgeneset_to_gmt.R`: converts Beyondcell gene set collection (SSc) to GMT format and merges it with the immunotherapy GMT file.
 > All scripts are run outside the Snakemake pipeline and rely on Beyondcell outputs generated per study.
 
 <br>
