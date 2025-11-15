@@ -93,6 +93,7 @@ After computing Beyondcell scores in the snakemake pipeline, several scripts in 
 - `therapeutic_clusters_umap_heatmap.R`: visualizes final therapeutic clusters, drug activity patterns, and their distribution across cancer types.
 - `get_sp_bc.R`: extract the switch point, a metric summarizing the balance between sensitive and resistant cell populations per drug and sample, allowing easier drug response comparison across samples.
 - `bcgeneset_to_gmt.R`: converts Beyondcell gene set collection (SSc) to GMT format and merges it with the immunotherapy GMT file.
+- `bc_subclones_gsva.R`: computes pseudobulk profiles for TCCA subclones (with scTherapy prediction) and applies GSVA to assess drug-response enrichment using SSc and immunotherapy signatures from Beyondcell.
 > All scripts are run outside the Snakemake pipeline and rely on Beyondcell outputs generated per study.
 
 <br>
@@ -219,6 +220,7 @@ This section contains supplementary scripts for extended analyses beyond the mai
 - `brca_clinical.R`: visualizes BRCA subclone distributions across age groups, sample type, TME archetypes, and tumor subtypes (bars colored by TC).
 - `brca_expr_clusters.R`: performs integration and clustering analysis of BRCA patient single-cell expression data using Seurat.
 - `brca_bc_plots.R`: plots Beyondcell drug sensitivity scores for TC10-predicted drugs in BRCA patient cells. 
+- `brca_bc_subclones.R`: computes pseudobulk profiles for BRCA subclones and applies GSVA to assess drug-response enrichment using SSc and immunotherapy signature collections from Beyondcell.
 
 <br>
 
