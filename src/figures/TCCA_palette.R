@@ -96,6 +96,8 @@ MoAs_colors <- c(
   "Microtubule agent" = "#ff5f76",
   "Chromatin agent" = "#ffb6b6",
   "EGFR inhibitor" = "#fff154",
+  "PARP inhibitor" = "#7d58ad",
+  "EGFR inhibitor;VEGFR inhibitor" = "#3f685e",
   "Pro-apoptotic agent" = "#ba7fff",
   "Kinase inhibitor" = "#ffdd72",
   "MAPK inhibitor" = "#4b71e5",
@@ -118,8 +120,10 @@ MoAs_colors <- c(
   "Protein synthesis inhibitor" = "#3267a8",
   "Cell cycle arrest;PI3K/AKT/mTOR signaling inhibitor" = "#086AFC",
   "SRC inhibitor" = "#FFFE89",
+  "Immunotherapy" = "#9e0089",
   "Other" = "#BBB9B7"
 )
+
 
 ## TME colors
 tme_colors <- c(

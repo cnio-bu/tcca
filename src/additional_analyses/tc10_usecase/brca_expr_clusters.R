@@ -38,10 +38,11 @@ ElbowPlot(brca, ndims = 100)
 
 
 brca <- FindNeighbors(brca, dims = 1:40)
-brca <- FindClusters(brca, resolution = seq(0.1, 1, 0.1))
+brca <- FindClusters(brca, resolution = 0.5, cluster.name = "unintegrated_umap")
 
 brca <- RunUMAP(brca, dims = 1:40)
-DimPlot(brca, reduction = "umap", group.by = "sample") + NoLegend()
+cells_tcs <- rownames(brca@meta.data %>% filter(!is.na(scTherapy_cluster)))
+DimPlot(brca, reduction = "umap", cells = cells_tcs, group.by = "scTherapy_cluster") + NoLegend()
 
 
 # Large batch effect caused by different samples in the visualization
@@ -64,16 +65,9 @@ brca <- IntegrateLayers(
 brca <- JoinLayers(brca)
 brca <- FindNeighbors(brca, reduction = "integrated.harmony", dims = 1:40)
 brca <- FindClusters(brca, resolution = seq(0.1, 1, 0.1))
-clustree <- clustree(brca@meta.data[, grep("integrated_snn_res.", 
-                                          colnames(brca@meta.data))], 
-                     prefix = "integrated_snn_res.")
-ggsave(
-  "plots/clustree_integration.png",
-  plot = clustree,
-  dpi = 300,
-  height = 7,
-  width = 7
-)
+
+clustree(brca@meta.data[, grep("RNA_snn_res.", colnames(brca@meta.data))], 
+         prefix = "RNA_snn_res.")
 
 brca <- RunUMAP(
   brca,
@@ -83,9 +77,10 @@ brca <- RunUMAP(
 )
 saveRDS(brca, "seu_brca_harmony.rds")
 
-# To then use beyondcell for subclone level expression data, we need to transform
-# the object to Seurat version 4
-seurat_v4 <- JoinLayers(brca)
 
-# Guardar
-saveRDS(seurat_v4, "seu_brca_harmony_v4.rds")
+# Move to local directories
+setwd("/Users/mariagb/Documents/bc_meta/brca_usecase")
+brca <- readRDS("seu_brca_harmony.rds")
+
+DimPlot(brca, reduction = "umap.harmony", cells = cells_tcs, group.by = "scTherapy_cluster")
+

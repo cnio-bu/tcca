@@ -10,6 +10,7 @@ library(tidyverse)
 
 source(file = "src/figures/TCCA_palette.R")
 
+setwd("/Users/mariagb/OneDrive-CNIO/2nd_year/bc-meta/beyondcell")
 
 ## function fix for factoextra
 my_fviz_nbclust <- function(x, print.summary = TRUE, barfill = "steelblue", barcolor = "steelblue"){
@@ -38,7 +39,7 @@ my_fviz_nbclust <- function(x, print.summary = TRUE, barfill = "steelblue", barc
 }
 
 mat <- read.table(
-    file = "results/functional/pancancer_pseudobulk.tsv",
+    file = "pancancer_pseudobulk.tsv",
     check.names = FALSE
     )
 
@@ -57,7 +58,7 @@ mat_cpm <- cpm(
 
 dim(mat_cpm)
 
-## gsva
+## Combined NMF gene sets and public gene sets into the same gmt
 gsets <- GSEABase::getGmt(con = "reference/combined_gsets_functional.gmt")
 
 gsets_fix <- list()
