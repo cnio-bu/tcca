@@ -7,6 +7,7 @@ library(dplyr)
 library(tidyverse)
 library(uwot)
 setwd("/storage/scratch01/shared/projects/bc-meta/beyondcell_immuno/")
+set.seed(123)
 
 # Load Seurat object with
 seu.lvl2 <- readRDS("../single_cell/seurat/v5/lvl2/seu_lvl2_sex_inferred.rds")
@@ -95,11 +96,7 @@ write.table(final_matrix, "subclone_level/subclones_bc_gsva_aggregated.tsv", sep
 
 
 # Compute UMAP of subclones based on drug enrichment
-gsva_final <- read.table(
-    "subclone_level/subclones_bc_gsva_aggregated.tsv", 
-    sep ="\t", 
-    header = TRUE
-    )
+gsva_final <- read.table("subclone_level/subclones_bc_gsva_aggregated.tsv", sep ="\t", header = TRUE)
 
 # Perform an UWOT on the drug signatures scores
 umap_transform <- uwot::umap(X = t(gsva_final),
@@ -119,7 +116,7 @@ umap_transform <- umap_transform %>%
         malignant_subset@meta.data %>%
             mutate(subclone = gsub("[^a-zA-Z0-9]", "", scevan_subclone), 
                    therapeutic_cluster = factor(scTherapy_cluster, levels = as.character(1:10))) %>%
-            select(subclone, study, sample_type, treated, therapeutic_cluster) %>%
+            select(subclone, study, refined_tumor_type, sample_type, treated, therapeutic_cluster) %>%
             distinct(),
         by = "subclone"
     ) %>%
@@ -129,7 +126,7 @@ source("/home/mgonzalezb/bc-meta/figures/TCCA_palette.R")
 tcs_umap <- ggplot(
     data = umap_transform,
     aes(x = V1, y = V2, color = therapeutic_cluster)) +
-    geom_point(size = 3) + 
+    geom_point(size = 2) + 
     theme_bw() +
     theme(panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
@@ -199,20 +196,23 @@ colnames(gsva_scaled) <- gsub("[^a-zA-Z0-9]", "", colnames(gsva_scaled))
 # 3. Column annotations
 annotation_col <- umap_transform %>%
     rownames_to_column("subclone") %>%
-    select(subclone, study, sample_type, treated, therapeutic_cluster) %>%
+    select(subclone, study, refined_tumor_type, sample_type, treated, therapeutic_cluster) %>%
     mutate(
         sample_type = ifelse(sample_type == "m", "Metastasis", "Primary"),
         treated = ifelse(treated == "t", "Treated", "Untreated")
     ) %>%
-    column_to_rownames("subclone")
+    column_to_rownames("subclone") %>%
+    arrange(therapeutic_cluster) # reorder columns based on therapeutic clusters
 
 col_ha <- HeatmapAnnotation(
     Study = annotation_col$study,
+    `Cancer type` = annotation_col$refined_tumor_type,
     `Sample type` = annotation_col$sample_type,
     Treated = annotation_col$treated,
     `Therapeutic cluster` = annotation_col$therapeutic_cluster,
     col = list(
         Study = study_colors[unique(annotation_col$study)],
+        `Cancer type` = tumor_type_colors[unique(annotation_col$refined_tumor_type)],
         `Sample type` = pm_colors,
         Treated = treatment_colors,
         `Therapeutic cluster` = sctherapy_colors
@@ -249,8 +249,9 @@ row_ha <- rowAnnotation(
         MoA = list(direction = "vertical")
     )
 )
+gsva_scaled <- gsva_scaled[,rownames(annotation_col)]
 
-# 5. Create and save heatmap
+# 6. Create and save heatmap
 ht <- Heatmap(
     gsva_scaled,
     name = "Scaled\nGSVA",
@@ -258,11 +259,11 @@ ht <- Heatmap(
         seq(-3, 3, length.out = 100),
         colorRampPalette(rev(brewer.pal(11, "RdBu")))(100)
     ),
-    column_order = rownames(annotation_col[order(annotation_col$therapeutic_cluster),]),
+    #column_order = rownames(annotation_col[order(annotation_col$therapeutic_cluster),]),
     top_annotation = col_ha,
     right_annotation = row_ha,
     cluster_rows = TRUE,
-    cluster_columns = FALSE,
+    cluster_columns = TRUE,
     show_row_names = TRUE,
     show_column_names = FALSE,
     row_names_gp = gpar(fontsize = 10),
@@ -275,13 +276,11 @@ ht <- Heatmap(
     show_heatmap_legend = TRUE
 )
 
-png(
-    "subclone_level/plots/drug_signatures_subclones_heatmap.png",
-    width = 15, 
-    height = 12, 
-    units = "in", 
-    res = 300)
-    
+pdf(
+    "subclone_level/plots/drug_signatures_clustcols_heatmap.pdf", 
+    width = 17, 
+    height = 12
+)
 draw(ht, 
     heatmap_legend_side = "bottom",
     annotation_legend_side = "right",
