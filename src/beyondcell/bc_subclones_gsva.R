@@ -95,7 +95,11 @@ write.table(final_matrix, "subclone_level/subclones_bc_gsva_aggregated.tsv", sep
 
 
 # Compute UMAP of subclones based on drug enrichment
-gsva_final <- read.table("subclone_level/subclones_bc_gsva_aggregated.tsv", sep ="\t", header = TRUE)
+gsva_final <- read.table(
+    "subclone_level/subclones_bc_gsva_aggregated.tsv", 
+    sep ="\t", 
+    header = TRUE
+    )
 
 # Perform an UWOT on the drug signatures scores
 umap_transform <- uwot::umap(X = t(gsva_final),

@@ -112,7 +112,7 @@ source(("/home/mgonzalezb/bc-meta/figures/TCCA_palette.R"))
 tcs_umap <- ggplot(
     data = umap_transform,
     aes(x = V1, y = V2, color = therapeutic_cluster)) +
-    geom_point(size = 3) + 
+    geom_point(size = 2, alpha = 0.7) + 
     theme_bw() +
     theme(panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
@@ -124,10 +124,12 @@ tcs_umap <- ggplot(
           panel.border       = element_blank(),
           text = element_text(family = "Arial")
     ) +
-    scale_color_manual(values = sctherapy_colors) +
+    scale_color_manual(
+        values = sctherapy_colors,
+        name = "Therapeutic cluster"
+    ) +
     scale_x_continuous(name = "UMAP1") +
-    scale_y_continuous(name = "UMAP2") +
-    scale_color_discrete(name = "Therapeutic cluster") 
+    scale_y_continuous(name = "UMAP2")
 
 ggsave(
     filename = "plots/tcs_uwot.png", 

@@ -42,8 +42,17 @@ brca <- FindClusters(brca, resolution = 0.5, cluster.name = "unintegrated_umap")
 
 brca <- RunUMAP(brca, dims = 1:40)
 cells_tcs <- rownames(brca@meta.data %>% filter(!is.na(scTherapy_cluster)))
-DimPlot(brca, reduction = "umap", cells = cells_tcs, group.by = "scTherapy_cluster") + NoLegend()
-
+source("/home/mgonzalezb/bc-meta/figures/TCCA_palette.R")
+png("plots/dimplot_tcs_unintegrated.png", width = 5, height = 4, units = "in", res = 300)
+DimPlot(
+  brca, 
+  reduction = "umap", 
+  cells = cells_tcs, 
+  group.by = "scTherapy_cluster", 
+  cols = sctherapy_colors
+  ) + 
+  NoLegend()
+dev.off()
 
 # Large batch effect caused by different samples in the visualization
 brca$study_sample <- paste0(brca$study, "_", brca$sample)
@@ -81,6 +90,12 @@ saveRDS(brca, "seu_brca_harmony.rds")
 # Move to local directories
 setwd("/Users/mariagb/Documents/bc_meta/brca_usecase")
 brca <- readRDS("seu_brca_harmony.rds")
-
-DimPlot(brca, reduction = "umap.harmony", cells = cells_tcs, group.by = "scTherapy_cluster")
-
+png("plots/dimplot_tcs_integrated.png", width = 5, height = 4, units = "in", res = 300)
+DimPlot(
+  brca, 
+  reduction = "umap.harmony", 
+  cells = cells_tcs, 
+  group.by = "scTherapy_cluster",
+  cols = sctherapy_colors
+  )
+dev.off()
