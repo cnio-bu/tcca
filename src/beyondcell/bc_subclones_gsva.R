@@ -264,6 +264,8 @@ ht <- Heatmap(
     right_annotation = row_ha,
     cluster_rows = TRUE,
     cluster_columns = TRUE,
+    row_dend_width = unit(2, "cm"),
+    column_dend_height = unit(2, "cm"),
     show_row_names = TRUE,
     show_column_names = FALSE,
     row_names_gp = gpar(fontsize = 10),
@@ -277,7 +279,7 @@ ht <- Heatmap(
 )
 
 pdf(
-    "subclone_level/plots/drug_signatures_clustcols_heatmap.pdf", 
+    "subclone_level/plots/drug_signatures_clustcols_heatmap2.pdf", 
     width = 17, 
     height = 12
 )
@@ -290,7 +292,9 @@ draw(ht,
 dev.off()
 
 
-# Flip column dendogram  for improved visualization
+
+
+## Flip column dendogram  for improved visualization
 ht <- draw(ht, 
     heatmap_legend_side = "bottom",
     annotation_legend_side = "right",
@@ -300,14 +304,14 @@ ht <- draw(ht,
 
 # Extract column dendogram
 col_dend <- column_dend(ht)
-png("subclone_level/plots/colrotated.png", units = "in", width = 20, height = 10, res = 300)
-plot(dend_rotated,
+png("subclone_level/plots/coldend.png", units = "in", width = 20, height = 10, res = 300)
+plot(coldend,
      cex = 0.4,
      horiz = FALSE)
 dev.off()
 
 # 1. Obtain subdendograms per cluster
-subs <- get_subdendrograms(col_dend, k = 5)
+subs <- get_subdendrograms(coldend_reordered, k = 5)
 
 # 2. Rotate only cluster from 2 to 5
 labels_rev <- lapply(subs, function(x) rev(labels(x)))
@@ -315,37 +319,7 @@ labels <- lapply(subs, function(x) labels(x))
 reordered_labels <- c(labels[1:2], labels[rev(3:5)])
 coldend_reordered <- rotate(col_dend, unlist(reordered_labels))
 
-names(reordered_labels) <- as.character(c(1:5))
-df_cluster <- data.frame(
-    subclone = unlist(reordered_labels),
-    cluster = rep(names(reordered_labels), lengths(reordered_labels))
-)
-rownames(df_cluster) <- NULL
-df_cluster <- df_cluster %>%
-    column_to_rownames(var = "subclone")
-annotation_col <- annotation_col %>%
-    mutate(bc_cluster = df_cluster[rownames(annotation_col), "cluster"])
-
-
-
-col_ha <- HeatmapAnnotation(
-    Study = annotation_col$study,
-    `Cancer type` = annotation_col$refined_tumor_type,
-    `Sample type` = annotation_col$sample_type,
-    Treated = annotation_col$treated,
-    `Therapeutic cluster` = annotation_col$therapeutic_cluster,
-    col = list(
-        Study = study_colors[unique(annotation_col$study)],
-        `Cancer type` = tumor_type_colors[unique(annotation_col$refined_tumor_type)],
-        `Sample type` = pm_colors,
-        Treated = treatment_colors,
-        `Therapeutic cluster` = sctherapy_colors
-    ),
-    annotation_name_side = "left",
-    annotation_name_gp = gpar(fontface = "bold", fontsize = 12)
-)
-
-# Plot reordered heatmap
+# 3. Plot reordered heatmap
 ht <- Heatmap(
     gsva_scaled,
     name = "Scaled\nGSVA",
@@ -353,13 +327,15 @@ ht <- Heatmap(
         seq(-3, 3, length.out = 100),
         colorRampPalette(rev(brewer.pal(11, "RdBu")))(100)
     ),
-    column_split = annotation_col[colnames(gsva_scaled), "bc_cluster"],
+    # column_split = annotation_col[colnames(gsva_scaled), "bc_cluster"],
     top_annotation = col_ha,
     right_annotation = row_ha,
+    cluster_rows = TRUE,
+    cluster_columns = coldend_reordered,
+    row_dend_width = unit(2, "cm"),
+    column_dend_height = unit(2, "cm"),
     show_row_names = TRUE,
     show_column_names = FALSE,
-    cluster_columns = FALSE,
-    cluster_column_slices = FALSE,
     row_names_gp = gpar(fontsize = 10),
     row_title = "Drugs",
     column_title = "Subclones",
@@ -382,4 +358,5 @@ draw(ht,
     padding = unit(c(2, 10, 2, 20), "mm")
     )
 dev.off()
+
 
