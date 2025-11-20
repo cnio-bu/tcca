@@ -305,3 +305,62 @@ ggsave(
     height = 5,
     width = 5
 )
+
+
+# Compute the enrichment in TC10 signature
+gsets <- GSEABase::getGmt(con = "../../single_cell/sctherapy/results/marker_genes/marker_sigs_filtered.gmt")
+
+## gsva parameters
+gsvapar <- gsvaParam(
+  exprData = mat_cpm,
+  geneSets = gsets,
+  kcdf = "Gaussian",
+  maxDiff = TRUE
+)
+
+gsva_markers <- gsva(gsvapar)
+write.table(gsva_markers, "subclones_markers_gsva.tsv", sep ="\t")
+
+# Plot enrichment in TC10
+colnames(gsva_markers) <- gsub("[^a-zA-Z0-9]", "", colnames(gsva_markers))
+umap_transform_tc10 <- umap_transform %>%
+    rownames_to_column(var = "subclone") %>%
+    mutate(
+        tc10_score = gsva_markers["Cluster10_UP",]
+    )
+
+# Plot con gradiente de color
+tc10_umap <- ggplot(
+    data = umap_transform_tc10,
+    aes(x = V1, y = V2, color = tc10_score)) +
+    geom_point(size = 3) + 
+    scale_color_gradient2(
+        low = "#1D61F2",
+        mid = "#F7F7F7",
+        high = "#DA0078",
+        midpoint = 0,  # Centro en 0
+        limits = c(-0.8, 0.8),
+        oob = scales::squish,
+        na.value = "grey50",
+        name = "GSVA score\nTC10 marker genes"
+    ) +
+    theme_bw() +
+    theme(
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line.x.bottom = element_line(),
+        axis.line.y.left = element_line(),
+        panel.border = element_blank(),
+        text = element_text(family = "Arial")
+    ) +
+    scale_x_continuous(name = "UMAP1") +
+    scale_y_continuous(name = "UMAP2") +
+    labs(title = paste("GSVA score TC10 marker genes"))
+
+ggsave(
+    filename = paste0("plots/umap_tc10_markers.png"), 
+    plot = drug_umap,
+    dpi = 300,
+    height = 5,
+    width = 6
+)
