@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 
-#sbatch -c 20 --job-name=Sv5 -o log.txt -e error.txt --mem=500G -t 1140 --wrap "Rscript 7_final_cellxgene_v5_cnafill.R"
+#sbatch -c 20 --job-name=Sv5 -o log.txt -e error.txt --mem=60G -t 80 --wrap "Rscript 7_final_cellxgene_v5_cnafill.R"
 
 library(BPCells)
 library(Matrix)
@@ -30,10 +30,10 @@ cbind.fill<-function(mat.list, genes){
 
         write_matrix_dir(
             mat = m,
-            dir = paste0("/storage/scratch01/shared/projects/bc-meta/single_cell/cna_metadata/cnv_cells_genes_lvl1_bpcells_merged/", name),
+            dir = paste0("/storage/scratch01/shared/projects/bc-meta/single_cell/cna_metadata/cnv_cells_genes_lvl2_bpcells_merged/", name),
             overwrite = TRUE)
         
-        m <- open_matrix_dir(dir = paste0("/storage/scratch01/shared/projects/bc-meta/single_cell/cna_metadata/cnv_cells_genes_lvl1_bpcells_merged/", name))
+        m <- open_matrix_dir(dir = paste0("/storage/scratch01/shared/projects/bc-meta/single_cell/cna_metadata/cnv_cells_genes_lvl2_bpcells_merged/", name))
 
         return(m)
     }
@@ -44,7 +44,7 @@ cbind.fill<-function(mat.list, genes){
 }
 
 ## Open all bpcells mats
-file.dir <- "/storage/scratch01/shared/projects/bc-meta/single_cell/cna_metadata/cnv_cells_genes_lvl1_bpcells/"
+file.dir <- "/storage/scratch01/shared/projects/bc-meta/single_cell/cna_metadata/cnv_cells_genes_lvl2_bpcells/"
 files.set <- list.dirs(file.dir, full.names = FALSE, recursive = FALSE)
 
 # Loop through h5ad files and output BPCells matrices on-disk
@@ -75,11 +75,11 @@ full_mat <- cbind.fill(data.list, all_genes)
 # Write the matrix to a directory
 write_matrix_dir(
   mat = full_mat,
-  dir = "/storage/scratch01/shared/projects/bc-meta/single_cell/cna_metadata/cnv_cells_genes_lvl1_fullbpcellsmatrix",
+  dir = "/storage/scratch01/shared/projects/bc-meta/single_cell/cna_metadata/cnv_cells_genes_lvl2_fullbpcellsmatrix",
   overwrite = TRUE)
 
 #Generate base metadata table
-clonality_table <- read.table("/storage/scratch01/shared/projects/bc-meta/single_cell/cna_metadata/full_clonality_table_lvl1.tsv", sep = "\t", header = T)
+clonality_table <- read.table("/storage/scratch01/shared/projects/bc-meta/single_cell/cna_metadata/full_clonality_table_lvl2.tsv", sep = "\t", header = T)
 clonality_table <- clonality_table %>%
   mutate(barcode_study_sample = paste(scevan_barcode, study, sample, sep  = "__"),
          study_sample = paste(study, sample, sep  = "__"))
@@ -89,6 +89,9 @@ clinical_metadata <- clinical_metadata %>%
   mutate(study_sample = paste(study, sample, sep  = "__"))
 
 full_metadata_table <- merge(clonality_table, clinical_metadata, by = "study_sample")
+full_metadata_table <- full_metadata_table[!duplicated(full_metadata_table$barcode_study_sample), ]
+rownames(full_metadata_table) <- NULL
+
 full_metadata_table <- full_metadata_table %>% 
   column_to_rownames(var = "barcode_study_sample") %>%
   subset(select = -c(study_sample, sample.y, study.y)) %>%
@@ -104,7 +107,7 @@ setwd("/storage/scratch01/shared/projects/bc-meta/single_cell/cna_metadata/")
 
 saveRDS(
   object = seu,
-  file = "full_genes_copynumber.rds",
-  destdir = "full_genes_copynumber_1layer",
-  relative = TRUE
+  file = "full_genes_copynumber_lvl2.rds",
+#  destdir = "full_genes_copynumber_1layer",
+#  relative = TRUE
 )
