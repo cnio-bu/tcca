@@ -30,8 +30,8 @@ https://tcca.bioinfo.cnio.es/session/8609a42b7abfbebe6b39778186468dd4/download/d
 ## Workflow steps
 ### 1. GEO data preparation
 Before running the Snakemake workflow, raw GEO single-cell data must be converted to the standard 10x Genomics format (matrix.mtx, genes.tsv, barcodes.tsv). We provide two helper Python scripts for this step:
-- `src/utils/sort_unzip_geo_v2.py` — for datasets using the new 10x format (features.tsv.gz).
-- `src/utils/sort_unzip_geo_v3.py` — for datasets using the legacy format (genes.tsv.gz).
+- `src/01_utils/sort_unzip_geo_v2.py` — for datasets using the new 10x format (features.tsv.gz).
+- `src/01_utils/sort_unzip_geo_v3.py` — for datasets using the legacy format (genes.tsv.gz).
   
 These scripts automatically:
 - Detect sample identifiers (GSMxxxxx) in a directory.
@@ -40,7 +40,7 @@ These scripts automatically:
 <br>
 
 ### 2. Snakemake pipeline
-The Snakemake workflow orchestrates the full analysis across all studies.
+The Snakemake workflow (`src/02_snakemake_pipeline`) orchestrates the full analysis across all studies.
 
 #### 2.1. Preprocessing
 First, the pipeline runs the preprocessing rules (`preprocessing.smk`) independently  for each study, since each study requires a different script depending on its input files. These scripts apply study-specific Seurat filtering steps to remove low-quality cells. Each rule generates a standardized Seurat v4 object saved as `{results}/seurat/raw/{study_name}.rds`. Each `.rds` file is a list of Seurat objects, one for each sample in the study.
@@ -59,7 +59,7 @@ To compute functional enrichment of malignant cells across different gene expres
 <br>
 
 ### 3. Seurat object conversion and structuring
-After preprocessing, Seurat v4 objects from each study are converted to optimized Seurat v5 formats using BPCells for efficient storage and analysis with scripts in `src/seurat`.
+After preprocessing, Seurat v4 objects from each study are converted to optimized Seurat v5 formats using BPCells for efficient storage and analysis with scripts in `src/03_seurat`.
 - `export_all_raw_to_v5.R`: converts Seurat v4 objects per study into Seurat v5, retains only protein-coding genes, and saves study-level Seurat v5 objects backed by BPCells matrices.
 - `generate_all_levels_seurat.R`: builds merged Seurat v5 objects across all studies at three filtering levels (lvl3: all cells; lvl2: clinically annotated samples with ≥100 malignant cells; lvl1: malignant-only subset from lvl2).
 > These scripts are run after the main Snakemake pipeline.
@@ -67,7 +67,7 @@ After preprocessing, Seurat v4 objects from each study are converted to optimize
 <br>
 
 ### 4. Single-cell annotation and TME classification
-This directory `src/cell_annotation_tme` contains the R notebook detailing the harmonization of cell type annotations. It covers the standardization of cell names, integration of author-provided labels with automated annotations (Azimuth and SingleR), calculation of sample-specific immune and stromal proportions, and the definition of 12 Tumor Microenvironment (TME) archetypes through clustering.
+This directory `src/04_cell_annotation_tme` contains the R notebook detailing the harmonization of cell type annotations. It covers the standardization of cell names, integration of author-provided labels with automated annotations (Azimuth and SingleR), calculation of sample-specific immune and stromal proportions, and the definition of 12 Tumor Microenvironment (TME) archetypes through clustering.
 **Scripts**
 - `add_author_annotation.R`: adds missing or mismatched author-provided cell type labels to preprocessed Seurat objects, ensuring correct mapping of cell names and updating metadata.
 - `rename_tme_archetype.R`: rename TME archetypes
@@ -75,7 +75,7 @@ This directory `src/cell_annotation_tme` contains the R notebook detailing the h
 <br>
 
 ### 5. Basic single-cell analysis with Scanpy
-The following scripts (`src/scanpy`) are run in Python using Scanpy based on the Seurat v5 level 2 (lvl2) dataset exported as an .h5ad file.
+The following scripts (`src/05_scanpy`) are run in Python using Scanpy based on the Seurat v5 level 2 (lvl2) dataset exported as an .h5ad file.
 - `envs/` directory provides environment specifications for running integration workflows and benchmarking analyses.
 - `dimred_before_int.py`: normalization, HVG detection, PCA, and initial clustering before integration.
 - `integration.py`: applies multiple state-of-the-art integration methods (e.g., scVI, SCANVI, Scanorama) o generate batch-corrected embeddings for integrated visualization across studies.
@@ -84,8 +84,32 @@ The following scripts (`src/scanpy`) are run in Python using Scanpy based on the
 
 <br>
 
-### 6. Beyondcell results analysis
-After computing Beyondcell scores in the snakemake pipeline, several scripts in `src/beyondcell` integrate and analyze drug-response profiles across studies:
+### 6. Inference of CNVs with SCEVAN
+After completing the Snakemake pipeline, several standalone R scripts are used to process and integrate SCEVAN copy number alterations (CNVs) inference into interpretable, analysis-ready formats.
+> These scripts are executed outside the Snakemake pipeline (`src/06_scevan/`).
+> Many of them are designed for parallel computing on an HPC environment and are submitted as independent jobs using SLURM (sbatch), as indicated in the script headers.
+
+**6.1. Running SCEVAN and preprocessing results**
+- `1_scevan_all_samples.R`: run SCEVAN for all studies.
+- `2_scevan_metadata.R`: extract clonality metrics per study.
+- `3_combine_clonality_metadata.R`: merge all clonality outputs into a single summary table.
+- `4_scevan_cellxgene.R`: generate per-gene CNV matrices for each study.
+- `5_filter_cellxgene_tables.R`: filter CNV matrices to level 1 (only high-quality malignant cells and genes).
+- `6_tsv_to_bpcells_lvl*.R`: convert CNV matrices into on-disk BPCells objects for efficient storage and access.
+- `7_final_cellxgene_v5_cnafill.R`: combine all BPCells matrices into a single, genome-wide CNV Seurat v5 object including clinical and clonality metadata.
+- `8_sketch_rds.R`: generate downsampled Seurat “sketch” datasets (50k and 5k cells) for efficient visualization and exploratory analysis.
+
+**6.2. Generating interpretable CNV Matrices**  
+These scripts summarize the raw SCEVAN output into biologically meaningful genomic units.
+- `9_interpretable_matrix/1_regionxclone.R`: build a complete region × clone matrix across all samples.
+- `9_interpretable_matrix/2_genomicranges.R`: create mapping files to associate SCEVAN regions with either custom genomic bins or cytogenetic bands.
+- `9_interpretable_matrix/3_customregions.R`: aggregate CNV values into averaged custom genomic regions.
+- `9_interpretable_matrix/3_cytobands.R`: aggregate CNV values into standard cytobands for more interpretable genome-level visualization.
+
+<br>
+
+### 7. Beyondcell results analysis
+After computing Beyondcell scores in the snakemake pipeline, several scripts in `src/07_beyondcell` integrate and analyze drug-response profiles across studies:
 - `export_bcimmuno_to_BP.R`: converts individual Beyondcell results into Seurat v5 objects with BPCells matrices (cells × drugs).
 - `merge_studywise_bps_immuno.R`: aligns and merges all Beyondcell matrices into a unified matrix with consistent drug identifiers and metadata.
 - `therapeutic_clusters.R`: performs basic analysis on the global Beyondcell matrix, including dimensionality reduction, clustering of cells based on drugs scores using Seurat v5 and generates sketch datasets.
@@ -98,33 +122,9 @@ After computing Beyondcell scores in the snakemake pipeline, several scripts in 
 
 <br>
 
-### 7. Inference of CNVs with SCEVAN
-After completing the Snakemake pipeline, several standalone R scripts are used to process and integrate SCEVAN copy number alterations (CNVs) inference into interpretable, analysis-ready formats.
-> These scripts are executed outside the Snakemake pipeline (`src/scevan/`).
-> Many of them are designed for parallel computing on an HPC environment and are submitted as independent jobs using SLURM (sbatch), as indicated in the script headers.
-
-**1. Running SCEVAN and preprocessing results**
-- `1_scevan_all_samples.R`: run SCEVAN for all studies.
-- `2_scevan_metadata.R`: extract clonality metrics per study.
-- `3_combine_clonality_metadata.R`: merge all clonality outputs into a single summary table.
-- `4_scevan_cellxgene.R`: generate per-gene CNV matrices for each study.
-- `5_filter_cellxgene_tables.R`: filter CNV matrices to level 1 (only high-quality malignant cells and genes).
-- `6_tsv_to_bpcells_lvl*.R`: convert CNV matrices into on-disk BPCells objects for efficient storage and access.
-- `7_final_cellxgene_v5_cnafill.R`: combine all BPCells matrices into a single, genome-wide CNV Seurat v5 object including clinical and clonality metadata.
-- `8_sketch_rds.R`: generate downsampled Seurat “sketch” datasets (50k and 5k cells) for efficient visualization and exploratory analysis.
-
-**2. Generating interpretable CNV Matrices**  
-These scripts summarize the raw SCEVAN output into biologically meaningful genomic units.
-- `9_interpretable_matrix/1_regionxclone.R`: build a complete region × clone matrix across all samples.
-- `9_interpretable_matrix/2_genomicranges.R`: create mapping files to associate SCEVAN regions with either custom genomic bins or cytogenetic bands.
-- `9_interpretable_matrix/3_customregions.R`: aggregate CNV values into averaged custom genomic regions.
-- `9_interpretable_matrix/3_cytobands.R`: aggregate CNV values into standard cytobands for more interpretable genome-level visualization.
-
-<br>
-
 ### 8. Therapeutic analysis with scTherapy
 
-The `src/sctherapy` folder contains the workflow for predicting subclone-level drug responses using scTherapy; characterizing therapeutic clusters (TCs); deriving transcriptomic signatures; and correlating these signatures with patient survival.
+The `src/08_sctherapy` folder contains the workflow for predicting subclone-level drug responses using scTherapy; characterizing therapeutic clusters (TCs); deriving transcriptomic signatures; and correlating these signatures with patient survival.
 
 **1. Subclone-level predictions**  
 - `sctherapy_fullcohort.R`: predicts drug responses for malignant subclones (only from samples containing normal or TME cells).
@@ -155,7 +155,7 @@ The `src/sctherapy` folder contains the workflow for predicting subclone-level d
 <br>
 
 ### 9. Functional analysis in the TCCA Cohort
-This section describes the workflow for computing functional pathway enrichment in malignant cells from the TCCA cohort using complementary approaches: **GSVA, UCell, Beyondcell, PROGENy, NMF, and Hotspot**. The workflow is organized into four main stages:
+This section `src/09_functional` describes the workflow for computing functional pathway enrichment in malignant cells from the TCCA cohort using complementary approaches: **GSVA, UCell, Beyondcell, PROGENy, NMF, and Hotspot**. The workflow is organized into four main stages:
 
 
 **1. Pseudobulk generation and GSVA enrichment (`pseudobulk/`)**
@@ -186,7 +186,7 @@ Equivalent enrichment matrices are also generated using Beyondcell scores (inste
 <br>
 
 ### 10. Intra-tumoral heterogeneity (ITH) analysis
-The folder `/src/heterogeneity/`contains scripts to quantify, compare, and visualize different dimensions of intra-tumor heterogeneity (ITH) across samples and cancer types.
+The folder `/src/10_heterogeneity/`contains scripts to quantify, compare, and visualize different dimensions of intra-tumor heterogeneity (ITH) across samples and cancer types.
 - `ith_score_subclone&sample.R`: quantifies ITH at both subclone and sample levels by computing transcriptomic, genomic, and therapeutic heterogeneity scores.
 - `cor_genomic_vs_therapeutic_ith.R`: integrates genomic and therapeutic ITH metrics per sample, and explores their correlation across cancer types.
 - `cor_genomic_ith_vs_sp.R`: computes correlation between genomic ITH and drug switch points (SP) per sample, both pan-cancer and by cancer type (primary and metastatic).
@@ -194,28 +194,28 @@ The folder `/src/heterogeneity/`contains scripts to quantify, compare, and visua
 <br>
 
 ### 11. Additional analyses
-This section contains supplementary scripts for extended analyses beyond the main workflow. It includes: enhanced cell and clinical annotations, correlation analyses linking scTherapy predictions, Beyondcell scores, and functional modules, as well as focused use cases for TC4 and TC10 subclones to explore CNV patterns, gene signatures, and drug sensitivity.
+This section `/src/11_additional_analyses/` contains supplementary scripts for extended analyses beyond the main workflow. It includes: enhanced cell and clinical annotations, correlation analyses linking scTherapy predictions, Beyondcell scores, and functional modules, as well as focused use cases for TC4 and TC10 subclones to explore CNV patterns, gene signatures, and drug sensitivity.
 
-**1. Additional cell annotations (`cell_annotation/`)**
+**11.1. Additional cell annotations (`cell_annotation/`)**
 - `reharmonize_tcca_metadata.R`: harmonizes level-2 TCCA metadata by integrating subclone membership, scTherapy therapeutic cluster assignments, and a refined cancer-type classification (46 → 34 types).
 - `predict_sex.R`: infers missing sex annotations from single-cell expression profiles with `cellXY` R package and updates the Seurat metadata accordingly.
 
-**2. Clinical database (`clinical_annotation/`)**
+**11.2. Clinical database (`clinical_annotation/`)**
 - `annotate_cancer_cell_lines.R`: adds standardized metadata to profiled cancer cell lines (sex, age, disease, lineage, collection site).
 - `filter_raw_clinical_data.R`: cleans and standardizes sample raw clinical metadata by removing duplicates/misassignments and harmonizing tumor types and sites.
 
-**3. Correlations with Beyondcell??**
+**11.3. Correlations with Beyondcell**
 - `compare_sctherapy_vs_beyondcell.R`: correlates Beyondcell scores with scTherapy predictions (converted to numeric values) at the subclone level. 
 - `cor_bc_vs_mps.R`: computes Pearson correlations between 43 functional MPs and 589 Beyondcell drugs.
 
-**4. Use case of TC4 (`tc4_usecase/`)**
+**11.4. Use case of TC4 (`tc4_usecase/`)**
 - `check_cnv_overlap_tc4.R`: identifies recurrent CNV co-amplifications across chr3q cytobands in TC4 subclones.
 - `get_tc4_peak_gmt.R`: retrieves gene sets located in cytobands recurrently amplified in TC4 subclones (mainly chr3q peaks) and intersects them with top TC4 marker genes.
 - `gdsc_tc4.R`: correlates TC4 CNV-derived gene signatures with GDSC2 drug sensitivity profiles to identify compounds associated with TC4 amplifications.
 - `go_enrichment.R`: performs GO enrichment analysis on genes within CNV regions recurrently amplified in TC4 subclones to identify biological processes associated with these genomic alterations.
 - `cor_bc_vs_tc4sigs.R`: correlates enrichment of TC4 amplification gene sets with Beyondcell drug sensitivity scores in TC4 cells.
 
-**5. Use case of TC10 (`tc10_usecase/`)**
+**11.5. Use case of TC10 (`tc10_usecase/`)**
 - `gdsc_tc10.R`: correlates TC10 gene signature enrichment with GDSC drug sensitivity across cell lines and tumor types.
 - `brca_clinical.R`: visualizes BRCA subclone distributions across age groups, sample type, TME archetypes, and tumor subtypes (bars colored by TC).
 - `brca_expr_clusters.R`: performs integration and clustering analysis of BRCA patient single-cell expression data using Seurat.
@@ -226,7 +226,7 @@ This section contains supplementary scripts for extended analyses beyond the mai
 
 
 ### 12. Figures
-This section includes scripts used to generate the main and supplementary figures of the study, covering clinical summaries, TME archetype visualizations, and clonality analyses. Other figures are produced directly within the corresponding analysis scripts.
+The folder `/src/12_figures/` includes scripts used to generate the main and supplementary figures of the study, covering clinical summaries, TME archetype visualizations, and clonality analyses. Other figures are produced directly within the corresponding analysis scripts.
 - `TCCA_palette.R`: defines color palettes for clinical variables, therapeutic clusters, and MPS groups.
 - `fig1_sankey_cohort.R`: sankey plot showing sample distribution across key clinical variables.
 - `tab1_summary_clinical_table.R`: generates a summary table of clinical features per cancer type.
@@ -234,3 +234,36 @@ This section includes scripts used to generate the main and supplementary figure
 - `fig1E_circular_tme.R`: circular plot displaying sample percentages by TME group and archetype.
 - `sankey_three_layers.R`: three-layer Sankey plot linking subclones, TME archetypes, tumor types, and functional metaprograms.
 - `figS5_S6_clonality_plots.R`: computes and visualizes clonality (subclones per 1,000 cells) across cancer types and clinical variables.
+
+<br>
+<br>
+
+
+
+**References**
+
+1. Stuart T, Butler A, Hoffman P, Hafemeister C, Papalexi E, Mauck WM, et al. [Comprehensive Integration of Single-Cell Data.](https://doi.org/10.1016/j.cell.2019.05.031) Cell. 2019 June 13;177(7):1888-1902.e21. 
+2. Wolf FA, Angerer P, Theis FJ. [SCANPY: large-scale single-cell gene expression data analysis.](https://doi.org/10.1186/s13059-017-1382-0) Genome Biol. 2018 Feb 6;19(1):15. 
+3. Xu C, Lopez R, Mehlman E, Regier J, Jordan MI, Yosef N. [Probabilistic harmonization and annotation of single‐cell transcriptomics data with deep generative models.](https://doi.org/10.15252/msb.20209620) Mol Syst Biol. 2021 Jan 25;17(1):MSB20209620. 
+4. Luecken MD, Büttner M, Chaichoompu K, Danese A, Interlandi M, Mueller MF, et al. [Benchmarking atlas-level data integration in single-cell genomics.](https://doi.org/10.1038/s41592-021-01336-8) Nat Methods. 2022 Jan;19(1):41–50. 
+5. Hao Y, Hao S, Andersen-Nissen E, Mauck WM, Zheng S, Butler A, et al. [Integrated analysis of multimodal single-cell data.](https://doi.org/10.1016/j.cell.2021.04.048) Cell. 2021 June 24;184(13):3573-3587.e29.
+6. De Falco A, Caruso F, Su XD, Iavarone A, Ceccarelli M. [A variational algorithm to detect the clonal copy number substructure of tumors from scRNA-seq data.](https://doi.org/10.1038/s41467-023-36790-9) Nat Commun. 2023 Feb 25;14(1):1074. 
+7. Ianevski A, Nader K, Driva K, Senkowski W, Bulanova D, Moyano-Galceran L, et al. [Single-cell transcriptomes identify patient-tailored therapies for selective co-inhibition of cancer clones.](https://doi.org/10.1038/s41467-024-52980-5) Nat Commun. 2024 Oct 3;15(1):8579. 
+8. Fustero-Torre C, Jiménez-Santos MJ, García-Martín S, Carretero-Puche C, García-Jimeno L, Ivanchuk V, et al. [Beyondcell: targeting cancer therapeutic heterogeneity in single-cell RNA-seq data.](https://doi.org/10.1186/s13073-021-01001-x) Genome Medicine. 2021 Dec 16;13(1):187. 
+9. Sinha S, Vegesna R, Mukherjee S, Kammula AV, Dhruba SR, Wu W, et al. [PERCEPTION predicts patient response and resistance to treatment using single-cell transcriptomics of their tumors.](https://doi.org/10.1038/s43018-024-00756-7) Nat Cancer. 2024 June;5(6):938–52. 
+10. Kinker GS, Greenwald AC, Tal R, Orlova Z, Cuoco MS, McFarland JM, et al. [Pan-cancer single-cell RNA-seq identifies recurring programs of cellular heterogeneity.](https://doi.org/10.1038/s41588-020-00726-6) Nat Genet. 2020 Nov;52(11):1208–18. 
+11. Gavish A, Tyler M, Greenwald AC, Hoefflin R, Simkin D, Tschernichovsky R, et al. [Hallmarks of transcriptional intratumour heterogeneity across a thousand tumours.](https://doi.org/10.1038/s41586-023-06130-4) Nature. 2023 June;618(7965):598–606. 
+12. Combes AJ, Samad B, Tsui J, Chew NW, Yan P, Reeder GC, et al. [Discovering dominant tumor immune archetypes in a pan-cancer census.](https://doi.org/10.1016/j.cell.2021.12.004) Cell. 2022 Jan 6;185(1):184-203.e19. 
+
+
+## Authors
+
+* María González Bermejo
+* Laura Serrano Ron
+* Santiago García Martín
+* Óscar Lapuente Santana
+
+<!-- ## Citation -->
+
+## Support
+If you have any questions, feel free to submit an [issue](https://github.com/cnio-bu/tcca/issues).
