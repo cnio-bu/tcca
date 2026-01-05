@@ -33,6 +33,13 @@ treatment_colors <- c(
 
 # Adult/Pediatric
 age_colors <- c("Adult" = "#7689DE", "Pediatric" = "#a9dce3")
+age_group_colors <- c(
+  "Pediatric"   = "#a9dce3",
+  "Young adult" = "#6CC2BD",
+  "Adult"       = "#7689DE",
+  "Elderly"     = "#4B4A73",
+  "Unknown"     = "#BEBEBE"
+)
 
 # Male/Female
 sex_colors <- c("Male" = "#ec5c44", "Female" = "#1c8c8c")
@@ -96,8 +103,8 @@ MoAs_colors <- c(
   "Microtubule agent" = "#ff5f76",
   "Chromatin agent" = "#ffb6b6",
   "EGFR inhibitor" = "#fff154",
-  "PARP inhibitor" = "#7d58ad",
   "EGFR inhibitor;VEGFR inhibitor" = "#3f685e",
+  "PARP inhibitor" = "#7d58ad",
   "Pro-apoptotic agent" = "#ba7fff",
   "Kinase inhibitor" = "#ffdd72",
   "MAPK inhibitor" = "#4b71e5",
@@ -120,25 +127,33 @@ MoAs_colors <- c(
   "Protein synthesis inhibitor" = "#3267a8",
   "Cell cycle arrest;PI3K/AKT/mTOR signaling inhibitor" = "#086AFC",
   "SRC inhibitor" = "#FFFE89",
-  "Immunotherapy" = "#9e0089",
   "Other" = "#BBB9B7"
 )
 
-
 ## TME colors
 tme_colors <- c(
-  "Immune_stromal_cDC1_bias" = "#006a40",
-  "Immune_stromal_CAFlike_cDC1_cDC2_bias" = "#75b41e",
-  "Immune_rich_cDC1_bias" = "#b3d0c0",
-  "Immune_desert_cDC1_bias" = "#007e7f",
-  "Tcell_centric_Mo_cDC1_cDC2_bias" = "#8ba1bc",
-  "Immune_stromal_CAFlike" = "#f2990c",
-  "Immune_desert_Endo_Mo_cDC2_bias" = "#d35e60",
+  "Immune_stromal" = "#006a40",
+  "Immune_stromal_CAFlike_Mp_bias" = "#75b41e",
+  "Immune_rich" = "#b3d0c0",
+  "Immune_stromal_desert" = "#007e7f",
+  "Tcell_centric" = "#8ba1bc",
+  "Immune_desert_CAFlike" = "#f2990c",
+  "Myeloid_centric_Mo_bias(medium)" = "#d35e60",
   "Myeloid_centric" = "#f08892",
-  "Immune_stromal_Endolike_Treg_cDC1_cDC2_bias" = "#8ab8cf",
+  "Immune_stromal_Endolike" = "#8ab8cf",
   "Myeloid_centric_Mp_bias" = "#b4a814",
-  "Immune_rich_Treg_bias" = "#9b7ebd",
-  "Myeloid_centric_Mo_cDC1_cDC2_bias" = "#5a5895",
+  "Immune_rich_Treg_cDC2_bias" = "#9b7ebd",
+  "Myeloid_centric_Mo_bias(high)" = "#5a5895",
+  "none" = "#BBB9B7"
+)
+
+
+tme_group_colors <- c(
+  "Immune_stromal" = "#1b9e77",
+  "Immune_rich" = "#d95f02",
+  "Immune_desert" = "#7570b3",
+  "Tcell_centric" = "#e7298a",
+  "Myeloid_centric" = "#41a24b",
   "none" = "#BBB9B7"
 )
 
@@ -317,17 +332,17 @@ mp_colors <- c(
 
 
 mp_family_colors <- c(
-  "CellCycle" = "#1b4248",
+  "CellCycle" = "#1b4248", 
   "Oncogenic" = "#6567bd",
   "Stress" = "#b46f9c",
   "Inflammation" = "#584116",
-  "EMT" = "#e4028c",
+  "EMT" = "#e4028c", 
   "CellularPlasticity" = "#c8d45e",
   "ProteinRegulation" = "#fcb451",
   "EpithelialSenescence" = "#6d8e43",
   "MitochondrialRespiration" = "#9d7e02",
   "Cilia" = "#0074bc",
   "LineageSpecific.Hemato" = "#4e5771",
-  "LineageSpecific.Neural" = "#95d4aa",
+  "LineageSpecific.Neural" = "#95d4aa", 
   "LineageSpecific.Other" = "#9b2727ff"
 )
