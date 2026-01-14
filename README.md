@@ -160,7 +160,7 @@ This section `src/09_functional` describes the workflow for computing functional
 
 **1. Pseudobulk generation and GSVA enrichment (`pseudobulk/`)**
 - `bulk_from_expr.R`: aggregates malignant cell expression per sample to create a pseudobulk expression matrix.
-- `bulk_functional.R`: computes gene set enrichment using GSVA with predefined gene sets (from MSigDB and published cancer transcriptional programs) and performs biclustering of pathways and samples to reveal functional patterns.
+- `sample_pseudobulk_functional.R` and `subclone_pseudobulk_functional.R`: computes gene set enrichment using GSVA with predefined gene sets (from MSigDB and published cancer transcriptional programs) and performs biclustering of pathways and samples or subclones, respectively, to reveal functional patterns.
 - `calculate_overlaps.R`: calculates pairwise Jaccard indices between gene sets to quantify redundancy and flag overlapping sets for potential filtering.
   
 **2. Single-cell functional enrichment (UCell and Beyondcell) (`single-cell/`)**

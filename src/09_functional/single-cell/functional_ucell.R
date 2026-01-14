@@ -18,7 +18,7 @@ read.gmt <- function(gmt_file) {
   return(sigs_list)
 }
 
-# Read the gmt file with the 6 drug resistance mechanisms gene sets.
+# Read the gmt file
 gmt_list <- read.gmt(
   "/storage/scratch01/shared/projects/bc-meta/reference/combined_gsets_functional.gmt"
 )
