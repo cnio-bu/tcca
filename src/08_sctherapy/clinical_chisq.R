@@ -304,3 +304,138 @@ ggplot(long_data, aes(x = SampleID, fill = Annotation)) +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
   labs(x = "Samples", y = "Annotation Presence", fill = "Annotation")
 
+
+
+# Fisher test table (specific enrichments)
+tcca_metadata <- read.table("tcca_metadata.tsv", header = T, sep = "\t")
+tcca_metadata[tcca_metadata$tme_archetype == "Immune_stromal_desert", "tme_archetype_group"] <- "Immune_desert"
+subclone_level <- tcca_metadata %>%
+  filter(!is.na(scevan_subclone) & !is.na(scTherapy_cluster)) %>%
+  select(scevan_subclone, refined_tumor_type, scTherapy_cluster) %> %>% 
+  distinct()
+
+# GBM in TC5
+x <- table(subclone_level$refined_tumor_type, subclone_level$scTherapy_cluster)
+gbm_tc5 <- x["GBM", "5"]
+gmb_not_tc5 <- sum(x["GBM", ]) - gbm_tc5
+
+not_gbm_tc5 <- sum(x[, "5"]) - gbm_tc5
+not_gbm_not_tc5 <- sum(x) - (gbm_tc5 + gmb_not_tc5 + not_gbm_tc5)
+
+mat <- matrix(c(gbm_tc5, gmb_not_tc5, not_gbm_tc5, not_gbm_not_tc5), nrow = 2, ncol = 2)
+fisher.test(mat)
+
+# AML in TC6
+laml_tc6 <- x["LAML", "6"]
+laml_not_tc6 <- sum(x["LAML", ]) - laml_tc6
+
+not_laml_tc6 <- sum(x[, "6"]) - laml_tc6
+not_laml_not_tc6 <- sum(x) - (laml_tc6 + laml_not_tc6 + not_laml_tc6)
+mat <- matrix(c(laml_tc6, laml_not_tc6, not_laml_tc6, not_laml_not_tc6), nrow = 2, ncol = 2)
+fisher.test(mat)
+
+
+# Fisher tests for TME archetypes in metastatic vs primary samples
+mixed_samples <- tcca_metadata %>%
+  group_by(study, sample) %>%
+  summarise(
+    has_malignant = any(malignancy == "True"),
+    has_non_malignant = any(malignancy == "False"),
+    .groups = "drop"
+  ) %>%
+  filter(has_malignant & has_non_malignant) %>%
+  mutate(study_sample = paste0(study, "_", sample))
+
+tme_samples <- tcca_metadata %>%
+  filter(tme_archetype != "none") %>%
+  mutate(study_sample = paste0(study, "_", sample)) %>%
+  filter(study_sample %in% mixed_samples$study_sample) %>%
+  select(study_sample, sample, refined_tumor_type, tme_archetype_group,sample_type, treated, age, sex) %>%
+  distinct()
+
+# Cancer types
+mat <- table(tme_samples$refined_tumor_type, tme_samples$tme_archetype)
+fisher.test(mat, simulate.p.value = TRUE, B = 10000)
+
+# Immune-desert
+mat <- table(tme_samples$tme_archetype_group, tme_samples$sample_type)
+met_desert <- mat["Immune_desert", "m"]
+pri_desert <- mat["Immune_desert", "p"]
+met_notdesert <- sum(mat[, "m"]) - met_desert
+pri_notdesert <- sum(mat[, "p"]) - pri_desert
+
+fisher.test(matrix(c(met_desert, met_notdesert,
+                     pri_desert, pri_notdesert), nrow=2, byrow=T))
+
+# Immune-stromal
+met_stromal <- mat["Immune_stromal", "m"]
+pri_stromal <- mat["Immune_stromal", "p"]
+met_notstromal <- sum(mat[, "m"]) - met_stromal
+pri_notstromal <- sum(mat[, "p"]) - pri_stromal
+
+fisher.test(matrix(c(met_stromal, met_notstromal,
+                     pri_stromal, pri_notstromal), nrow=2, byrow=T))
+
+# T-cell-centric
+met_tcell <- mat["Tcell_centric", "m"]
+pri_tcell <- mat["Tcell_centric", "p"]
+met_nottcell <- sum(mat[, "m"]) - met_tcell
+pri_nottcell <- sum(mat[, "p"]) - pri_tcell
+fisher.test(matrix(c(met_tcell, met_nottcell,
+                     pri_tcell, pri_nottcell), nrow=2, byrow=T))
+
+# Immune-rich
+met_rich <- mat["Immune_rich", "m"]
+pri_rich <- mat["Immune_rich", "p"]
+met_notrich <- sum(mat[, "m"]) - met_rich
+pri_notrich <- sum(mat[, "p"]) - pri_rich
+fisher.test(matrix(c(met_rich, met_notrich,
+                     pri_rich, pri_notrich), nrow=2, byrow=T))
+
+
+# Fisher tests for TME archetypes in treated vs untreated samples
+mat <- table(tme_samples$tme_archetype_group, tme_samples$treated)
+# Immune-stromal
+untreated_stromal <- mat["Immune_stromal", "f"]
+treated_stromal <- mat["Immune_stromal", "t"]
+untreated_notstromal <- sum(mat[, "f"]) - untreated_stromal
+treated_notstromal <- sum(mat[, "t"]) - treated_stromal
+
+fisher.test(matrix(c(untreated_stromal, untreated_notstromal,
+                     treated_stromal, treated_notstromal), nrow=2, byrow=T))
+# T-cell-centric
+untreated_tcell <- mat["Tcell_centric", "f"]
+treated_tcell <- mat["Tcell_centric", "t"]
+untreated_nottcell <- sum(mat[, "f"]) - untreated_tcell
+treated_nottcell <- sum(mat[, "t"]) - treated_tcell
+
+fisher.test(matrix(c(untreated_tcell, untreated_nottcell,
+                     treated_tcell, treated_nottcell), nrow=2, byrow=T))
+# Myeloid-centric
+treated_myeloid <- mat["Myeloid_centric", "t"]
+untreated_myeloid <- mat["Myeloid_centric", "f"]
+treated_notmyeloid <- sum(mat[, "t"]) - treated_myeloid
+untreated_notmyeloid <- sum(mat[, "f"]) - untreated_myeloid
+fisher.test(matrix(c(treated_myeloid, treated_notmyeloid,
+                     untreated_myeloid, untreated_notmyeloid), nrow=2, byrow=T))
+# Fisher tests for TME archetypes in treated vs untreated samples
+mat <- table(tme_samples$sex,tme_samples$tme_archetype_group)
+
+fisher.test(mat[c(2, 3), ], simulate.p.value = TRUE, B = 10000)
+fisher.test(t(mat)[c(2, 3), ], simulate.p.value = TRUE, B = 10000)
+# Fisher tests for TME archetypes in adult vs pediatric samples
+tme_samples$age_group <- tme_samples %>%
+  mutate(age_group = factor(
+      case_when(
+        age >= 0  & age <= 15 ~ "Pediatric",
+        age >= 16 & age <= 39 ~ "Young adult",
+        age >= 40 & age <= 64 ~ "Adult",
+        age >= 65             ~ "Elderly",
+        TRUE                  ~ "Unknown"
+      ),
+      levels = c("Pediatric", "Young adult", "Adult", "Elderly", "Unknown")
+    )) %>%
+  pull(age_group)
+
+mat <- table(tme_samples$age_group, tme_samples$tme_archetype_group)
+fisher.test(mat[1:4, ], simulate.p.value = TRUE, B = 10000)
