@@ -78,7 +78,7 @@ This directory `src/04_cell_annotation_tme` contains the R notebook detailing th
 The following scripts (`src/05_scanpy`) are run in Python using Scanpy based on the Seurat v5 level 2 (lvl2) dataset exported as an .h5ad file.
 - `envs/` directory provides environment specifications for running integration workflows and benchmarking analyses.
 - `dimred_before_int.py`: normalization, HVG detection, PCA, and initial clustering before integration.
-- `integration.py`: applies multiple state-of-the-art integration methods (e.g., scVI, SCANVI, Scanorama) o generate batch-corrected embeddings for integrated visualization across studies.
+- `integration.py`: applies multiple state-of-the-art integration methods (e.g., scVI, SCANVI, Scanorama) o generate batch-corrected embeddings for integrated visualization across studies. This script requires a GPU-enabled HPC environment. Analyses were performed on an HPC with 3× Nvidia A100 80GB GPUs.
 - `benchmark_integration.py`: evaluates integration performance using standard metrics to compare batch correction and biological conservation across the three integration methods.,
 - `cluster.py`: visualizes integrated embeddings, performs clustering (all cells and malignant subset), and validates cell type annotation using known marker genes.
 
