@@ -127,6 +127,7 @@ MoAs_colors <- c(
   "Protein synthesis inhibitor" = "#3267a8",
   "Cell cycle arrest;PI3K/AKT/mTOR signaling inhibitor" = "#086AFC",
   "SRC inhibitor" = "#FFFE89",
+  "Immunotherapy" = "#9e0089",
   "Other" = "#BBB9B7"
 )
 
