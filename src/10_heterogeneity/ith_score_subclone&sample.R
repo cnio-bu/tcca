@@ -5,8 +5,7 @@ library(dplyr)
 library(tidyverse)
 library(ggplot2)
 library(patchwork)
-library(openxlsx)
-library(entropy)
+#library(openxlsx)
 library(matrixStats)
 library(fmsb)
 library(ggpubr)
@@ -15,242 +14,287 @@ setwd("/storage/scratch01/shared/projects/bc-meta/")
 source("/home/mgonzalezb/bc-meta/figures/TCCA_palette.R")
 seu <- readRDS("functional_nmf/sample_wise/seu_mps_sketch.rds")
 
-#### ------------- Transcriptomic Heterogeneity per Subclone ------------- ####
-# Get log-normalized expression matrix
-expr_mat <- as.matrix(seu[["RNA"]]$data)
-
+#### ------------- Transcriptomic Heterogeneity ------------- ####
 # 1. Extract variable genes (already calculated by Seurat)
+seu$study_sample <- paste0(seu$study, "_", seu$sample)
 seu <- FindVariableFeatures(seu, selection.method = "vst", nfeatures = 3000)
-variable_genes <- VariableFeatures(seu)
-expr_var <- as.matrix(seu[["RNA"]]$data[variable_genes, ])
+hvgs <- VariableFeatures(seu)
+logcounts <- t(as.matrix(seu[["RNA"]]$data[hvgs, ])) # cells x genes
 
-# 2. Pre-calculate cell masks per subclone
-subclones <- unique(seu@meta.data$subclone_name)
-cell_masks <- lapply(subclones, function(sub) {
-    seu@meta.data$subclone_name == sub
+# 2. Get a transcriptomic profile per subclone (mean expression of each gene)
+subclones <- seu@meta.data$subclone_name
+cells_by_subclone <- split(seq_len(nrow(logcounts)), subclones)
+profiles <- lapply(cells_by_subclone, function(idx) {
+  Matrix::colMeans(logcounts[idx, , drop = FALSE])
 })
-names(cell_masks) <- subclones
+subclone_profiles <- do.call(cbind, profiles)
 
-# 3. Calculate heterogeneity
-heterogeneity_results <- data.frame(
-    subclone = subclones,
-    mean_cv = NA,
-    median_cv = NA,
-    n_cells = NA,
-    n_variable_genes = NA
-)
+# 3. Compute transcriptomic heterogeneity (tITH) per sample taking into account
+# or not the therapeutic cluster assignment.
+metadata <- read.table(
+    "single_cell/seurat/tcca/tcca_metadata_h5ad.tsv", 
+    sep = "\t", 
+    header = TRUE
+    )
 
-for (i in seq_along(subclones)) {
-    sub <- subclones[i]
-    cells <- cell_masks[[sub]]
-    n_cells <- sum(cells)
+subclone_metadata <- metadata %>%
+  filter(therapeutic_cluster != "NA") %>%
+  mutate(study_sample = paste0(study, "_", sample)) %>%
+  group_by(study, study_sample, scevan_subclone, therapeutic_cluster) %>%
+  summarise(n_cells = n(), .groups = "drop") %>%
+  group_by(study_sample) %>%
+  mutate(subclone_freq = n_cells / sum(n_cells)) %>%
+  ungroup()
 
-    if (n_cells < 3) { # Minimum 3 cells for reliable CV
-        heterogeneity_results$n_cells[i] <- n_cells
-        next
-    }
 
-    expr_sub <- expr_var[, cells, drop = FALSE]
+compute_tITH <- function(
+    subclone_metadata,
+    subclone_profiles,
+    subclone_col = "scevan_subclone",
+    cluster_col = "therapeutic_cluster",
+    sample_col = "study_sample",
+    freq_col = "subclone_freq",
+    unit = c("sample", "TC")
+    ) {
 
-    # Calculate CV per gene
-    gene_means <- rowMeans(expr_sub)
-    gene_sds <- rowSds(expr_sub)
+    unit  <- match.arg(unit)
+    global_dist <- 1 - cor(subclone_profiles, method = "pearson")
 
-    # CV = sd/mean, only for expressed genes
-    expressed <- gene_means > 0.01 # Minimum threshold
-    cv_genes <- gene_sds[expressed] / gene_means[expressed]
+    group_col <- if (unit == "sample") sample_col else cluster_col
+    groups <- sort(unique(subclone_metadata[[group_col]]))
+    groups<- groups[!is.na(groups) & groups != "NA"]
 
-    # Filter extreme outliers (optional but recommended)
-    cv_genes <- cv_genes[cv_genes < quantile(cv_genes, 0.99, na.rm = TRUE)]
+    results <- vapply(groups, function(group) {
 
-    heterogeneity_results$mean_cv[i] <- mean(cv_genes, na.rm = TRUE)
-    heterogeneity_results$median_cv[i] <- median(cv_genes, na.rm = TRUE)
-    heterogeneity_results$n_cells[i] <- n_cells
-    heterogeneity_results$n_variable_genes[i] <- sum(expressed)
+        meta_group <- subclone_metadata[subclone_metadata[[group_col]] == group, ]
+        subclones  <- meta_group[[subclone_col]]
+        subclones  <- subclones[subclones %in% colnames(subclone_profiles)]
+
+        if (length(subclones) < 2) return(0)
+
+        freq <- setNames(meta_group[[freq_col]], meta_group[[subclone_col]])
+        freq <- freq[subclones]
+        freq <- freq / sum(freq)
+
+        D <- global_dist[subclones, subclones]
+        return(as.numeric(freq %*% D %*% freq))
+
+        }, FUN.VALUE = numeric(1))
+
+    names(results) <- groups
+    return(results)
 }
 
-# write.table(heterogeneity_results,
-#     file = "sample_wise/single_cell/heterogeneity/transcriptomic_heterogeneity_per_subclone.tsv",
-#     sep = "\t",
-#     quote = FALSE,
-#     row.names = FALSE
-# )
-# 4. Add metadata and visualize
-seu@meta.data$transcriptomic_ith_cv <- heterogeneity_results$mean_cv[
-    match(seu@meta.data$subclone_name, heterogeneity_results$subclone)
-]
+
+# Per sample (Fig 3c)
+tITH_per_sample <- compute_tITH(subclone_metadata, subclone_profiles, unit = "sample")
+
+# Per TC (Fig 2e)
+tITH_per_TC <- compute_tITH(subclone_metadata, subclone_profiles, unit = "TC")
 
 
-#### --------------- Therapeutic Heterogeneity per Subclone -------------- ####
-# Compute a mean Jaccard index per cluster
-similarity_matrix <- readRDS("single_cell/sctherapy/results/jaccard_matrix.rds")
-jaccard_dist <- as.dist(1 - similarity_matrix)
-cluster_assignment <- readRDS("single_cell/sctherapy/results/speclustering_reordered.rds")
-
-cluster_list <- split(names(cluster_assignment), cluster_assignment)
-subclone_heterogeneity <- sapply(names(cluster_assignment), function(s) {
-    cl <- cluster_assignment[s]
-    cluster_samples <- names(cluster_assignment[cluster_assignment == cl])
-    cluster_samples <- setdiff(cluster_samples, s) # exclude self
-    sample_distance <- mean(1 - similarity_matrix[s, cluster_samples]) # mean distance
-    return(sample_distance)
-})
-
-# Add to seurat object
-therapeutic_het <- enframe(subclone_heterogeneity, name = "Subclone", value = "therapeutic_heterogeneity")
-seu@meta.data <- seu@meta.data %>%
-    left_join(therapeutic_het, by = c("subclone_name" = "Subclone"))
-
-
-
-
-
-#### ---------------- Genomic Heterogeneity per Subclone ---------------- ####
+#### ---------------- Genomic Heterogeneity ---------------- #####
 # Read CNV matrix per subclone
-library(entropy)
 cnv_mat <- read.table("single_cell/cna_metadata/cnv_segments_clones_lvl2_cytobands.tsv")
+colnames(cnv_mat) <- gsub("subclone", "", colnames(cnv_mat))
+colnames(cnv_mat) <- gsub("[^a-zA-Z0-9]", "", names(cnv_mat))
 cnv_mat <- as.matrix(cnv_mat)
 cnv_mat <- apply(cnv_mat, c(1,2), as.numeric)
 cnv_mat[is.na(cnv_mat)] <- 2
 
 
-# Discretize (bin) expression to stabilize entropy calculation
-# You can use 10 bins (can be tuned)
-genomic_entropy <- apply(cnv_mat, 2, function(x) {
-    entropy(discretize(x, numBins = 5))
-})
+# Compute distance between subclone
+compute_gITH <- function(
+    subclone_metadata,
+    cnv_mat,
+    subclone_col = "scevan_subclone",
+    cluster_col = "therapeutic_cluster",
+    sample_col = "study_sample",
+    freq_col = "subclone_freq",
+    unit = c("sample", "TC")
+    ) {
+  
+    cnv_mat <- t(cnv_mat)
+    unit <- match.arg(unit)
+    L  <- ncol(cnv_mat)
+    global_dist <- as.matrix(stats::dist(cnv_mat, method = "euclidean")) / sqrt(L)
+    
+    # Rename subclones to match cnv mat
+    subclone_metadata$scevan_subclone <- gsub("[^a-zA-Z0-9]", "", subclone_metadata$scevan_subclone)
+    group_col <- if (unit == "sample") sample_col else cluster_col
+    groups <- sort(unique(subclone_metadata[[group_col]]))
+    groups <- groups[!is.na(groups) & groups != "NA"]
 
-# Rename subclones
-names(genomic_entropy) <- gsub("subclone", "", names(genomic_entropy))
-names(genomic_entropy) <- gsub("[^a-zA-Z0-9]", "", names(genomic_entropy))
+    results <- vapply(groups, function(group) {
 
-genomic_entropy <- enframe(genomic_entropy,
-    name = "Subclone", 
-    value = "shannon_entropy_genomic"
+        meta_group <- subclone_metadata[subclone_metadata[[group_col]] == group, ]
+        subclones <- meta_group[[subclone_col]]
+        subclones <- subclones[subclones %in% rownames(cnv_mat)]
+
+        if (length(subclones) < 2) return(0)
+
+        # Frecuencias directamente desde subclone_metadata
+        freq <- setNames(meta_group[[freq_col]], meta_group[[subclone_col]])
+        freq <- freq[subclones]
+        freq <- freq / sum(freq)  # renormalizar por si algún subclón fue filtrado
+
+        D <- global_dist[subclones, subclones]
+        return(as.numeric(freq %*% D %*% freq))
+
+    }, FUN.VALUE = numeric(1))
+
+    names(results) <- groups
+    return(results)
+}
+
+# Per sample (Fig 3c)
+gITH_per_sample <- compute_gITH(subclone_metadata, cnv_mat, unit = "sample")
+
+# Per TC (Fig 2e)
+gITH_per_TC <- compute_gITH(subclone_metadata, cnv_mat, unit = "TC")
+
+
+#### --------------- Therapeutic Heterogeneity per Subclone -------------- ####
+# Compute a mean Jaccard index per cluster
+similarity_matrix <- readRDS("single_cell/sctherapy/results/jaccard_matrix.rds")
+jaccard_dist <- as.matrix(as.dist(1 - similarity_matrix))
+
+compute_thITH <- function(
+    subclone_metadata,
+    jaccard_dist,
+    subclone_col = "scevan_subclone",
+    cluster_col = "therapeutic_cluster",
+    sample_col = "study_sample",
+    freq_col = "subclone_freq",
+    unit = c("sample", "TC")
+    ) {
+
+  unit <- match.arg(unit)
+  group_col <- if (unit == "sample") sample_col else cluster_col
+  groups <- sort(unique(subclone_metadata[[group_col]]))
+  groups <- groups[!is.na(groups) & groups != "NA"]
+
+  results <- vapply(groups, function(group) {
+
+    meta_group <- subclone_metadata[subclone_metadata[[group_col]] == group, ]
+    subclones <- meta_group[[subclone_col]]
+    subclones <- subclones[subclones %in% rownames(jaccard_dist)]
+
+    if (length(subclones) < 2) return(0)
+
+    freq <- setNames(meta_group[[freq_col]], meta_group[[subclone_col]])
+    freq <- freq[subclones]
+    freq <- freq / sum(freq)
+
+    D <- jaccard_dist[subclones, subclones]
+    return(as.numeric(freq %*% D %*% freq))
+
+  }, FUN.VALUE = numeric(1))
+
+  names(results) <- groups
+  return(results)
+}
+
+thITH_per_sample <- compute_thITH(subclone_metadata, jaccard_dist, unit = "sample")
+thITH_per_TC <- compute_thITH(subclone_metadata, jaccard_dist, unit = "TC")
+
+
+# Join the 3 heterogeneities for samples and TCs
+sample_lvl_ITH <- data.frame(
+    transcriptomic_ITH = tITH_per_sample,
+    genomic_ITH = gITH_per_sample,
+    therapeutic_ITH = thITH_per_sample
+    )
+tc_lvl_ITH <- data.frame(
+    transcriptomic_ITH = tITH_per_TC,
+    genomic_ITH = gITH_per_TC,
+    therapeutic_ITH = thITH_per_TC
 )
 
-seu@meta.data <- seu@meta.data %>%
-    mutate(subclone_match = gsub("[^a-zA-Z0-9]", "", subclone_name)) %>%
-    left_join(genomic_entropy, by = c("subclone_match" = "Subclone")) %>%
-    select(-subclone_match)
-
-
-# Save subclone-level heterogeneity scores
-ith_subclone <- seu@meta.data %>%
-    select(
-        subclone_name,
-        transcriptomic_ith_cv,
-        shannon_entropy_genomic,
-        therapeutic_heterogeneity
-    ) %>%
+#### ---------------- Boxplots & radar charts per cancer type ---------------- ####
+# We add the refined tumor type annotation to ITH
+sample_tumor <- metadata %>%
+    mutate(study_sample = paste0(study, "_", sample)) %>%
+    select(study_sample, tumor_type) %>%
     distinct()
-write.table(ith_subclone,
-    file = "single_cell/heterogeneity/ith_scores_per_subclone.tsv",
-    sep = "\t",
-    quote = FALSE,
-    row.names = FALSE
-)
 
+sample_lvl_ITH <-  sample_lvl_ITH %>%
+    rownames_to_column(var = "study_sample") %>%
+    left_join(sample_tumor, by = "study_sample")
 
+tumor_order <- sample_lvl_ITH %>%
+  group_by(tumor_type) %>%
+  summarise(median_thITH = median(therapeutic_ITH, na.rm = TRUE)) %>%
+  arrange(median_thITH) %>%
+  pull(tumor_type)
 
-#### ---------------- Boxplots & radar charts per TC ---------------- ####
-# We add the refined tumor type annotation to the metadata
-metadata <- read.table("single_cell/seurat/v5/tcca_metadata.tsv",
-    sep = "\t",
-    header = TRUE
-)
-seu@meta.data <- seu@meta.data %>%
-    left_join(select(metadata, cell, refined_tumor_type), by = "cell")
-
-subclone_heterogeneity <- seu@meta.data %>%
-    group_by(subclone_name, clusters, refined_tumor_type) %>%
-    summarize(
-        transcriptomic_mean = mean(transcriptomic_ith_cv, na.rm = TRUE),
-        genomic_mean = mean(shannon_entropy_genomic, na.rm = TRUE),
-        therapeutic_mean = mean(therapeutic_heterogeneity, na.rm = TRUE)
+boxplot_df <- sample_lvl_ITH %>%
+  pivot_longer(
+    cols      = c(transcriptomic_ITH, genomic_ITH, therapeutic_ITH),
+    names_to  = "heterogeneity_type",
+    values_to = "heterogeneity_value"
+  ) %>%
+  mutate(
+    tumor_type = factor(tumor_type, levels = tumor_order),
+    heterogeneity_type = factor(heterogeneity_type,
+      levels = c("therapeutic_ITH", "transcriptomic_ITH", "genomic_ITH"),
+      labels = c("Therapeutic", "Transcriptomic", "Genomic")
     )
+  )
 
-boxplot_df <- subclone_heterogeneity %>%
-    pivot_longer(
-        cols = c(transcriptomic_mean, genomic_mean, therapeutic_mean),
-        names_to = "heterogeneity_type", values_to = "heterogeneity_value"
-    )
+boxplot1 <- ggplot(
+  boxplot_df,
+  aes(x = tumor_type, y = heterogeneity_value, 
+      fill = tumor_type, color = tumor_type)
+) +
+  geom_violin(
+    alpha = 0.3, 
+    color = NA,
+    trim  = FALSE
+  ) +
+  geom_boxplot(
+    width         = 0.65,
+    outlier.shape = NA,
+    linewidth     = 0.3,
+    alpha         = 0.6,
+    fatten = 1,
+    color         = "black"
+  ) +
+  geom_jitter(
+    width  = 0.15,
+    size   = 0.8,
+    alpha  = 0.6,
+    stroke = 0
+  ) +
+  scale_fill_manual(values  = tumor_type_colors) +
+  scale_color_manual(values = tumor_type_colors) +
+  facet_wrap(
+    ~ heterogeneity_type,
+    nrow   = 3,
+    scales = "free_y"
+  ) +
+  labs(x = "Cancer type", y = "Heterogeneity score") +
+  theme_classic(base_size = 9) +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
+    strip.background = element_blank(),
+    strip.text = element_text(face = "bold", hjust = 0),
+    legend.position  = "none"
+  )
 
-th <- theme(
-    axis.text.x = element_text(angle = 45, hjust = 1),
-    axis.text = element_text(size = 12, color = "black"),
-    axis.title = element_text(size = 12, face = "bold"),
-    legend.title = element_text(size = 12, face = "bold", hjust = 0.5),
-    legend.text = element_text(size = 12),
-    axis.line = element_line(color = "black")
+ggsave("single_cell/heterogeneity/figures/ith_per_tumor_type.pdf",
+  plot   = boxplot1,
+  dpi    = 300,
+  width  = 6,
+  height = 6
 )
-
-boxplot_df$heterogeneity_type <- factor(
-    boxplot_df$heterogeneity_type,
-    levels = c("therapeutic_mean", "transcriptomic_mean", "genomic_mean")
-)
-tc_order <- seu@meta.data %>%
-    select(clusters, subclone_name, therapeutic_heterogeneity) %>%
-    distinct() %>%
-    mutate(clusters = fct_reorder(
-        clusters,
-        therapeutic_heterogeneity,
-        .fun = median,
-        .desc = FALSE
-    )) %>%
-    pull(clusters)
-boxplot_df$clusters <- factor(boxplot_df$clusters, levels = levels(tc_order))
-boxplot1 <- ggplot(boxplot_df, aes(x = clusters, y = heterogeneity_value, fill = clusters)) +
-    geom_boxplot(position = position_dodge(width = 0.75), width = 0.7) +
-    labs(
-        x = "scTherapy cluster",
-        y = "Heterogeneity score",
-        fill = "Heterogeneity"
-    ) +
-    facet_wrap(~heterogeneity_type, ncol = 3, scales = "free_y", labeller = as_labeller(c(
-                transcriptomic_mean = "Transcriptomic",
-                genomic_mean = "Genomic",
-                therapeutic_mean = "Therapeutic"))) +
-    scale_fill_manual(values = sctherapy_colors) +
-    theme_bw() +
-    th +
-    theme(legend.position = "none")
-
-ggsave("single_cell/heterogeneity/figures/ith_per_tc.pdf",
-    plot = boxplot1,
-    dpi = 300,
-    width = 12, height = 4
-)
-
 
 
 
 # To use the fmsb package, we have to add 2 lines to the dataframe: the max and min of
 # each variable to show on the plot.
 # Format the data for the radarchart.
-radar_df <- subclone_heterogeneity %>%
-    select(
-        clusters, transcriptomic_mean,
-        therapeutic_mean,
-        genomic_mean
-    ) %>%
-    group_by(clusters) %>%
-    summarize(
-        transcriptomic = mean(transcriptomic_mean, na.rm = TRUE),
-        genomic = mean(genomic_mean, na.rm = TRUE),
-        therapeutic = mean(therapeutic_mean, na.rm = TRUE)
-    ) %>%
-    # mutate(
-    #     transcriptomic = scale(transcriptomic)[, 1],
-    #     genomic = scale(genomic)[, 1],
-    #     therapeutic = scale(therapeutic)[, 1]
-    # ) %>%
-    column_to_rownames(var = "clusters") %>%
-    t() %>%
-    as.data.frame()
-
-
-radar_df <- round(radar_df, digits = 3)
+radar_df <- as.data.frame(t(round(tc_lvl_ITH, digits = 3)))
 
 # Plot each row (heterogeneity type) as its own radar chart
 custom_titles <- c("Transcriptomic", "Genomic", "Therapeutic")
@@ -281,377 +325,288 @@ for (i in seq_along(custom_titles)) {
 }
 dev.off()
 
+#### ---------------- Boxplots per TC ---------------- ####
+# Add TC to sample_lvl_ITH via subclone_metadata
+sample_tc <- subclone_metadata %>%
+  select(study_sample, therapeutic_cluster) %>%
+  distinct()
 
-#### ------------ Boxplots & radar charts per tumor type -------------- ####
-cancer_order <- seu@meta.data %>%
-    select(clusters, refined_tumor_type, subclone_name, therapeutic_heterogeneity) %>%
-    distinct() %>%
-    mutate(refined_tumor_type = fct_reorder(
-        refined_tumor_type,
-        therapeutic_heterogeneity,
-        .fun = median,
-        .desc = FALSE
-    )) %>%
-    pull(refined_tumor_type)
+# Each sample can appear in multiple TCs
+sample_lvl_ITH_tc <- sample_lvl_ITH %>%
+  left_join(sample_tc, by = "study_sample")
 
-boxplot_df$refined_tumor_type <- factor(boxplot_df$refined_tumor_type, levels = levels(cancer_order))
+# Orden de TCs por mediana de therapeutic_ITH
+tc_order <- sample_lvl_ITH_tc %>%
+  group_by(therapeutic_cluster) %>%
+  summarise(median_thITH = median(therapeutic_ITH, na.rm = TRUE)) %>%
+  arrange(median_thITH) %>%
+  pull(therapeutic_cluster)
 
-boxplot2 <- ggplot(boxplot_df, aes(
-    x = factor(refined_tumor_type),
-    y = heterogeneity_value,
-    fill = factor(refined_tumor_type)
-)) +
-    geom_boxplot(position = position_dodge(width = 0.75), width = 0.7) +
-    labs(
-        x = "Tumor type",
-        y = "Heterogeneity score",
-        fill = "Heterogeneity"
-    ) +
-    facet_wrap(~heterogeneity_type, ncol = 1, scales = "free_y", labeller = as_labeller(c(
-        transcriptomic_mean = "Transcriptomic",
-        genomic_mean = "Genomic",
-        therapeutic_mean = "Therapeutic"
-    ))) +
-    scale_fill_manual(values = tumor_type_colors) +
-    theme_bw() +
-    th +
-    theme(legend.position = "none")
-
-
-
-ggsave("single_cell/heterogeneity/figures/ith_per_tumor_type_facet.pdf",
-    plot = boxplot2,
-    dpi = 300,
-    width = 12, height = 10
-)
-
-# Radar chart per cancer type
-# Format the data for the radarchart.
-radar_df <- subclone_heterogeneity %>%
-    select(
-        refined_tumor_type, transcriptomic_mean,
-        therapeutic_mean,
-        genomic_mean
-    ) %>%
-    group_by(refined_tumor_type) %>%
-    summarize(
-        transcriptomic = median(transcriptomic_mean, na.rm = TRUE),
-        genomic = median(genomic_mean, na.rm = TRUE),
-        therapeutic = median(therapeutic_mean, na.rm = TRUE)
-    ) %>%
-    # mutate(
-    #     transcriptomic = scale(transcriptomic)[, 1],
-    #     genomic = scale(genomic)[, 1],
-    #     therapeutic = scale(therapeutic)[, 1]
-    # ) %>%
-    column_to_rownames(var = "refined_tumor_type") %>%
-    t() %>%
-    as.data.frame()
-
-
-radar_df <- round(radar_df, digits = 3)
-
-# Plot each row (heterogeneity type) as its own radar chart
-custom_titles <- c("Transcriptomic", "Genomic", "Therapeutic")
-colors_border <- c("#d96157", "#447dac", "#53744c")
-colors_in <- alpha(colors_border, 0.3)
-
-# Set up PDF or PNG
-pdf("single_cell/heterogeneity/figures/radarchart_ith_per_cancertype.pdf",
-    width = 10, height = 4
-)
-par(mfrow = c(1, 3))
-par(mar = c(2, 1, 3, 1))
-par(oma = c(0, 0, 2, 0))
-for (i in seq_along(custom_titles)) {
-    df_i <- radar_df[i, , drop = FALSE]
-    df_i <- rbind(rep(max(df_i), ncol(df_i)), rep(min(df_i), ncol(df_i)), df_i)
-
-    radarchart(df_i,
-        vlabels = colnames(df_i),
-        pcol = colors_border[i],
-        pfcol = colors_in[i],
-        plwd = 4,
-        plty = 1,
-        cglcol = "grey", cglty = 1, axislabcol = "black", cglwd = 0.8,
-        vlcex = 1.2, # 🔹 bigger cluster labels
-        title = custom_titles[i] # 🔹 custom plot title
+boxplot_df_tc <- sample_lvl_ITH_tc %>%
+  pivot_longer(
+    cols = c(therapeutic_ITH, transcriptomic_ITH, genomic_ITH),
+    names_to  = "heterogeneity_type",
+    values_to = "heterogeneity_value"
+  ) %>%
+  mutate(
+    therapeutic_cluster = factor(therapeutic_cluster, levels = tc_order),
+    heterogeneity_type  = factor(heterogeneity_type,
+      levels = c("therapeutic_ITH", "transcriptomic_ITH", "genomic_ITH"),
+      labels = c("Therapeutic", "Transcriptomic", "Genomic")
     )
-}
-dev.off()
+  )
+
+boxplot2 <- ggplot(
+  boxplot_df_tc,
+  aes(x = therapeutic_cluster, y = heterogeneity_value,
+      fill = therapeutic_cluster, color = therapeutic_cluster)
+) +
+  geom_violin(alpha = 0.3, color = NA, trim = FALSE) +
+  geom_boxplot(
+    width = 0.65, outlier.shape = NA,
+    linewidth = 0.3, alpha = 0.6,
+    fatten = 1, color = "black"
+  ) +
+  geom_jitter(width = 0.15, size = 0.8, alpha = 0.6, stroke = 0) +
+  scale_fill_manual(values  = sctherapy_colors) +
+  scale_color_manual(values = sctherapy_colors) +
+  facet_wrap(
+    ~ heterogeneity_type,
+    ncol = 3,
+    scales = "free_y"
+  ) +
+  labs(x = "Therapeutic cluster", y = "Heterogeneity score") +
+  theme_classic(base_size = 9) +
+  theme(
+    axis.text.x      = element_text(angle = 0),
+    strip.background = element_blank(),
+    strip.text       = element_text(face = "bold", hjust = 0),
+    legend.position  = "none"
+  )
+
+ggsave("single_cell/heterogeneity/figures/ith_per_TC.pdf",
+  plot   = boxplot2,
+  dpi    = 300,
+  width  = 8,
+  height = 3
+)
 
 
+# Add number of cells per sample
+seu <- readRDS("functional_nmf/sample_wise/seu_mps_sketch.rds")
+num_cells_sample <- seu@meta.data %>%
+    mutate(study_sample = paste0(study, "_", sample)) %>%
+    group_by(study_sample) %>%
+    summarise(n_cells = n())
+corr_genomic_therapeutic <- sample_lvl_ITH  %>%
+    inner_join(num_cells_sample, by = "study_sample")
+
+# Add number of drugs per sample
+sctherapy <- read.table(
+    "single_cell/sctherapy/results/drug_response_subclone_sctherapy.tsv",
+    sep = "\t", header = TRUE
+)
+num_drugs_sample <- sctherapy %>%
+    mutate(study_sample = paste0(Study, "_", Sample)) %>%
+    group_by(study_sample) %>%
+    summarise(n_drugs = n_distinct(Drug.Name))
+corr_genomic_therapeutic <- corr_genomic_therapeutic %>%
+    inner_join(num_drugs_sample, by = "study_sample")
 
 
-#### ---------------- Correlations between heterogeneities ---------------- ####
-heterogeneity_df <- seu@meta.data %>%
+# Join clinical data to genomic and therapeutic ITH table
+clinical_data <- metadata %>%
+    mutate(study_sample = paste0(study, "_", sample)) %>%
     select(
-        subclone_name,
-        transcriptomic_ith_cv,
-        therapeutic_heterogeneity,
-        shannon_entropy_genomic
+        study_sample,
+        #tumor_type,
+        sample_type,
+        treated
     ) %>%
     distinct()
+    
+corr_genomic_therapeutic <- corr_genomic_therapeutic %>%
+    left_join(clinical_data, by = "study_sample")
 
-# Generate all pairwise combinations (without repetition)
-var_pairs <- combn(names(heterogeneity_df)[2:4], 2, simplify = FALSE)
-
-# Create a list of ggscatter plots
-plots <- map(var_pairs, function(vars) {
-    xvar <- vars[1]
-    yvar <- vars[2]
-    ggscatter(
-        heterogeneity_df,
-        x = xvar,
-        y = yvar,
-        add = "reg.line",
-        conf.int = TRUE,
-        cor.coef = TRUE,
-        cor.method = "spearman",
-        cor.coef.size = 5
+# Plot distribution of number of drugs per sample
+plot <- ggplot(corr_genomic_therapeutic, aes(x = n_drugs)) +
+    geom_histogram(binwidth = 5, fill = "#3182bd", color = "black", alpha = 0.7) +
+    geom_vline(xintercept = c(20, 40), linetype = "dashed", color = "red") +
+    labs(
+        title = "Distribución del número de fármacos efectivos por muestra",
+        x = "Número de fármacos (n_drugs)",
+        y = "Frecuencia"
     ) +
-        ggtitle(paste(xvar, "vs", yvar))
-})
-
-# Combine all scatter plots into a single figure
-combined_plot <- ggpubr::ggarrange(
-    plotlist = plots,
-    ncol = 3, nrow = 1,
-    labels = LETTERS[1:length(plots)]
+    theme_bw(base_size = 14)
+ggsave(
+    "single_cell/genomic_ith/figures/num_drugs_distribution.png",
+    plot = plot,
+    width = 15,
+    height = 6,
+    dpi = 300
 )
 
-# Display
-pdf("single_cell/heterogeneity/figures/heterogeneity_correlations.pdf",
-    width = 14,
-    height = 4
+# Plot correlation between genomic and therapeutic heterogeneity
+theme <- theme_minimal() +
+    theme(
+        panel.background = element_rect(fill = "white", color = NA),
+        plot.background = element_rect(fill = "white", color = NA),
+        axis.line = element_line(color = "black"),
+        axis.text = element_text(color = "black", size = 12),
+        axis.title = element_text(color = "black", face = "bold"),
+        legend.title = element_text(color = "black", face = "bold"),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank()
+    )
+
+corr_plot_faceted <- corr_genomic_therapeutic %>%
+    filter(sample_type %in% c("p", "m")) %>%
+    mutate(
+        sample_type = factor(
+            sample_type,
+            levels = c("p", "m"),
+            labels = c("Primary", "Metastasis")
+        ),
+        n_drugs_cat = cut(
+            n_drugs,
+            breaks = c(0, 30, 40, 50, 60, Inf),
+            labels = c("<30", "30-40", "40-50", "50-60", ">60"),
+            right = TRUE
+        )
+    ) %>%
+    ggplot(aes(
+        x = therapeutic_ITH,
+        y = genomic_ITH,
+        color = tumor_type,
+        size = n_drugs_cat
+    )) +
+    geom_point(alpha = 0.8) +
+    facet_wrap(~sample_type, nrow = 2) +
+    labs(
+        x = "Therapeutic ITH",
+        y = "Genomic ITH",
+        color = "Cancer type",
+        size = "Number of effective drugs"
+    ) +
+    scale_color_manual(values = tumor_type_colors) +
+    scale_size_manual(
+        values = c(2, 3, 4.5, 6, 8), # tamaños crecientes por categoría
+        drop = FALSE
+    ) +
+    guides(color = guide_legend(override.aes = list(size = 3), ncol = 9)) +
+    theme_bw(base_size = 14) +
+    theme_bw(base_size = 14) +
+    theme(
+        panel.border = element_blank(),
+        axis.line = element_line(
+            color = "black",
+            linewidth = 0.6
+        ),
+        panel.grid = element_blank(),
+
+        strip.background = element_blank(),
+        strip.text = element_text(
+            face = "bold",
+            size = 14,
+            hjust = 0
+        ),
+
+        legend.position = "bottom",
+        legend.title = element_text(face = "bold"),
+        legend.background = element_blank(),
+        legend.box.background = element_blank()
+    )
+ggsave(
+    "single_cell/genomic_ith/figures/genomic_vs_therapeutic_ith_primary_vs_met.pdf",
+    plot = corr_plot_faceted,
+    width = 8,
+    height = 10,
+    dpi = 300
 )
-combined_plot
-dev.off()
+
+
+# Interactive version of the plot
+library(ggplot2)
+library(plotly)
+library(dplyr)
+
+corr_plot_faceted_interactive <- corr_genomic_therapeutic %>%
+    filter(sample_type %in% c("p", "m")) %>%
+    mutate(
+        sample_type = factor(
+            sample_type,
+            levels = c("p", "m"),
+            labels = c("Primary", "Metastasis")
+        ),
+        n_drugs_cat = cut(
+            n_drugs,
+            breaks = c(0, 30, 40, 50, 60, Inf),
+            labels = c("<30", "30-40", "40-50", "50-60", ">60"),
+            right = TRUE
+        )
+    ) %>%
+    ggplot(aes(
+        x = therapeutic_ITH,
+        y = genomic_ITH,
+        color = tumor_type,
+        size = n_drugs_cat,
+        text = paste0(
+            "Sample: ", study_sample, "<br>",
+            "Cancer type: ", tumor_type, "<br>",
+            "Genomic ITH: ", round(genomic_ITH, 2), "<br>",
+            "Therapeutic ITH: ", round(therapeutic_ITH, 2), "<br>",
+            "Effective drugs: ", n_drugs
+        )
+    )) +
+    geom_point(alpha = 0.8) +
+    facet_wrap(~sample_type, ncol = 2) +
+    labs(
+        x = "Therapeutic ITH",
+        y = "Genomic ITH"
+    ) +
+    scale_color_manual(values = tumor_type_colors) +
+    scale_size_manual(
+        values = c(2, 3, 4.5, 6, 8),
+        drop = FALSE
+    ) +
+    guides(color = "none", size = "none") + # Esto quita las leyendas
+    theme_bw(base_size = 14) +
+    theme(
+        strip.background = element_rect(fill = "white", color = "black", linewidth = 0.8),
+        strip.text = element_text(face = "bold", size = 14),
+        panel.border = element_rect(color = "black", fill = NA, linewidth = 0.8),
+        panel.grid = element_blank(),
+        legend.position = "none" # También puedes usar esto
+    )
+
+# Convertir a plotly
+corr_plot_faceted_interactive <- ggplotly(corr_plot_faceted_interactive, tooltip = "text")
+
+htmlwidgets::saveWidget(
+    corr_plot_faceted_interactive,
+    "single_cell/genomic_ith/figures/corr_plot_faceted_interactive.html",
+    selfcontained = TRUE
+)
 
 
 # Compute correlation matrix
 # Transcriptomic vs Therapeutic
 cor.test(
-    heterogeneity_df$transcriptomic_ith_cv,
-    heterogeneity_df$therapeutic_heterogeneity,
+    sample_lvl_ITH$transcriptomic_ITH,
+    sample_lvl_ITH$therapeutic_ITH,
     method = "pearson"
 )
 
 # Transcriptomic vs Genomic
 cor.test(
-    heterogeneity_df$transcriptomic_ith_cv,
-    heterogeneity_df$shannon_entropy_genomic,
+    sample_lvl_ITH$transcriptomic_ITH,
+    sample_lvl_ITH$genomic_ITH,
     method = "pearson"
 )
 
 # Therapeutic vs Genomic
 cor.test(
-    heterogeneity_df$therapeutic_heterogeneity,
-    heterogeneity_df$shannon_entropy_genomic,
+    sample_lvl_ITH$therapeutic_ITH,
+    sample_lvl_ITH$genomic_ITH,
     method = "pearson"
 )
-
-
-
-
-
-#### -------------------------- ITH per sample --------------------------- ####
-# Compute frequency of subclones per sample
-colnames(similarity_matrix) <- gsub("[^a-zA-Z0-9]", "", colnames(similarity_matrix))
-rownames(similarity_matrix) <- gsub("[^a-zA-Z0-9]", "", rownames(similarity_matrix))
-
-subclone_freq <- metadata %>%
-    mutate(scevan_subclone = gsub("[^a-zA-Z0-9]", "", scevan_subclone)) %>%
-    filter(malignancy == "True" & scevan_subclone %in% colnames(similarity_matrix)) %>%
-    group_by(study_sample, scevan_subclone) %>%
-    summarise(n_cells = n()) %>%
-    group_by(study_sample) %>%
-    mutate(p = n_cells / sum(n_cells)) %>%
-    ungroup()
-
-# Compute transcriptomic heterogeneity per sample (weighted by number of cells in each subclone)
-transcriptomic_ith <- heterogeneity_results %>%
-    left_join(
-        seu@meta.data %>%
-            mutate(study_sample = paste0(study,"_", sample)) %>%
-            select(subclone_name, study_sample) %>%
-            distinct(),
-        by = c("subclone" = "subclone_name")
-    ) %>%
-    filter(!is.na(mean_cv), n_cells >= 3) %>%
-    group_by(study_sample) %>%
-    summarise(
-        transcriptomic_ith = weighted.mean(mean_cv, w = n_cells, na.rm = TRUE),
-        n_subclones = n(),
-        total_cells = sum(n_cells)
-    )
-
-
-# Compute genomic heterogeneity per sample
-colnames(cnv_mat) <- gsub("subclone", "", gsub("[^a-zA-Z0-9]", "", colnames(cnv_mat)))
-
-samples <- unique(subclone_freq$study_sample)
-entropy_sample <- setNames(numeric(length(samples)), samples)
-
-prop_cnv_by_subclon <- lapply(colnames(cnv_mat), function(subclone) {
-    cnv_subclone <- cnv_mat[, subclone]
-    bins <- discretize(cnv_subclone, numBins = 5)
-    prop <- bins / sum(bins)
-    return(prop)
-})
-
-names(prop_cnv_by_subclon) <- colnames(cnv_mat)
-
-for (s in samples) {
-    subclones <- subclone_freq$scevan_subclone[subclone_freq$study_sample == s]
-    fracs <- subclone_freq$p[subclone_freq$study_sample == s]
-    mat <- do.call(rbind, prop_cnv_by_subclon[subclones])
-    weighted_prop <- colSums(mat * fracs)
-    entropy_sample[s] <- entropy(weighted_prop, unit = "log2")
-}
-
-genomic_ith <- data.frame(
-    study_sample = names(entropy_sample),
-    genomic_ith = entropy_sample,
-    row.names = NULL,
-    stringsAsFactors = FALSE
-)
-
-# Compute therapeutic heterogeneity per sample (Rao's Quadratic Entropy, Rao Q)
-dist_mat <- 1 - similarity_matrix
-
-compute_rao <- function(p_vec, dist_mat) {
-    subclones <- names(p_vec)
-    dist_sub <- dist_mat[subclones, subclones, drop = FALSE]
-    p <- matrix(p_vec, ncol = 1)
-    as.numeric(t(p) %*% dist_sub %*% p)
-}
-
-therapeutic_ith <- subclone_freq %>%
-    group_by(study_sample) %>%
-    summarise(
-        rao_q = {
-            p_vec <- setNames(p, scevan_subclone)
-            compute_rao(p_vec, dist_mat)
-        }
-    )
-
-
-# Join the 3 heterogeneities
-heterogeneity_per_sample <- transcriptomic_ith %>%
-    select(study_sample, transcriptomic_ith) %>%
-    left_join(genomic_ith, by = "study_sample") %>%
-    left_join(therapeutic_ith, by = "study_sample")
-# Save table with ITH per sample
-write.table(heterogeneity_per_sample,
-    file = "single_cell/heterogeneity/ith_scores_per_sample.tsv",
-    sep = "\t",
-    quote = FALSE,
-    row.names = FALSE
-)
-
-# Boxplots of sample ITH per cancer type
-heterogeneity_per_sample <- heterogeneity_per_sample %>%
-    left_join(
-        seu@meta.data %>%
-            mutate(study_sample = paste0(study, "_", sample)) %>%
-            select(study_sample, refined_tumor_type) %>%
-            distinct(),
-        by = "study_sample"
-    )
-
-boxplot_df <- heterogeneity_per_sample %>%
-    pivot_longer(
-        cols = c(transcriptomic_ith, genomic_ith, rao_q),
-        names_to = "heterogeneity_type", values_to = "heterogeneity_value"
-    )
-
-th <- theme(
-    axis.text.x = element_text(angle = 45, hjust = 1),
-    axis.text = element_text(size = 12, color = "black"),
-    axis.title = element_text(size = 12, face = "bold"),
-    legend.title = element_text(size = 12, face = "bold", hjust = 0.5),
-    legend.text = element_text(size = 12),
-    axis.line = element_line(color = "black")
-)
-
-boxplot_df$heterogeneity_type <- factor(
-    boxplot_df$heterogeneity_type,
-    levels = c("rao_q", "transcriptomic_ith", "genomic_ith")
-)
-cancer_order <- heterogeneity_per_sample %>%
-    select(refined_tumor_type, study_sample, rao_q) %>%
-    distinct() %>%
-    mutate(refined_tumor_type = fct_reorder(
-        refined_tumor_type,
-        rao_q,
-        .fun = median,
-        .desc = FALSE
-    )) %>%
-    pull(refined_tumor_type)
-
-boxplot_df$refined_tumor_type <- factor(boxplot_df$refined_tumor_type, levels = levels(cancer_order))
-
-boxplot2 <- ggplot(boxplot_df, aes(
-    x = factor(refined_tumor_type),
-    y = heterogeneity_value,
-    fill = factor(refined_tumor_type)
-)) +
-    geom_boxplot(position = position_dodge(width = 0.75), width = 0.7) +
-    labs(
-        x = "Tumor type",
-        y = "Heterogeneity score",
-        fill = "Heterogeneity"
-    ) +
-    facet_wrap(~heterogeneity_type, ncol = 1, scales = "free_y", labeller = as_labeller(c(
-        transcriptomic_ith = "Transcriptomic",
-        genomic_ith = "Genomic",
-        rao_q = "Therapeutic"
-    ))) +
-    scale_fill_manual(values = tumor_type_colors) +
-    theme_bw() +
-    th +
-    theme(legend.position = "none")
-
-ggsave("single_cell/heterogeneity/figures/sample_ith_per_cancertype.pdf",
-    plot = boxplot2,
-    dpi = 300,
-    width = 12, height = 10
-)
-
-
-# Correlation between transcriptomic, genomic and therapeutic heterogeneity per sample
-# Generate all pairwise combinations (without repetition)
-var_pairs <- combn(colnames(heterogeneity_per_sample)[2:4], 2, simplify = FALSE)
-
-# Create a list of ggscatter plots
-plots <- map(var_pairs, function(vars) {
-    xvar <- vars[1]
-    yvar <- vars[2]
-    ggscatter(
-        heterogeneity_per_sample,
-        x = xvar,
-        y = yvar,
-        add = "reg.line",
-        conf.int = TRUE,
-        cor.coef = TRUE,
-        cor.method = "spearman",
-        cor.coef.size = 5
-    ) +
-        ggtitle(paste(xvar, "vs", yvar))
-})
-
-# Combine all scatter plots into a single figure
-combined_plot <- ggpubr::ggarrange(
-    plotlist = plots,
-    ncol = 3, nrow = 1,
-    labels = LETTERS[1:length(plots)]
-)
-
-# Display
-pdf("single_cell/heterogeneity/figures/ith_correlations_sample_wise.pdf",
-    width = 14,
-    height = 4
-)
-combined_plot
-dev.off()
