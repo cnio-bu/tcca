@@ -6,7 +6,7 @@ library(ggstatsplot)
 library(ComplexHeatmap)
 
 setwd("/Users/mariagb/OneDrive-CNIO/2nd_year/bc-meta/cohort_statistics/")
-source("../bc-meta_repo/bc-meta/src/figures/TCCA_palette.R")
+source("/Users/mariagb/Documents/tcca/src/12_figures/TCCA_palette.R")
 
 metadata <- read.table("tcca_metadata.tsv", sep = "\t", header = TRUE)
 translat_human_sites <- c(
@@ -520,28 +520,28 @@ ggsave("figures/barplot_tme_groups_ntc.png", plot = barplot_tme_ntc, width = 15,
 
 
 ## Plot top drugs per cluster ##
-subclones <- read.table("drug_response_subclone_sctherapy_pandrugs.tsv", header = TRUE)
+subclones <- read.table("drug_response_subclone_final.tsv", header = TRUE)
 
 # Get number of subclones per cluster
 cluster_sizes <- subclones %>%
-  select(Subclone.Name, scTherapy.Cluster) %>%
+  select(Subclone.Name, ScTherapy.Cluster) %>%
   distinct() %>%
-  count(scTherapy.Cluster, name = "n_subclones")
+  count(ScTherapy.Cluster, name = "n_subclones")
 
 # Count how often each drug appears in each cluster
 drug_counts <- subclones %>%
-  group_by(Drug.Name, scTherapy.Cluster) %>%
+  group_by(Drug.Name, ScTherapy.Cluster) %>%
   summarise(count = n(), .groups = 'drop')
 
 # Frequency of each drug per subclone
 drug_freq <- drug_counts %>%
-  left_join(cluster_sizes, by = "scTherapy.Cluster") %>%
+  left_join(cluster_sizes, by = "ScTherapy.Cluster") %>%
   mutate(freq = count / n_subclones)
          
 # Create a Drug x Cluster matrix
 drug_cluster_matrix <- drug_freq %>%
-  select(Drug.Name, scTherapy.Cluster, freq) %>%
-  pivot_wider(names_from = scTherapy.Cluster, values_from = freq, values_fill = 0)
+  select(Drug.Name, ScTherapy.Cluster, freq) %>%
+  pivot_wider(names_from = ScTherapy.Cluster, values_from = freq, values_fill = 0)
 
 drug_cluster_freq_mat <- drug_cluster_matrix %>%
   column_to_rownames("Drug.Name") %>%
@@ -589,18 +589,18 @@ write.table(top_drugs_df, "top_drugs_cluster.tsv", sep = "\t", col.names = TRUE,
 
 # Plot MoAs of top 10 drugs
 drug_moas <- subclones %>%
-  select(Drug.Name, Drug.Mechanism.of.Action) %>%
+  select(Drug.Name, Drug.Mechanism.Of.Action) %>%
   distinct()
 top_drugs_moas <- top_drugs_df %>%
   pivot_longer(cols = everything(), names_to = "Cluster", values_to = "Drug") %>%
-  left_join(select(drug_moas, Drug.Mechanism.of.Action, Drug.Name), 
+  left_join(select(drug_moas, Drug.Mechanism.Of.Action, Drug.Name), 
             by = c("Drug" = "Drug.Name")) %>%
   mutate(Cluster = as.numeric(gsub("Cluster_", "", Cluster))) %>%
-  arrange(Cluster, Drug.Mechanism.of.Action) %>% 
+  arrange(Cluster, Drug.Mechanism.Of.Action) %>% 
   mutate(Cluster = factor(Cluster, levels = 1:10),
          Drug = factor(Drug, levels = unique(.$Drug)),
-         Drug.Mechanism.of.Action = factor(Drug.Mechanism.of.Action, 
-                                           levels = c(setdiff(sort(Drug.Mechanism.of.Action), 
+         Drug.Mechanism.Of.Action = factor(Drug.Mechanism.Of.Action, 
+                                           levels = c(setdiff(sort(Drug.Mechanism.Of.Action), 
                                                               "Other"), 
                                                       "Other")))
 
@@ -625,6 +625,43 @@ tile_plot <- ggplot(top_drugs_moas, aes(x = Cluster, y = Drug, fill = Drug.Mecha
   guides(fill = guide_legend(ncol = 2))
 
 ggsave("figures/top_drug_tileplot.pdf", plot = tile_plot, width = 5, height = 12, dpi = 500)
+
+# Tile plot with color gradient to indicate percentage of subclones
+# Transform the list of subclone proportions to dataframe
+long_list <- lapply(names(top_drug_list), function(cl) {
+  s <- stack(top_drug_list[[cl]]) 
+  names(s) <- c("score", "drug")
+  s$cluster <- cl
+  s
+})
+df_long <- do.call(rbind, long_list)
+
+df_wide <- reshape(df_long, idvar = "drug", timevar = "cluster", direction = "wide")
+df_wide <- df_wide %>% 
+    remove_rownames() %>%
+    column_to_rownames("drug")
+names(df_wide) <- gsub("score\\.", "", names(df_wide))
+
+library(ComplexHeatmap)
+drugs_df <- subclones %>%
+  select(Drug.Name, Drug.Mechanism.Of.Action) %>%
+  unique() %>%
+  remove_rownames() %>%
+  column_to_rownames("Drug.Name")
+drugs_df <- drugs_df[rownames(df_wide), , drop = FALSE]
+col_anno <- HeatmapAnnotation(MoA = drugs_df$Drug.Mechanism.Of.Action, col = list(MoA = MoAs_colors), show_annotation_name = FALSE)
+pdf("../figures/sctherapy/top_drugs_heatmap.pdf", width = 15, height = 5)
+Heatmap(t(df_wide), top_annotation = col_anno,
+        col = colorRampPalette(c("white", "#2C5F8A"))(50),
+        heatmap_legend_param = list(title = "Proportion of subclones"),
+        column_names_gp = gpar(fontsize = 10),
+        column_names_rot = 45,
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,na_col = "white",
+        column_split = drugs_df$Drug.Mechanism.Of.Action,
+        column_title = NULL)
+dev.off()
+
 
 
 ## MoAs per TME archetype
