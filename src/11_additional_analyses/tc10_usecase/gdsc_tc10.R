@@ -13,14 +13,15 @@ library(purrr)
 library(broom)
 
 setwd("/local/bc_meta/")
-source("TCCA_palette.R")
+source("/Users/mariagb/Documents/tcca/src/12_figures/TCCA_palette.R")
 
 
 library(readxl)
 library(stringr)
 
 # Leer el archivo Excel
-df <- read_excel("/home/lserranor/Downloads/top_drugs_cluster.xlsx")
+setwd("/Users/mariagb/Library/CloudStorage/OneDrive-CentroNacionaldeInvestigacionesOncológicas/2nd_year/bc-meta/therapeutic_analysis/gdsc/")
+df <- read_excel("top_drugs_cluster.xlsx")
 
 # Función de formato personalizada
 # Función de formato personalizada que maneja NA
@@ -55,7 +56,7 @@ all_drugs <- c(
 ## FUNCTIONS -------------------------
 
 ## Extract desired strudy from global seurat object 
-metadata <- read.table("tcca_metadata.tsv", header = T, sep = "\t") %>%
+metadata <- read.table("tcca_metadata_h5ad.tsv", header = T, sep = "\t") %>%
   column_to_rownames("cell")
 
 extract_seu <- function(path, sam = NULL) {
@@ -97,14 +98,14 @@ plot_correlation <- function(data, drug, tumor_type = "all", cluster) {
   if (unique(tumor_type == "all")) {
     df_plot <- data %>%
       filter(DRUG_NAME == drug) %>%
-      dplyr::select(all_of(cluster), AUC, refined_tumor_type) %>%
+      dplyr::select(all_of(cluster), AUC, tumor_type) %>%
       na.omit()
   } else {
     df_plot <- data %>%
       filter(DRUG_NAME == drug,
-             refined_tumor_type %in% tumor_type
+             tumor_type %in% tumor_type
       ) %>%
-      dplyr::select(all_of(cluster), AUC, refined_tumor_type) %>%
+      dplyr::select(all_of(cluster), AUC, tumor_type) %>%
       na.omit()
   }
   
@@ -118,7 +119,7 @@ plot_correlation <- function(data, drug, tumor_type = "all", cluster) {
   p_val_formatted <- ifelse(p_val < 0.001, "< 0.001", paste0("= ", round(p_val, 4)))
   
   if (unique(tumor_type == "all")) {
-    ggplot(df_plot, aes_string(x = cluster, y = "AUC", color = "refined_tumor_type")) +
+    ggplot(df_plot, aes_string(x = cluster, y = "AUC", color = "tumor_type")) +
       geom_point(size = 2) +
       geom_smooth(method = "lm", se = TRUE, color = "black") +
       labs(
@@ -133,7 +134,7 @@ plot_correlation <- function(data, drug, tumor_type = "all", cluster) {
   } else {
     tumor_text <- paste(tumor_type, collapse = ", ")
     
-    ggplot(df_plot, aes_string(x = cluster, y = "AUC", color = "refined_tumor_type")) +
+    ggplot(df_plot, aes_string(x = cluster, y = "AUC", color = "tumor_type")) +
       geom_point() +
       geom_smooth(method = "lm", se = TRUE, color = "black") +
       labs(
@@ -146,17 +147,74 @@ plot_correlation <- function(data, drug, tumor_type = "all", cluster) {
       theme_minimal()
   }
 }
+plot_correlation_multidrug <- function(data, drugs, tumor_filter, cluster) {
+  
+  df_plot <- data %>%
+    filter(DRUG_NAME %in% drugs, tumor_type %in% tumor_filter) %>%
+    dplyr::select(all_of(cluster), AUC, DRUG_NAME) %>%
+    na.omit()
+  
+  # Etiquetas con r y p para cada panel
+  corr_stats <- df_plot %>%
+    group_by(DRUG_NAME) %>%
+    summarise(
+      r     = round(cor(.data[[cluster]], AUC, method = "pearson"), 2),
+      p_val = cor.test(.data[[cluster]], AUC, method = "pearson")$p.value,
+      .groups = "drop"
+    ) %>%
+    mutate(
+      p_fmt = ifelse(p_val < 0.001, "p < 0.001", paste0("p = ", round(p_val, 3))),
+      label = paste0(DRUG_NAME, "\nr = ", r, "  ·  ", p_fmt)  # salto de línea en el strip
+    )
+  
+  label_map <- setNames(corr_stats$label, corr_stats$DRUG_NAME)
+  df_plot <- df_plot %>%
+    mutate(drug_label = factor(label_map[DRUG_NAME], levels = corr_stats$label))
+  
+  # Paleta — misma asignación de color que el mockup
+  drug_colors <- setNames(
+    RColorBrewer::brewer.pal(max(3, length(drugs)), "Set1")[seq_along(drugs)],
+    levels(df_plot$drug_label)
+  )
+  
+  ggplot(df_plot, aes(x = .data[[cluster]], y = AUC, color = drug_label, fill = drug_label)) +
+    geom_point(alpha = 0.55, size = 2) +
+    geom_smooth(method = "lm", se = TRUE, alpha = 0.12, linewidth = 1.1) +
+    facet_wrap(~ drug_label, scales = "fixed", nrow = 1) +   # nrow=1 → paneles en fila
+    scale_color_manual(values = drug_colors, guide = "none") +
+    scale_fill_manual(values  = drug_colors, guide = "none") +
+    labs(
+      title    = paste0("Pearson correlation: ", cluster, " vs AUC"),
+      subtitle = paste0("Tumor type: ", paste(tumor_filter, collapse = ", ")),
+      x        = cluster,
+      y        = "AUC"
+    ) +
+    theme_minimal(base_size = 13) +
+    theme(
+      # Strip (título de cada panel) con fondo coloreado suave
+      strip.background = element_rect(fill = "grey94", color = NA),
+      strip.text       = element_text(face = "bold", size = 11, lineheight = 1.4),
+      # Márgenes entre paneles
+      panel.spacing    = unit(1.5, "lines"),
+      # Títulos
+      plot.title       = element_text(face = "bold", size = 14),
+      plot.subtitle    = element_text(color = "grey40", size = 11),
+      # Ejes limpios
+      axis.title       = element_text(size = 10, color = "grey40"),
+      panel.grid.minor = element_blank()
+    )
+}
 
 ## -----------------------
 
 ## Get Seurat objects and GDSC2 data
-gdsc <- read.table("gdsc/GDSC2_fitted_dose_response_27Oct23.tsv", sep = "\t", header = T) %>%
+gdsc <- read_excel("GDSC2_fitted_dose_response_27Oct23.xlsx") %>%
   mutate(CELL_LINE_NAME = sub("-", "", CELL_LINE_NAME)) %>%
   dplyr::select(CELL_LINE_NAME, DRUG_NAME, PATHWAY_NAME, AUC) %>%
   group_by(CELL_LINE_NAME, DRUG_NAME, PATHWAY_NAME) %>%
   summarise(AUC = mean(AUC), .groups = "drop") ## These steps averages duplicated AUC (same drug, different ID)
 
-seu <- extract_seu("v5/lvl2/cell_lines_gabriella_kinker_v5/")
+seu <- extract_seu("cell_lines_gabriella_kinker_v5/")
 
 seu@meta.data <- seu@meta.data %>%
   mutate(CELL_LINE_NAME = sub("_.*", "", sample))
@@ -166,7 +224,7 @@ common_cell_lines <- intersect(seu$CELL_LINE_NAME, gdsc$CELL_LINE_NAME)
 seu <- subset(seu, subset = CELL_LINE_NAME %in% common_cell_lines)
 gdsc <- subset(gdsc, subset = CELL_LINE_NAME %in% common_cell_lines)
 
-markers <- read_gmt_list("genes_by_cluster.gmt")
+markers <- read_gmt_list("/Users/mariagb/Library/CloudStorage/OneDrive-CentroNacionaldeInvestigacionesOncológicas/2nd_year/bc-meta/therapeutic_analysis/sctherapy/marker_genes/survival_results/marker_sigs_filtered.gmt")
 
 ## Adapt signatures to keep only genes expressed in the dataset
 
@@ -195,8 +253,8 @@ length(intersect(markers$Cluster10_UP, undetected_genes))
 ## Get dataframe of averages
 
 tc_sigs <- seu@meta.data %>%
-  dplyr::select(CELL_LINE_NAME, refined_tumor_type, starts_with("Cluster")) %>%
-  group_by(CELL_LINE_NAME, refined_tumor_type) %>%
+  dplyr::select(CELL_LINE_NAME, tumor_type, starts_with("Cluster")) %>%
+  group_by(CELL_LINE_NAME, tumor_type) %>%
   summarise(across(starts_with("Cluster"), mean, na.rm = TRUE), .groups = "drop")
 
 data <- left_join(tc_sigs, gdsc)
@@ -259,8 +317,10 @@ results <- data %>%
   bind_rows()
 
 tmp <- filter(results, P_value < 0.05, Cluster == "Cluster10_UP") # + DRUG_NAME %in% tc10_drugs returns 0
-plot_correlation(data, drug = "5-azacytidine", tumor_type = "all", cluster = "Cluster10_UP")
+plot_correlation(data, drug = c("Epirubicin", "Carfilzomib", "Tanespimycin"), tumor_type = "BRCA", cluster = "Cluster10_UP")
+plot <- plot_correlation_multidrug(data, drugs = c("AZD2014"), tumor_filter = "ESCA", cluster = "3q25.2")
 
+ggsave("gdsc_correlation_multidrug_esca.pdf", plot, width = 5, height = 4)
 
 ## Calculate correlations with main tumor types from cluster 10
 cluster_cols <- grep("Cluster\\d+_UP", colnames(data), value = TRUE)
@@ -286,7 +346,7 @@ results2 <- data %>%
   bind_rows()
 
 tmp <- filter(results2, P_value < 0.05, Cluster == "Cluster10_UP") # + DRUG_NAME %in% tc10_drugs returns 0
-plot_correlation(data, drug = "5-azacytidine", tumor_type = tc10_tumors, cluster = "Cluster10_UP")
+plot_correlation(data, drug = c("Epirubicin", "Carfilzomib", "Birinapant"), tumor_type = c("BRCA"), cluster = "Cluster10_UP")
 
 
 

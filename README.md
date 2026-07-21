@@ -208,14 +208,17 @@ This section `/src/11_additional_analyses/` contains supplementary scripts for e
 - `compare_sctherapy_vs_beyondcell.R`: correlates Beyondcell scores with scTherapy predictions (converted to numeric values) at the subclone level. 
 - `cor_bc_vs_mps.R`: computes Pearson correlations between 43 functional MPs and 589 Beyondcell drugs.
 
-**11.4. Use case of TC4 (`tc4_usecase/`)**
+**11.4. TC validation**
+- `tc_validation.R`: computes Spearman correlations between TC marker enrichment scores and drug AUC values in GDSC cancer cell lines to assess prediction–validation concordance
+  
+**11.5. Use case of TC4 (`tc4_usecase/`)**
 - `check_cnv_overlap_tc4.R`: identifies recurrent CNV co-amplifications across chr3q cytobands in TC4 subclones.
 - `get_tc4_peak_gmt.R`: retrieves gene sets located in cytobands recurrently amplified in TC4 subclones (mainly chr3q peaks) and intersects them with top TC4 marker genes.
 - `gdsc_tc4.R`: correlates TC4 CNV-derived gene signatures with GDSC2 drug sensitivity profiles to identify compounds associated with TC4 amplifications.
 - `go_enrichment.R`: performs GO enrichment analysis on genes within CNV regions recurrently amplified in TC4 subclones to identify biological processes associated with these genomic alterations.
 - `cor_bc_vs_tc4sigs.R`: correlates enrichment of TC4 amplification gene sets with Beyondcell drug sensitivity scores in TC4 cells.
 
-**11.5. Use case of TC10 (`tc10_usecase/`)**
+**11.6. Use case of TC10 (`tc10_usecase/`)**
 - `gdsc_tc10.R`: correlates TC10 gene signature enrichment with GDSC drug sensitivity across cell lines and tumor types.
 - `brca_clinical.R`: visualizes BRCA subclone distributions across age groups, sample type, TME archetypes, and tumor subtypes (bars colored by TC).
 - `brca_expr_clusters.R`: performs integration and clustering analysis of BRCA patient single-cell expression data using Seurat.
