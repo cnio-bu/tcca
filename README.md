@@ -266,7 +266,9 @@ The folder `/src/12_figures/` includes scripts used to generate the main and sup
 * Santiago García Martín
 * Óscar Lapuente Santana
 
-<!-- ## Citation -->
+## Citation
+
+González-Bermejo M, Serrano-Ron L, García-Martín S, et al. A single-cell atlas linking intratumoral states to therapeutic vulnerabilities across cancers. bioRxiv (2026). [doi:10.64898/2026.02.18.706316](https://doi.org/10.64898/2026.02.18.706316)
 
 ## Support
 If you have any questions, feel free to submit an [issue](https://github.com/cnio-bu/tcca/issues).
