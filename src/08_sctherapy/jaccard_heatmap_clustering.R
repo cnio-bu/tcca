@@ -8,9 +8,10 @@ library(dendextend)
 library(factoextra)
 library(kernlab)
 library(igraph)
+library(viridis)
 set.seed(123)
-setwd("/home/lmgonzalezb/Documents/bc-meta/sctherapy/")
-source(file = "../bc-meta_repo/bc-meta/src/figures/TCCA_palette.R")
+setwd("/storage/scratch01/shared/projects/bc-meta/single_cell/sctherapy/results")
+source(file = "/home/mgonzalezb/bc-meta/figures/TCCA_palette.R")
 
 ### FUNCTIONS ###
 jaccard_similarity <- function(vector1, vector2) {
@@ -20,7 +21,7 @@ jaccard_similarity <- function(vector1, vector2) {
 }
 
 
-data <- read.table("full_table_drug_prediction.tsv")
+data <- read.table("../full_table_drug_prediction.tsv")
 data$study_sample <- paste0(sub("\\..*", "", data$Subclone), "_", data$Sample)
 
 drug_subclone <- data %>%
@@ -96,6 +97,7 @@ saveRDS(cluster_assignment, "speclustering_reordered.rds")
 
 
 
+cluster_assignment <- readRDS("speclustering_reordered.rds")
 
 ### Compute therapeutic heterogeneity
 # Boxplot of Jaccard indexes per cluster
@@ -194,22 +196,23 @@ dev.off()
 
 ### Plot heatmap of similarity matrix
 ## Create top annotations for samples.
-clinical <- data.table::fread("../clinical_metadata_v4_clean.tsv")
+clinical <- data.table::fread("../../seurat/v5/clinical_metadata_v4_clean.tsv")
 clinical$study_sample <- paste0(clinical$study, "_", clinical$sample)
+clinical <- clinical %>% select(-tumor_type)
 
 # Include the inferred sex
-seu <- readRDS("../seu_lvl2_sex_inferred.rds")
+seu <- readRDS("../../seurat/v5/lvl2/seu_lvl2_sex_inferred.rds")
 new_sex <- seu@meta.data %>%
     mutate(study_sample = paste0(study, "_", sample)) %>%
     select(study_sample, sex) %>%
     distinct()
 
 # Include TME subtypes and refined tumor type
-tcca_annot <- read.table("/home/lmgonzalezb/Documents/bc-meta/cohort_statistics/tcca_metadata.tsv",
+tcca_annot <- read.table("../../seurat/tcca/tcca_metadata_h5ad.tsv",
                          header = TRUE, sep = "\t")
 tumor_tme <- tcca_annot %>%
   mutate(study_sample = paste0(study, "_", sample)) %>%
-  select(study_sample, refined_tumor_type, tme_archetype) %>%
+  select(study_sample, tumor_type, tme_archetype) %>%
   distinct()
 
 data$study_sample <- paste0(sub("\\..*", "", data$Subclone), "_", data$Sample)
@@ -270,7 +273,7 @@ subclone_annot_df <- clinical_subclones %>%
         sample_type,
         summarised_tumor_site,
         treated,
-        refined_tumor_type,
+        tumor_type,
         tme_archetype,
         cluster) %>%
     as.data.frame()
@@ -413,6 +416,7 @@ top_annotation <- ComplexHeatmap::HeatmapAnnotation(
 # Plot the heatmap
 similarity_matrix <- similarity_matrix[ordered_names, ordered_names]
 jaccard_dist <- as.dist(1-similarity_matrix)
+
 heat <- ComplexHeatmap::Heatmap(
     similarity_matrix,
     col = colorRamp2(seq(0, 0.5, length.out = 9), viridis::mako(9, direction = -1)),
@@ -453,12 +457,12 @@ heat <- ComplexHeatmap::Heatmap(
     heatmap_height = unit(8, "in")
 )
 
-png(
-  file = "figures/heatmap_sctherapey_clusters_final.png",
+pdf(
+  file = "heatmap_sctherapy_clusters_final.pdf",
   width = 14,
   height = 14,
-  units = "in",
-  res = 300
+  #units = "in",
+  #res = 300
 )
 
 ht_opt(
