@@ -2,6 +2,7 @@ library(dplyr)
 library(tidyverse)
 library(circlize)
 library(ComplexHeatmap)
+library(viridis)
 library(dynamicTreeCut)
 library(dendextend)
 library(factoextra)
@@ -414,7 +415,7 @@ similarity_matrix <- similarity_matrix[ordered_names, ordered_names]
 jaccard_dist <- as.dist(1-similarity_matrix)
 heat <- ComplexHeatmap::Heatmap(
     similarity_matrix,
-    #col = colorRamp2(c(0, 1), hcl_palette = "Inferno", reverse = TRUE),
+    col = colorRamp2(seq(0, 0.5, length.out = 9), viridis::mako(9, direction = -1)),
     top_annotation = top_annotation,
     cluster_rows = FALSE,
     cluster_columns = FALSE,
