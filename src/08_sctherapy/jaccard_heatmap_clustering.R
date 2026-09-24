@@ -10,8 +10,8 @@ library(kernlab)
 library(igraph)
 library(viridis)
 set.seed(123)
-setwd("/storage/scratch01/shared/projects/bc-meta/single_cell/sctherapy/results")
-source(file = "/home/mgonzalezb/bc-meta/figures/TCCA_palette.R")
+setwd("/Users/mariagb/Library/CloudStorage/OneDrive-CentroNacionaldeInvestigacionesOncológicas/2nd_year/bc-meta/therapeutic_analysis/sctherapy")
+source(file = "/Users/mariagb/Documents/tcca/src/12_figures/TCCA_palette.R")
 
 ### FUNCTIONS ###
 jaccard_similarity <- function(vector1, vector2) {
@@ -21,7 +21,7 @@ jaccard_similarity <- function(vector1, vector2) {
 }
 
 
-data <- read.table("../full_table_drug_prediction.tsv")
+data <- read.table("full_table_drug_prediction.tsv")
 data$study_sample <- paste0(sub("\\..*", "", data$Subclone), "_", data$Sample)
 
 drug_subclone <- data %>%
@@ -196,19 +196,19 @@ dev.off()
 
 ### Plot heatmap of similarity matrix
 ## Create top annotations for samples.
-clinical <- data.table::fread("../../seurat/v5/clinical_metadata_v4_clean.tsv")
+clinical <- data.table::fread("../../cohort_statistics/clinical_metadata_v4_clean.tsv")
 clinical$study_sample <- paste0(clinical$study, "_", clinical$sample)
 clinical <- clinical %>% select(-tumor_type)
 
 # Include the inferred sex
-seu <- readRDS("../../seurat/v5/lvl2/seu_lvl2_sex_inferred.rds")
+seu <- readRDS("../../seu_lvl2_sex_inferred.rds")
 new_sex <- seu@meta.data %>%
     mutate(study_sample = paste0(study, "_", sample)) %>%
     select(study_sample, sex) %>%
     distinct()
 
 # Include TME subtypes and refined tumor type
-tcca_annot <- read.table("../../seurat/tcca/tcca_metadata_h5ad.tsv",
+tcca_annot <- read.table("../gdsc/tcca_metadata_h5ad.tsv",
                          header = TRUE, sep = "\t")
 tumor_tme <- tcca_annot %>%
   mutate(study_sample = paste0(study, "_", sample)) %>%
@@ -417,9 +417,20 @@ top_annotation <- ComplexHeatmap::HeatmapAnnotation(
 similarity_matrix <- similarity_matrix[ordered_names, ordered_names]
 jaccard_dist <- as.dist(1-similarity_matrix)
 
+# Create color palette
+vals <- as.vector(similarity_matrix)
+vals <- vals[vals < 1]
+
+quantile(vals, probs = c(0, 0.25, 0.5, 0.75, 0.90, 0.95, 1))
+q <- quantile(vals, probs = c(0, 0.25, 0.5, 0.75, 0.90, 0.95, 1))
+custom_col <- colorRamp2(
+    c(0, q[3], q[5], 0.5), 
+    c("white", "#57c7ac", "#1A6FA8", "#18195a")
+)
+
 heat <- ComplexHeatmap::Heatmap(
     similarity_matrix,
-    col = colorRamp2(seq(0, 0.5, length.out = 9), viridis::mako(9, direction = -1)),
+    col = custom_col,
     top_annotation = top_annotation,
     cluster_rows = FALSE,
     cluster_columns = FALSE,
@@ -452,17 +463,20 @@ heat <- ComplexHeatmap::Heatmap(
         title_gp = gpar(fontsize = 12, fontface = "bold"),
         labels_gp = gpar(fontsize = 12),
         title_gap = unit(10, "mm"),
+        at = c(0, 0.1, 0.2, 0.3, 0.4, 0.5),
+        labels = c("0", "0.1", "0.2", "0.3", "0.4", "0.5"),
         direction = "horizontal"),
     heatmap_width = unit(8, "in"),
-    heatmap_height = unit(8, "in")
+    heatmap_height = unit(9, "in"),
+    use_raster = FALSE
 )
 
-pdf(
-  file = "heatmap_sctherapy_clusters_final.pdf",
+png(
+  file = "/Users/mariagb/Documents/new_figures_tcca/heatmap_sctherapy_clusters_final.png",
   width = 14,
-  height = 14,
-  #units = "in",
-  #res = 300
+  height = 15,
+  units = "in",
+  res = 300
 )
 
 ht_opt(
@@ -486,6 +500,19 @@ draw(heat,
      annotation_legend_list = list(pd, 
                                    tumor_site_legend,
                                    cluster_legend))
+dev.off()
+
+
+pdf("/Users/mariagb/Documents/new_figures_tcca/legend_preview.pdf", width = 4, height = 2)
+draw(
+    Legend(
+        col_fun = custom_col,
+        title = "Similarity\n(Jaccard index)",
+        direction = "horizontal",
+        at = c(0, 0.1, 0.2, 0.3, 0.4, 0.5),
+        labels = c("0", "0.1", "0.2", "0.3", "0.4", "0.5")
+    )
+)
 dev.off()
 
 
