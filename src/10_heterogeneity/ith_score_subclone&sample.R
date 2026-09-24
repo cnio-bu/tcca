@@ -325,6 +325,56 @@ for (i in seq_along(custom_titles)) {
 }
 dev.off()
 
+# Plot the 3 ITH types in a single radar plot
+radar_scaled <- as.data.frame(t(apply(radar_df, 1, function(x) {
+    (x - min(x)) / (max(x) - min(x))
+})))
+
+# Add max and min for radarchart (always 0 y 1 after scaling)
+radar_combined <- rbind(
+    max = rep(1, ncol(radar_scaled)),
+    min = rep(0, ncol(radar_scaled)),
+    radar_scaled
+)
+
+# Save figure
+pdf("single_cell/heterogeneity/figures/radarchart_ith_combined.pdf",
+    width = 8, height = 8
+)
+
+par(mar = c(2, 2, 3, 2))
+
+# A single radar chart with the 3 lines
+radarchart(
+    radar_combined,  # max, min, transcriptomic, genomic, therapeutic
+    vlabels = colnames(radar_combined),
+    pcol = colors_border,
+    pfcol = colors_in,
+    plwd = 4,
+    plty = 1,
+    cglcol = "grey",
+    cglty = 1,
+    axislabcol = "black",
+    cglwd = 0.8,
+    vlcex = 1.2,
+    title = "Intratumoral heterogeneity"
+)
+
+# Legend
+legend(
+    x = "bottomright",
+    legend = custom_titles,
+    col = colors_border,
+    lwd = 4,
+    lty = 1,
+    bty = "n",
+    cex = 1,
+    fill = alpha(colors_border, 0.3)
+)
+
+dev.off()
+
+
 #### ---------------- Boxplots per TC ---------------- ####
 # Add TC to sample_lvl_ITH via subclone_metadata
 sample_tc <- subclone_metadata %>%
