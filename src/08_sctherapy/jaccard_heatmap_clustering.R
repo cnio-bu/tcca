@@ -265,12 +265,10 @@ new_sex <- seu@meta.data %>%
     distinct()
 
 # Include TME subtypes and refined tumor type
-tcca_annot <- read.table("../gdsc/tcca_metadata_h5ad.tsv",
-    header = TRUE, sep = "\t"
-)
+tcca_annot <- read.table("../../cohort_statistics/tcca_metadata_h5ad.tsv", header = TRUE, sep = "\t")
 tumor_tme <- tcca_annot %>%
     mutate(study_sample = paste0(study, "_", sample)) %>%
-    select(study_sample, tumor_type, tme_archetype) %>%
+    select(study_sample, tumor_type, tme_archetype_group) %>%
     distinct()
 
 data$study_sample <- paste0(sub("\\..*", "", data$Subclone), "_", data$Sample)
@@ -333,7 +331,7 @@ subclone_annot_df <- clinical_subclones %>%
         summarised_tumor_site,
         treated,
         tumor_type,
-        tme_archetype,
+        tme_archetype_group,
         cluster
     ) %>%
     as.data.frame()
@@ -362,7 +360,7 @@ pals <- list(
     "Sample site" = tumor_sites_colors,
     "Treatment" = treatment_colors,
     "Cancer type" = tumor_type_colors,
-    "TME archetype" = tme_colors,
+    "TME archetype" = tme_group_colors,
     "Cluster" = sctherapy_colors
 )
 
@@ -532,7 +530,7 @@ heat <- ComplexHeatmap::Heatmap(
 )
 
 png(
-    file = "/Users/mariagb/Documents/new_figures_tcca/heatmap_sctherapy_clusters_final.png",
+    file = "/Users/mariagb/Documents/new_figures_tcca/heatmap_sctherapy_clusters_final_tme_five.png",
     width = 14,
     height = 15,
     units = "in",
