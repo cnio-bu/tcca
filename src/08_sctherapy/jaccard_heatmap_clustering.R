@@ -15,9 +15,9 @@ source(file = "/Users/mariagb/Documents/tcca/src/12_figures/TCCA_palette.R")
 
 ### FUNCTIONS ###
 jaccard_similarity <- function(vector1, vector2) {
-  intersection <- length(intersect(vector1, vector2))
-  union <- length(union(vector1, vector2))
-  return(intersection / union)
+    intersection <- length(intersect(vector1, vector2))
+    union <- length(union(vector1, vector2))
+    return(intersection / union)
 }
 
 
@@ -25,29 +25,84 @@ data <- read.table("full_table_drug_prediction.tsv")
 data$study_sample <- paste0(sub("\\..*", "", data$Subclone), "_", data$Sample)
 
 drug_subclone <- data %>%
-  select(Subclone, Drug_Name) %>%
-  distinct()
+    select(Subclone, Drug_Name) %>%
+    distinct()
 
 subclones <- unique(data$Subclone)
 
+# Create historgram with number of drugs per subclone
+drug_counts <- drug_subclone %>%
+    group_by(Subclone) %>%
+    summarise(n_drugs = n_distinct(Drug_Name))
+
+# Statistics to justifiy the use of Jaccard Index (very similar drug numbers
+# across subclones)
+drug_counts %>%
+    summarise(
+        median = median(n_drugs),
+        mean = round(mean(n_drugs), 1),
+        sd = round(sd(n_drugs), 1),
+        min = min(n_drugs),
+        max = max(n_drugs),
+        cv = round(sd(n_drugs) / mean(n_drugs) * 100, 1)
+    )
+
+drug_histogram <-
+    ggplot(drug_counts, aes(x = n_drugs)) +
+    geom_histogram(binwidth = 1, fill = "#7fb3cc", color = "white", linewidth = 0.3) +
+    # Línea de mediana
+    geom_vline(
+        xintercept = median(drug_counts$n_drugs),
+        linetype = "dashed", color = "#aa6969", linewidth = 0.5
+    ) +
+    # Anotación con estadísticas
+    annotate("text",
+        x = 14, y = 400,
+        label = paste0(
+            "n = ", nrow(drug_counts), " subclones\n",
+            "Mean ± SD: 26 ± 2.7\n",
+            "CV = 10.2%"
+        ),
+        hjust = 0, size = 3.5, color = "gray30"
+    ) +
+    labs(
+        x = "Number of predicted drugs per subclone",
+        y = "Number of subclones",
+        title = "Distribution of drug set size across subclones",
+        caption = "Dashed line = median"
+    ) +
+    theme_classic(base_size = 11)
+
+ggsave(
+    "/Users/mariagb/Documents/new_figures_tcca/n_drugs_histogram.png",
+    plot = drug_histogram,
+    width = 6,
+    height = 6
+)
+
+
 # Create a list with drug predictions per subclone
 subclones_drug_list <- lapply(subclones, function(subclone) {
-  drugs <- drug_subclone$Drug_Name[drug_subclone$Subclone == subclone]
-  return(drugs)
+    drugs <- drug_subclone$Drug_Name[drug_subclone$Subclone == subclone]
+    return(drugs)
 })
 
 names(subclones_drug_list) <- subclones
 
 # Compute similarity matrix
-similarity_matrix <- matrix(0, nrow = length(subclones), ncol = length(subclones),
-                            dimnames = list(subclones, subclones))
+similarity_matrix <- matrix(0,
+    nrow = length(subclones), ncol = length(subclones),
+    dimnames = list(subclones, subclones)
+)
 
 # Compute pairwise Jaccard similarity
 for (i in seq_along(subclones)) {
-  for (j in seq_along(subclones)) {
-    similarity_matrix[i, j] <- jaccard_similarity(subclones_drug_list[[subclones[i]]], 
-                                                  subclones_drug_list[[subclones[j]]])
-  }
+    for (j in seq_along(subclones)) {
+        similarity_matrix[i, j] <- jaccard_similarity(
+            subclones_drug_list[[subclones[i]]],
+            subclones_drug_list[[subclones[j]]]
+        )
+    }
 }
 
 saveRDS(similarity_matrix, "jaccard_matrix.rds")
@@ -59,7 +114,7 @@ hc <- hclust(as.dist(1 - similarity_matrix))
 png(
     file = "figures/hc_jaccard.png",
     res = 300,
-    width = 20, 
+    width = 20,
     height = 10,
     units = "in"
 )
@@ -70,11 +125,11 @@ clusters <- cutreeDynamic(hc, distM = as.matrix(as.dist(1 - similarity_matrix)),
 dend <- as.dendrogram(hc)
 dend <- color_branches(dend, clusters = clusters)
 png(
-  file = "hc_jaccard_colored.png",
-  res = 300,
-  width = 20, 
-  height = 10,
-  units = "in"
+    file = "hc_jaccard_colored.png",
+    res = 300,
+    width = 20,
+    height = 10,
+    units = "in"
 )
 labels(dend) <- rep("", length(labels(dend)))
 plot(dend, main = "Dendrogram")
@@ -87,14 +142,14 @@ cluster_assignment <- as.factor(spectral_result)
 cluster_assignment <- saveRDS(cluster_assignment, "speclustering.rds")
 names_subclones <- names(cluster_assignment)
 cluster_assignment <- as.character(cluster_assignment)
-cluster_assignment <- recode(cluster_assignment, "1" = "8", "2" = "5", "3" = "1", 
-                             "4" = "2", "5" = "9", "6" = "6", "7" = "10", "8" = "4",
-                             "9" = "3", "10" = "7")
+cluster_assignment <- recode(cluster_assignment,
+    "1" = "8", "2" = "5", "3" = "1",
+    "4" = "2", "5" = "9", "6" = "6", "7" = "10", "8" = "4",
+    "9" = "3", "10" = "7"
+)
 cluster_assignment <- factor(cluster_assignment, levels = as.character(1:10))
 names(cluster_assignment) <- names_subclones
 saveRDS(cluster_assignment, "speclustering_reordered.rds")
-
-
 
 
 cluster_assignment <- readRDS("speclustering_reordered.rds")
@@ -103,30 +158,30 @@ cluster_assignment <- readRDS("speclustering_reordered.rds")
 # Boxplot of Jaccard indexes per cluster
 cluster_list <- split(names(cluster_assignment), cluster_assignment)
 sample_heterogeneity <- sapply(names(cluster_assignment), function(s) {
-  cl <- cluster_assignment[s]
-  cluster_samples <- names(cluster_assignment[cluster_assignment == cl])
-  cluster_samples <- setdiff(cluster_samples, s)  # exclude self
-  sample_distance <- mean(1 - similarity_matrix[s, cluster_samples])  # mean distance
-  return(sample_distance)
+    cl <- cluster_assignment[s]
+    cluster_samples <- names(cluster_assignment[cluster_assignment == cl])
+    cluster_samples <- setdiff(cluster_samples, s) # exclude self
+    sample_distance <- mean(1 - similarity_matrix[s, cluster_samples]) # mean distance
+    return(sample_distance)
 })
 
 # Add cluster info
 heterogeneity_df <- data.frame(
-  sample = names(sample_heterogeneity),
-  cluster = cluster_assignment[names(sample_heterogeneity)],
-  heterogeneity = sample_heterogeneity
+    sample = names(sample_heterogeneity),
+    cluster = cluster_assignment[names(sample_heterogeneity)],
+    heterogeneity = sample_heterogeneity
 )
 
 boxplot <- ggplot(heterogeneity_df, aes(x = factor(cluster), y = heterogeneity, fill = factor(cluster))) +
-  geom_boxplot(outlier.size = 0.5) +
-  scale_fill_manual(values = sctherapy_colors) +
-  labs(
-    title = "Therapeutic Heterogeneity",
-    y = "Mean distance to samples in same cluster",
-    x = "Cluster"
-  ) +
-  theme_bw(base_size = 9) +
-  theme(
+    geom_boxplot(outlier.size = 0.5) +
+    scale_fill_manual(values = sctherapy_colors) +
+    labs(
+        title = "Therapeutic Heterogeneity",
+        y = "Mean distance to samples in same cluster",
+        x = "Cluster"
+    ) +
+    theme_bw(base_size = 9) +
+    theme(
         axis.text.x = element_text(angle = 45, hjust = 1),
         axis.text = element_text(size = 12, color = "black"),
         axis.title = element_text(size = 12, face = "bold"),
@@ -145,34 +200,36 @@ dev.off()
 
 
 # Compute a mean Jaccard index per cluster
-jaccard_dist <- as.dist(1-similarity_matrix)
+jaccard_dist <- as.dist(1 - similarity_matrix)
 heterogeneity_by_cluster <- lapply(unique(cluster_assignment), function(cl) {
-  samples_in_cl <- names(cluster_assignment[cluster_assignment == cl])
-  
-  # Subset distance matrix
-  cl_dists <- as.matrix(jaccard_dist)[samples_in_cl, samples_in_cl]
-  
-  # Get upper triangle values without diagonal
-  dists <- cl_dists[upper.tri(cl_dists)]
-  
-  data.frame(
-    cluster = cl,
-    mean_dist = mean(dists),
-    median_dist = median(dists),
-    sd_dist = sd(dists),
-    n_samples = length(samples_in_cl)
-  )
+    samples_in_cl <- names(cluster_assignment[cluster_assignment == cl])
+
+    # Subset distance matrix
+    cl_dists <- as.matrix(jaccard_dist)[samples_in_cl, samples_in_cl]
+
+    # Get upper triangle values without diagonal
+    dists <- cl_dists[upper.tri(cl_dists)]
+
+    data.frame(
+        cluster = cl,
+        mean_dist = mean(dists),
+        median_dist = median(dists),
+        sd_dist = sd(dists),
+        n_samples = length(samples_in_cl)
+    )
 }) %>% bind_rows()
 
 # Plot mean distance per cluster
 barplot <- ggplot(heterogeneity_by_cluster, aes(x = factor(cluster), y = mean_dist, fill = factor(cluster))) +
-  geom_bar(stat = "identity") +
-  scale_fill_manual(values = sctherapy_colors) +
-  labs(title = "Therapeutic Heterogeneity per Cluster",
-       y = "Mean intra-cluster Jaccard distance",
-       x = "Cluster") +
-  theme_bw(base_size = 9) +
-  theme(
+    geom_bar(stat = "identity") +
+    scale_fill_manual(values = sctherapy_colors) +
+    labs(
+        title = "Therapeutic Heterogeneity per Cluster",
+        y = "Mean intra-cluster Jaccard distance",
+        x = "Cluster"
+    ) +
+    theme_bw(base_size = 9) +
+    theme(
         axis.text.x = element_text(angle = 45, hjust = 1),
         axis.text = element_text(size = 12, color = "black"),
         axis.title = element_text(size = 12, face = "bold"),
@@ -209,11 +266,12 @@ new_sex <- seu@meta.data %>%
 
 # Include TME subtypes and refined tumor type
 tcca_annot <- read.table("../gdsc/tcca_metadata_h5ad.tsv",
-                         header = TRUE, sep = "\t")
+    header = TRUE, sep = "\t"
+)
 tumor_tme <- tcca_annot %>%
-  mutate(study_sample = paste0(study, "_", sample)) %>%
-  select(study_sample, tumor_type, tme_archetype) %>%
-  distinct()
+    mutate(study_sample = paste0(study, "_", sample)) %>%
+    select(study_sample, tumor_type, tme_archetype) %>%
+    distinct()
 
 data$study_sample <- paste0(sub("\\..*", "", data$Subclone), "_", data$Sample)
 rownames(data) <- NULL
@@ -224,7 +282,7 @@ subclones <- data %>%
 
 # Add clinical and tme annotation to subclones
 clinical_subclones <- subclones %>%
-    left_join(clinical, by = "study_sample") %>% 
+    left_join(clinical, by = "study_sample") %>%
     select(-sex) %>%
     left_join(new_sex, by = "study_sample") %>%
     left_join(tumor_tme, by = "study_sample")
@@ -258,11 +316,12 @@ clinical_subclones <- clinical_subclones %>%
             TRUE ~ "Other"
         ),
         adult_pediatric = ifelse(age >= 16, "Adult", "Pediatric"),
-        is_blood = ifelse(tumor_type %in% c("ALL", "CLL", "LAML","MM"), "Liquid", "Solid"),
+        is_blood = ifelse(tumor_type %in% c("ALL", "CLL", "LAML", "MM"), "Liquid", "Solid"),
         treated = ifelse(treated != "", ifelse(treated == "t", "Treated", "Untreated"), NA),
         sex = ifelse(sex == "f", "Female", "Male"),
         sample_type = ifelse(sample_type == "m", "Metastasis", "Primary"),
-        cluster = cluster_assignment)
+        cluster = cluster_assignment
+    )
 
 
 subclone_annot_df <- clinical_subclones %>%
@@ -275,10 +334,11 @@ subclone_annot_df <- clinical_subclones %>%
         treated,
         tumor_type,
         tme_archetype,
-        cluster) %>%
+        cluster
+    ) %>%
     as.data.frame()
 
-subclone_annot_df$summarised_tumor_site <-  translat_human_sites[subclone_annot_df$summarised_tumor_site]
+subclone_annot_df$summarised_tumor_site <- translat_human_sites[subclone_annot_df$summarised_tumor_site]
 
 write.table(subclone_annot_df, "annotations_subclones.tsv")
 
@@ -307,115 +367,114 @@ pals <- list(
 )
 
 
-
-# Customize legends 
+# Customize legends
 sex_legend <- Legend(
-  at = names(pals$`Chromosomal sex`),
-  legend_gp = gpar(fill = pals$`Chromosomal sex`),
-  ncol = 1,  # Split Group legend into 2 columns
-  gap = unit(10, "mm"),
-  title = "Chromosomal sex",
-  title_gp = gpar(fontsize = 12, fontface = "bold"),  # Title font
-  labels_gp = gpar(fontsize = 12) 
+    at = names(pals$`Chromosomal sex`),
+    legend_gp = gpar(fill = pals$`Chromosomal sex`),
+    ncol = 1, # Split Group legend into 2 columns
+    gap = unit(10, "mm"),
+    title = "Chromosomal sex",
+    title_gp = gpar(fontsize = 12, fontface = "bold"), # Title font
+    labels_gp = gpar(fontsize = 12)
 )
 age_legend <- Legend(
     at = names(pals$`Age group`),
     legend_gp = gpar(fill = pals$`Age group`),
-    ncol = 1,  # Split Group legend into 2 columns
+    ncol = 1, # Split Group legend into 2 columns
     gap = unit(10, "mm"),
     title = "Age group",
-    title_gp = gpar(fontsize = 12, fontface = "bold"),  # Title font
+    title_gp = gpar(fontsize = 12, fontface = "bold"), # Title font
     labels_gp = gpar(fontsize = 12)
-  )
+)
 solid_liquid_legend <- Legend(
-  at = names(pals$`Solid/Liquid`),
-  legend_gp = gpar(fill = pals$`Solid/Liquid`),
-  ncol = 1,  # Split Group legend into 2 columns
-  gap = unit(10, "mm"),
-  title = "Solid/Liquid",
-  title_gp = gpar(fontsize = 12, fontface = "bold"),  # Title font
-  labels_gp = gpar(fontsize = 12)
+    at = names(pals$`Solid/Liquid`),
+    legend_gp = gpar(fill = pals$`Solid/Liquid`),
+    ncol = 1, # Split Group legend into 2 columns
+    gap = unit(10, "mm"),
+    title = "Solid/Liquid",
+    title_gp = gpar(fontsize = 12, fontface = "bold"), # Title font
+    labels_gp = gpar(fontsize = 12)
 )
 sample_type_legend <- Legend(
-  at = names(pals$`Sample type`),
-  legend_gp = gpar(fill = pals$`Sample type`),
-  ncol = 1,  # Split Group legend into 2 columns
-  gap = unit(10, "mm"),
-  title = "Sample type",
-  title_gp = gpar(fontsize = 12, fontface = "bold"),  # Title font
-  labels_gp = gpar(fontsize = 12)
+    at = names(pals$`Sample type`),
+    legend_gp = gpar(fill = pals$`Sample type`),
+    ncol = 1, # Split Group legend into 2 columns
+    gap = unit(10, "mm"),
+    title = "Sample type",
+    title_gp = gpar(fontsize = 12, fontface = "bold"), # Title font
+    labels_gp = gpar(fontsize = 12)
 )
 
 treatment_legend <- Legend(
-  at = names(pals$`Treatment`),
-  legend_gp = gpar(fill = pals$`Treatment`),
-  ncol = 1,  # Split Group legend into 2 columns
-  gap = unit(10, "mm"),
-  title = "Treatment",
-  title_gp = gpar(fontsize = 12, fontface = "bold"),  # Title font
-  labels_gp = gpar(fontsize = 12)
+    at = names(pals$`Treatment`),
+    legend_gp = gpar(fill = pals$`Treatment`),
+    ncol = 1, # Split Group legend into 2 columns
+    gap = unit(10, "mm"),
+    title = "Treatment",
+    title_gp = gpar(fontsize = 12, fontface = "bold"), # Title font
+    labels_gp = gpar(fontsize = 12)
 )
 
 tumor_site_legend <- Legend(
-  at = names(pals$`Sample site`),
-  legend_gp = gpar(fill = pals$`Sample site`),
-  ncol = 2,  # Split Group legend into 2 columns
-  gap = unit(10, "mm"),
-  title = "Sample site",
-  title_gp = gpar(fontsize = 12, fontface = "bold"),  # Title font
-  labels_gp = gpar(fontsize = 12)
+    at = names(pals$`Sample site`),
+    legend_gp = gpar(fill = pals$`Sample site`),
+    ncol = 2, # Split Group legend into 2 columns
+    gap = unit(10, "mm"),
+    title = "Sample site",
+    title_gp = gpar(fontsize = 12, fontface = "bold"), # Title font
+    labels_gp = gpar(fontsize = 12)
 )
 
 cancertype_legend <- Legend(
-  at = names(pals$`Cancer type`),
-  legend_gp = gpar(fill = pals$`Cancer type`),
-  ncol = 4,  # Split Group legend into 2 columns
-  gap = unit(10, "mm"),
-  title = "Cancer type",
-  title_gp = gpar(fontsize = 12, fontface = "bold"),  # Title font
-  labels_gp = gpar(fontsize = 12)
+    at = names(pals$`Cancer type`),
+    legend_gp = gpar(fill = pals$`Cancer type`),
+    ncol = 4, # Split Group legend into 2 columns
+    gap = unit(10, "mm"),
+    title = "Cancer type",
+    title_gp = gpar(fontsize = 12, fontface = "bold"), # Title font
+    labels_gp = gpar(fontsize = 12)
 )
 
 tme_legend <- Legend(
-  at = names(pals$`TME archetype`),
-  legend_gp = gpar(fill = pals$`TME archetype`),
-  ncol = 2,  # Split Group legend into 2 columns
-  gap = unit(10, "mm"),
-  title = "TME archetype",
-  title_gp = gpar(fontsize = 12, fontface = "bold"),  # Title font
-  labels_gp = gpar(fontsize = 12)
+    at = names(pals$`TME archetype`),
+    legend_gp = gpar(fill = pals$`TME archetype`),
+    ncol = 2, # Split Group legend into 2 columns
+    gap = unit(10, "mm"),
+    title = "TME archetype",
+    title_gp = gpar(fontsize = 12, fontface = "bold"), # Title font
+    labels_gp = gpar(fontsize = 12)
 )
 
 
 cluster_legend <- Legend(
-  at = names(pals$`Cluster`),
-  legend_gp = gpar(fill = pals$`Cluster`),
-  ncol = 1,  # Split Group legend into 2 columns
-  gap = unit(10, "mm"),
-  title = "Cluster",
-  title_gp = gpar(fontsize = 12, fontface = "bold"),  # Title font
-  labels_gp = gpar(fontsize = 12)
+    at = names(pals$`Cluster`),
+    legend_gp = gpar(fill = pals$`Cluster`),
+    ncol = 1, # Split Group legend into 2 columns
+    gap = unit(10, "mm"),
+    title = "Cluster",
+    title_gp = gpar(fontsize = 12, fontface = "bold"), # Title font
+    labels_gp = gpar(fontsize = 12)
 )
 similarity_matrix <- round(similarity_matrix, 3)
 
 # Order by sample site, sample type, treatment, tme_archetype, cancer type
 subclone_annot_df <- subclone_annot_df %>%
-  arrange(`Sample site`, `Sample type`, Treatment, `Cancer type`, `TME archetype`)
+    arrange(`Sample site`, `Sample type`, Treatment, `Cancer type`, `TME archetype`)
 ordered_names <- rownames(subclone_annot_df)
 
 top_annotation <- ComplexHeatmap::HeatmapAnnotation(
-  df =  subclone_annot_df,
-  which = "column",
-  col = pals,
-  annotation_name_side = "left",
-  annotation_name_rot = 0,
-  annotation_name_gp = gpar(fontsize = 12, fontface = "bold"),
-  show_legend = FALSE
+    df = subclone_annot_df,
+    which = "column",
+    col = pals,
+    annotation_name_side = "left",
+    annotation_name_rot = 0,
+    annotation_name_gp = gpar(fontsize = 12, fontface = "bold"),
+    show_legend = FALSE
 )
 
 # Plot the heatmap
 similarity_matrix <- similarity_matrix[ordered_names, ordered_names]
-jaccard_dist <- as.dist(1-similarity_matrix)
+jaccard_dist <- as.dist(1 - similarity_matrix)
 
 # Create color palette
 vals <- as.vector(similarity_matrix)
@@ -424,7 +483,7 @@ vals <- vals[vals < 1]
 quantile(vals, probs = c(0, 0.25, 0.5, 0.75, 0.90, 0.95, 1))
 q <- quantile(vals, probs = c(0, 0.25, 0.5, 0.75, 0.90, 0.95, 1))
 custom_col <- colorRamp2(
-    c(0, q[3], q[5], 0.5), 
+    c(0, q[3], q[5], 0.5),
     c("white", "#57c7ac", "#1A6FA8", "#18195a")
 )
 
@@ -465,18 +524,19 @@ heat <- ComplexHeatmap::Heatmap(
         title_gap = unit(10, "mm"),
         at = c(0, 0.1, 0.2, 0.3, 0.4, 0.5),
         labels = c("0", "0.1", "0.2", "0.3", "0.4", "0.5"),
-        direction = "horizontal"),
+        direction = "horizontal"
+    ),
     heatmap_width = unit(8, "in"),
     heatmap_height = unit(9, "in"),
     use_raster = FALSE
 )
 
 png(
-  file = "/Users/mariagb/Documents/new_figures_tcca/heatmap_sctherapy_clusters_final.png",
-  width = 14,
-  height = 15,
-  units = "in",
-  res = 300
+    file = "/Users/mariagb/Documents/new_figures_tcca/heatmap_sctherapy_clusters_final.png",
+    width = 14,
+    height = 15,
+    units = "in",
+    res = 300
 )
 
 ht_opt(
@@ -485,21 +545,25 @@ ht_opt(
     "legend_gap" = unit(1, "cm")
 )
 
-pd <- packLegend(sex_legend, 
-                 age_legend, 
-                 solid_liquid_legend, 
-                 sample_type_legend, 
-                 treatment_legend, 
-                 cancertype_legend,
-                 tme_legend,
-                 max_height = unit(8, "cm"), 
-                 column_gap = unit(1, "cm"))
-draw(heat, 
-     annotation_legend_side = "top", 
-     heatmap_legend_side = "bottom", 
-     annotation_legend_list = list(pd, 
-                                   tumor_site_legend,
-                                   cluster_legend))
+pd <- packLegend(sex_legend,
+    age_legend,
+    solid_liquid_legend,
+    sample_type_legend,
+    treatment_legend,
+    cancertype_legend,
+    tme_legend,
+    max_height = unit(8, "cm"),
+    column_gap = unit(1, "cm")
+)
+draw(heat,
+    annotation_legend_side = "top",
+    heatmap_legend_side = "bottom",
+    annotation_legend_list = list(
+        pd,
+        tumor_site_legend,
+        cluster_legend
+    )
+)
 dev.off()
 
 
@@ -523,20 +587,17 @@ column_dend <- column_dend(heat)
 
 # Compute mean Jaccard Index per cluster
 clusters <- lapply(column_order, function(x) colnames(similarity_matrix)[x])
-mean_jaccard_index <- lapply(column_order, function(x){
-  subclones <- colnames(similarity_matrix)[x]
-  mean_jaccard <- mean(similarity_matrix[subclones, subclones])
-  return(mean_jaccard)
+mean_jaccard_index <- lapply(column_order, function(x) {
+    subclones <- colnames(similarity_matrix)[x]
+    mean_jaccard <- mean(similarity_matrix[subclones, subclones])
+    return(mean_jaccard)
 })
 
 # Get top 10 drugs per cluster of subclones
-drugs_per_cluster <- lapply(clusters, function(subclones){
-  drugs <- data[data$Subclone %in% subclones, "Drug_Name"]
-  top_drugs <- data.frame(sort(table(drugs), decreasing = TRUE)[1:10])
+drugs_per_cluster <- lapply(clusters, function(subclones) {
+    drugs <- data[data$Subclone %in% subclones, "Drug_Name"]
+    top_drugs <- data.frame(sort(table(drugs), decreasing = TRUE)[1:10])
 })
-
-  
-
 
 
 ### Parameters for customized clustering
@@ -686,7 +747,6 @@ saveRDS(cluster_list, "subclone_cluster.rds")
 saveRDS(drug_list, "drug_list.rds")
 
 
-
 # Plot heatmap with the new clustering
 mp_names <- names(which(unlist(lapply(cluster_list, length)) >= 10))
 cluster_list <- cluster_list[mp_names]
@@ -695,90 +755,92 @@ cluster_list <- cluster_list[mp_names]
 #  Sort Jaccard similarity plot according to new clusters:
 inds_sorted <- c()
 for (j in seq_along(cluster_list)) {
-  inds_sorted <- c(inds_sorted, match(
-    cluster_list[[j]],
-    colnames(similarity_matrix_original)
-  ))
+    inds_sorted <- c(inds_sorted, match(
+        cluster_list[[j]],
+        colnames(similarity_matrix_original)
+    ))
 }
 
 similarity_matrix_sort <- similarity_matrix_original[inds_sorted, inds_sorted]
-rownames(similarity_matrix_sort) <- 1: ncol(similarity_matrix_sort)
-colnames(similarity_matrix_sort) <- 1: ncol(similarity_matrix_sort)
-labels <- ifelse(1:ncol(similarity_matrix_sort) %in% seq(0, 3000, by = 150), 
-                 rownames(similarity_matrix_sort), "")
+rownames(similarity_matrix_sort) <- 1:ncol(similarity_matrix_sort)
+colnames(similarity_matrix_sort) <- 1:ncol(similarity_matrix_sort)
+labels <- ifelse(1:ncol(similarity_matrix_sort) %in% seq(0, 3000, by = 150),
+    rownames(similarity_matrix_sort), ""
+)
 
 # Transform cluster list into a vector
 cluster_members <- unlist(lapply(seq_along(cluster_list), function(i) {
-  group <- names(cluster_list)[i] # Get the name of the current group
-  setNames(rep(group, length(cluster_list[[i]])), cluster_list[[i]])
+    group <- names(cluster_list)[i] # Get the name of the current group
+    setNames(rep(group, length(cluster_list[[i]])), cluster_list[[i]])
 }))
 
 cluster_annotation <- data.frame(
-  cluster = cluster_members,
-  stringsAsFactors = FALSE
+    cluster = cluster_members,
+    stringsAsFactors = FALSE
 )
 
-cluster_annotation <- cbind(cluster_annotation, subclone_annot_df[rownames(cluster_annotation),])
+cluster_annotation <- cbind(cluster_annotation, subclone_annot_df[rownames(cluster_annotation), ])
 
 top_annotation <- ComplexHeatmap::HeatmapAnnotation(
-  df = cluster_annotation[names(pals)],
-  which = "column",
-  col = pals,
-  annotation_name_side = "left",
-  annotation_name_rot = 0,
-  show_annotation_name = TRUE,
-  annotation_name_gp = gpar(fontsize = 12),
-  show_legend = c(
-    "Sample site" = FALSE
-  )
+    df = cluster_annotation[names(pals)],
+    which = "column",
+    col = pals,
+    annotation_name_side = "left",
+    annotation_name_rot = 0,
+    show_annotation_name = TRUE,
+    annotation_name_gp = gpar(fontsize = 12),
+    show_legend = c(
+        "Sample site" = FALSE
+    )
 )
 
 
 # Plot the heatmap
 heat <- ComplexHeatmap::Heatmap(
-  similarity_matrix_sort,
-  top_annotation = top_annotation,
-  cluster_rows = FALSE,
-  cluster_row_slices = TRUE, 
-  row_split =  cluster_annotation$`cluster`,
-  cluster_columns = FALSE,
-  cluster_column_slices = TRUE,
-  show_column_dend = FALSE,
-  column_split = cluster_annotation$`cluster`,
-  row_labels = labels,
-  column_labels = labels,
-  column_names_rot = 45,
-  row_names_gp = gpar(fontsize = 12),
-  column_names_gp = gpar(fontsize = 12),
-  row_names_side = "left",
-  column_names_side = "bottom",
-  row_title = "Subclones",
-  row_title_gp = gpar(fontsize = 12, fontface = "bold"),
-  column_title = "Subclones",
-  column_title_gp = gpar(fontsize = 12, fontface = "bold"),
-  show_column_names = FALSE,
-  show_row_names = FALSE,
-  row_title_side = "left",
-  column_title_side = "bottom",
-  heatmap_legend_param = list(
-    title = "Similarity\n(Jaccard index)",
-    title_gp = gpar(fontsize = 12, fontface = "bold"),
-    labels_gp = gpar(fontsize = 12),
-    title_gap = unit(10, "mm")),
-  heatmap_width = unit(10, "in"),
-  heatmap_height = unit(10, "in")
+    similarity_matrix_sort,
+    top_annotation = top_annotation,
+    cluster_rows = FALSE,
+    cluster_row_slices = TRUE,
+    row_split = cluster_annotation$`cluster`,
+    cluster_columns = FALSE,
+    cluster_column_slices = TRUE,
+    show_column_dend = FALSE,
+    column_split = cluster_annotation$`cluster`,
+    row_labels = labels,
+    column_labels = labels,
+    column_names_rot = 45,
+    row_names_gp = gpar(fontsize = 12),
+    column_names_gp = gpar(fontsize = 12),
+    row_names_side = "left",
+    column_names_side = "bottom",
+    row_title = "Subclones",
+    row_title_gp = gpar(fontsize = 12, fontface = "bold"),
+    column_title = "Subclones",
+    column_title_gp = gpar(fontsize = 12, fontface = "bold"),
+    show_column_names = FALSE,
+    show_row_names = FALSE,
+    row_title_side = "left",
+    column_title_side = "bottom",
+    heatmap_legend_param = list(
+        title = "Similarity\n(Jaccard index)",
+        title_gp = gpar(fontsize = 12, fontface = "bold"),
+        labels_gp = gpar(fontsize = 12),
+        title_gap = unit(10, "mm")
+    ),
+    heatmap_width = unit(10, "in"),
+    heatmap_height = unit(10, "in")
 )
 
 png(
-  file = "figures/heatmap_jaccard_clustered.png",
-  res = 500,
-  width = 16,
-  height = 14,
-  units = "in"
+    file = "figures/heatmap_jaccard_clustered.png",
+    res = 500,
+    width = 16,
+    height = 14,
+    units = "in"
 )
 draw(
-  heat,
-  annotation_legend_side = "top",
-  annotation_legend_list = list(tumor_site_legend)
+    heat,
+    annotation_legend_side = "top",
+    annotation_legend_list = list(tumor_site_legend)
 )
 dev.off()
