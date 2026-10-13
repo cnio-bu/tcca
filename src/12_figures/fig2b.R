@@ -11,9 +11,9 @@ drug_pred <- read.table("drug_response_subclone_final.tsv", header = TRUE)
 
 # Get number of subclones per cluster
 cluster_sizes <- drug_pred %>%
-  select(Subclone.Name, ScTherapy.Cluster) %>%
-  distinct() %>%
-  count(ScTherapy.Cluster, name = "n_total")
+    select(Subclone.Name, ScTherapy.Cluster) %>%
+    distinct() %>%
+    count(ScTherapy.Cluster, name = "n_total")
 
 # Frequency of each drug per therapeutic cluster
 drug_freq <- drug_pred %>%
@@ -26,7 +26,7 @@ drug_freq <- drug_pred %>%
     mutate(frequency = n_predicted / n_total)
 
 # Proportions test
-drug_exclusivity_pval <- drug_freq %>%
+drug_freq_pval <- drug_freq %>%
     group_by(Drug.Name) %>%
     mutate(
         n_other = sum(n_predicted) - n_predicted,
@@ -35,7 +35,9 @@ drug_exclusivity_pval <- drug_freq %>%
             list(n_predicted, n_total, n_other, total_other),
             function(x, n, x_other, n_other) {
                 # Avoid errors when the drug is not present in other TCs
-                if (n_other == 0 || n == 0) return(1)
+                if (n_other == 0 || n == 0) {
+                    return(1)
+                }
                 tryCatch(
                     prop.test(
                         x = c(x, x_other),
@@ -51,21 +53,22 @@ drug_exclusivity_pval <- drug_freq %>%
     ungroup()
 
 # Filter drugs with frequency >= 0.5 in at least one cluster
-selected_drugs <- drug_exclusivity_pval %>%
+selected_drugs <- drug_freq_pval %>%
     group_by(Drug.Name) %>%
     filter(max(frequency) >= 0.50) %>%
     ungroup()
 
 # Add MoA information
 drug_moas <- drug_pred %>%
-  select(Drug.Name, Drug.Mechanism.Of.Action) %>%
-  distinct()
+    select(Drug.Name, Drug.Mechanism.Of.Action) %>%
+    distinct()
 
 selected_drugs <- selected_drugs %>%
     left_join(drug_moas, by = "Drug.Name")
 
 tc_order <- as.character(sort(unique(as.numeric(
-    selected_drugs$ScTherapy.Cluster))))
+    selected_drugs$ScTherapy.Cluster
+))))
 
 # Prepare matrices for dotplot
 # Frequency matrix (color)
@@ -101,7 +104,7 @@ drug_order <- selected_drugs %>%
         Drug.Mechanism.Of.Action,
         levels = c(
             sort(setdiff(unique(Drug.Mechanism.Of.Action), "Other")),
-            "Other"  # Other siempre al final
+            "Other" # Other at the end
         )
     )) %>%
     arrange(Drug.Mechanism.Of.Action, Drug.Name) %>%
@@ -145,14 +148,14 @@ cell_fun <- function(j, i, x, y, width, height, fill) {
     # Size and color based on frequency
     size <- size_matrix[i, j]
     col <- freq_col(freq_matrix[i, j])
-    
+
     # Draw bubble
     grid.circle(
         x, y,
         r = unit(size, "mm"),
         gp = gpar(fill = col, col = "grey80", lwd = 0.5)
     )
-    
+
     # Add asterisk if padj < 0.05
     if (pval_matrix[i, j] < 0.05) {
         grid.text(
@@ -173,14 +176,14 @@ hm <- Heatmap(
     cell_fun = cell_fun,
     rect_gp = gpar(col = "grey90", fill = NA, lwd = 0.5),
     left_annotation = left_annotation,
-    
-    # Filas
+
+    # Rows
     cluster_rows = FALSE,
     row_order = drug_order,
     show_row_names = TRUE,
     row_names_side = "left",
     row_names_gp = gpar(fontsize = 8),
-    
+
     # Columnas
     cluster_columns = FALSE,
     column_order = tc_order,
@@ -189,9 +192,7 @@ hm <- Heatmap(
     column_names_gp = gpar(fontsize = 10),
     column_names_rot = 45,
     show_column_names = TRUE,
-    
     show_heatmap_legend = FALSE,
-    
     width = cell_size * 10,
     height = cell_size * nrow(freq_matrix)
 )
