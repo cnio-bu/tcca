@@ -24,14 +24,15 @@ samples_lvl2 <- read.table(
 adrenalnb_rui_chong <- readRDS("adrenalnb_rui_chong.rds")
 all_drugs <- unique(unlist(
     lapply(
-    adrenalnb_rui_chong,
-    function(x) names(x@switch.point)
-)))
+        adrenalnb_rui_chong,
+        function(x) names(x@switch.point)
+    )
+))
 
 
 study_mats_sp <- list()
 
-for (study in all_studies){
+for (study in all_studies) {
     study_name <- basename(study)
     study_name <- gsub(x = study_name, pattern = ".rds", replacement = "")
     samples_bc <- readRDS(study)
@@ -42,7 +43,7 @@ for (study in all_studies){
     # Remove samples not in level 2 (i.e., samples with fewer than 100 malignant
     # cells or missing clinical annotations)
     samples_bc <- samples_bc[names(samples_bc) %in% samples_lvl2]
-    
+
     samples_aligned <- lapply(names(samples_bc), function(sample_name) {
         sp <- samples_bc[[sample_name]]@switch.point
         # Create vector with all possible drugs
@@ -93,17 +94,18 @@ write.table(
 
 ## Heatmap of SP per sample with clinical annotations
 library(ComplexHeatmap)
-source(file = "~/bc-meta/figures/TCCA_palette.R")
+source(file = "/Users/mariagb/Documents/tcca/src/12_figures/TCCA_palette.R")
+setwd("/Users/mariagb/OneDrive-CNIO/2nd_year/bc-meta/therapeutic_analysis/beyondcell/")
 full_sp_mat <- read.table(
-    "../../beyondcell_immuno/full_sp_mat_filtered.tsv",
+    "beyondcell_immuno/full_sp_mat_filtered.tsv",
     sep = "\t",
     header = TRUE
 )
 colnames(full_sp_mat) <- gsub("[_. \\-]", "", colnames(full_sp_mat))
 # Add clinical annotations
-metadata <- read.table("../seurat/v5/tcca_metadata.tsv", sep = "\t", header = TRUE)
+metadata <- read.table("../../cohort_statistics/tcca_metadata_h5ad.tsv", sep = "\t", header = TRUE)
 metadata <- metadata %>%
-    mutate(study_sample =  gsub("[_. \\-]", "", paste0(study, "_", sample))) %>%
+    mutate(study_sample = gsub("[_. \\-]", "", paste0(study, "_", sample))) %>%
     select(
         study_sample,
         study,
@@ -114,7 +116,7 @@ metadata <- metadata %>%
         refined_tumor_site,
         sample_type,
         treated,
-        refined_tumor_type,
+        tumor_type,
         tme_archetype,
         tme_archetype_group
     ) %>%
@@ -149,7 +151,7 @@ clinical_features <- metadata %>%
             TRUE ~ "Other"
         ),
         adult_pediatric = ifelse(age >= 16, "Adult", "Pediatric"),
-        is_blood = ifelse(refined_tumor_type %in% c("ALL", "CLL", "LAML", "MM"), "Liquid", "Solid"),
+        is_blood = ifelse(tumor_type %in% c("ALL", "CLL", "LAML", "MM"), "Liquid", "Solid"),
         treated = ifelse(treated == "t", "Treated", "Untreated"),
         sex = ifelse(sex == "f", "Female", "Male"),
         sample_type = ifelse(sample_type == "m", "Metastasis", "Primary"),
@@ -166,12 +168,12 @@ sample_annot_df <- clinical_features %>%
         sample_type,
         summarised_tumor_site,
         treated,
-        refined_tumor_type,
-       #sample_origin,
+        tumor_type,
+        # sample_origin,
         tme_archetype
     ) %>%
     filter(study_sample %in% colnames(full_sp_mat)) %>%
-    as.data.frame() 
+    as.data.frame()
 
 sample_annot_df$summarised_tumor_site <- translat_human_sites[sample_annot_df$summarised_tumor_site]
 
@@ -187,7 +189,7 @@ colnames(sample_annot_df) <- c(
     "Sample site",
     "Treatment",
     "Cancer type",
-    #"Sample origin",
+    # "Sample origin",
     "TME archetype"
 )
 
@@ -198,7 +200,7 @@ pals <- list(
     "Sample type" = pm_colors,
     "Sample site" = tumor_sites_colors,
     "Treatment" = treatment_colors,
-    #"Sample origin" = patient_ccl_colors,
+    # "Sample origin" = patient_ccl_colors,
     "Cancer type" = tumor_type_colors,
     "TME archetype" = tme_colors
 )
@@ -276,8 +278,8 @@ mat <- as.matrix(full_sp_mat)
 mat <- scale(x = mat, center = TRUE, scale = TRUE)
 apply(head(apply(mat, 2, function(x) is.na(x))), 2, sum)[apply(head(apply(mat, 2, function(x) is.na(x))), 2, sum) != 0]
 heat <- ComplexHeatmap::Heatmap(
-    mat = mat[ordered_rownames,],
-    #col = colorRamp2(c(0, 0.5, 1), c("blue", "white", "red")),
+    mat = mat[ordered_rownames, ],
+    # col = colorRamp2(c(0, 0.5, 1), c("blue", "white", "red")),
     top_annotation = top_annotation,
     right_annotation = right_annotation,
     cluster_rows = FALSE,
@@ -291,10 +293,10 @@ heat <- ComplexHeatmap::Heatmap(
     clustering_distance_columns = "pearson",
     clustering_distance_rows = "pearson",
     show_column_names = FALSE,
-    #row_title = unique(sort(MoAs[rownames(full_sp_mat), "Mechanism of action"])),
+    # row_title = unique(sort(MoAs[rownames(full_sp_mat), "Mechanism of action"])),
     row_title = NULL,
     row_order = ordered_rownames,
-    row_labels  = ordered_drug_names,
+    row_labels = ordered_drug_names,
     show_row_names = TRUE,
     column_names_side = "top",
     row_title_side = "right",
@@ -329,7 +331,6 @@ brca <- brca %>%
     ))
 
 
-
 barplot <- ggplot(
     brca,
     aes(x = sp_group, fill = tme_archetype_group)
@@ -351,7 +352,8 @@ barplot <- ggplot(
 ggsave(
     filename = "../../beyondcell_immuno/results/barplot_trastuzumab_response_brca.png",
     plot = barplot,
-    width = 7, height = 6)
+    width = 7, height = 6
+)
 
 # Plot SPs of Wang Melanoma Hot-vs-Cold signature per TME archetype group
 sp_hot_vs_cold <- as.data.frame(t(full_sp_mat["WANG_MELANOMA_HOT_VS_COLD", ]))
@@ -360,54 +362,89 @@ sp_hot_vs_cold <- sp_hot_vs_cold %>%
     rownames_to_column(var = "study_sample") %>%
     left_join(
         clinical_features %>%
-            select(study_sample, tme_archetype_group),
+            select(study_sample, tme_archetype, tme_archetype_group),
         by = "study_sample"
     ) %>%
-    mutate(tme_archetype_group = factor(tme_archetype_group,
-        levels = c(
-            "Tcell_centric",
-            "Myeloid_centric",
-            "Immune_rich",
-            "Immune_stromal",
-            "Immune_desert",
-            "none"
+    mutate(
+        tme_archetype_group = ifelse(
+            tme_archetype == "Immune_stromal_desert", "Immune_desert",
+            tme_archetype_group
+        ),
+        tme_archetype_group = factor(tme_archetype_group,
+            levels = c(
+                "Tcell_centric",
+                "Myeloid_centric",
+                "Immune_rich",
+                "Immune_stromal",
+                "Immune_desert",
+                "none"
+            )
         )
-    )) %>%
+    ) %>%
     filter(tme_archetype_group != "none") %>%
     # Compute the inverse of SP (1 - SP) to improve interpretability
     mutate(sensitivity = 1 - WANG_MELANOMA_HOT_VS_COLD)
 
+# Define hot and cold groups
+sp_hot_vs_cold <- sp_hot_vs_cold %>%
+    mutate(
+        immune_group = ifelse(
+            tme_archetype_group %in% c("Tcell_centric", "Myeloid_centric", "Immune_rich"),
+            "Immune-hot", "Immune-cold"
+        ),
+        immune_group = factor(immune_group, levels = c("Immune-hot", "Immune-cold"))
+    )
+
+# Wilcoxon test
+wilcox_result <- wilcox.test(sensitivity ~ immune_group, data = sp_hot_vs_cold)
 
 boxplot <- ggplot(
     sp_hot_vs_cold,
     aes(
         x = tme_archetype_group,
         y = sensitivity,
-        fill = tme_archetype_group
+        fill = immune_group
     )
 ) +
-    geom_boxplot() +
-    scale_fill_manual(values = tme_group_colors) +
+    geom_boxplot(outlier.size = 0.5) +
+    scale_fill_manual(
+        values = c("Immune-hot" = "#F4A582", "Immune-cold" = "#92C5DE"),
+        name   = NULL
+    ) +
+    scale_y_continuous(
+        expand = expansion(mult = c(0.05, 0.15)) # 5% abajo, 15% arriba
+    ) +
+    annotate(
+        "text",
+        x = 3,
+        y = max(sp_hot_vs_cold$sensitivity, na.rm = TRUE) * 1.05,
+        label = paste0(
+            "Wilcoxon p = ",
+            formatC(wilcox_result$p.value, format = "e", digits = 1)
+        ),
+        size = 3.5
+    ) +
+    geom_vline(
+        xintercept = 3.5, linetype = "dashed",
+        color = "grey50", linewidth = 0.5
+    ) +
     labs(
-        x = "TME archetype group",
-        y = "Predicted response to ICB (anti-PD1 & anti-CTLA4)"
+        x = "TME archetype",
+        y = "Predicted response to ICB (1 - SP)"
     ) +
     theme_bw() +
     theme(
-        axis.text.x = element_text(angle = 45, hjust = 1),
-        legend.position = "none"
+        axis.text.x = element_text(angle = 0, hjust = 0.5, size = 10),
+        axis.text.y = element_text(size = 10),
+        axis.title = element_text(size = 11, face = "bold"),
+        legend.position = "top",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank()
     )
 
 ggsave(
-    "../../beyondcell_immuno/results/boxplot_wang_melanoma_hot_vs_cold.pdf",
-    plot = boxplot, 
-    width = 8, 
+    "beyondcell_immuno/boxplot_wang_melanoma_hot_vs_cold.pdf",
+    plot = boxplot,
+    width = 5,
     height = 4
 )
-
-# Statistical test
-sp_hot_vs_cold <- sp_hot_vs_cold %>%
-    filter(!is.na(sensitivity)) %>%
-    mutate(group = ifelse(tme_archetype_group %in% c("Tcell_centric", "Myeloid_centric", "Immune_rich"), "Immune_hot", "Immune_cold"))
-
-wilcox.test(sensitivity ~ group, data = sp_hot_vs_cold)
