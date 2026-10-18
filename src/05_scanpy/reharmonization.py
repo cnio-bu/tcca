@@ -164,8 +164,7 @@ def map_cell_type(row):
         return reverse_mapping.get(row["cell_type_main"], "Unknown")
 
 metadata["cell_type_broad"] =  metadata.apply(map_cell_type, axis=1)
-ordered_columns = metadata.columns.values[0:29].tolist() + ["cell_type_broad"] + 
-    metadata.columns.values[29:metadata.shape[1]].tolist()
+ordered_columns = metadata.columns.values[0:29].tolist() + ["cell_type_broad"] + metadata.columns.values[29:metadata.shape[1]].tolist()
 metadata = metadata[ordered_columns]
 
 metadata.to_csv("tcca_metadata.tsv", sep = "\t", index = False)
