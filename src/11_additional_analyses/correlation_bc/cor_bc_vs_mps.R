@@ -10,8 +10,8 @@ setwd("/storage/scratch01/shared/projects/bc-meta/")
 mat_bc <- open_matrix_dir(dir = "./beyondcell_immuno/full_mat_beyondcell")
 
 mat_mps <- read.table(
-  "functional_nmf/sample_wise/mps_ucell_scores.tsv", 
-  header = TRUE
+    "functional_nmf/sample_wise/mps_ucell_scores.tsv",
+    header = TRUE
 )
 
 # Transform to sparse matrix
@@ -33,25 +33,26 @@ colnames(cor_mat) <- gsub("_UCell", "", colnames(mat_mps))
 # Heatmap
 ## get drug names
 drugs <- data.table::fread("~/bc-meta/reference/final_moas - Collapsed.tsv") %>%
-  select(IDs, preferred.drug.names, collapsed.MoAs) %>%
-  mutate(
-    collapsed.MoAs = case_when(
-      preferred.drug.names == "VANDETANIB" ~ "VEGFR inhibitor",
-      preferred.drug.names == "DASATINIB" ~ "Kinase inhibitor",
-      preferred.drug.names == "RIGOSERTIB" ~ "Other",
-      preferred.drug.names == "SORAFENIB" ~ "Kinase inhibitor",
-      TRUE ~ collapsed.MoAs
-    )
-  ) %>%
-  distinct() %>%
-  as.data.frame()
+    select(IDs, preferred.drug.names, collapsed.MoAs) %>%
+    mutate(
+        collapsed.MoAs = case_when(
+            preferred.drug.names == "VANDETANIB" ~ "VEGFR inhibitor",
+            preferred.drug.names == "DASATINIB" ~ "Kinase inhibitor",
+            preferred.drug.names == "RIGOSERTIB" ~ "Other",
+            preferred.drug.names == "SORAFENIB" ~ "Kinase inhibitor",
+            TRUE ~ collapsed.MoAs
+        )
+    ) %>%
+    distinct() %>%
+    as.data.frame()
 
 drugs <- drugs[drugs$IDs %in% rownames(cor_mat), ]
 rownames(drugs) <- drugs$IDs
 
 drugs$collapsed.MoAs <- ifelse(drugs$collapsed.MoAs %in% names(MoAs_colors),
-                               drugs$collapsed.MoAs,
-                               "Other")
+    drugs$collapsed.MoAs,
+    "Other"
+)
 MoAs <- drugs[rownames(cor_mat), c("IDs", "collapsed.MoAs")]
 MoAs <- as.data.frame(MoAs$collapsed.MoAs)
 colnames(MoAs) <- "Mechanism of action"
@@ -63,48 +64,161 @@ moa_pals <- list("Mechanism of action" = MoAs_colors)
 
 
 right_annotation <- ComplexHeatmap::HeatmapAnnotation(
-  df = MoAs,
-  which = "row",
-  col = moa_pals,
-  show_annotation_name = FALSE,
-  show_legend = FALSE
+    df = MoAs,
+    which = "row",
+    col = moa_pals,
+    show_annotation_name = FALSE,
+    show_legend = FALSE
 )
 
 
-pdf(file = "functional_nmf/correlation.pdf",
+pdf(
+    file = "functional_nmf/correlation.pdf",
     width = 17,
-    height = 19)
+    height = 19
+)
 
 
 heat <- ComplexHeatmap::Heatmap(
-  mat = cor_mat,
-  # mat = t(sketched_mat),
-  right_annotation = right_annotation,
-  cluster_rows = FALSE,
-  cluster_row_slices = FALSE,
-  row_split = MoAs$`Mechanism of action`,
-  #row_title = NULL,
-  row_title_side = "right",
-  row_title_rot = 0,
-  cluster_columns = FALSE,
-  cluster_column_slices = FALSE,
-  show_column_dend = FALSE,
-  clustering_distance_columns = "pearson",
-  clustering_distance_rows = "pearson",
-  show_column_names = TRUE,
-  row_labels = drugs[rownames(cor_mat), "preferred.drug.names"],
-  show_row_names = FALSE,
-  column_names_rot = 45,
-  row_names_gp = grid::gpar(fontsize = 8),
-  column_names_side = "top",
-  column_title = NULL,
-  heatmap_legend_param = list(title = "Pearson coefficient", direction = "horizontal"),
-  heatmap_width = unit(14, "in"),
-  heatmap_height = unit(16, "in")
+    mat = cor_mat,
+    # mat = t(sketched_mat),
+    right_annotation = right_annotation,
+    cluster_rows = FALSE,
+    cluster_row_slices = FALSE,
+    row_split = MoAs$`Mechanism of action`,
+    # row_title = NULL,
+    row_title_side = "right",
+    row_title_rot = 0,
+    cluster_columns = FALSE,
+    cluster_column_slices = FALSE,
+    show_column_dend = FALSE,
+    clustering_distance_columns = "pearson",
+    clustering_distance_rows = "pearson",
+    show_column_names = TRUE,
+    row_labels = drugs[rownames(cor_mat), "preferred.drug.names"],
+    show_row_names = FALSE,
+    column_names_rot = 45,
+    row_names_gp = grid::gpar(fontsize = 8),
+    column_names_side = "top",
+    column_title = NULL,
+    heatmap_legend_param = list(title = "Pearson coefficient", direction = "horizontal"),
+    heatmap_width = unit(14, "in"),
+    heatmap_height = unit(16, "in")
 )
 
 
 draw(heat,
-     annotation_legend_side = "top",
-     heatmap_legend_side = "bottom")
+    annotation_legend_side = "top",
+    heatmap_legend_side = "bottom"
+)
+dev.off()
+
+
+# Run the same correlation at subclone level
+library(Seurat)
+library(qlcMatrix)
+library(dplyr)
+library(ComplexHeatmap)
+setwd("/Users/mariagb/OneDrive-CNIO/2nd_year/bc-meta/functional/functional_pseudobulk/subclone/")
+source("/Users/mariagb/Documents/tcca/src/12_figures/TCCA_palette.R")
+
+mat_bc <- read.table("subclones_bc_gsva_aggregated.tsv", header = TRUE)
+
+mat_mps <- read.table("gsva_mps_subclones.tsv",
+    header = TRUE
+)
+
+# Transpose mat_bc (to subclones x drugs)
+mat_bc <- t(mat_bc)
+
+# Match subclone names
+rownames(mat_mps) <- gsub("-| ", ".", rownames(mat_mps))
+identical(rownames(mat_bc), rownames(mat_mps))
+
+# Compute correlation between drug sensitivity and mp enrichment
+cor_mat <- cor(mat_bc, mat_mps, method = "pearson", use = "pairwise.complete.obs")
+rownames(cor_mat) <- colnames(mat_bc)
+colnames(cor_mat) <- gsub("_UCell", "", colnames(mat_mps))
+
+# Heatmap
+## get drug names
+drugs <- data.table::fread("/Users/mariagb/Documents/tcca/reference/final_moas - Collapsed.tsv") %>%
+    select(IDs, preferred.drug.names, collapsed.MoAs) %>%
+    mutate(
+        collapsed.MoAs = case_when(
+            preferred.drug.names == "VANDETANIB" ~ "VEGFR inhibitor",
+            preferred.drug.names == "DASATINIB" ~ "Kinase inhibitor",
+            preferred.drug.names == "RIGOSERTIB" ~ "Other",
+            preferred.drug.names == "SORAFENIB" ~ "Kinase inhibitor",
+            TRUE ~ collapsed.MoAs
+        )
+    ) %>%
+    distinct() %>%
+    as.data.frame()
+
+drugs <- drugs[drugs$IDs %in% rownames(cor_mat), ]
+rownames(drugs) <- drugs$IDs
+
+drugs$collapsed.MoAs <- ifelse(drugs$collapsed.MoAs %in% names(MoAs_colors),
+    drugs$collapsed.MoAs,
+    "Other"
+)
+MoAs <- drugs[rownames(cor_mat), c("IDs", "collapsed.MoAs")]
+MoAs <- as.data.frame(MoAs$collapsed.MoAs)
+colnames(MoAs) <- "Mechanism of action"
+
+# Add mechanism of action to immunotherapies
+MoAs$`Mechanism of action`[is.na(MoAs$`Mechanism of action`)] <- "Immunotherapy"
+
+moa_pals <- list("Mechanism of action" = MoAs_colors)
+
+
+right_annotation <- ComplexHeatmap::HeatmapAnnotation(
+    df = MoAs,
+    which = "row",
+    col = moa_pals,
+    show_annotation_name = FALSE,
+    show_legend = FALSE
+)
+
+
+pdf(
+    file = "mps_bc_correlation.pdf",
+    width = 17,
+    height = 19
+)
+
+
+heat <- ComplexHeatmap::Heatmap(
+    mat = cor_mat,
+    # mat = t(sketched_mat),
+    right_annotation = right_annotation,
+    cluster_rows = FALSE,
+    cluster_row_slices = FALSE,
+    row_split = MoAs$`Mechanism of action`,
+    # row_title = NULL,
+    row_title_side = "right",
+    row_title_rot = 0,
+    cluster_columns = FALSE,
+    cluster_column_slices = FALSE,
+    show_column_dend = FALSE,
+    clustering_distance_columns = "pearson",
+    clustering_distance_rows = "pearson",
+    show_column_names = TRUE,
+    row_labels = drugs[rownames(cor_mat), "preferred.drug.names"],
+    show_row_names = FALSE,
+    column_names_rot = 45,
+    row_names_gp = grid::gpar(fontsize = 8),
+    column_names_side = "top",
+    column_title = NULL,
+    heatmap_legend_param = list(title = "Pearson coefficient", direction = "horizontal"),
+    heatmap_width = unit(14, "in"),
+    heatmap_height = unit(16, "in")
+)
+
+
+draw(heat,
+    annotation_legend_side = "top",
+    heatmap_legend_side = "bottom"
+)
 dev.off()
