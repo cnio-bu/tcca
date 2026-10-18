@@ -286,11 +286,11 @@ ggsave(
 
 # Age
 age_group_colors <- c(
-    "Pediatric"   = "#a9dce3",
+    "Pediatric" = "#a9dce3",
     "Young adult" = "#6CC2BD",
-    "Adult"       = "#7689DE",
-    "Elderly"     = "#4B4A73",
-    "Unknown"     = "#BEBEBE"
+    "Adult" = "#7689DE",
+    "Elderly" = "#4B4A73",
+    "Unknown" = "#BEBEBE"
 )
 boxplot <- boxplot_function(
     x = "age_group",
@@ -361,7 +361,7 @@ age_stats <- compare_means(
     inverse_simpson ~ age_group,
     data = clonality_patients,
     method = "wilcox.test",
-    ref.group = "Pediatric" # opcional si quieres comparar contra Pediatric
+    ref.group = "Pediatric"
 )
 print(age_stats)
 
