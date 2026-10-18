@@ -239,7 +239,11 @@ boxplot_df <- sample_lvl_ITH %>%
         )
     )
 
-heterogeneity_colors <- c("#d96157", "#447dac", "#53744c")
+heterogeneity_colors <- c(
+    "Transcriptomic" = "#d96157",
+    "Genomic" = "#447dac",
+    "Therapeutic" = "#53744c"
+)
 boxplot1 <- ggplot(
     boxplot_df,
     aes(
