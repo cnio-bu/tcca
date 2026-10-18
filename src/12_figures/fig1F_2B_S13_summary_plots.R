@@ -142,7 +142,7 @@ theme_barplot <- theme(
 )
 
 sample_tme <- metadata_with_tme %>%
-    select(sample, study, sex, age, treated, sample_type, tumor_type, refined_tumor_site, tme_archetype_group, tme_archetype) %>%
+    select(sample, study, sex, age_group, treated, sample_type, tumor_type, refined_tumor_site, tme_archetype_group, tme_archetype) %>%
     distinct()
 
 barplot <- ggplot(
@@ -400,21 +400,23 @@ results_per_tc <- lapply(tc_levels, function(tc) {
 
 print(results_per_tc)
 
+subclone_metadata <- subclone_metadata %>%
+    mutate(tme_archetype = fct_rev(tme_archetype))
 barplot_tme_tc <- ggbarstats(
     data = subclone_metadata,
-    x = scTherapy_cluster,
-    y = tme_archetype,
+    x = tme_archetype,
+    y = therapeutic_cluster,
     type = "proportion" # show proportions instead of counts
 ) +
-    scale_fill_manual(values = sctherapy_colors) +
+    scale_fill_manual(values = tme_colors) +
     scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
-    labs(x = "TME archetype", y = "Percentage of samples", fill = "Therapeutic clusters") +
+    labs(x = "Therapeutic clusters", y = "Percentage of samples", fill = "TME") +
     theme_bw() +
     theme_barplot +
     theme(
-        legend.position = "top",
+        legend.position = "right",
         axis.title = element_text(face = "bold"),
-        axis.text.x = element_text(size = 14, color = "black", angle = 45),
+        axis.text.x = element_text(size = 14, color = "black", angle = 0, hjust = 0.5),
         panel.background = element_blank(),
         plot.background = element_blank(),
         panel.grid.major = element_blank(),
@@ -422,7 +424,7 @@ barplot_tme_tc <- ggbarstats(
         panel.border = element_blank(),
         axis.line = element_line(color = "black", linewidth = 0.3)
     ) +
-    guides(fill = guide_legend(ncol = 3, reverse = TRUE))
+    guides(fill = guide_legend(ncol = 1, reverse = TRUE))
 
 ggsave("figures/barplot_tme_tcs.pdf", plot = barplot_tme_tc, width = 8, height = 10)
 
@@ -949,51 +951,66 @@ write.table(tabla_df, "eac_thomas_carrol_tab1.tsv", sep = "\t")
 
 # Compute number of clusters each cancer type is distributed in
 tc_counts_cancertype <- metadata %>%
-    select(refined_tumor_type, scTherapy_cluster, scevan_subclone) %>%
-    filter(!is.na(scTherapy_cluster)) %>%
+    select(tumor_type, therapeutic_cluster, scevan_subclone) %>%
+    filter(!is.na(therapeutic_cluster)) %>%
     distinct() %>%
-    group_by(refined_tumor_type) %>%
-    summarise(n_clusters = n_distinct(scTherapy_cluster)) %>%
-    arrange(desc(n_clusters), refined_tumor_type) %>%
-    mutate(refined_tumor_type = factor(refined_tumor_type, levels = rev(unique(refined_tumor_type))))
+    group_by(tumor_type) %>%
+    summarise(n_clusters = n_distinct(therapeutic_cluster)) %>%
+    arrange(desc(n_clusters), tumor_type) %>%
+    mutate(tumor_type = factor(tumor_type, levels = rev(unique(tumor_type))))
 
 
-tc_count_plot <- ggplot(tc_counts_cancertype, aes(x = refined_tumor_type, y = n_clusters, fill = refined_tumor_type)) +
-    geom_col() +
-    scale_fill_manual(values = tumor_type_colors, name = "Cancer types") +
-    labs(x = "Cancer type", y = "Number of therapeutic clusters", title = "Number of TCs per cancer type") +
-    scale_y_continuous(breaks = seq(1, 10, by = 1)) +
-    theme_minimal() +
+tc_count_plot <- ggplot(
+    tc_counts_cancertype,
+    aes(
+        x = reorder(tumor_type, n_clusters),
+        y = n_clusters
+    )
+) +
+    geom_col(fill = "#6BAED6", width = 0.7) + # single color, no legend needed
+    labs(
+        x = NULL, # no x title needed, axis labels say it
+        y = "Number of therapeutic clusters"
+    ) +
+    scale_y_continuous(
+        breaks = seq(1, 10, by = 1),
+        expand = expansion(mult = c(0, 0.05))
+    ) +
     coord_flip() +
-    guides(fill = guide_legend(reverse = TRUE), ncol = 4) +
-    theme_barplot +
+    theme_bw() +
     theme(
-        axis.text.x = element_text(angle = 0),
-        legend.position = "top"
+        axis.text.x = element_text(size = 10, color = "black"),
+        axis.text.y = element_text(size = 10, color = "black"),
+        axis.title.x = element_text(size = 11, face = "bold"),
+        panel.grid.major.y = element_blank(), # remove horizontal gridlines
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        axis.line = element_line(color = "black", linewidth = 0.3),
+        legend.position = "none" # no legend needed
     )
 
 ggsave(
     "figures/tc_count_cancertype.pdf",
     plot = tc_count_plot,
-    height = 8,
-    width = 8,
+    height = 5,
+    width = 3,
     dpi = 300
 )
 
 # Plot TCs distribution per cancer type
 subclones_clinical <- metadata %>%
-    select(refined_tumor_type, scTherapy_cluster, scevan_subclone, sample_type, treated, age_group) %>%
-    filter(!is.na(scTherapy_cluster)) %>%
-    mutate(scTherapy_cluster = factor(scTherapy_cluster)) %>%
+    select(tumor_type, therapeutic_cluster, scevan_subclone, sample_type, treated, age_group) %>%
+    filter(!is.na(therapeutic_cluster)) %>%
+    mutate(therapeutic_cluster = factor(therapeutic_cluster)) %>%
     distinct()
 
 barplot_tc_cancertype <- ggbarstats(
-    data = tc_cancertype,
-    x = scTherapy_cluster,
-    y = refined_tumor_type,
+    data = subclones_clinical,
+    x = therapeutic_cluster,
+    y = tumor_type,
     type = "proportion" # show proportions instead of counts
 ) +
-    scale_fill_manual(values = sctherapy_colors) +
+    scale_fill_manual(values = alpha(sctherapy_colors, 0.8)) +
     scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
     labs(x = "Cancer type", y = "Percentage of samples", fill = "Therapeutic cluster") +
     theme_bw() +
@@ -1010,14 +1027,46 @@ barplot_tc_cancertype <- ggbarstats(
     ) +
     guides(fill = guide_legend(ncol = 10, reverse = TRUE))
 
-ggsave("figures/barplot_tcs_cancertype.pdf", plot = barplot_tc_cancertype, width = 12, height = 7)
+ggsave("figures/barplot_tcs_cancertype.pdf", plot = barplot_tc_cancertype, width = 14, height = 8)
+
+# Statistical analysis for pairwise comparisons
+# Fisher's exact test por par TC-cancer type
+results_fisher <- expand.grid(
+    TC = levels(subclones_clinical$therapeutic_cluster),
+    cancer_type = unique(subclones_clinical$tumor_type),
+    stringsAsFactors = FALSE
+) %>%
+    rowwise() %>%
+    mutate(
+        result = list(tryCatch(
+            {
+                tab <- table(
+                    subclones_clinical$therapeutic_cluster == TC,
+                    subclones_clinical$tumor_type == cancer_type
+                )
+                fisher.test(tab, simulate.p.value = TRUE)
+            },
+            error = function(e) NULL
+        )),
+        p_value = ifelse(is.null(result), NA, result$p.value),
+        OR = ifelse(is.null(result), NA, result$estimate)
+    ) %>%
+    select(-result) %>%
+    ungroup() %>%
+    mutate(p_adj = p.adjust(p_value, method = "BH"))
+
+# See pairs with significant enrichment (OR > 1)
+results_fisher %>%
+    filter(p_adj < 0.05, OR > 1) %>%
+    arrange(desc(OR)) %>%
+    print(n = Inf)
 
 
 # Primary/Met subclones per cluster and cancer type
 barplot_tc_clinical <- ggbarstats(
     data = subclones_clinical,
-    x = scTherapy_cluster,
-    y = age_group,
+    x = therapeutic_cluster,
+    y = treated,
     type = "proportion" # show proportions instead of counts
 ) +
     scale_fill_manual(values = sctherapy_colors) +
@@ -1037,7 +1086,50 @@ barplot_tc_clinical <- ggbarstats(
     ) +
     guides(fill = guide_legend(ncol = 1, reverse = TRUE))
 
-ggsave("./figures/barplot_tcs_age.pdf", plot = barplot_tc_clinical, width = 6, height = 8)
+ggsave("./figures/barplot_tcs_treated.pdf", plot = barplot_tc_clinical, width = 5, height = 6)
+
+
+# Run statistical tests to check whether TCs are significantly different
+# across clinical variables (sample_type, treatment status, age) controlling by cancer type
+subclone_cmh_data <- subclones_clinical %>%
+    mutate(
+        TC = factor(therapeutic_cluster),
+        clin = factor(treated),
+        cancer_type = factor(tumor_type)
+    )
+
+# For each combination TC-clinical variable, binary CMH controlling for cancer type
+tc_levels <- levels(subclone_cmh_data$TC)
+clin_levels <- levels(subclone_cmh_data$clin)
+
+results_pairs <- expand.grid(
+    TC = tc_levels,
+    clin = clin_levels,
+    stringsAsFactors = FALSE
+) %>%
+    rowwise() %>%
+    mutate(
+        result = list(tryCatch(
+            {
+                mantelhaen.test(table(
+                    subclone_cmh_data$TC == TC,
+                    subclone_cmh_data$clin == clin,
+                    subclone_cmh_data$cancer_type
+                ))
+            },
+            error = function(e) NULL
+        )),
+        p_value = ifelse(is.null(result), NA, result$p.value),
+        statistic = ifelse(is.null(result), NA, result$statistic),
+        OR = ifelse(is.null(result), NA, result$estimate)
+    ) %>%
+    select(-result) %>%
+    ungroup() %>%
+    mutate(p_adj = p.adjust(p_value, method = "BH"))
+
+print(results_pairs, n = 50)
+
+
 
 # Plot proportion of samples per cluster
 seu@meta.data <- seu@meta.data %>%
@@ -1077,3 +1169,5 @@ barplot <- ggplot(subclones_clinical, aes(x = scTherapy_cluster, fill = refined_
         legend.text = element_text(size = 12)
     )
 ggsave("figures/barplot_subclone_cancertype.pdf", plot = barplot, height = 6, width = 10)
+
+
