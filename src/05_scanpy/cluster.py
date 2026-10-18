@@ -217,8 +217,8 @@ marker_genes_dict = [
 ]
 
 marker_genes_dict = {
-    "B-cell": ["CD19", "CD79A", "MS4A1"],
-    "Plasma cell": ["IGKC", "IGHG1"],
+    "B-cell": ["MS4A1"],
+    "Plasma cell": ["JCHAIN", "IGKC", "IGHG1"],
     "CD4+ T-cell": ["CD4", "ILR7", "TRAC", "CD3D"],
     "CD8+ T-cell": ["CD8A", "CD8B", "CCL5"],
     "Regulatory T-cell": ["LAG3", "FOXP3", "CTLA4", "NKX1-1"],
@@ -238,6 +238,30 @@ marker_genes_dict = {
     "Stem": ["CD44", "CD34", "ENG"],
     "Glial cell": ["GFAP", "OLIG2", "PLP1"],
     "Neuron": ["MAP2", "RBFOX3", "SYN1"],
+}
+
+final_marker_genes_dict = {
+    "B-cell": ["MS4A1"],
+    "Plasma cell": ["JCHAIN", "CD38"],
+    "CD4+ T-cell": ["IL7R"],
+    "CD8+ T-cell": ["CD8A", "CCL5"],
+    "Regulatory T-cell": ["FOXP3", "CTLA4"],
+    "Innate lymphoid cells": ["AREG"],
+    "Unconventional T-cells": ["KLRG1", "RUNX1"],
+    "NK cell": ["NKG7", "KLRD1"],
+    "Dendritic cell": ["CLEC10A", "CD1C"],
+    "Plasmacytoid dendritic cell": ["CXCR3", "IRF7"],
+    "Granulocyte": ["FCN1"],
+    "Monocyte/Macrophage": ["CD68", "MSR1"],
+    "Mast": ["CPA3", "TPSB2"],
+    "Erythrocyte": ["HBA1"],
+    # "Platelet": ["PPBP", "PF4", "ITGA2B"],
+    "Epithelial": ["EPCAM", "KRT8"],
+    "Endothelial": ["PECAM1", "ACKR1"],
+    "Stromal cell": ["PDPN", "DCN", "THY1"],
+    "Stem": ["SOX4"],
+    "Glial cell": ["GFAP", "OLIG2", "PLP1"],
+    "Neuron": ["MAP2", "NEFH", "NES"]
 }
 
 filtered_marker_genes_dict = {}
