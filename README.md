@@ -71,6 +71,7 @@ This directory `src/04_cell_annotation_tme` contains the R notebook detailing th
 **Scripts**
 - `add_author_annotation.R`: adds missing or mismatched author-provided cell type labels to preprocessed Seurat objects, ensuring correct mapping of cell names and updating metadata.
 - `rename_tme_archetype.R`: rename TME archetypes
+- `analysis_TME_bcmeta_cohort.Rmd`: harmonize cell type annotations from authors and automated annotators using manually curated labels, and classify samples into TME archetypes based on the proportions of TME cell types.
   
 <br>
 
@@ -81,7 +82,7 @@ The following scripts (`src/05_scanpy`) are run in Python using Scanpy based on 
 - `integration.py`: applies multiple state-of-the-art integration methods (e.g., scVI, SCANVI, Scanorama) o generate batch-corrected embeddings for integrated visualization across studies. This script requires a GPU-enabled HPC environment. Analyses were performed on an HPC with 3× Nvidia A100 80GB GPUs.
 - `benchmark_integration.py`: evaluates integration performance using standard metrics to compare batch correction and biological conservation across the three integration methods.,
 - `cluster.py`: visualizes integrated embeddings, performs clustering (all cells and malignant subset), and validates cell type annotation using known marker genes.
-
+- `reharmonization.py`: reharmonize cell type labels by grouping fine-grained annotations into broader cell type categories.
 <br>
 
 ### 6. Inference of CNVs with SCEVAN
@@ -127,7 +128,9 @@ After computing Beyondcell scores in the snakemake pipeline, several scripts in 
 The `src/08_sctherapy` folder contains the workflow for predicting subclone-level drug responses using scTherapy; characterizing therapeutic clusters (TCs); deriving transcriptomic signatures; and correlating these signatures with patient survival.
 
 **8.1. Subclone-level predictions**  
-- `sctherapy_fullcohort.R`: predicts drug responses for malignant subclones (only from samples containing normal or TME cells).
+- `sctherapy_fullcohort.R`: predicts drug responses for malignant subclones (only from samples containing nonmalignant cells, epithelial or TME cells).
+- `drug_concordance.R`: assess the proportion of approved drugs in the predicted set that are indicated for the corresponding tumor type according to PanDrugs.
+- `oncogene_driven_genes.R`: compare predicted drug sensitivities between subclones harboring canonical driver mutations and wild-type subclones to assess known oncogene–drug relationships. 
 
 **8.2. Visualization**  
 - `heatmap_subclones.R`: heatmap of predicted drug responses per subclone.  
@@ -151,6 +154,12 @@ The `src/08_sctherapy` folder contains the workflow for predicting subclone-leve
 - Fit Cox proportional hazards models adjusted for cancer type, sex, age, and tumor stage/grade.  
 - Analyses for progression-free interval (PFI) and overall survival (OS); outputs include tables and forest plots.
 - `envs/` directory provides environment specifications for running ssGSEA and survival analysis.
+
+**8.6.Subclone-level predictions in samples with sufficient non-malignant epithelial cells**
+- `non_malignant_stat.R`: compute the number of non-malignant TME and epithelial cells per sample.
+- `sctherapy_nomal_epi.R`: predict drug responses for malignant subclones in samples with sufficient non-malignant epithelial cells.
+- `nonmal_epi_categorical_heatmap.R`: visualize predicted drug responses.
+- `compare_nonmal_epi.R`: compare drug predictions across samples using all non-malignant cells (epithelial and TME cells)
 
 <br>
 
@@ -182,6 +191,10 @@ Equivalent enrichment matrices are also generated using Beyondcell scores (inste
 - `tcca_decoupler.py`: infers pathway activity scores using PROGENy gene signatures and decoupler’s multivariate linear model (MLM), producing per-cell activity matrices for downstream analysis.
 - `hotspot_tcca.py`: identifies gene co-expression modules in malignant cells using the Hotspot algorithm. It computes local and global autocorrelations based on scANVI embeddings, clusters genes into modules, and outputs module definitions and per-cell activity scores.
 - `annotate_hotspot.R`: performs functional enrichment of Hotspot-derived modules using MSigDB and custom gene sets via FGSEA overrepresentation analysis (ORA) to identify overrepresented pathways.
+
+**9.5. scTherapy analysis from metaprograms (`therapeutic_from_mps/`)**
+- `run_high_mp_cells.R`, `aggregate_mp_high_results.R` and `submit_mp_scoring.sh`: identify MP-high cells in each sample using UCell scoring against an empirical null distribution of expression bin-matched control gene sets, and aggregate the results across samples.
+- `run_sctherapy_mps.R`, `aggregate_mp_drugs.R` and `submit_sctherapy_mp.sh`: compute differential expression between MP-high malignant cells and non-malignant cells of the same sample, predict drug sensitivities with scTherapy for each MP × sample combination, and aggregate the predictions into a single table to compare with TC-specific drugs.
 
 <br>
 
@@ -233,11 +246,15 @@ The folder `/src/12_figures/` includes scripts used to generate the main and sup
 - `TCCA_palette.R`: defines color palettes for clinical variables, therapeutic clusters, and MPS groups.
 - `fig1_sankey_cohort.R`: sankey plot showing sample distribution across key clinical variables.
 - `tab1_summary_clinical_table.R`: generates a summary table of clinical features per cancer type.
-- `fig1F_2B_S13_summary_plots.R`: summarizes single-cell and scTherapy data, including malignant vs. TME proportions, TME archetype distributions, top drugs and MoAs per TC, and TC composition.
-- `fig1E_circular_tme.R`: circular plot displaying sample percentages by TME group and archetype.
+- `figS1_heatmap_tumor_healthy_cells.R`: heatmap of genome-wide copy number alterations (CNAs) inferred with SCEVAN from single-cell RNA sequencing data, comparing malignant and non-malignant cells.
+- `fig2b.R`: bubble plot showing the percentage of subclones in which each drug is predicted, per therapeutic cluster.
+- `fig2d.R`: heatmap of the net CNA proportion (gain - loss) for each genomic region across the ten therapeutic clusters.
+- `fig5bc_S12_S13_summary_plots.R`: summarizes single-cell and scTherapy data, including malignant vs. TME proportions, TME archetype distributions, top drugs and MoAs per TC, and TC composition.
+- `fig5a.R`: circular plot displaying sample percentages by TME group and archetype.
 - `sankey_three_layers.R`: three-layer Sankey plot linking subclones, TME archetypes, tumor types, and functional metaprograms.
-- `figS5_S6_clonality_plots.R`: computes and visualizes clonality (subclones per 1,000 cells) across cancer types and clinical variables.
-
+- `figS3_clonality_plots.R`: computes and visualizes clonality (Inverse Simpson Index) across cancer types and clinical variables.
+- `cna_freqplot.R`: CNA frequency plots (cnFreq, GenVisR) showing the proportion of samples or subclones with gains and losses per genomic region, stratified by variable (cancer type, therapeutic cluster, etc.)
+- `figS17a.R`: UpSet plot showing combinations of copy-number amplifications in TC4 subclones.
 <br>
 <br>
 
