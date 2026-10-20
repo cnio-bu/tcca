@@ -1,4 +1,5 @@
 # The Therapeutic Cancer Cell Atlas (TCCA)
+[![DOI](https://zenodo.org/badge/1070270025.svg)](https://doi.org/10.5281/zenodo.23500617)
 
 ## Overview
 This repository contains all code and workflows used to preprocess, analyze, and visualize the **Therapeutic Cancer Cell Atlas (TCCA)** — an integrated single-cell atlas with therapeutic predictions built from publicly available datasets. It includes a Snakemake-based pipeline for preprocessing GEO single-cell expression data, and modular scripts for genomic, therapeutic, functional and tumor microenvironment analyses.
