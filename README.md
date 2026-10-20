@@ -24,8 +24,7 @@ This is a simplified diagram of the workflow steps:
 git clone https://github.com/cnio-bu/tcca.git
 cd tcca
 ```
-2. Download the preprocessed TCCA dataset, which contains 1,089,024 malignant cells and 750,218 non-malignant cells from 36 studies, along with metadata:
-https://tcca.bioinfo.cnio.es/session/8609a42b7abfbebe6b39778186468dd4/download/download-dl_h5ad?w=
+1. Download the preprocessed TCCA dataset from Zenodo (https://doi.org/10.5281/zenodo.18109100). It contains 1,089,024 malignant cells and 750,218 non-malignant cells from 36 studies, together with curated clinical metadata and analysis results (SCEVAN CNA profiles, metaprograms, TME archetypes, and Beyondcell/scTherapy drug-response predictions). The data can also be explored interactively at https://tcca.bioinfo.cnio.es/.
 
 ## Workflow steps
 ### 1. GEO data preparation
